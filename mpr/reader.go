@@ -3,11 +3,13 @@ package mpr
 
 import (
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/anthropics/modelsdk-go/domainmodel"
 	"github.com/anthropics/modelsdk-go/microflows"
@@ -15,6 +17,7 @@ import (
 	"github.com/anthropics/modelsdk-go/pages"
 
 	_ "github.com/mattn/go-sqlite3"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // MPRVersion represents the MPR file format version.
@@ -29,11 +32,11 @@ const (
 
 // Reader provides methods to read Mendix project files.
 type Reader struct {
-	path       string
-	db         *sql.DB
-	version    MPRVersion
+	path        string
+	db          *sql.DB
+	version     MPRVersion
 	contentsDir string
-	readOnly   bool
+	readOnly    bool
 }
 
 // OpenOptions configures how the MPR file is opened.
@@ -110,14 +113,14 @@ func (r *Reader) Version() MPRVersion {
 
 // verify checks that the file is a valid MPR database.
 func (r *Reader) verify() error {
-	// Check for expected tables
+	// Check for Unit table which is required
 	var count int
-	err := r.db.QueryRow("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('Unit', 'Document', 'Module')").Scan(&count)
+	err := r.db.QueryRow("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name = 'Unit'").Scan(&count)
 	if err != nil {
 		return fmt.Errorf("failed to query tables: %w", err)
 	}
 	if count == 0 {
-		return errors.New("not a valid MPR file: required tables not found")
+		return errors.New("not a valid MPR file: Unit table not found")
 	}
 	return nil
 }
@@ -125,40 +128,102 @@ func (r *Reader) verify() error {
 // GetMendixVersion returns the Mendix version used to create the project.
 func (r *Reader) GetMendixVersion() (string, error) {
 	var version string
-	err := r.db.QueryRow("SELECT MendixVersion FROM _MetaData LIMIT 1").Scan(&version)
+	// Try new schema first
+	err := r.db.QueryRow("SELECT _ProductVersion FROM _MetaData LIMIT 1").Scan(&version)
 	if err != nil {
-		return "", fmt.Errorf("failed to get Mendix version: %w", err)
+		// Try old schema
+		err = r.db.QueryRow("SELECT MendixVersion FROM _MetaData LIMIT 1").Scan(&version)
+		if err != nil {
+			return "", fmt.Errorf("failed to get Mendix version: %w", err)
+		}
 	}
 	return version, nil
 }
 
-// ListModules returns all modules in the project.
-func (r *Reader) ListModules() ([]*model.Module, error) {
+// blobToUUID converts a 16-byte blob to a UUID string.
+func blobToUUID(blob []byte) string {
+	if len(blob) != 16 {
+		return hex.EncodeToString(blob)
+	}
+	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x",
+		blob[0:4], blob[4:6], blob[6:8], blob[8:10], blob[10:16])
+}
+
+// getTypeFromContents extracts the $Type field from BSON contents.
+func getTypeFromContents(contents []byte) string {
+	if len(contents) == 0 {
+		return ""
+	}
+
+	var raw map[string]interface{}
+	if err := bson.Unmarshal(contents, &raw); err != nil {
+		return ""
+	}
+
+	if typeName, ok := raw["$Type"].(string); ok {
+		return typeName
+	}
+	return ""
+}
+
+// listUnitsByType returns all units matching the given type prefix.
+func (r *Reader) listUnitsByType(typePrefix string) ([]rawUnit, error) {
 	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.ContentsHash, Unit.Contents
+		SELECT UnitID, ContainerID, ContainmentName, Contents
 		FROM Unit
-		WHERE Unit.Type = 'Projects$Module'
 	`)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query modules: %w", err)
+		return nil, fmt.Errorf("failed to query units: %w", err)
 	}
 	defer rows.Close()
 
-	var modules []*model.Module
+	var units []rawUnit
 	for rows.Next() {
-		var unitID, containerID string
-		var contentsHash sql.NullString
+		var unitID, containerID []byte
+		var containmentName string
 		var contents []byte
 
-		if err := rows.Scan(&unitID, &containerID, &contentsHash, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan module row: %w", err)
+		if err := rows.Scan(&unitID, &containerID, &containmentName, &contents); err != nil {
+			return nil, fmt.Errorf("failed to scan unit row: %w", err)
 		}
 
-		module, err := r.parseModule(unitID, contents)
+		typeName := getTypeFromContents(contents)
+		if typePrefix == "" || strings.HasPrefix(typeName, typePrefix) {
+			units = append(units, rawUnit{
+				ID:              blobToUUID(unitID),
+				ContainerID:     blobToUUID(containerID),
+				ContainmentName: containmentName,
+				Type:            typeName,
+				Contents:        contents,
+			})
+		}
+	}
+
+	return units, nil
+}
+
+// rawUnit holds raw unit data from the database.
+type rawUnit struct {
+	ID              string
+	ContainerID     string
+	ContainmentName string
+	Type            string
+	Contents        []byte
+}
+
+// ListModules returns all modules in the project.
+func (r *Reader) ListModules() ([]*model.Module, error) {
+	units, err := r.listUnitsByType("Projects$Module")
+	if err != nil {
+		return nil, err
+	}
+
+	var modules []*model.Module
+	for _, u := range units {
+		module, err := r.parseModule(u.ID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse module %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse module %s: %w", u.ID, err)
 		}
-
 		modules = append(modules, module)
 	}
 
@@ -167,18 +232,18 @@ func (r *Reader) ListModules() ([]*model.Module, error) {
 
 // GetModule retrieves a module by ID.
 func (r *Reader) GetModule(id model.ID) (*model.Module, error) {
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT Contents FROM Unit WHERE UnitID = ? AND Type = 'Projects$Module'
-	`, string(id)).Scan(&contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("module not found: %s", id)
-	}
+	modules, err := r.ListModules()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query module: %w", err)
+		return nil, err
 	}
 
-	return r.parseModule(string(id), contents)
+	for _, m := range modules {
+		if m.ID == id {
+			return m, nil
+		}
+	}
+
+	return nil, fmt.Errorf("module not found: %s", id)
 }
 
 // GetModuleByName retrieves a module by name.
@@ -199,30 +264,17 @@ func (r *Reader) GetModuleByName(name string) (*model.Module, error) {
 
 // ListDomainModels returns all domain models in the project.
 func (r *Reader) ListDomainModels() ([]*domainmodel.DomainModel, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'DomainModels$DomainModel'
-	`)
+	units, err := r.listUnitsByType("DomainModels$DomainModel")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query domain models: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var domainModels []*domainmodel.DomainModel
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan domain model row: %w", err)
-		}
-
-		dm, err := r.parseDomainModel(unitID, containerID, contents)
+	for _, u := range units {
+		dm, err := r.parseDomainModel(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse domain model %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse domain model %s: %w", u.ID, err)
 		}
-
 		domainModels = append(domainModels, dm)
 	}
 
@@ -231,49 +283,33 @@ func (r *Reader) ListDomainModels() ([]*domainmodel.DomainModel, error) {
 
 // GetDomainModel retrieves a domain model by module ID.
 func (r *Reader) GetDomainModel(moduleID model.ID) (*domainmodel.DomainModel, error) {
-	var unitID, containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT UnitID, ContainerID, Contents
-		FROM Unit
-		WHERE ContainerID = ? AND Type = 'DomainModels$DomainModel'
-	`, string(moduleID)).Scan(&unitID, &containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("domain model not found for module: %s", moduleID)
-	}
+	domainModels, err := r.ListDomainModels()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query domain model: %w", err)
+		return nil, err
 	}
 
-	return r.parseDomainModel(unitID, containerID, contents)
+	for _, dm := range domainModels {
+		if dm.ContainerID == moduleID {
+			return dm, nil
+		}
+	}
+
+	return nil, fmt.Errorf("domain model not found for module: %s", moduleID)
 }
 
 // ListMicroflows returns all microflows in the project.
 func (r *Reader) ListMicroflows() ([]*microflows.Microflow, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'Microflows$Microflow'
-	`)
+	units, err := r.listUnitsByType("Microflows$Microflow")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query microflows: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*microflows.Microflow
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan microflow row: %w", err)
-		}
-
-		mf, err := r.parseMicroflow(unitID, containerID, contents)
+	for _, u := range units {
+		mf, err := r.parseMicroflow(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse microflow %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse microflow %s: %w", u.ID, err)
 		}
-
 		result = append(result, mf)
 	}
 
@@ -282,47 +318,33 @@ func (r *Reader) ListMicroflows() ([]*microflows.Microflow, error) {
 
 // GetMicroflow retrieves a microflow by ID.
 func (r *Reader) GetMicroflow(id model.ID) (*microflows.Microflow, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'Microflows$Microflow'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("microflow not found: %s", id)
-	}
+	microflowsList, err := r.ListMicroflows()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query microflow: %w", err)
+		return nil, err
 	}
 
-	return r.parseMicroflow(string(id), containerID, contents)
+	for _, mf := range microflowsList {
+		if mf.ID == id {
+			return mf, nil
+		}
+	}
+
+	return nil, fmt.Errorf("microflow not found: %s", id)
 }
 
 // ListNanoflows returns all nanoflows in the project.
 func (r *Reader) ListNanoflows() ([]*microflows.Nanoflow, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'Microflows$Nanoflow'
-	`)
+	units, err := r.listUnitsByType("Microflows$Nanoflow")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query nanoflows: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*microflows.Nanoflow
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan nanoflow row: %w", err)
-		}
-
-		nf, err := r.parseNanoflow(unitID, containerID, contents)
+	for _, u := range units {
+		nf, err := r.parseNanoflow(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse nanoflow %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse nanoflow %s: %w", u.ID, err)
 		}
-
 		result = append(result, nf)
 	}
 
@@ -331,47 +353,33 @@ func (r *Reader) ListNanoflows() ([]*microflows.Nanoflow, error) {
 
 // GetNanoflow retrieves a nanoflow by ID.
 func (r *Reader) GetNanoflow(id model.ID) (*microflows.Nanoflow, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'Microflows$Nanoflow'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("nanoflow not found: %s", id)
-	}
+	nanoflows, err := r.ListNanoflows()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query nanoflow: %w", err)
+		return nil, err
 	}
 
-	return r.parseNanoflow(string(id), containerID, contents)
+	for _, nf := range nanoflows {
+		if nf.ID == id {
+			return nf, nil
+		}
+	}
+
+	return nil, fmt.Errorf("nanoflow not found: %s", id)
 }
 
 // ListPages returns all pages in the project.
 func (r *Reader) ListPages() ([]*pages.Page, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'Pages$Page'
-	`)
+	units, err := r.listUnitsByType("Pages$Page")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query pages: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*pages.Page
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan page row: %w", err)
-		}
-
-		page, err := r.parsePage(unitID, containerID, contents)
+	for _, u := range units {
+		page, err := r.parsePage(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse page %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse page %s: %w", u.ID, err)
 		}
-
 		result = append(result, page)
 	}
 
@@ -380,47 +388,33 @@ func (r *Reader) ListPages() ([]*pages.Page, error) {
 
 // GetPage retrieves a page by ID.
 func (r *Reader) GetPage(id model.ID) (*pages.Page, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'Pages$Page'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("page not found: %s", id)
-	}
+	pagesList, err := r.ListPages()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query page: %w", err)
+		return nil, err
 	}
 
-	return r.parsePage(string(id), containerID, contents)
+	for _, p := range pagesList {
+		if p.ID == id {
+			return p, nil
+		}
+	}
+
+	return nil, fmt.Errorf("page not found: %s", id)
 }
 
 // ListLayouts returns all layouts in the project.
 func (r *Reader) ListLayouts() ([]*pages.Layout, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'Pages$Layout'
-	`)
+	units, err := r.listUnitsByType("Pages$Layout")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query layouts: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*pages.Layout
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan layout row: %w", err)
-		}
-
-		layout, err := r.parseLayout(unitID, containerID, contents)
+	for _, u := range units {
+		layout, err := r.parseLayout(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse layout %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse layout %s: %w", u.ID, err)
 		}
-
 		result = append(result, layout)
 	}
 
@@ -429,47 +423,33 @@ func (r *Reader) ListLayouts() ([]*pages.Layout, error) {
 
 // GetLayout retrieves a layout by ID.
 func (r *Reader) GetLayout(id model.ID) (*pages.Layout, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'Pages$Layout'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("layout not found: %s", id)
-	}
+	layouts, err := r.ListLayouts()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query layout: %w", err)
+		return nil, err
 	}
 
-	return r.parseLayout(string(id), containerID, contents)
+	for _, l := range layouts {
+		if l.ID == id {
+			return l, nil
+		}
+	}
+
+	return nil, fmt.Errorf("layout not found: %s", id)
 }
 
 // ListEnumerations returns all enumerations in the project.
 func (r *Reader) ListEnumerations() ([]*model.Enumeration, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'Enumerations$Enumeration'
-	`)
+	units, err := r.listUnitsByType("Enumerations$Enumeration")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query enumerations: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*model.Enumeration
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan enumeration row: %w", err)
-		}
-
-		enum, err := r.parseEnumeration(unitID, containerID, contents)
+	for _, u := range units {
+		enum, err := r.parseEnumeration(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse enumeration %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse enumeration %s: %w", u.ID, err)
 		}
-
 		result = append(result, enum)
 	}
 
@@ -478,47 +458,33 @@ func (r *Reader) ListEnumerations() ([]*model.Enumeration, error) {
 
 // GetEnumeration retrieves an enumeration by ID.
 func (r *Reader) GetEnumeration(id model.ID) (*model.Enumeration, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'Enumerations$Enumeration'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("enumeration not found: %s", id)
-	}
+	enums, err := r.ListEnumerations()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query enumeration: %w", err)
+		return nil, err
 	}
 
-	return r.parseEnumeration(string(id), containerID, contents)
+	for _, e := range enums {
+		if e.ID == id {
+			return e, nil
+		}
+	}
+
+	return nil, fmt.Errorf("enumeration not found: %s", id)
 }
 
 // ListConstants returns all constants in the project.
 func (r *Reader) ListConstants() ([]*model.Constant, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'Constants$Constant'
-	`)
+	units, err := r.listUnitsByType("Constants$Constant")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query constants: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*model.Constant
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan constant row: %w", err)
-		}
-
-		constant, err := r.parseConstant(unitID, containerID, contents)
+	for _, u := range units {
+		constant, err := r.parseConstant(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse constant %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse constant %s: %w", u.ID, err)
 		}
-
 		result = append(result, constant)
 	}
 
@@ -527,47 +493,33 @@ func (r *Reader) ListConstants() ([]*model.Constant, error) {
 
 // GetConstant retrieves a constant by ID.
 func (r *Reader) GetConstant(id model.ID) (*model.Constant, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'Constants$Constant'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("constant not found: %s", id)
-	}
+	constants, err := r.ListConstants()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query constant: %w", err)
+		return nil, err
 	}
 
-	return r.parseConstant(string(id), containerID, contents)
+	for _, c := range constants {
+		if c.ID == id {
+			return c, nil
+		}
+	}
+
+	return nil, fmt.Errorf("constant not found: %s", id)
 }
 
 // ListScheduledEvents returns all scheduled events in the project.
 func (r *Reader) ListScheduledEvents() ([]*model.ScheduledEvent, error) {
-	rows, err := r.db.Query(`
-		SELECT Unit.UnitID, Unit.ContainerID, Unit.Contents
-		FROM Unit
-		WHERE Unit.Type = 'ScheduledEvents$ScheduledEvent'
-	`)
+	units, err := r.listUnitsByType("ScheduledEvents$ScheduledEvent")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query scheduled events: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
 	var result []*model.ScheduledEvent
-	for rows.Next() {
-		var unitID, containerID string
-		var contents []byte
-
-		if err := rows.Scan(&unitID, &containerID, &contents); err != nil {
-			return nil, fmt.Errorf("failed to scan scheduled event row: %w", err)
-		}
-
-		event, err := r.parseScheduledEvent(unitID, containerID, contents)
+	for _, u := range units {
+		event, err := r.parseScheduledEvent(u.ID, u.ContainerID, u.Contents)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse scheduled event %s: %w", unitID, err)
+			return nil, fmt.Errorf("failed to parse scheduled event %s: %w", u.ID, err)
 		}
-
 		result = append(result, event)
 	}
 
@@ -576,101 +528,144 @@ func (r *Reader) ListScheduledEvents() ([]*model.ScheduledEvent, error) {
 
 // GetScheduledEvent retrieves a scheduled event by ID.
 func (r *Reader) GetScheduledEvent(id model.ID) (*model.ScheduledEvent, error) {
-	var containerID string
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT ContainerID, Contents FROM Unit WHERE UnitID = ? AND Type = 'ScheduledEvents$ScheduledEvent'
-	`, string(id)).Scan(&containerID, &contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("scheduled event not found: %s", id)
-	}
+	events, err := r.ListScheduledEvents()
 	if err != nil {
-		return nil, fmt.Errorf("failed to query scheduled event: %w", err)
+		return nil, err
 	}
 
-	return r.parseScheduledEvent(string(id), containerID, contents)
+	for _, e := range events {
+		if e.ID == id {
+			return e, nil
+		}
+	}
+
+	return nil, fmt.Errorf("scheduled event not found: %s", id)
 }
 
-// GetUnit retrieves a raw unit by ID and type.
-func (r *Reader) GetUnit(id model.ID, unitType string) ([]byte, error) {
-	var contents []byte
-	err := r.db.QueryRow(`
-		SELECT Contents FROM Unit WHERE UnitID = ? AND Type = ?
-	`, string(id), unitType).Scan(&contents)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("unit not found: %s", id)
-	}
+// ListSnippets returns all snippets in the project.
+func (r *Reader) ListSnippets() ([]*pages.Snippet, error) {
+	units, err := r.listUnitsByType("Pages$Snippet")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query unit: %w", err)
+		return nil, err
 	}
 
-	return contents, nil
+	var result []*pages.Snippet
+	for _, u := range units {
+		snippet, err := r.parseSnippet(u.ID, u.ContainerID, u.Contents)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse snippet %s: %w", u.ID, err)
+		}
+		result = append(result, snippet)
+	}
+
+	return result, nil
+}
+
+// ListJavaActions returns all Java actions in the project.
+func (r *Reader) ListJavaActions() ([]*JavaAction, error) {
+	units, err := r.listUnitsByType("JavaActions$JavaAction")
+	if err != nil {
+		return nil, err
+	}
+
+	var result []*JavaAction
+	for _, u := range units {
+		ja, err := r.parseJavaAction(u.ID, u.ContainerID, u.Contents)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse java action %s: %w", u.ID, err)
+		}
+		result = append(result, ja)
+	}
+
+	return result, nil
+}
+
+// JavaAction represents a Java action.
+type JavaAction struct {
+	model.BaseElement
+	ContainerID   model.ID `json:"containerId"`
+	Name          string   `json:"name"`
+	Documentation string   `json:"documentation,omitempty"`
+}
+
+// GetName returns the Java action's name.
+func (ja *JavaAction) GetName() string {
+	return ja.Name
+}
+
+// GetContainerID returns the container ID.
+func (ja *JavaAction) GetContainerID() model.ID {
+	return ja.ContainerID
 }
 
 // ListUnits returns all units with their IDs and types.
 func (r *Reader) ListUnits() ([]*UnitInfo, error) {
-	rows, err := r.db.Query(`
-		SELECT UnitID, ContainerID, Type FROM Unit
-	`)
+	units, err := r.listUnitsByType("")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query units: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
-	var units []*UnitInfo
-	for rows.Next() {
-		var unitID, containerID, unitType string
-		if err := rows.Scan(&unitID, &containerID, &unitType); err != nil {
-			return nil, fmt.Errorf("failed to scan unit row: %w", err)
-		}
-
-		units = append(units, &UnitInfo{
-			ID:          model.ID(unitID),
-			ContainerID: model.ID(containerID),
-			Type:        unitType,
+	var result []*UnitInfo
+	for _, u := range units {
+		result = append(result, &UnitInfo{
+			ID:              model.ID(u.ID),
+			ContainerID:     model.ID(u.ContainerID),
+			ContainmentName: u.ContainmentName,
+			Type:            u.Type,
 		})
 	}
 
-	return units, nil
+	return result, nil
 }
 
 // UnitInfo contains basic information about a unit.
 type UnitInfo struct {
-	ID          model.ID
-	ContainerID model.ID
-	Type        string
+	ID              model.ID
+	ContainerID     model.ID
+	ContainmentName string
+	Type            string
 }
 
 // ExportJSON exports the entire model as JSON.
 func (r *Reader) ExportJSON() ([]byte, error) {
 	modules, err := r.ListModules()
 	if err != nil {
-		return nil, err
+		modules = nil // Continue even if modules fail
 	}
 
 	domainModels, err := r.ListDomainModels()
 	if err != nil {
-		return nil, err
+		domainModels = nil
 	}
 
 	microflowsList, err := r.ListMicroflows()
 	if err != nil {
-		return nil, err
+		microflowsList = nil
 	}
 
 	nanoflows, err := r.ListNanoflows()
 	if err != nil {
-		return nil, err
+		nanoflows = nil
 	}
 
 	pagesList, err := r.ListPages()
 	if err != nil {
-		return nil, err
+		pagesList = nil
 	}
 
 	layouts, err := r.ListLayouts()
 	if err != nil {
-		return nil, err
+		layouts = nil
+	}
+
+	enumerations, err := r.ListEnumerations()
+	if err != nil {
+		enumerations = nil
+	}
+
+	constants, err := r.ListConstants()
+	if err != nil {
+		constants = nil
 	}
 
 	export := map[string]interface{}{
@@ -680,7 +675,24 @@ func (r *Reader) ExportJSON() ([]byte, error) {
 		"nanoflows":    nanoflows,
 		"pages":        pagesList,
 		"layouts":      layouts,
+		"enumerations": enumerations,
+		"constants":    constants,
 	}
 
 	return json.MarshalIndent(export, "", "  ")
+}
+
+// GetUnitTypes returns a count of units by type.
+func (r *Reader) GetUnitTypes() (map[string]int, error) {
+	units, err := r.listUnitsByType("")
+	if err != nil {
+		return nil, err
+	}
+
+	counts := make(map[string]int)
+	for _, u := range units {
+		counts[u.Type]++
+	}
+
+	return counts, nil
 }

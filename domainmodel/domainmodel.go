@@ -42,11 +42,12 @@ func (dm *DomainModel) FindAssociationByName(name string) *Association {
 // Entity represents an entity in the domain model.
 type Entity struct {
 	model.BaseElement
-	ContainerID    model.ID     `json:"containerId"`
-	Name           string       `json:"name"`
-	Documentation  string       `json:"documentation,omitempty"`
-	Location       model.Point  `json:"location"`
-	Generalization Generalization `json:"generalization,omitempty"`
+	ContainerID      model.ID    `json:"containerId"`
+	Name             string      `json:"name"`
+	Documentation    string      `json:"documentation,omitempty"`
+	Location         model.Point `json:"location"`
+	Generalization   Generalization `json:"generalization,omitempty"`
+	GeneralizationID model.ID    `json:"generalizationId,omitempty"`
 
 	// Persistability
 	Persistable bool `json:"persistable"`
@@ -59,7 +60,7 @@ type Entity struct {
 	EventHandlers   []*EventHandler   `json:"eventHandlers,omitempty"`
 
 	// Remote entity properties (for external entities)
-	RemoteSource    string `json:"remoteSource,omitempty"`
+	RemoteSource         string   `json:"remoteSource,omitempty"`
 	RemoteSourceDocument model.ID `json:"remoteSourceDocument,omitempty"`
 }
 
@@ -238,25 +239,12 @@ func (t *HashedStringAttributeType) GetTypeName() string {
 }
 
 // AttributeValue represents a default value for an attribute.
-type AttributeValue interface {
-	isAttributeValue()
-}
-
-// StoredValue represents a stored default value.
-type StoredValue struct {
+type AttributeValue struct {
 	model.BaseElement
-	DefaultValue string `json:"defaultValue"`
+	Type         string   `json:"type,omitempty"`
+	DefaultValue string   `json:"defaultValue,omitempty"`
+	MicroflowID  model.ID `json:"microflowId,omitempty"`
 }
-
-func (StoredValue) isAttributeValue() {}
-
-// CalculatedValue represents a calculated value.
-type CalculatedValue struct {
-	model.BaseElement
-	MicroflowID model.ID `json:"microflowId"`
-}
-
-func (CalculatedValue) isAttributeValue() {}
 
 // Association represents an association between entities.
 type Association struct {
@@ -320,9 +308,10 @@ const (
 // Index represents an index on an entity.
 type Index struct {
 	model.BaseElement
-	ContainerID model.ID        `json:"containerId"`
-	Name        string          `json:"name,omitempty"`
-	Attributes  []*IndexAttribute `json:"attributes,omitempty"`
+	ContainerID  model.ID          `json:"containerId"`
+	Name         string            `json:"name,omitempty"`
+	Attributes   []*IndexAttribute `json:"attributes,omitempty"`
+	AttributeIDs []model.ID        `json:"attributeIds,omitempty"`
 }
 
 // GetName returns the index's name.

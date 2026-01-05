@@ -1,6 +1,7 @@
 package mpr
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -12,7 +13,116 @@ import (
 	"github.com/anthropics/modelsdk-go/pages"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+// extractBsonID extracts an ID string from various BSON ID representations.
+// Mendix stores IDs as Binary with Subtype/Data or as primitive.Binary.
+func extractBsonID(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+
+	switch val := v.(type) {
+	case string:
+		return val
+	case []byte:
+		return blobToUUID(val)
+	case primitive.Binary:
+		return blobToUUID(val.Data)
+	case map[string]interface{}:
+		// Binary UUID stored as {Subtype: 0, Data: "base64..."}
+		if data, ok := val["Data"].(string); ok {
+			decoded, err := base64.StdEncoding.DecodeString(data)
+			if err == nil {
+				return blobToUUID(decoded)
+			}
+		}
+		// Also try $ID field
+		if id, ok := val["$ID"]; ok {
+			return extractBsonID(id)
+		}
+	}
+
+	return ""
+}
+
+// extractInt extracts an integer from various BSON number types.
+func extractInt(v interface{}) int {
+	if v == nil {
+		return 0
+	}
+	switch val := v.(type) {
+	case int32:
+		return int(val)
+	case int64:
+		return int(val)
+	case int:
+		return val
+	case float64:
+		return int(val)
+	}
+	return 0
+}
+
+// extractString extracts a string from various BSON representations.
+func extractString(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+	if s, ok := v.(string); ok {
+		return s
+	}
+	return ""
+}
+
+// extractBool extracts a boolean from BSON, with default value.
+func extractBool(v interface{}, defaultVal bool) bool {
+	if v == nil {
+		return defaultVal
+	}
+	if b, ok := v.(bool); ok {
+		return b
+	}
+	return defaultVal
+}
+
+// extractBsonArray extracts items from a Mendix BSON array.
+// Mendix arrays start with a type indicator (3 for array), followed by items.
+func extractBsonArray(v interface{}) []interface{} {
+	if v == nil {
+		return nil
+	}
+
+	arr, ok := v.(primitive.A)
+	if !ok {
+		// Try regular slice
+		if slice, ok := v.([]interface{}); ok {
+			// Check if first element is the array type indicator
+			if len(slice) > 0 {
+				if typeIndicator, ok := slice[0].(int32); ok && typeIndicator == 3 {
+					// Skip the type indicator
+					return slice[1:]
+				}
+			}
+			return slice
+		}
+		return nil
+	}
+
+	// primitive.A is []interface{} underneath
+	slice := []interface{}(arr)
+
+	// Check if first element is the array type indicator (3)
+	if len(slice) > 0 {
+		if typeIndicator, ok := slice[0].(int32); ok && typeIndicator == 3 {
+			// Skip the type indicator
+			return slice[1:]
+		}
+	}
+
+	return slice
+}
 
 // parseModule parses module contents from BSON.
 func (r *Reader) parseModule(unitID string, contents []byte) (*model.Module, error) {
@@ -65,33 +175,30 @@ func (r *Reader) parseDomainModel(unitID, containerID string, contents []byte) (
 	dm.TypeName = "DomainModels$DomainModel"
 	dm.ContainerID = model.ID(containerID)
 
-	// Parse entities
-	if entities, ok := raw["Entities"].([]interface{}); ok {
-		for _, e := range entities {
-			if entityMap, ok := e.(map[string]interface{}); ok {
-				entity := parseEntity(entityMap)
-				dm.Entities = append(dm.Entities, entity)
-			}
+	// Parse entities - use extractBsonArray to handle Mendix array format
+	entities := extractBsonArray(raw["Entities"])
+	for _, e := range entities {
+		if entityMap, ok := e.(map[string]interface{}); ok {
+			entity := parseEntity(entityMap)
+			dm.Entities = append(dm.Entities, entity)
 		}
 	}
 
 	// Parse associations
-	if associations, ok := raw["Associations"].([]interface{}); ok {
-		for _, a := range associations {
-			if assocMap, ok := a.(map[string]interface{}); ok {
-				assoc := parseAssociation(assocMap)
-				dm.Associations = append(dm.Associations, assoc)
-			}
+	associations := extractBsonArray(raw["Associations"])
+	for _, a := range associations {
+		if assocMap, ok := a.(map[string]interface{}); ok {
+			assoc := parseAssociation(assocMap)
+			dm.Associations = append(dm.Associations, assoc)
 		}
 	}
 
 	// Parse annotations
-	if annotations, ok := raw["Annotations"].([]interface{}); ok {
-		for _, a := range annotations {
-			if annotMap, ok := a.(map[string]interface{}); ok {
-				annot := parseAnnotation(annotMap)
-				dm.Annotations = append(dm.Annotations, annot)
-			}
+	annotations := extractBsonArray(raw["Annotations"])
+	for _, a := range annotations {
+		if annotMap, ok := a.(map[string]interface{}); ok {
+			annot := parseAnnotation(annotMap)
+			dm.Annotations = append(dm.Annotations, annot)
 		}
 	}
 
@@ -101,9 +208,8 @@ func (r *Reader) parseDomainModel(unitID, containerID string, contents []byte) (
 func parseEntity(raw map[string]interface{}) *domainmodel.Entity {
 	entity := &domainmodel.Entity{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		entity.ID = model.ID(id)
-	}
+	// Use extractBsonID to handle various ID formats (string, binary, base64)
+	entity.ID = model.ID(extractBsonID(raw["$ID"]))
 	if typeName, ok := raw["$Type"].(string); ok {
 		entity.TypeName = typeName
 	}
@@ -114,68 +220,73 @@ func parseEntity(raw map[string]interface{}) *domainmodel.Entity {
 		entity.Documentation = doc
 	}
 
-	// Parse location
+	// Parse location - handle both int32 and float64
 	if loc, ok := raw["Location"].(map[string]interface{}); ok {
-		if x, ok := loc["x"].(int32); ok {
-			entity.Location.X = int(x)
-		}
-		if y, ok := loc["y"].(int32); ok {
-			entity.Location.Y = int(y)
-		}
+		entity.Location.X = extractInt(loc["x"])
+		entity.Location.Y = extractInt(loc["y"])
 	}
 
-	// Parse persistable
+	// Parse persistable - default to true if not specified
+	entity.Persistable = true
 	if persistable, ok := raw["Persistable"].(bool); ok {
 		entity.Persistable = persistable
 	}
 
-	// Parse attributes
-	if attrs, ok := raw["Attributes"].([]interface{}); ok {
-		for _, a := range attrs {
-			if attrMap, ok := a.(map[string]interface{}); ok {
-				attr := parseAttribute(attrMap)
-				entity.Attributes = append(entity.Attributes, attr)
+	// Parse generalization (parent entity)
+	if gen := raw["Generalization"]; gen != nil {
+		if genMap, ok := gen.(map[string]interface{}); ok {
+			if genID := extractBsonID(genMap["$ID"]); genID != "" {
+				entity.GeneralizationID = model.ID(genID)
 			}
+			// Handle direct entity reference
+			if entityRef := extractBsonID(genMap["Generalization"]); entityRef != "" {
+				entity.GeneralizationID = model.ID(entityRef)
+			}
+		}
+	}
+
+	// Parse attributes using extractBsonArray
+	attrs := extractBsonArray(raw["Attributes"])
+	for _, a := range attrs {
+		if attrMap, ok := a.(map[string]interface{}); ok {
+			attr := parseAttribute(attrMap)
+			entity.Attributes = append(entity.Attributes, attr)
 		}
 	}
 
 	// Parse indexes
-	if indexes, ok := raw["Indexes"].([]interface{}); ok {
-		for _, i := range indexes {
-			if indexMap, ok := i.(map[string]interface{}); ok {
-				index := parseIndex(indexMap)
-				entity.Indexes = append(entity.Indexes, index)
-			}
+	indexes := extractBsonArray(raw["Indexes"])
+	for _, i := range indexes {
+		if indexMap, ok := i.(map[string]interface{}); ok {
+			index := parseIndex(indexMap)
+			entity.Indexes = append(entity.Indexes, index)
 		}
 	}
 
 	// Parse access rules
-	if rules, ok := raw["AccessRules"].([]interface{}); ok {
-		for _, r := range rules {
-			if ruleMap, ok := r.(map[string]interface{}); ok {
-				rule := parseAccessRule(ruleMap)
-				entity.AccessRules = append(entity.AccessRules, rule)
-			}
+	rules := extractBsonArray(raw["AccessRules"])
+	for _, r := range rules {
+		if ruleMap, ok := r.(map[string]interface{}); ok {
+			rule := parseAccessRule(ruleMap)
+			entity.AccessRules = append(entity.AccessRules, rule)
 		}
 	}
 
 	// Parse validation rules
-	if validations, ok := raw["ValidationRules"].([]interface{}); ok {
-		for _, v := range validations {
-			if validMap, ok := v.(map[string]interface{}); ok {
-				validation := parseValidationRule(validMap)
-				entity.ValidationRules = append(entity.ValidationRules, validation)
-			}
+	validations := extractBsonArray(raw["ValidationRules"])
+	for _, v := range validations {
+		if validMap, ok := v.(map[string]interface{}); ok {
+			validation := parseValidationRule(validMap)
+			entity.ValidationRules = append(entity.ValidationRules, validation)
 		}
 	}
 
 	// Parse event handlers
-	if handlers, ok := raw["EventHandlers"].([]interface{}); ok {
-		for _, h := range handlers {
-			if handlerMap, ok := h.(map[string]interface{}); ok {
-				handler := parseEventHandler(handlerMap)
-				entity.EventHandlers = append(entity.EventHandlers, handler)
-			}
+	handlers := extractBsonArray(raw["EventHandlers"])
+	for _, h := range handlers {
+		if handlerMap, ok := h.(map[string]interface{}); ok {
+			handler := parseEventHandler(handlerMap)
+			entity.EventHandlers = append(entity.EventHandlers, handler)
 		}
 	}
 
@@ -185,25 +296,47 @@ func parseEntity(raw map[string]interface{}) *domainmodel.Entity {
 func parseAttribute(raw map[string]interface{}) *domainmodel.Attribute {
 	attr := &domainmodel.Attribute{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		attr.ID = model.ID(id)
-	}
-	if typeName, ok := raw["$Type"].(string); ok {
-		attr.TypeName = typeName
-	}
-	if name, ok := raw["Name"].(string); ok {
-		attr.Name = name
-	}
-	if doc, ok := raw["Documentation"].(string); ok {
-		attr.Documentation = doc
-	}
+	attr.ID = model.ID(extractBsonID(raw["$ID"]))
+	attr.TypeName = extractString(raw["$Type"])
+	attr.Name = extractString(raw["Name"])
+	attr.Documentation = extractString(raw["Documentation"])
 
-	// Parse attribute type
-	if attrType, ok := raw["Type"].(map[string]interface{}); ok {
+	// Parse attribute type - Mendix uses "NewType" field
+	if attrType, ok := raw["NewType"].(map[string]interface{}); ok {
+		attr.Type = parseAttributeType(attrType)
+	} else if attrType, ok := raw["Type"].(map[string]interface{}); ok {
+		// Fallback to "Type" for older format
 		attr.Type = parseAttributeType(attrType)
 	}
 
+	// Parse default value
+	if val, ok := raw["Value"].(map[string]interface{}); ok {
+		attr.Value = parseAttributeValue(val)
+	}
+
 	return attr
+}
+
+func parseAttributeValue(raw map[string]interface{}) *domainmodel.AttributeValue {
+	typeName := extractString(raw["$Type"])
+	defaultValue := extractString(raw["DefaultValue"])
+
+	switch typeName {
+	case "DomainModels$StoredValue":
+		return &domainmodel.AttributeValue{
+			Type:         "StoredValue",
+			DefaultValue: defaultValue,
+		}
+	case "DomainModels$CalculatedValue":
+		return &domainmodel.AttributeValue{
+			Type:        "CalculatedValue",
+			MicroflowID: model.ID(extractBsonID(raw["Microflow"])),
+		}
+	default:
+		return &domainmodel.AttributeValue{
+			DefaultValue: defaultValue,
+		}
+	}
 }
 
 func parseAttributeType(raw map[string]interface{}) domainmodel.AttributeType {
@@ -250,30 +383,14 @@ func parseAttributeType(raw map[string]interface{}) domainmodel.AttributeType {
 func parseAssociation(raw map[string]interface{}) *domainmodel.Association {
 	assoc := &domainmodel.Association{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		assoc.ID = model.ID(id)
-	}
-	if typeName, ok := raw["$Type"].(string); ok {
-		assoc.TypeName = typeName
-	}
-	if name, ok := raw["Name"].(string); ok {
-		assoc.Name = name
-	}
-	if doc, ok := raw["Documentation"].(string); ok {
-		assoc.Documentation = doc
-	}
-	if parentID, ok := raw["Parent"].(string); ok {
-		assoc.ParentID = model.ID(parentID)
-	}
-	if childID, ok := raw["Child"].(string); ok {
-		assoc.ChildID = model.ID(childID)
-	}
-	if assocType, ok := raw["Type"].(string); ok {
-		assoc.Type = domainmodel.AssociationType(assocType)
-	}
-	if owner, ok := raw["Owner"].(string); ok {
-		assoc.Owner = domainmodel.AssociationOwner(owner)
-	}
+	assoc.ID = model.ID(extractBsonID(raw["$ID"]))
+	assoc.TypeName = extractString(raw["$Type"])
+	assoc.Name = extractString(raw["Name"])
+	assoc.Documentation = extractString(raw["Documentation"])
+	assoc.ParentID = model.ID(extractBsonID(raw["Parent"]))
+	assoc.ChildID = model.ID(extractBsonID(raw["Child"]))
+	assoc.Type = domainmodel.AssociationType(extractString(raw["Type"]))
+	assoc.Owner = domainmodel.AssociationOwner(extractString(raw["Owner"]))
 
 	return assoc
 }
@@ -281,23 +398,13 @@ func parseAssociation(raw map[string]interface{}) *domainmodel.Association {
 func parseAnnotation(raw map[string]interface{}) *domainmodel.Annotation {
 	annot := &domainmodel.Annotation{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		annot.ID = model.ID(id)
-	}
-	if typeName, ok := raw["$Type"].(string); ok {
-		annot.TypeName = typeName
-	}
-	if caption, ok := raw["Caption"].(string); ok {
-		annot.Caption = caption
-	}
+	annot.ID = model.ID(extractBsonID(raw["$ID"]))
+	annot.TypeName = extractString(raw["$Type"])
+	annot.Caption = extractString(raw["Caption"])
 
 	if loc, ok := raw["Location"].(map[string]interface{}); ok {
-		if x, ok := loc["x"].(int32); ok {
-			annot.Location.X = int(x)
-		}
-		if y, ok := loc["y"].(int32); ok {
-			annot.Location.Y = int(y)
-		}
+		annot.Location.X = extractInt(loc["x"])
+		annot.Location.Y = extractInt(loc["y"])
 	}
 
 	return annot
@@ -306,11 +413,18 @@ func parseAnnotation(raw map[string]interface{}) *domainmodel.Annotation {
 func parseIndex(raw map[string]interface{}) *domainmodel.Index {
 	index := &domainmodel.Index{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		index.ID = model.ID(id)
-	}
-	if name, ok := raw["Name"].(string); ok {
-		index.Name = name
+	index.ID = model.ID(extractBsonID(raw["$ID"]))
+	index.Name = extractString(raw["Name"])
+
+	// Parse index attributes
+	attrs := extractBsonArray(raw["Attributes"])
+	for _, a := range attrs {
+		if attrMap, ok := a.(map[string]interface{}); ok {
+			attrID := extractBsonID(attrMap["Attribute"])
+			if attrID != "" {
+				index.AttributeIDs = append(index.AttributeIDs, model.ID(attrID))
+			}
+		}
 	}
 
 	return index
@@ -319,23 +433,20 @@ func parseIndex(raw map[string]interface{}) *domainmodel.Index {
 func parseAccessRule(raw map[string]interface{}) *domainmodel.AccessRule {
 	rule := &domainmodel.AccessRule{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		rule.ID = model.ID(id)
-	}
-	if allowCreate, ok := raw["AllowCreate"].(bool); ok {
-		rule.AllowCreate = allowCreate
-	}
-	if allowRead, ok := raw["AllowRead"].(bool); ok {
-		rule.AllowRead = allowRead
-	}
-	if allowWrite, ok := raw["AllowWrite"].(bool); ok {
-		rule.AllowWrite = allowWrite
-	}
-	if allowDelete, ok := raw["AllowDelete"].(bool); ok {
-		rule.AllowDelete = allowDelete
-	}
-	if xpath, ok := raw["XPathConstraint"].(string); ok {
-		rule.XPathConstraint = xpath
+	rule.ID = model.ID(extractBsonID(raw["$ID"]))
+	rule.AllowCreate = extractBool(raw["AllowCreate"], false)
+	rule.AllowRead = extractBool(raw["AllowRead"], false)
+	rule.AllowWrite = extractBool(raw["AllowWrite"], false)
+	rule.AllowDelete = extractBool(raw["AllowDelete"], false)
+	rule.XPathConstraint = extractString(raw["XPathConstraint"])
+
+	// Parse module roles
+	roles := extractBsonArray(raw["ModuleRoles"])
+	for _, r := range roles {
+		roleID := extractBsonID(r)
+		if roleID != "" {
+			rule.ModuleRoles = append(rule.ModuleRoles, model.ID(roleID))
+		}
 	}
 
 	return rule
@@ -344,11 +455,13 @@ func parseAccessRule(raw map[string]interface{}) *domainmodel.AccessRule {
 func parseValidationRule(raw map[string]interface{}) *domainmodel.ValidationRule {
 	rule := &domainmodel.ValidationRule{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		rule.ID = model.ID(id)
-	}
-	if attrID, ok := raw["Attribute"].(string); ok {
-		rule.AttributeID = model.ID(attrID)
+	rule.ID = model.ID(extractBsonID(raw["$ID"]))
+	rule.AttributeID = model.ID(extractBsonID(raw["Attribute"]))
+	rule.Type = extractString(raw["$Type"])
+
+	// Parse error message
+	if errMsg, ok := raw["ErrorMessage"].(map[string]interface{}); ok {
+		rule.ErrorMessage = parseText(errMsg)
 	}
 
 	return rule
@@ -357,18 +470,10 @@ func parseValidationRule(raw map[string]interface{}) *domainmodel.ValidationRule
 func parseEventHandler(raw map[string]interface{}) *domainmodel.EventHandler {
 	handler := &domainmodel.EventHandler{}
 
-	if id, ok := raw["$ID"].(string); ok {
-		handler.ID = model.ID(id)
-	}
-	if event, ok := raw["Event"].(string); ok {
-		handler.Event = domainmodel.EventType(event)
-	}
-	if mfID, ok := raw["Microflow"].(string); ok {
-		handler.MicroflowID = model.ID(mfID)
-	}
-	if raiseError, ok := raw["RaiseErrorOnFalse"].(bool); ok {
-		handler.RaiseErrorOnFalse = raiseError
-	}
+	handler.ID = model.ID(extractBsonID(raw["$ID"]))
+	handler.Event = domainmodel.EventType(extractString(raw["Event"]))
+	handler.MicroflowID = model.ID(extractBsonID(raw["Microflow"]))
+	handler.RaiseErrorOnFalse = extractBool(raw["RaiseErrorOnFalse"], false)
 
 	return handler
 }
@@ -773,6 +878,88 @@ func (r *Reader) resolveContents(unitID string, contents []byte) ([]byte, error)
 	}
 
 	return contents, nil
+}
+
+// parseSnippet parses snippet contents from BSON.
+func (r *Reader) parseSnippet(unitID, containerID string, contents []byte) (*pages.Snippet, error) {
+	contents, err := r.resolveContents(unitID, contents)
+	if err != nil {
+		return nil, err
+	}
+
+	var raw map[string]interface{}
+	if err := bson.Unmarshal(contents, &raw); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal BSON: %w", err)
+	}
+
+	snippet := &pages.Snippet{}
+	snippet.ID = model.ID(unitID)
+	snippet.TypeName = "Pages$Snippet"
+	snippet.ContainerID = model.ID(containerID)
+
+	if name, ok := raw["Name"].(string); ok {
+		snippet.Name = name
+	}
+	if doc, ok := raw["Documentation"].(string); ok {
+		snippet.Documentation = doc
+	}
+	if entityID := extractID(raw["Entity"]); entityID != "" {
+		snippet.EntityID = model.ID(entityID)
+	}
+
+	return snippet, nil
+}
+
+// parseJavaAction parses Java action contents from BSON.
+func (r *Reader) parseJavaAction(unitID, containerID string, contents []byte) (*JavaAction, error) {
+	contents, err := r.resolveContents(unitID, contents)
+	if err != nil {
+		return nil, err
+	}
+
+	var raw map[string]interface{}
+	if err := bson.Unmarshal(contents, &raw); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal BSON: %w", err)
+	}
+
+	ja := &JavaAction{}
+	ja.ID = model.ID(unitID)
+	ja.TypeName = "JavaActions$JavaAction"
+	ja.ContainerID = model.ID(containerID)
+
+	if name, ok := raw["Name"].(string); ok {
+		ja.Name = name
+	}
+	if doc, ok := raw["Documentation"].(string); ok {
+		ja.Documentation = doc
+	}
+
+	return ja, nil
+}
+
+// extractID extracts an ID from various BSON representations.
+// IDs in Mendix BSON can be strings, binary UUIDs, or nested structures.
+func extractID(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+
+	switch val := v.(type) {
+	case string:
+		return val
+	case []byte:
+		return blobToUUID(val)
+	case map[string]interface{}:
+		// Could be a reference structure with $ID
+		if id, ok := val["$ID"].(string); ok {
+			return id
+		}
+		if id, ok := val["$ID"].([]byte); ok {
+			return blobToUUID(id)
+		}
+	}
+
+	return ""
 }
 
 // WriteJSON serializes the given element to JSON.
