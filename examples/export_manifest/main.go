@@ -1774,12 +1774,12 @@ func extractMenuItemsFromMenuDocument(content map[string]interface{}, documentNa
 	if !ok {
 		return items
 	}
-	
+
 	itemsArr, ok := collectionMap["Items"]
 	if !ok {
 		return items
 	}
-	
+
 	// Handle primitive.A (BSON array type)
 	var itemsList []interface{}
 	if primitiveArr, ok := itemsArr.(primitive.A); ok {
@@ -1789,14 +1789,14 @@ func extractMenuItemsFromMenuDocument(content map[string]interface{}, documentNa
 	} else {
 		return items
 	}
-	
+
 	// Skip the first element (count) and process menu items
 	for i, item := range itemsList {
 		if i == 0 {
 			// First element is the count, skip it
 			continue
 		}
-		
+
 		if itemMap, ok := item.(map[string]interface{}); ok {
 			navItem := parseMenuItemSimple(itemMap, moduleName, documentName, level)
 			if navItem.ItemName != "" || navItem.Caption != "" {
@@ -1827,7 +1827,7 @@ func parseMenuItemSimple(itemMap map[string]interface{}, moduleName string, docu
 				} else if arrInterface, ok := itemsArr.([]interface{}); ok {
 					itemsList = arrInterface
 				}
-				
+
 				if itemsList != nil {
 					// Skip first element (count), get first translation
 					for i, trans := range itemsList {
@@ -1858,7 +1858,7 @@ func parseMenuItemSimple(itemMap map[string]interface{}, moduleName string, docu
 		if actionMap, ok := action.(map[string]interface{}); ok {
 			if actionType, ok := actionMap["$Type"]; ok {
 				actionTypeStr := fmt.Sprintf("%v", actionType)
-				
+
 				switch {
 				case strings.Contains(actionTypeStr, "FormAction"):
 					item.ItemType = "Page"
@@ -1870,19 +1870,19 @@ func parseMenuItemSimple(itemMap map[string]interface{}, moduleName string, docu
 							}
 						}
 					}
-					
+
 				case strings.Contains(actionTypeStr, "CallMicroflowClientAction"):
 					item.ItemType = "Microflow"
 					if microflow, ok := actionMap["Microflow"]; ok {
 						item.Target = fmt.Sprintf("%v", microflow)
 					}
-					
+
 				case strings.Contains(actionTypeStr, "CallNanoflowClientAction"):
 					item.ItemType = "Nanoflow"
 					if nanoflow, ok := actionMap["Nanoflow"]; ok {
 						item.Target = fmt.Sprintf("%v", nanoflow)
 					}
-				
+
 				default:
 					item.ItemType = "Action"
 					item.Target = actionTypeStr
