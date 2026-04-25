@@ -13,7 +13,7 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
      * `-include-attributes` (default: true): Include attributi nelle tabelle entità
      * `-include-microflows` (default: true): Include sezione Microflow/Action Calls nel report
      * `-include-widgets` (default: true): Include sezione Signal Manager Widgets nel report
-     * ⏳ `-include-navigation` (default: true): Include sezione Navigation Items nel report (da implementare)
+     * ✅ `-include-navigation` (default: true): Include sezione Navigation Items nel report
      * ⏳ `-include-roles` (default: true): Include sezione System Roles & Page Accessibility nel report (da implementare)
      * **Usage**: `export_manifest -include-entities=true -include-attributes=false MyApp.mpr report.md`
    - ✅ Aprire MPR con `modelsdk.Open()`
@@ -158,17 +158,39 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
    - **Implementato in**: `examples/export_manifest/main.go` (linee ~1052-1470, 1471-1620)
    - *depends on 1*
 
-5. **Implementare Sezione 4: Navigation Items Report**
-   - Estrarre navigation items dal progetto Mendix
-   - Listare menu items con struttura gerarchica
-   - Per ogni navigation item raccogliere:
-     * Nome item
-     * Caption/Label
-     * Target (page o microflow)
-     * Modulo di appartenenza
-     * Item type (Page, Microflow, Nanoflow)
-   - Formattare in MD: tabella o lista gerarchica (Navigation Item | Caption | Target | Module | Type)
-   - Considerare struttura ad albero per sottomenu
+5. **✅ COMPLETATO - Implementare Sezione 4: Navigation Items Report**
+   - ✅ Estrarre navigation items dal progetto Mendix tramite SQL query per NavigationDocument
+   - ✅ Listare menu items con struttura gerarchica
+   - ✅ Per ogni navigation item raccogliere:
+     * Nome item (`ItemName`)
+     * Caption/Label (`Caption`)
+     * Target (page o microflow) tramite reference resolution
+     * Modulo di appartenenza (`Module`)
+     * Item type (Page, Microflow, Nanoflow) da Action.$Type
+   - ✅ **Formato MD implementato**:
+     * Header: `## 4. Navigation Items`
+     * Descrizione: "Navigation menu items found in the project"
+     * Tabella: `| Navigation Item | Caption | Target | Module | Type |`
+     * Supporto indentazione gerarchica con `Level` field (spaces per sottomenu)
+   - ✅ **Funzioni implementate**:
+     * `collectNavigationItems(db, contentsDir, report)`: query per NavigationDocument e colleziona items
+     * `extractNavigationItemsFromBSON(content, moduleName, db, contentsDir)`: estrae items da profili Desktop/Tablet/Phone
+     * `extractMenuItems(menuRef, db, contentsDir, moduleName, level)`: ricorsivamente estrae items da MenuDocument
+     * `parseMenuItem(itemMap, db, contentsDir, moduleName, level)`: parse singolo menu item con Action type detection
+     * `resolvePageReference(pageRef, db, contentsDir)`: risolve reference a page name
+     * `resolveMicroflowReference(mfRef, db, contentsDir)`: risolve reference a microflow name
+     * `resolveNanoflowReference(nfRef, db, contentsDir)`: risolve reference a nanoflow name
+     * `extractReferenceID(ref)`: estrae unit ID da reference object ($ID, Unit field)
+     * `loadDocumentByReference(db, contentsDir, refID)`: carica BSON content di documento tramite reference
+     * `getModuleNameFromContainerID(db, containerID)`: estrae module name da container con parent traversal
+   - ✅ **CLI flag aggiunto**: `-include-navigation` (default: true)
+   - ✅ **Supporto profili multipli**: Desktop, Tablet, Phone navigation profiles
+   - ✅ **Action types supportati**:
+     * PageClientAction → Item type: "Page"
+     * MicroflowClientAction → Item type: "Microflow"
+     * NanoflowClientAction → Item type: "Nanoflow"
+   - ✅ **Struttura gerarchica**: Level-based indentation per sottomenu (SubMenu recursion)
+   - **Implementato in**: `examples/export_manifest/main.go` (linee ~1659-2050)
    - *depends on 1*
 
 6. **Implementare Sezione 5: System Roles & Page Accessibility Report**

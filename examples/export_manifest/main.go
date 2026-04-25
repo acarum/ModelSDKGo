@@ -14,6 +14,7 @@ import (
 	"github.com/anthropics/modelsdk-go"
 	_ "github.com/mattn/go-sqlite3"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Data structures
@@ -58,13 +59,24 @@ type WidgetInfo struct {
 	SubscriptionFilter string
 }
 
+type NavigationItem struct {
+	ItemName   string
+	Caption    string
+	Target     string // Page or microflow name
+	Module     string
+	ItemType   string // "Page", "Microflow", "Nanoflow"
+	ParentItem string // For hierarchical structure
+	Level      int    // Indentation level
+}
+
 type ManifestReport struct {
-	ProjectName    string
-	MendixVersion  string
-	GeneratedAt    string
-	Entities       map[string][]EntityInfo // by module
-	MicroflowCalls []MicroflowCallInfo     // all calls
-	Widgets        []WidgetInfo            // signal manager widgets
+	ProjectName     string
+	MendixVersion   string
+	GeneratedAt     string
+	Entities        map[string][]EntityInfo // by module
+	MicroflowCalls  []MicroflowCallInfo     // all calls
+	Widgets         []WidgetInfo            // signal manager widgets
+	NavigationItems []NavigationItem        // navigation menu items
 }
 
 type ReportOptions struct {
@@ -72,6 +84,7 @@ type ReportOptions struct {
 	IncludeAttributes bool
 	IncludeMicroflows bool
 	IncludeWidgets    bool
+	IncludeNavigation bool
 }
 
 func main() {
@@ -80,6 +93,7 @@ func main() {
 	includeAttributes := flag.Bool("include-attributes", true, "Include entity attributes in the report")
 	includeMicroflows := flag.Bool("include-microflows", true, "Include microflow/action calls in the report")
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
+	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: export_manifest [options] <mpr_file_path> <output_md_path>\n\n")
 		fmt.Fprintf(os.Stderr, "Arguments:\n")
@@ -112,6 +126,7 @@ func main() {
 		IncludeAttributes: *includeAttributes,
 		IncludeMicroflows: *includeMicroflows,
 		IncludeWidgets:    *includeWidgets,
+		IncludeNavigation: *includeNavigation,
 	}
 
 	fmt.Printf("🔍 Opening MPR: %s\n", mprPath)
@@ -156,27 +171,43 @@ func main() {
 	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
 
 	// ==== SECTION 1: External Entities ====
-	fmt.Println("🔎 Scanning for external entities...")
-	err = collectExternalEntities(db, contentsDir, &report)
-	if err != nil {
-		fmt.Printf("Error collecting entities: %v\n", err)
-		os.Exit(1)
+	if options.IncludeEntities {
+		fmt.Println("🔎 Scanning for external entities...")
+		err = collectExternalEntities(db, contentsDir, &report)
+		if err != nil {
+			fmt.Printf("Error collecting entities: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	// ==== SECTION 2: Microflow/Action Calls ====
-	fmt.Println("\n🔎 Scanning for microflow/action calls...")
-	err = collectMicroflowCalls(db, contentsDir, &report)
-	if err != nil {
-		fmt.Printf("Error collecting microflow calls: %v\n", err)
-		os.Exit(1)
+	if options.IncludeMicroflows {
+		fmt.Println("\n🔎 Scanning for microflow/action calls...")
+		err = collectMicroflowCalls(db, contentsDir, &report)
+		if err != nil {
+			fmt.Printf("Error collecting microflow calls: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	// ==== SECTION 3: Signal Manager Widgets ====
-	fmt.Println("\n🔎 Scanning for Signal Manager widgets...")
-	err = collectSignalManagerWidgets(reader, mprPath, &report)
-	if err != nil {
-		fmt.Printf("Error collecting widgets: %v\n", err)
-		os.Exit(1)
+	if options.IncludeWidgets {
+		fmt.Println("\n🔎 Scanning for Signal Manager widgets...")
+		err = collectSignalManagerWidgets(reader, mprPath, &report)
+		if err != nil {
+			fmt.Printf("Error collecting widgets: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	// ==== SECTION 4: Navigation Items ====
+	if options.IncludeNavigation {
+		fmt.Println("\n🔎 Scanning for navigation items...")
+		err = collectNavigationItems(db, contentsDir, &report)
+		if err != nil {
+			fmt.Printf("Error collecting navigation items: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	// Generate Markdown report
@@ -1633,6 +1664,524 @@ func parseAttribute(attr string) (name, attrType string) {
 	return attr, "-"
 }
 
+// ==== SECTION 4: Navigation Items Collection ====
+
+func collectNavigationItems(db *sql.DB, contentsDir string, report *ManifestReport) error {
+	// Query all units (will filter by $Type in BSON)
+	query := `SELECT UnitID, ContainerID, ContainmentName, ContentsHash FROM Unit`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return fmt.Errorf("failed to query units: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var unitID, containerID []byte
+		var containmentName string
+		var contentsHash interface{}
+
+		err := rows.Scan(&unitID, &containerID, &containmentName, &contentsHash)
+		if err != nil {
+			continue
+		}
+
+		// Convert UUID blob to string
+		unitIDStr := blobToUUID(unitID)
+		containerIDStr := blobToUUID(containerID)
+
+		// Load content from mprcontents
+		contentMap, err := loadUnitContents(contentsDir, unitIDStr)
+		if err != nil {
+			continue
+		}
+
+		// Extract type from BSON content
+		typeName := ""
+		if t, ok := contentMap["$Type"].(string); ok {
+			typeName = t
+		}
+
+		// Process both NavigationDocument and MenuDocument
+		if typeName == "Navigation$NavigationDocument" {
+			// Extract module name from containerID
+			moduleName := getModuleNameFromContainerID(db, containerIDStr)
+
+			// Extract navigation items from content
+			items := extractNavigationItemsFromBSON(contentMap, moduleName, db, contentsDir)
+			report.NavigationItems = append(report.NavigationItems, items...)
+		} else if typeName == "Menus$MenuDocument" {
+			// Extract module name from containerID
+			moduleName := getModuleNameFromContainerID(db, containerIDStr)
+
+			// Extract menu items directly
+			items := extractMenuItemsFromMenuDocument(contentMap, containmentName, moduleName, 0)
+			report.NavigationItems = append(report.NavigationItems, items...)
+		}
+	}
+
+	fmt.Printf("✅ Found %d navigation item(s)\n", len(report.NavigationItems))
+	return nil
+}
+
+// extractNavigationItemsFromBSON extracts menu items from navigation document BSON
+func extractNavigationItemsFromBSON(content map[string]interface{}, moduleName string, db *sql.DB, contentsDir string) []NavigationItem {
+	var items []NavigationItem
+
+	// Look for Desktop/Tablet/Phone profiles
+	profiles := []string{"DesktopProfile", "TabletProfile", "PhoneProfile"}
+
+	for _, profileKey := range profiles {
+		if profile, ok := content[profileKey]; ok {
+			if profileMap, ok := profile.(map[string]interface{}); ok {
+				// Extract menu document reference
+				if menuDocRef, ok := profileMap["MenuDocument"]; ok {
+					menuItems := extractMenuItems(menuDocRef, db, contentsDir, moduleName, 0)
+					items = append(items, menuItems...)
+				}
+
+				// Also check HomepageSettings for additional navigation info
+				if homePage, ok := profileMap["HomepageSettings"]; ok {
+					if homeMap, ok := homePage.(map[string]interface{}); ok {
+						// Extract homepage as a navigation item
+						if pageRef, ok := homeMap["Page"]; ok {
+							pageItem := extractPageReference(pageRef, db, contentsDir, moduleName, "HomePage", 0)
+							if pageItem.Target != "" {
+								items = append(items, pageItem)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return items
+}
+
+// extractMenuItemsFromMenuDocument extracts menu items directly from a MenuDocument
+func extractMenuItemsFromMenuDocument(content map[string]interface{}, documentName string, moduleName string, level int) []NavigationItem {
+	var items []NavigationItem
+
+	// Check if ItemCollection exists
+	itemCollection, hasCollection := content["ItemCollection"]
+	if !hasCollection {
+		return items
+	}
+
+	// Look for ItemCollection → Items in menu document
+	collectionMap, ok := itemCollection.(map[string]interface{})
+	if !ok {
+		return items
+	}
+	
+	itemsArr, ok := collectionMap["Items"]
+	if !ok {
+		return items
+	}
+	
+	// Handle primitive.A (BSON array type)
+	var itemsList []interface{}
+	if primitiveArr, ok := itemsArr.(primitive.A); ok {
+		itemsList = primitiveArr
+	} else if arrInterface, ok := itemsArr.([]interface{}); ok {
+		itemsList = arrInterface
+	} else {
+		return items
+	}
+	
+	// Skip the first element (count) and process menu items
+	for i, item := range itemsList {
+		if i == 0 {
+			// First element is the count, skip it
+			continue
+		}
+		
+		if itemMap, ok := item.(map[string]interface{}); ok {
+			navItem := parseMenuItemSimple(itemMap, moduleName, documentName, level)
+			if navItem.ItemName != "" || navItem.Caption != "" {
+				items = append(items, navItem)
+			}
+		}
+	}
+
+	return items
+}
+
+// parseMenuItemSimple parses a menu item without database lookups (simpler version)
+func parseMenuItemSimple(itemMap map[string]interface{}, moduleName string, documentName string, level int) NavigationItem {
+	item := NavigationItem{
+		Module: moduleName,
+		Level:  level,
+	}
+
+	// Extract caption from Text structure
+	if caption, ok := itemMap["Caption"]; ok {
+		if captionMap, ok := caption.(map[string]interface{}); ok {
+			// Handle Items array (translations)
+			if itemsArr, ok := captionMap["Items"]; ok {
+				// Handle primitive.A for caption items
+				var itemsList []interface{}
+				if primitiveArr, ok := itemsArr.(primitive.A); ok {
+					itemsList = primitiveArr
+				} else if arrInterface, ok := itemsArr.([]interface{}); ok {
+					itemsList = arrInterface
+				}
+				
+				if itemsList != nil {
+					// Skip first element (count), get first translation
+					for i, trans := range itemsList {
+						if i == 0 {
+							continue // Skip count
+						}
+						if transMap, ok := trans.(map[string]interface{}); ok {
+							if text, ok := transMap["Text"]; ok {
+								if textStr, ok := text.(string); ok {
+									item.Caption = textStr
+									break // Use first translation
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Use caption as name if not set
+	if item.ItemName == "" {
+		item.ItemName = item.Caption
+	}
+
+	// Extract action type and target
+	if action, ok := itemMap["Action"]; ok {
+		if actionMap, ok := action.(map[string]interface{}); ok {
+			if actionType, ok := actionMap["$Type"]; ok {
+				actionTypeStr := fmt.Sprintf("%v", actionType)
+				
+				switch {
+				case strings.Contains(actionTypeStr, "FormAction"):
+					item.ItemType = "Page"
+					// Extract page from FormSettings
+					if formSettings, ok := actionMap["FormSettings"]; ok {
+						if settingsMap, ok := formSettings.(map[string]interface{}); ok {
+							if form, ok := settingsMap["Form"]; ok {
+								item.Target = fmt.Sprintf("%v", form)
+							}
+						}
+					}
+					
+				case strings.Contains(actionTypeStr, "CallMicroflowClientAction"):
+					item.ItemType = "Microflow"
+					if microflow, ok := actionMap["Microflow"]; ok {
+						item.Target = fmt.Sprintf("%v", microflow)
+					}
+					
+				case strings.Contains(actionTypeStr, "CallNanoflowClientAction"):
+					item.ItemType = "Nanoflow"
+					if nanoflow, ok := actionMap["Nanoflow"]; ok {
+						item.Target = fmt.Sprintf("%v", nanoflow)
+					}
+				
+				default:
+					item.ItemType = "Action"
+					item.Target = actionTypeStr
+				}
+			}
+		}
+	}
+
+	return item
+}
+
+// extractMenuItems recursively extracts menu items from MenuDocument
+func extractMenuItems(menuRef interface{}, db *sql.DB, contentsDir string, moduleName string, level int) []NavigationItem {
+	var items []NavigationItem
+
+	// Handle reference to menu document
+	if refStr, ok := menuRef.(string); ok {
+		// Load menu document by reference
+		menuContent := loadDocumentByReference(db, contentsDir, refStr)
+		if menuContent != nil {
+			return extractMenuItems(menuContent, db, contentsDir, moduleName, level)
+		}
+		return items
+	}
+
+	// Handle menu document map
+	menuMap, ok := menuRef.(map[string]interface{})
+	if !ok {
+		return items
+	}
+
+	// Look for Items array in menu document
+	if itemsArr, ok := menuMap["Items"]; ok {
+		if itemsList, ok := itemsArr.([]interface{}); ok {
+			for _, item := range itemsList {
+				if itemMap, ok := item.(map[string]interface{}); ok {
+					navItem := parseMenuItem(itemMap, db, contentsDir, moduleName, level)
+					if navItem.ItemName != "" || navItem.Caption != "" {
+						items = append(items, navItem)
+					}
+
+					// Check for sub-items
+					if subMenu, ok := itemMap["SubMenu"]; ok {
+						subItems := extractMenuItems(subMenu, db, contentsDir, moduleName, level+1)
+						items = append(items, subItems...)
+					}
+				}
+			}
+		}
+	}
+
+	return items
+}
+
+// parseMenuItem parses a single menu item from BSON
+func parseMenuItem(itemMap map[string]interface{}, db *sql.DB, contentsDir string, moduleName string, level int) NavigationItem {
+	item := NavigationItem{
+		Module: moduleName,
+		Level:  level,
+	}
+
+	// Extract caption
+	if caption, ok := itemMap["Caption"]; ok {
+		if captionMap, ok := caption.(map[string]interface{}); ok {
+			// Handle translation structure
+			if textVal, ok := captionMap["Text"]; ok {
+				if text, ok := textVal.(string); ok {
+					item.Caption = text
+				}
+			}
+		} else if captionStr, ok := caption.(string); ok {
+			item.Caption = captionStr
+		}
+	}
+
+	// Extract name/title
+	if name, ok := itemMap["Name"]; ok {
+		if nameStr, ok := name.(string); ok {
+			item.ItemName = nameStr
+		}
+	}
+
+	// If no name, use caption
+	if item.ItemName == "" {
+		item.ItemName = item.Caption
+	}
+
+	// Determine target and type
+	// Check for Page action
+	if action, ok := itemMap["Action"]; ok {
+		if actionMap, ok := action.(map[string]interface{}); ok {
+			// Check action type
+			if actionType, ok := actionMap["$Type"]; ok {
+				actionTypeStr := fmt.Sprintf("%v", actionType)
+
+				switch {
+				case strings.Contains(actionTypeStr, "PageClientAction"):
+					item.ItemType = "Page"
+					// Extract page reference
+					if pageRef, ok := actionMap["Page"]; ok {
+						item.Target = resolvePageReference(pageRef, db, contentsDir)
+					}
+
+				case strings.Contains(actionTypeStr, "MicroflowClientAction"):
+					item.ItemType = "Microflow"
+					// Extract microflow reference
+					if mfRef, ok := actionMap["Microflow"]; ok {
+						item.Target = resolveMicroflowReference(mfRef, db, contentsDir)
+					}
+
+				case strings.Contains(actionTypeStr, "NanoflowClientAction"):
+					item.ItemType = "Nanoflow"
+					// Extract nanoflow reference
+					if nfRef, ok := actionMap["Nanoflow"]; ok {
+						item.Target = resolveNanoflowReference(nfRef, db, contentsDir)
+					}
+				}
+			}
+		}
+	}
+
+	return item
+}
+
+// extractPageReference creates a navigation item from a page reference
+func extractPageReference(pageRef interface{}, db *sql.DB, contentsDir string, moduleName string, itemName string, level int) NavigationItem {
+	return NavigationItem{
+		ItemName: itemName,
+		Caption:  itemName,
+		Target:   resolvePageReference(pageRef, db, contentsDir),
+		Module:   moduleName,
+		ItemType: "Page",
+		Level:    level,
+	}
+}
+
+// resolvePageReference resolves a page reference to page name
+func resolvePageReference(pageRef interface{}, db *sql.DB, contentsDir string) string {
+	refID := extractReferenceID(pageRef)
+	if refID == "" {
+		return ""
+	}
+
+	// Convert UUID string to Windows GUID binary
+	refIDBytes := stringToWindowsGUID(refID)
+	if refIDBytes == nil {
+		return refID
+	}
+
+	// Query for page name
+	var name string
+	query := `SELECT ContainmentName FROM Unit WHERE UnitID = ?`
+	err := db.QueryRow(query, refIDBytes).Scan(&name)
+	if err == nil && name != "" {
+		return name
+	}
+
+	return refID
+}
+
+// resolveMicroflowReference resolves a microflow reference to microflow name
+func resolveMicroflowReference(mfRef interface{}, db *sql.DB, contentsDir string) string {
+	refID := extractReferenceID(mfRef)
+	if refID == "" {
+		return ""
+	}
+
+	// Convert UUID string to Windows GUID binary
+	refIDBytes := stringToWindowsGUID(refID)
+	if refIDBytes == nil {
+		return refID
+	}
+
+	// Query for microflow name
+	var name string
+	query := `SELECT ContainmentName FROM Unit WHERE UnitID = ?`
+	err := db.QueryRow(query, refIDBytes).Scan(&name)
+	if err == nil && name != "" {
+		return name
+	}
+
+	return refID
+}
+
+// resolveNanoflowReference resolves a nanoflow reference to nanoflow name
+func resolveNanoflowReference(nfRef interface{}, db *sql.DB, contentsDir string) string {
+	refID := extractReferenceID(nfRef)
+	if refID == "" {
+		return ""
+	}
+
+	// Convert UUID string to Windows GUID binary
+	refIDBytes := stringToWindowsGUID(refID)
+	if refIDBytes == nil {
+		return refID
+	}
+
+	// Query for nanoflow name
+	var name string
+	query := `SELECT ContainmentName FROM Unit WHERE UnitID = ?`
+	err := db.QueryRow(query, refIDBytes).Scan(&name)
+	if err == nil && name != "" {
+		return name
+	}
+
+	return refID
+}
+
+// extractReferenceID extracts unit ID from a reference object
+func extractReferenceID(ref interface{}) string {
+	if refStr, ok := ref.(string); ok {
+		return refStr
+	}
+
+	if refMap, ok := ref.(map[string]interface{}); ok {
+		// Try $ID field
+		if id, ok := refMap["$ID"]; ok {
+			return fmt.Sprintf("%v", id)
+		}
+		// Try Unit field
+		if unit, ok := refMap["Unit"]; ok {
+			return fmt.Sprintf("%v", unit)
+		}
+	}
+
+	return ""
+}
+
+// loadDocumentByReference loads a document's BSON content by reference
+func loadDocumentByReference(db *sql.DB, contentsDir string, refID string) map[string]interface{} {
+	// Convert UUID string to Windows GUID binary
+	refIDBytes := stringToWindowsGUID(refID)
+	if refIDBytes == nil {
+		// If conversion fails, try loading directly from mprcontents
+		contentMap, err := loadUnitContents(contentsDir, refID)
+		if err != nil {
+			return nil
+		}
+		return contentMap
+	}
+
+	// Query for document contents
+	query := `SELECT ContentsHash FROM Unit WHERE UnitID = ?`
+	var contentsHash interface{}
+	err := db.QueryRow(query, refIDBytes).Scan(&contentsHash)
+
+	if err != nil {
+		// Try loading from mprcontents
+		contentMap, err := loadUnitContents(contentsDir, refID)
+		if err != nil {
+			return nil
+		}
+		return contentMap
+	}
+
+	// Load from mprcontents using the UUID string
+	contentMap, err := loadUnitContents(contentsDir, refID)
+	if err != nil {
+		return nil
+	}
+
+	return contentMap
+}
+
+// getModuleNameFromContainerID gets module name from a container ID
+func getModuleNameFromContainerID(db *sql.DB, containerID string) string {
+	// First, try to get the unit with this ID and check if it's a module
+	query := `SELECT ContainmentName, ContentsHash FROM Unit WHERE UnitID = ?`
+	var name string
+	var contentsHash interface{}
+
+	// Convert containerID string to binary format for query
+	containerIDBytes := stringToWindowsGUID(containerID)
+	if containerIDBytes == nil {
+		return "Unknown"
+	}
+
+	err := db.QueryRow(query, containerIDBytes).Scan(&name, &contentsHash)
+	if err == nil && name != "" {
+		// Check if this unit is a module by checking ContainmentName pattern
+		// Modules typically have simple names without dots or slashes
+		if !strings.Contains(name, ".") && !strings.Contains(name, "/") {
+			return name
+		}
+	}
+
+	// Try parent traversal - get the container's container
+	query = `SELECT u2.ContainmentName 
+			 FROM Unit u1 
+			 JOIN Unit u2 ON u1.ContainerID = u2.UnitID 
+			 WHERE u1.UnitID = ?`
+	err = db.QueryRow(query, containerIDBytes).Scan(&name)
+	if err == nil && name != "" {
+		return name
+	}
+
+	return "Unknown"
+}
+
 // ==== Markdown Report Generation ====
 
 func generateMarkdownReport(report *ManifestReport, outputPath string, options *ReportOptions) error {
@@ -1666,9 +2215,14 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "- **Microflow/Action Calls:** _Excluded from report_\n")
 	}
 	if options.IncludeWidgets {
-		fmt.Fprintf(file, "- **Signal Manager Widgets:** %d subscription(s)\n\n", len(report.Widgets))
+		fmt.Fprintf(file, "- **Signal Manager Widgets:** %d subscription(s)\n", len(report.Widgets))
 	} else {
-		fmt.Fprintf(file, "- **Signal Manager Widgets:** _Excluded from report_\n\n")
+		fmt.Fprintf(file, "- **Signal Manager Widgets:** _Excluded from report_\n")
+	}
+	if options.IncludeNavigation {
+		fmt.Fprintf(file, "- **Navigation Items:** %d\n\n", len(report.NavigationItems))
+	} else {
+		fmt.Fprintf(file, "- **Navigation Items:** _Excluded from report_\n\n")
 	}
 	fmt.Fprintf(file, "---\n\n")
 
@@ -1810,6 +2364,58 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 					signalName,
 					appName,
 					filter,
+				)
+			}
+			fmt.Fprintf(file, "\n")
+		}
+
+		fmt.Fprintf(file, "---\n\n")
+	}
+
+	// Section 4: Navigation Items
+	if options.IncludeNavigation {
+		fmt.Fprintf(file, "## 4. Navigation Items\n\n")
+		fmt.Fprintf(file, "Navigation menu items found in the project.\n\n")
+
+		if len(report.NavigationItems) == 0 {
+			fmt.Fprintf(file, "_No navigation items found._\n\n")
+		} else {
+			fmt.Fprintf(file, "Found %d navigation item(s):\n\n", len(report.NavigationItems))
+			fmt.Fprintf(file, "| Navigation Item | Caption | Target | Module | Type |\n")
+			fmt.Fprintf(file, "|-----------------|---------|--------|--------|------|\n")
+
+			for _, item := range report.NavigationItems {
+				itemName := item.ItemName
+				if itemName == "" {
+					itemName = "-"
+				}
+				// Add indentation for hierarchical display
+				indent := strings.Repeat("  ", item.Level)
+				itemName = indent + itemName
+
+				caption := item.Caption
+				if caption == "" {
+					caption = "-"
+				}
+				target := item.Target
+				if target == "" {
+					target = "-"
+				}
+				module := item.Module
+				if module == "" {
+					module = "-"
+				}
+				itemType := item.ItemType
+				if itemType == "" {
+					itemType = "-"
+				}
+
+				fmt.Fprintf(file, "| %s | %s | %s | %s | %s |\n",
+					itemName,
+					caption,
+					target,
+					module,
+					itemType,
 				)
 			}
 			fmt.Fprintf(file, "\n")
