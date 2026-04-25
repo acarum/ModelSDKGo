@@ -1,0 +1,875 @@
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "HJFFjoEIJky6aggyZkhWyA=="
+  },
+  "$Type": "Microflows$Microflow",
+  "AllowConcurrentExecution": true,
+  "AllowedModuleRoles": [
+    1
+  ],
+  "ApplyEntityAccess": false,
+  "ConcurrencyErrorMicroflow": "",
+  "ConcurrenyErrorMessage": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "6fJVMh3pxEqAldeiCKOqKw=="
+    },
+    "$Type": "Texts$Text",
+    "Items": [
+      3,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "j2KWxzMJzEezzX99uWMM4A=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "en_US",
+        "Text": ""
+      }
+    ]
+  },
+  "Documentation": "",
+  "Excluded": false,
+  "ExportLevel": "Hidden",
+  "Flows": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "bMonu2swG0WDtOTgOglZCA=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "89g4kW1TFEGuoBrIwytUWA=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "36hn2Mbt3kCqBR9y7I5phw=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "x9XU92dKu0eUB+Sn2GjHwQ=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "0;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "5lLgU9e5QUGIaiDdeaw2gA=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "CYBKfErII0y8t+QC6k9E/g=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "onySD9tBO0Or08VxhdY/gw=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "UhfmCeRRxkGO5QnRQNmiUg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "aq1VQ1aGpkaXMXCpOvOZ9A=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-30;0",
+        "OriginControlVector": "30;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "lVaXS0cP7k6srhooS9FcOA=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "Rg3W1lyR9UOJCeWpsP5XqQ=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "/AkrAwP8TEyc5VAdMvz7jg=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "uvMKMAEQAkCwMbTYjn2tQQ=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "66tRhymIKEKy3tH/x2IQjw=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "30;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "ZT/w7XrhXEiyLcG9oX6PJg=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "fHx+u2awxUeTEurMKz4KoA=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "+S4ySpb9pUKqvv+PeI6a0g=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "true"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "DXPyowKbF0al8GppB+Z1jw=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "+4Bnzd+hk0aJV+0LOGp2ww=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "15;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "uvMKMAEQAkCwMbTYjn2tQQ=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "kf4VRIwzAkKieQZ/F1IE1A=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "8l0JPERzFU2biyPVev3jjA=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "true"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "Elg7RiVSakenwsdlHf0rSQ=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "TMG4wwfgH0GPskckSg1AYA=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "15;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "36hn2Mbt3kCqBR9y7I5phw=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "Syg3MSkJ2kGDYUqCuN9KmA=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "mcKK6S9ONkWuvClXgQtwLQ=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "false"
+        }
+      ],
+      "DestinationConnectionIndex": 0,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "D0gSt6wZ5UGkCiaYwxtrEg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "C2lHnJZA+kmZfjkQ4b2KjA=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "0;-15",
+        "OriginControlVector": "0;15"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "36hn2Mbt3kCqBR9y7I5phw=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "KPkRQBwBAUin2iBx4fUuNg=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "qCUKrRwuIUyEO3r7ZYDu0Q=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "true"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "lVaXS0cP7k6srhooS9FcOA=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "eX7slzI99EC+WBWt4ofLZg=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-30;0",
+        "OriginControlVector": "15;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "Elg7RiVSakenwsdlHf0rSQ=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "HOyF3ZJhXk+S1E6l5op9nw=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "lHAbSJi5GUCd8s0fjycE0g=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "false"
+        }
+      ],
+      "DestinationConnectionIndex": 0,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "Bd/Yy4YLvkaVfn6A3JIWQA=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "9YU2jq7t/UGyW2PteLlsSw=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "0;-15",
+        "OriginControlVector": "0;15"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "Elg7RiVSakenwsdlHf0rSQ=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "IrIaMZdSYEyyARuVUYjd9Q=="
+      },
+      "$Type": "Microflows$AnnotationFlow",
+      "DestinationConnectionIndex": 2,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "Elg7RiVSakenwsdlHf0rSQ=="
+      },
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "EHuSBDKDlE2hteMd3pMkRQ=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "0;15",
+        "OriginControlVector": "0;0"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "juCePDWr80mQpgM/EhRS8Q=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "EhOXfZPLH0Wx5l5MO0tAKg=="
+      },
+      "$Type": "Microflows$AnnotationFlow",
+      "DestinationConnectionIndex": 0,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "Bd/Yy4YLvkaVfn6A3JIWQA=="
+      },
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "GALyLcsVz0uiv/eUjqsteg=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "0;-15",
+        "OriginControlVector": "0;0"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "juCePDWr80mQpgM/EhRS8Q=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "VomeRiekGkaQQKyou2LzLw=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "fHI7mezt3EiAbLpkfm5lEA=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "false"
+        }
+      ],
+      "DestinationConnectionIndex": 0,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "l5zRLoAp4U+hF2h7cJ+trg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "69hsrS2cDk2SmnszcEp/Jg=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "0;-15",
+        "OriginControlVector": "0;15"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "uvMKMAEQAkCwMbTYjn2tQQ=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "l/CfRqDnQkmh8nSL1l9rjw=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "iiNO7JNNUE6bVcTKKRh5Dw=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "Ja3+R5o9YEyuS7Ab9N83mQ=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "q1Yc/3gBAkK8NogA4HMamw=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "30;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "UhfmCeRRxkGO5QnRQNmiUg=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "WwNuX5zKX0iZx72ACokc6w=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "rbpOhZbThkW5jlFnrhUScg=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "true"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "ZT/w7XrhXEiyLcG9oX6PJg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "HybAbDZ+N0Kmq9WXFj+9ZA=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-30;0",
+        "OriginControlVector": "15;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "Ja3+R5o9YEyuS7Ab9N83mQ=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "CBCZIOm240+GP1aUE2GpwQ=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "acIUIboB002fOL1GlmohZg=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 0,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "iNlAFkJrwUqfp0oCqA9XAg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "cZOlV4lGoUKFkELt7xxfCw=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "0;-15",
+        "OriginControlVector": "0;15"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "l5zRLoAp4U+hF2h7cJ+trg=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "Kpw1CgPWBUaAzFTcPEwxMw=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "buH6QjqLJkS6ehtUwfXalQ=="
+          },
+          "$Type": "Microflows$EnumerationCase",
+          "Value": "false"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "l5zRLoAp4U+hF2h7cJ+trg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "R2IwQU6LB0KXSre/2Dv4ig=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "0;15"
+      },
+      "OriginConnectionIndex": 2,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "Ja3+R5o9YEyuS7Ab9N83mQ=="
+      }
+    }
+  ],
+  "MarkAsUsed": false,
+  "MicroflowActionInfo": null,
+  "MicroflowReturnType": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "Kijq6S1wjEyLMgOOLHv9bw=="
+    },
+    "$Type": "DataTypes$StringType"
+  },
+  "Name": "SUB_String_Name_GetInitials",
+  "ObjectCollection": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "kucI1f9hVkiqZkIuHNvK1Q=="
+    },
+    "$Type": "Microflows$MicroflowObjectCollection",
+    "Objects": [
+      3,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "5lLgU9e5QUGIaiDdeaw2gA=="
+        },
+        "$Type": "Microflows$StartEvent",
+        "RelativeMiddlePoint": "-554;112",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "DXPyowKbF0al8GppB+Z1jw=="
+        },
+        "$Type": "Microflows$EndEvent",
+        "Documentation": "",
+        "RelativeMiddlePoint": "806;112",
+        "ReturnValue": "toUpperCase($FirstInitial+$SecondInitial)",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "89uFj4wTOkuo3z4SIfjQhw=="
+        },
+        "$Type": "Microflows$MicroflowParameter",
+        "DefaultValue": "",
+        "Documentation": "",
+        "HasVariableNameBeenChanged": false,
+        "IsRequired": true,
+        "Name": "FullName",
+        "RelativeMiddlePoint": "-554;-3",
+        "Size": "30;30",
+        "VariableType": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "YmMtgyYV7USL3jPoFLBDsQ=="
+          },
+          "$Type": "DataTypes$StringType"
+        }
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "lVaXS0cP7k6srhooS9FcOA=="
+        },
+        "$Type": "Microflows$ActionActivity",
+        "Action": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "DZCyXRHCv0iRFaCqMPUw0w=="
+          },
+          "$Type": "Microflows$CreateVariableAction",
+          "ErrorHandlingType": "Rollback",
+          "InitialValue": "substring(trim($FullName),0,1)",
+          "VariableName": "FirstInitial",
+          "VariableType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "bm5C776nYkG/tfu0LSe00w=="
+            },
+            "$Type": "DataTypes$StringType"
+          }
+        },
+        "AutoGenerateCaption": true,
+        "BackgroundColor": "Default",
+        "Caption": "Activity",
+        "Disabled": false,
+        "Documentation": "",
+        "RelativeMiddlePoint": "-94;112",
+        "Size": "120;60"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "ZT/w7XrhXEiyLcG9oX6PJg=="
+        },
+        "$Type": "Microflows$ActionActivity",
+        "Action": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "CK+42qNbhUSli0gkBp/0Tw=="
+          },
+          "$Type": "Microflows$CreateVariableAction",
+          "ErrorHandlingType": "Rollback",
+          "InitialValue": "substring(\n\ttrim($FullName),\n\tfindLast(\n\t\ttrim($FullName)\n\t\t,' ')+1,\n\t1\n\t)",
+          "VariableName": "SecondInitial",
+          "VariableType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "Km6furMiZ0eUbNm1Yl+lOA=="
+            },
+            "$Type": "DataTypes$StringType"
+          }
+        },
+        "AutoGenerateCaption": true,
+        "BackgroundColor": "Default",
+        "Caption": "Activity",
+        "Disabled": false,
+        "Documentation": "",
+        "RelativeMiddlePoint": "506;112",
+        "Size": "120;60"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "uvMKMAEQAkCwMbTYjn2tQQ=="
+        },
+        "$Type": "Microflows$ExclusiveSplit",
+        "Caption": "Initials found",
+        "Documentation": "",
+        "ErrorHandlingType": "Rollback",
+        "RelativeMiddlePoint": "681;112",
+        "Size": "90;60",
+        "SplitCondition": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "BNUYdrv00UmCTDvligTKhg=="
+          },
+          "$Type": "Microflows$ExpressionSplitCondition",
+          "Expression": "not($FirstInitial = empty)\nand not(trim($FirstInitial) = '')\nand\nnot($SecondInitial = empty)\nand not(trim($SecondInitial) = '')\n"
+        }
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "36hn2Mbt3kCqBR9y7I5phw=="
+        },
+        "$Type": "Microflows$ExclusiveSplit",
+        "Caption": "String provided",
+        "Documentation": "",
+        "ErrorHandlingType": "Rollback",
+        "RelativeMiddlePoint": "-429;112",
+        "Size": "90;60",
+        "SplitCondition": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "F60AH5BPrk2pMs7OSXFLHA=="
+          },
+          "$Type": "Microflows$ExpressionSplitCondition",
+          "Expression": "not($FullName = empty)\nand not(trim($FullName) = '')"
+        }
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "D0gSt6wZ5UGkCiaYwxtrEg=="
+        },
+        "$Type": "Microflows$EndEvent",
+        "Documentation": "",
+        "RelativeMiddlePoint": "-429;352",
+        "ReturnValue": "empty",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "Elg7RiVSakenwsdlHf0rSQ=="
+        },
+        "$Type": "Microflows$ExclusiveSplit",
+        "Caption": "Length \u003e 1",
+        "Documentation": "",
+        "ErrorHandlingType": "Rollback",
+        "RelativeMiddlePoint": "-269;112",
+        "Size": "90;60",
+        "SplitCondition": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "6L9AWLQQyUeTd1HUV9qqTQ=="
+          },
+          "$Type": "Microflows$ExpressionSplitCondition",
+          "Expression": "length(trim($FullName)) \u003e 1"
+        }
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "Bd/Yy4YLvkaVfn6A3JIWQA=="
+        },
+        "$Type": "Microflows$EndEvent",
+        "Documentation": "",
+        "RelativeMiddlePoint": "-269;352",
+        "ReturnValue": "toUpperCase(trim($FullName))",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "juCePDWr80mQpgM/EhRS8Q=="
+        },
+        "$Type": "Microflows$Annotation",
+        "Caption": "Gregor Swan 05/10/2021:\r\nThis is the case where length = 1",
+        "RelativeMiddlePoint": "-69;342",
+        "Size": "190;50"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "iNlAFkJrwUqfp0oCqA9XAg=="
+        },
+        "$Type": "Microflows$EndEvent",
+        "Documentation": "",
+        "RelativeMiddlePoint": "681;352",
+        "ReturnValue": "toUpperCase(substring(trim($FullName),0,1))\n+\ntoLowerCase(substring(trim($FullName),1,1))\n",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "UhfmCeRRxkGO5QnRQNmiUg=="
+        },
+        "$Type": "Microflows$ActionActivity",
+        "Action": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "TkNYeEhkBEyvvuOyPyml7w=="
+          },
+          "$Type": "Microflows$CreateVariableAction",
+          "ErrorHandlingType": "Rollback",
+          "InitialValue": "not(findLast(trim($FullName),' ') = -1)",
+          "VariableName": "SpaceExists",
+          "VariableType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "8pmstJ34sUuULPqpMxJ4qQ=="
+            },
+            "$Type": "DataTypes$BooleanType"
+          }
+        },
+        "AutoGenerateCaption": true,
+        "BackgroundColor": "Default",
+        "Caption": "Activity",
+        "Disabled": false,
+        "Documentation": "",
+        "RelativeMiddlePoint": "156;112",
+        "Size": "120;60"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "Ja3+R5o9YEyuS7Ab9N83mQ=="
+        },
+        "$Type": "Microflows$ExclusiveSplit",
+        "Caption": "Space exists",
+        "Documentation": "",
+        "ErrorHandlingType": "Rollback",
+        "RelativeMiddlePoint": "331;112",
+        "Size": "90;60",
+        "SplitCondition": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "r/5x7DZDA0yUa1Hd7pnVFQ=="
+          },
+          "$Type": "Microflows$ExpressionSplitCondition",
+          "Expression": "$SpaceExists"
+        }
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "l5zRLoAp4U+hF2h7cJ+trg=="
+        },
+        "$Type": "Microflows$ExclusiveMerge",
+        "RelativeMiddlePoint": "681;242",
+        "Size": "90;60"
+      }
+    ]
+  },
+  "ReturnVariableName": "",
+  "StableId": {
+    "Subtype": 0,
+    "Data": "he/Yt7bSd0Cmo6jem4XMrA=="
+  },
+  "Url": "",
+  "UrlSearchParameters": [
+    1
+  ],
+  "WorkflowActionInfo": null
+}

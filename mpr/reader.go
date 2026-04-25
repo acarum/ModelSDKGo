@@ -101,6 +101,32 @@ func (r *Reader) Close() error {
 	return nil
 }
 
+// loadUnitContents loads the contents of a unit from the mprcontents folder (MPR v2).
+// The structure is: mprcontents/{first2chars}/{next2chars}/{uuid}.mxunit
+func (r *Reader) loadUnitContents(unitID string) ([]byte, error) {
+	if r.version != MPRVersionV2 || r.contentsDir == "" {
+		return nil, fmt.Errorf("mprcontents not available")
+	}
+
+	// Remove dashes from UUID for directory structure
+	cleanID := strings.ReplaceAll(unitID, "-", "")
+	if len(cleanID) < 4 {
+		return nil, fmt.Errorf("invalid unit ID: %s", unitID)
+	}
+
+	// Build path: mprcontents/{first2}/{next2}/{uuid}.mxunit
+	dir1 := cleanID[0:2]
+	dir2 := cleanID[2:4]
+	filePath := filepath.Join(r.contentsDir, dir1, dir2, unitID+".mxunit")
+
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read unit file %s: %w", filePath, err)
+	}
+
+	return data, nil
+}
+
 // Path returns the path to the MPR file.
 func (r *Reader) Path() string {
 	return r.path
@@ -141,12 +167,17 @@ func (r *Reader) GetMendixVersion() (string, error) {
 }
 
 // blobToUUID converts a 16-byte blob to a UUID string.
+// Uses Windows GUID format: first 3 fields are little-endian, last 2 fields are big-endian.
 func blobToUUID(blob []byte) string {
 	if len(blob) != 16 {
 		return hex.EncodeToString(blob)
 	}
-	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x",
-		blob[0:4], blob[4:6], blob[6:8], blob[8:10], blob[10:16])
+	// Windows GUID format: Data1 (4 bytes LE), Data2 (2 bytes LE), Data3 (2 bytes LE), Data4 (8 bytes BE)
+	return fmt.Sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		blob[3], blob[2], blob[1], blob[0], // Data1 (little-endian)
+		blob[5], blob[4], // Data2 (little-endian)
+		blob[7], blob[6], // Data3 (little-endian)
+		blob[8], blob[9], blob[10], blob[11], blob[12], blob[13], blob[14], blob[15]) // Data4 (big-endian)
 }
 
 // getTypeFromContents extracts the $Type field from BSON contents.
@@ -168,10 +199,22 @@ func getTypeFromContents(contents []byte) string {
 
 // listUnitsByType returns all units matching the given type prefix.
 func (r *Reader) listUnitsByType(typePrefix string) ([]rawUnit, error) {
-	rows, err := r.db.Query(`
-		SELECT UnitID, ContainerID, ContainmentName, Contents
-		FROM Unit
-	`)
+	var rows *sql.Rows
+	var err error
+
+	// MPR v1 has Contents column, MPR v2 has ContentsHash
+	if r.version == MPRVersionV1 {
+		rows, err = r.db.Query(`
+			SELECT UnitID, ContainerID, ContainmentName, Contents
+			FROM Unit
+		`)
+	} else {
+		rows, err = r.db.Query(`
+			SELECT UnitID, ContainerID, ContainmentName, ContentsHash
+			FROM Unit
+		`)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to query units: %w", err)
 	}
@@ -181,16 +224,32 @@ func (r *Reader) listUnitsByType(typePrefix string) ([]rawUnit, error) {
 	for rows.Next() {
 		var unitID, containerID []byte
 		var containmentName string
-		var contents []byte
+		var contentsOrHash interface{}
 
-		if err := rows.Scan(&unitID, &containerID, &containmentName, &contents); err != nil {
+		if err := rows.Scan(&unitID, &containerID, &containmentName, &contentsOrHash); err != nil {
 			return nil, fmt.Errorf("failed to scan unit row: %w", err)
+		}
+
+		// For MPR v2, load contents from external file
+		var contents []byte
+		unitIDStr := blobToUUID(unitID)
+
+		if r.version == MPRVersionV2 {
+			contents, err = r.loadUnitContents(unitIDStr)
+			if err != nil {
+				// Skip units that can't be loaded
+				continue
+			}
+		} else {
+			if c, ok := contentsOrHash.([]byte); ok {
+				contents = c
+			}
 		}
 
 		typeName := getTypeFromContents(contents)
 		if typePrefix == "" || strings.HasPrefix(typeName, typePrefix) {
 			units = append(units, rawUnit{
-				ID:              blobToUUID(unitID),
+				ID:              unitIDStr,
 				ContainerID:     blobToUUID(containerID),
 				ContainmentName: containmentName,
 				Type:            typeName,
@@ -369,7 +428,7 @@ func (r *Reader) GetNanoflow(id model.ID) (*microflows.Nanoflow, error) {
 
 // ListPages returns all pages in the project.
 func (r *Reader) ListPages() ([]*pages.Page, error) {
-	units, err := r.listUnitsByType("Pages$Page")
+	units, err := r.listUnitsByType("Forms$Page")
 	if err != nil {
 		return nil, err
 	}
@@ -404,7 +463,7 @@ func (r *Reader) GetPage(id model.ID) (*pages.Page, error) {
 
 // ListLayouts returns all layouts in the project.
 func (r *Reader) ListLayouts() ([]*pages.Layout, error) {
-	units, err := r.listUnitsByType("Pages$Layout")
+	units, err := r.listUnitsByType("Forms$Layout")
 	if err != nil {
 		return nil, err
 	}
@@ -544,7 +603,7 @@ func (r *Reader) GetScheduledEvent(id model.ID) (*model.ScheduledEvent, error) {
 
 // ListSnippets returns all snippets in the project.
 func (r *Reader) ListSnippets() ([]*pages.Snippet, error) {
-	units, err := r.listUnitsByType("Pages$Snippet")
+	units, err := r.listUnitsByType("Forms$Snippet")
 	if err != nil {
 		return nil, err
 	}

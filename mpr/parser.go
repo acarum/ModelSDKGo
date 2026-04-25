@@ -4,8 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/anthropics/modelsdk-go/domainmodel"
 	"github.com/anthropics/modelsdk-go/microflows"
@@ -614,7 +612,7 @@ func (r *Reader) parsePage(unitID, containerID string, contents []byte) (*pages.
 
 	page := &pages.Page{}
 	page.ID = model.ID(unitID)
-	page.TypeName = "Pages$Page"
+	page.TypeName = "Forms$Page"
 	page.ContainerID = model.ID(containerID)
 
 	if name, ok := raw["Name"].(string); ok {
@@ -703,7 +701,7 @@ func (r *Reader) parseLayout(unitID, containerID string, contents []byte) (*page
 
 	layout := &pages.Layout{}
 	layout.ID = model.ID(unitID)
-	layout.TypeName = "Pages$Layout"
+	layout.TypeName = "Forms$Layout"
 	layout.ContainerID = model.ID(containerID)
 
 	if name, ok := raw["Name"].(string); ok {
@@ -863,21 +861,8 @@ func (r *Reader) resolveContents(unitID string, contents []byte) ([]byte, error)
 		}
 	}
 
-	// Look for the external file in mprcontents
-	externalPath := filepath.Join(r.contentsDir, unitID)
-	if _, err := os.Stat(externalPath); err == nil {
-		return os.ReadFile(externalPath)
-	}
-
-	// Try with common extensions
-	for _, ext := range []string{".mxunit", ".json", ""} {
-		path := filepath.Join(r.contentsDir, unitID+ext)
-		if data, err := os.ReadFile(path); err == nil {
-			return data, nil
-		}
-	}
-
-	return contents, nil
+	// Load from mprcontents folder using the proper directory structure
+	return r.loadUnitContents(unitID)
 }
 
 // parseSnippet parses snippet contents from BSON.

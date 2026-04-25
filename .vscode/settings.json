@@ -1,0 +1,34 @@
+{
+    "go.toolsEnvVars": {
+        "CGO_ENABLED": "1",
+        "PATH": "C:\\msys64\\mingw64\\bin;${env:PATH}"
+    },
+    "go.buildFlags": [
+        "-tags=cgo"
+    ],
+    "go.testFlags": [
+        "-tags=cgo"
+    ],
+    "terminal.integrated.env.windows": {
+        "CGO_ENABLED": "1",
+        "PATH": "C:\\msys64\\mingw64\\bin;${env:PATH}"
+    },
+    "chat.tools.terminal.autoApprove": {
+        "/^\\.\\\\examples\\\\export_manifest\\\\export_manifest\\.exe \"C:\\\\Workspaces\\\\Mendix\\\\MDUI\\\\System_Mendix_CLI\\\\OC EX System\\.mpr\" \"manifest_report\\.md\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd c:\\\\Workspaces\\\\Mendix\\\\SDK\\\\ModelSDKGo_IyGm9\\\\examples\\\\export_manifest ; \\$env:CGO_ENABLED=1 ; \\$env:PATH=\"C:\\\\msys64\\\\mingw64\\\\bin;\\$env:PATH\" ; go build -o export_manifest\\.exe$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^\\.\\\\export_manifest\\.exe \"C:\\\\Workspaces\\\\Mendix\\\\MDUI\\\\System_Mendix_CLI\\\\OC EX System\\.mpr\" manifest_report\\.md$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^\\$env:CGO_ENABLED=1 ; \\$env:PATH=\"C:\\\\msys64\\\\mingw64\\\\bin;\\$env:PATH\" ; go build -o export_manifest\\.exe$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

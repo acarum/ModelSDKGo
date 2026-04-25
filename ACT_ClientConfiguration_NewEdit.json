@@ -1,0 +1,290 @@
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "0Xffyo9Z5kuVv0COb5XBwQ=="
+  },
+  "$Type": "Microflows$Microflow",
+  "AllowConcurrentExecution": true,
+  "AllowedModuleRoles": [
+    1,
+    "OpcenterEXFN_DISW_DesignSystem.Administrator"
+  ],
+  "ApplyEntityAccess": false,
+  "ConcurrencyErrorMicroflow": "",
+  "ConcurrenyErrorMessage": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "bxdjWWT4g0y0e/2cJb246A=="
+    },
+    "$Type": "Texts$Text",
+    "Items": [
+      3,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "VpgAYZa/oU2FbQ7naG5ssA=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "en_US",
+        "Text": ""
+      }
+    ]
+  },
+  "Documentation": "",
+  "Excluded": false,
+  "ExportLevel": "Hidden",
+  "Flows": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "DvFzahQd60SJOLE7xNKQvA=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "qlu5Dj3NrEO/WOvZIII2Nw=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "4jmPYe1oo0qUF/xUACRbBg=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "0QtAc3+HtlK+lHR7cBYHxg=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-15;0",
+        "OriginControlVector": "30;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "FSLty5cDZ0SppEKvAxUBgA=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "Dpv/Jb8b1UOzsOeVtIIczw=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "GJ5aPNmTOUWIwi7swtnQjQ=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "iEBaXVBNnE2ETiidfSClYQ=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "gpkoOso6uFWJZW8D1Bw6Fg=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-30;0",
+        "OriginControlVector": "15;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "O467Y3KTIkCW6PQzbqMVEQ=="
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "17MUu3iriUKaZ8/uODOmDA=="
+      },
+      "$Type": "Microflows$SequenceFlow",
+      "CaseValues": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "DE5GHdOh6kOzwmlC5j6fDg=="
+          },
+          "$Type": "Microflows$NoCase"
+        }
+      ],
+      "DestinationConnectionIndex": 3,
+      "DestinationPointer": {
+        "Subtype": 0,
+        "Data": "FSLty5cDZ0SppEKvAxUBgA=="
+      },
+      "IsErrorHandler": false,
+      "Line": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "pOWxaJ2sS1KDYJhgzK3GyQ=="
+        },
+        "$Type": "Microflows$BezierCurve",
+        "DestinationControlVector": "-30;0",
+        "OriginControlVector": "30;0"
+      },
+      "OriginConnectionIndex": 1,
+      "OriginPointer": {
+        "Subtype": 0,
+        "Data": "iEBaXVBNnE2ETiidfSClYQ=="
+      }
+    }
+  ],
+  "MarkAsUsed": false,
+  "MicroflowActionInfo": null,
+  "MicroflowReturnType": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "ZANP+VM07k2H54N7PbaE+g=="
+    },
+    "$Type": "DataTypes$VoidType"
+  },
+  "Name": "ACT_ClientConfiguration_NewEdit",
+  "ObjectCollection": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "ulabuTK9AE68vGGZj545yw=="
+    },
+    "$Type": "Microflows$MicroflowObjectCollection",
+    "Objects": [
+      3,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "4jmPYe1oo0qUF/xUACRbBg=="
+        },
+        "$Type": "Microflows$EndEvent",
+        "Documentation": "",
+        "RelativeMiddlePoint": "330;100",
+        "ReturnValue": "",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "FSLty5cDZ0SppEKvAxUBgA=="
+        },
+        "$Type": "Microflows$ActionActivity",
+        "Action": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "tQOP+hCOBkior7pJn2/u+A=="
+          },
+          "$Type": "Microflows$CloseFormAction",
+          "ErrorHandlingType": "Rollback",
+          "NumberOfPagesToClose": ""
+        },
+        "AutoGenerateCaption": true,
+        "BackgroundColor": "Default",
+        "Caption": "Activity",
+        "Disabled": false,
+        "Documentation": "",
+        "RelativeMiddlePoint": "190;100",
+        "Size": "120;60"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "O467Y3KTIkCW6PQzbqMVEQ=="
+        },
+        "$Type": "Microflows$StartEvent",
+        "RelativeMiddlePoint": "-140;100",
+        "Size": "20;20"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "pHmbnF7cqUyVgQDXGyqEmQ=="
+        },
+        "$Type": "Microflows$MicroflowParameter",
+        "DefaultValue": "",
+        "Documentation": "",
+        "HasVariableNameBeenChanged": false,
+        "IsRequired": true,
+        "Name": "ClientConfiguration",
+        "RelativeMiddlePoint": "-275;-50",
+        "Size": "30;30",
+        "VariableType": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "9b9r2TBp0kmrBqx37ooWlw=="
+          },
+          "$Type": "DataTypes$ObjectType",
+          "Entity": "EXFN_Authentication.ClientConfiguration"
+        }
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "iEBaXVBNnE2ETiidfSClYQ=="
+        },
+        "$Type": "Microflows$ActionActivity",
+        "Action": {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "/aEmTJqieEWfWy3y10evUA=="
+          },
+          "$Type": "Microflows$MicroflowCallAction",
+          "ErrorHandlingType": "Rollback",
+          "MicroflowCall": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "6ygfoSkZeUinkLO4kLECQQ=="
+            },
+            "$Type": "Microflows$MicroflowCall",
+            "Microflow": "EXFN_Authentication.ACT_ClientConfiguration_NewEdit",
+            "ParameterMappings": [
+              2,
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "1HdsJoH0IU65OjZEAoIIpg=="
+                },
+                "$Type": "Microflows$MicroflowCallParameterMapping",
+                "Argument": "$ClientConfiguration",
+                "Parameter": "EXFN_Authentication.ACT_ClientConfiguration_NewEdit.ClientConfiguration"
+              }
+            ],
+            "QueueSettings": null
+          },
+          "ResultVariableName": "",
+          "UseReturnVariable": true
+        },
+        "AutoGenerateCaption": true,
+        "BackgroundColor": "Default",
+        "Caption": "Activity",
+        "Disabled": false,
+        "Documentation": "",
+        "RelativeMiddlePoint": "0;100",
+        "Size": "120;60"
+      }
+    ]
+  },
+  "ReturnVariableName": "",
+  "StableId": {
+    "Subtype": 0,
+    "Data": "mYLY2LY3mla/MnSR5sVmow=="
+  },
+  "Url": "",
+  "UrlSearchParameters": [
+    1
+  ],
+  "WorkflowActionInfo": null
+}
