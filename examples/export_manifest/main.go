@@ -114,28 +114,79 @@ func main() {
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
 	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
+	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: export_manifest [options] <mpr_file_path> <output_md_path>\n\n")
+		fmt.Fprintf(os.Stderr, "Usage: export_manifest [options] <mpr_file_path>\n\n")
 		fmt.Fprintf(os.Stderr, "Arguments:\n")
-		fmt.Fprintf(os.Stderr, "  <mpr_file_path>   Path to the Mendix MPR file\n")
-		fmt.Fprintf(os.Stderr, "  <output_md_path>  Path to the output Markdown report\n\n")
+		fmt.Fprintf(os.Stderr, "  <mpr_file_path>   Path to the Mendix MPR file (use '.' to auto-detect in current directory)\n\n")
+		fmt.Fprintf(os.Stderr, "The output report will be named: <mpr_filename>-manifest.md\n\n")
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
-		fmt.Fprintf(os.Stderr, "\nExample:\n")
-		fmt.Fprintf(os.Stderr, "  export_manifest MyApp.mpr manifest_report.md\n")
-		fmt.Fprintf(os.Stderr, "  export_manifest -include-entities=true MyApp.mpr manifest_report.md\n")
-		fmt.Fprintf(os.Stderr, "  export_manifest -include-attributes=false MyApp.mpr manifest_report.md\n")
+		fmt.Fprintf(os.Stderr, "\nExamples:\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest MyApp.mpr\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest .\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest -include-entities=true MyApp.mpr\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest -output-dir=\"reports\" .\n")
 	}
 	flag.Parse()
 
 	// Check positional arguments
-	if flag.NArg() < 2 {
+	if flag.NArg() < 1 {
 		flag.Usage()
 		os.Exit(1)
 	}
 
 	mprPath := flag.Arg(0)
-	outputPath := flag.Arg(1)
+
+	// If "." is passed, search for .mpr file in current directory
+	if mprPath == "." {
+		currentDir, err := os.Getwd()
+		if err != nil {
+			fmt.Printf("Error getting current directory: %v\n", err)
+			os.Exit(1)
+		}
+		
+		// Search for .mpr files in current directory
+		mprFiles, err := filepath.Glob(filepath.Join(currentDir, "*.mpr"))
+		if err != nil {
+			fmt.Printf("Error searching for .mpr files: %v\n", err)
+			os.Exit(1)
+		}
+		
+		if len(mprFiles) == 0 {
+			fmt.Printf("❌ No .mpr files found in current directory\n")
+			os.Exit(1)
+		} else if len(mprFiles) > 1 {
+			fmt.Printf("❌ Multiple .mpr files found in current directory:\n")
+			for _, file := range mprFiles {
+				fmt.Printf("  - %s\n", filepath.Base(file))
+			}
+			fmt.Printf("\nPlease specify which file to use.\n")
+			os.Exit(1)
+		} else {
+			mprPath = mprFiles[0]
+			fmt.Printf("🔍 Found MPR file: %s\n", filepath.Base(mprPath))
+		}
+	}
+
+	// Generate output filename from MPR filename
+	mprFilename := filepath.Base(mprPath)
+	mprNameWithoutExt := strings.TrimSuffix(mprFilename, filepath.Ext(mprFilename))
+	outputFilename := mprNameWithoutExt + "-manifest.md"
+
+	// Construct final output path
+	finalOutputPath := outputFilename
+	if *outputDir != "" {
+		// Join with outputDir
+		finalOutputPath = filepath.Join(*outputDir, outputFilename)
+		
+		// Create output directory if it doesn't exist
+		err := os.MkdirAll(*outputDir, 0755)
+		if err != nil {
+			fmt.Printf("Error creating output directory: %v\n", err)
+			os.Exit(1)
+		}
+	}
 
 	// Store global MPR path for module traversal
 	globalMPRPath = mprPath
@@ -250,8 +301,8 @@ func main() {
 	}
 
 	// Generate Markdown report
-	fmt.Printf("\n📝 Generating report: %s\n", outputPath)
-	err = generateMarkdownReport(&report, outputPath, &options)
+	fmt.Printf("\n📝 Generating report: %s\n", finalOutputPath)
+	err = generateMarkdownReport(&report, finalOutputPath, &options)
 	if err != nil {
 		fmt.Printf("Error generating report: %v\n", err)
 		os.Exit(1)
