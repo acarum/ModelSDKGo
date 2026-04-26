@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
@@ -189,7 +190,8 @@ func generateIndexFile(indexPath string, entries []ReportEntry) error {
 				if appName == "" {
 					appName = strings.TrimSuffix(filepath.Base(entry.MPRPath), ".mpr")
 				}
-				fmt.Fprintf(file, "| %s | [%s](%s) |\n", appName, reportFilename, reportFilename)
+				// Use wikilink syntax [[filename]]
+				fmt.Fprintf(file, "| %s | [[%s]] |\n", appName, reportFilename)
 			}
 		}
 		fmt.Fprintf(file, "\n")
@@ -1603,28 +1605,56 @@ func collectSignalManagerWidgets(reader *modelsdk.Reader, mprPath string, report
 	}
 	defer db.Close()
 
-	// Search in pages
-	fmt.Printf("  🔍 Loading pages...\n")
+	// ===== OPTIMIZATION: Pre-filter documents containing widget =====
+	fmt.Printf("  🔍 Pre-filtering documents with Signal Manager widgets...\n")
+
+	// Get all pages
 	pages, err := reader.ListPages()
 	if err != nil {
 		return fmt.Errorf("failed to list pages: %w", err)
 	}
-	fmt.Printf("  📄 Scanning %d page(s) for Signal Manager widgets...\n", len(pages))
 
-	processedPages := 0
+	// Pre-filter pages that contain the widget ID
+	var filteredPages []string
 	for _, page := range pages {
-		processedPages++
-		// Load page BSON
-		pageContent, err := loadUnitContents(contentsDir, string(page.ID))
+		if containsWidgetID(contentsDir, string(page.ID), widgetID) {
+			filteredPages = append(filteredPages, string(page.ID))
+		}
+	}
+
+	// Get all snippets
+	snippets, err := reader.ListSnippets()
+	if err != nil {
+		return fmt.Errorf("failed to list snippets: %w", err)
+	}
+
+	// Pre-filter snippets that contain the widget ID
+	var filteredSnippets []string
+	for _, snippet := range snippets {
+		if containsWidgetID(contentsDir, string(snippet.ID), widgetID) {
+			filteredSnippets = append(filteredSnippets, string(snippet.ID))
+		}
+	}
+
+	totalDocs := len(pages) + len(snippets)
+	filteredDocs := len(filteredPages) + len(filteredSnippets)
+	fmt.Printf("  📊 Found %d documents to scan (filtered from %d total, %.1f%% reduction)\n",
+		filteredDocs, totalDocs, float64(totalDocs-filteredDocs)/float64(totalDocs)*100)
+
+	// Process filtered pages
+	if len(filteredPages) > 0 {
+		fmt.Printf("  📄 Scanning %d filtered page(s)...\n", len(filteredPages))
+	}
+
+	for _, pageID := range filteredPages {
+		// Load page BSON (we already know it contains the widget)
+		pageContent, err := loadUnitContents(contentsDir, pageID)
 		if err != nil {
 			continue
 		}
 
-		// Extract module name and document name from BSON (with DB fallback)
-		moduleName, docName := extractModuleAndNameFromBSON(pageContent, string(page.ID), db)
-		if docName == "" {
-			docName = page.Name // fallback to SDK name
-		}
+		// Extract module name and document name from BSON
+		moduleName, docName := extractModuleAndNameFromBSON(pageContent, pageID, db)
 
 		// Find widgets with the specified widgetId
 		widgets := findWidgetsByWidgetID(pageContent, widgetID)
@@ -1641,28 +1671,20 @@ func collectSignalManagerWidgets(reader *modelsdk.Reader, mprPath string, report
 		}
 	}
 
-	// Search in snippets
-	fmt.Printf("  🔍 Loading snippets...\n")
-	snippets, err := reader.ListSnippets()
-	if err != nil {
-		return fmt.Errorf("failed to list snippets: %w", err)
+	// Process filtered snippets
+	if len(filteredSnippets) > 0 {
+		fmt.Printf("  📄 Scanning %d filtered snippet(s)...\n", len(filteredSnippets))
 	}
-	fmt.Printf("  📄 Scanning %d snippet(s) for Signal Manager widgets...\n", len(snippets))
 
-	processedSnippets := 0
-	for _, snippet := range snippets {
-		processedSnippets++
-		// Load snippet BSON
-		snippetContent, err := loadUnitContents(contentsDir, string(snippet.ID))
+	for _, snippetID := range filteredSnippets {
+		// Load snippet BSON (we already know it contains the widget)
+		snippetContent, err := loadUnitContents(contentsDir, snippetID)
 		if err != nil {
 			continue
 		}
 
-		// Extract module name and document name from BSON (with DB fallback)
-		moduleName, docName := extractModuleAndNameFromBSON(snippetContent, string(snippet.ID), db)
-		if docName == "" {
-			docName = snippet.Name // fallback to SDK name
-		}
+		// Extract module name and document name from BSON
+		moduleName, docName := extractModuleAndNameFromBSON(snippetContent, snippetID, db)
 
 		// Find widgets with the specified widgetId
 		widgets := findWidgetsByWidgetID(snippetContent, widgetID)
@@ -1679,7 +1701,7 @@ func collectSignalManagerWidgets(reader *modelsdk.Reader, mprPath string, report
 		}
 	}
 
-	fmt.Printf("\n  ✅ Completed: Analyzed %d pages and %d snippets\n", processedPages, processedSnippets)
+	fmt.Printf("\n  ✅ Completed: Analyzed %d filtered pages and %d filtered snippets\n", len(filteredPages), len(filteredSnippets))
 	fmt.Printf("  📊 Result: %d signal subscription(s) found (%d in pages, %d in snippets)\n",
 		totalWidgets, pagesCount, snippetsCount)
 	return nil
@@ -2002,6 +2024,32 @@ func loadUnitContents(contentsDir string, unitID string) (map[string]interface{}
 	}
 
 	return content, nil
+}
+
+// containsWidgetID performs fast pre-filtering by checking if the raw BSON file
+// contains the widget ID string without full parsing. This avoids expensive
+// BSON unmarshaling for documents that don't contain the widget.
+func containsWidgetID(contentsDir, unitID, widgetID string) bool {
+	// Remove dashes from UUID for directory structure
+	cleanID := strings.ReplaceAll(unitID, "-", "")
+	if len(cleanID) < 4 {
+		return false
+	}
+
+	// Build path: mprcontents/{first2}/{next2}/{uuid}.mxunit
+	dir1 := cleanID[0:2]
+	dir2 := cleanID[2:4]
+	filePath := filepath.Join(contentsDir, dir1, dir2, unitID+".mxunit")
+
+	// Read file as raw bytes
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return false
+	}
+
+	// Fast byte search - check if widget ID appears anywhere in the file
+	// This is much faster than unmarshaling BSON
+	return bytes.Contains(data, []byte(widgetID))
 }
 
 // stringToWindowsGUID converts a UUID string to Windows GUID binary format
@@ -3236,9 +3284,11 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 				if appName == "" {
 					appName = "-"
 				}
-				filter := widget.SubscriptionFilter
-				if filter == "" {
-					filter = "-"
+
+				// Show Yes/No instead of actual filter value
+				filterPresent := "No"
+				if widget.SubscriptionFilter != "" {
+					filterPresent = "Yes"
 				}
 
 				fmt.Fprintf(file, "| %s | %s | %s | %s | %s | %s |\n",
@@ -3247,7 +3297,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 					docName,
 					signalName,
 					appName,
-					filter,
+					filterPresent,
 				)
 			}
 			fmt.Fprintf(file, "\n")

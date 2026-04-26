@@ -2,14 +2,14 @@
 
 **Mendix Version:** 11.9.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-04-26 15:14:22  
+**Generated:** 2026-04-26 16:32:57  
 
 ---
 
 ## Summary
 
 - **Microflow/Action Calls:** 78
-- **Signal Manager Widgets:** 3 subscription(s)
+- **Signal Manager Subscriptions:** 3 subscription(s)
 - **Navigation Items:** 10
 
 ---
@@ -105,7 +105,7 @@ Found 78 call(s):
 
 ---
 
-## 3. Signal Manager Widgets
+## 3. Signal Manager Subscriptions
 
 Signal subscriptions from Signal Manager widgets (siemens.mxtosignal.MxToSignal).
 
@@ -113,9 +113,9 @@ Found 3 subscription(s):
 
 | Module | Document Type | Document | Signal Name | App Name | Subscription Filter |
 |--------|---------------|----------|-------------|----------|---------------------|
-| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN | APPName | filter0 |
-| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN2 | AN2 | filter |
-| OpcenterEXFN_ReferenceData | Snippet | MySnippet | SNIPPET_SN | SNIPPET_APPName | SNIPPET_filter0 |
+| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN | APPName | Yes |
+| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN2 | AN2 | Yes |
+| OpcenterEXFN_ReferenceData | Snippet | MySnippet | SNIPPET_SN | SNIPPET_APPName | Yes |
 
 ---
 

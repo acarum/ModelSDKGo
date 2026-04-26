@@ -2,14 +2,14 @@
 
 **Mendix Version:** 11.6.4  
 **MPR File:** C:\Workspaces\Mendix\2601S186_SPX\CMX\Opcenter EX DS Complex Manufacturing.mpr  
-**Generated:** 2026-04-26 15:18:25  
+**Generated:** 2026-04-26 16:35:03  
 
 ---
 
 ## Summary
 
 - **Microflow/Action Calls:** 82
-- **Signal Manager Widgets:** 64 subscription(s)
+- **Signal Manager Subscriptions:** 64 subscription(s)
 - **Navigation Items:** 1
 
 ---
@@ -164,7 +164,7 @@ Found 82 call(s):
 
 ---
 
-## 3. Signal Manager Widgets
+## 3. Signal Manager Subscriptions
 
 Signal subscriptions from Signal Manager widgets (siemens.mxtosignal.MxToSignal).
 
@@ -172,147 +172,70 @@ Found 64 subscription(s):
 
 | Module | Document Type | Document | Signal Name | App Name | Subscription Filter |
 |--------|---------------|----------|-------------|----------|---------------------|
-| OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCStartTransferEvent | AppU4DM | WorkOrderOperationNId eq ''' + $ProgramPartDetailsContext/WorkOrderOperationNId + ''' and DNCMachine eq ''' + $ProgramPartDetailsContext/DNCMachine +  |
-| OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCCompleteTransferEvent | AppU4DM | WorkOrderOperationNId eq ''' + $ProgramPartDetailsContext/WorkOrderOperationNId + ''' and DNCMachine eq ''' + $ProgramPartDetailsContext/DNCMachine +  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnChangeFlexibleWOOpStatusToComplete | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICandidateDeclared | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationFullQty | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCreateNonConformanceV3_1 | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationSerialized | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | StatusChanged | AppU4DM | EnvelopeCategory eq ''ChangePackageStatusChanged |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | WorkOrderSerialNumbersScrapped | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteReworkOrder | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICompleted | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnPauseWorkOrderOperation | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSetHoldWorkOrder | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | SnagAndNoteNotificationSgn | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSkipWOOperation | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationSerialized | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationFullQty | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSentenceNonConformanceV3_1 | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnReopenWorkOrderOperation | AppU4DM | - |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnPauseWorkOrderOperation | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepSerialized | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepFullQty | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSentenceNonConformanceV3_1 | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField4 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkOrderSerialNumbersScrapped | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'WorkOrderNId eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICompleted | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICandidateDeclared | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkInstructionStatusChangedSignal | WorkInstruction | if(trim($currentObject/WorkOrderNId) != '') then
-'Context/CtxEntityValue eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | StatusChanged | AppU4DM | EnvelopeCategory eq ''ChangePackageStatusChanged |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteReworkOrder | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'WorkOrderNId eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSkipWOOperation | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'WorkOrderNId eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationFullQty | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSetHoldWorkOrder | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnDisassemblyWorkOrderOperation | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnReopenWorkOrderOperation | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField4 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAIRemoved | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationSerialized | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationSerialized | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepSerialized | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepFullQty | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | SnagAndNoteNotificationSgn | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'WorkOrderNId eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnAssemblyWorkOrderOperation | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnUsedToolSignal | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCreateNonConformanceV3_1 | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'WorkOrderNId eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationFullQty | AppU4DM | if(trim($currentObject/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $currentObject/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionSectionCompletedSignal | WorkInstruction | if($WorkInstructionContextHelper != empty and trim($WorkInstructionContextHelper/WorkOrderNId) != '') then
-'Context/CtxEntityValue eq ''' + $WorkInstructionContextHelper/WorkOrderNId + ''''
-else 'EnvelopeCategory eq ''WorkInstructionSectionCompleted |
-| OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionStepCompletedSignal | WorkInstruction | if($WorkInstructionContextHelper != empty and trim($WorkInstructionContextHelper/WorkOrderNId) != '') then
-'Context/CtxEntityValue eq ''' + $WorkInstructionContextHelper/WorkOrderNId + ''''
-else 'EnvelopeCategory eq ''WorkInstructionStepCompleted |
-| OpcenterEXDS_OperatorLanding | Snippet | WorkInstructions | OnLinkWIOnDemandToSerialNumber | AppU4DM | if($WorkOrderOperationOrStepContext/WorkOrderStepId = empty) then 
-	'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderOperationId + ''''
-else
-	'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderStepId +  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools_Backup | OnUsedToolSignal | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | CoProductProduced | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'CoProductProducedParameter/WorkOrderNId eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | ByProductProduced | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'ByProductProducedParameter/WorkOrderNId eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | OutputMaterialProduced | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'ProducedMaterial/WorkOrderNId eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCCompleteTransferEvent | AppU4DM | WorkOrderOperationNId eq ''' + $dataView3/WorkOrderOperationNId + ''' and DNCMachine eq ''' + $dataView3/DNCMachine +  |
-| OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCStartTransferEvent | AppU4DM | WorkOrderOperationNId eq ''' + $dataView3/WorkOrderOperationNId + ''' and DNCMachine eq ''' + $dataView3/DNCMachine +  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnAssemblyWorkOrderOperation | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnDisassemblyWorkOrderOperation | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | ScrapMaterials | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'WorkOrderNId eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | OnUsedToolSignal | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | MaterialTrackingUnitDeactivationEvent | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | MaterialTrackingUnitActivationEvent | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | ScrewingExecuted | AppU4DM | if(trim($WorkOrderOperationOrStepContext/WorkOrderNId) != '') then
-'EnvelopeUserField1 eq ''' + $WorkOrderOperationOrStepContext/WorkOrderNId + ''''
-else  |
-| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | DelayedExecution | WorkInstruction | RuntimeChrReprContainerNId eq ''' + $ParameterView/ContainerNId +  |
-| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | InspectionExecutionChrReprRuntimeNumberChanged | WorkInstruction | RuntimeChrRepresentationContainerNId eq ''' + $ParameterView/ContainerNId +  |
-| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | OnCompleteInspectionSampleScenarioInstance | WorkInstruction | RuntimeChrRepresentationContainerNId eq ''' + $ParameterView/ContainerNId +  |
-| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | InspectionSampleConfirmed | WorkInstruction | RuntimeChrRepresentationContainerNId eq ''' + $ParameterView/ContainerNId +  |
+| OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCStartTransferEvent | AppU4DM | Yes |
+| OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCCompleteTransferEvent | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCreateNonConformanceV3_1 | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSkipWOOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteReworkOrder | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICompleted | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationFullQty | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationFullQty | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnPauseWorkOrderOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSetHoldWorkOrder | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | WorkOrderSerialNumbersScrapped | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICandidateDeclared | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationSerialized | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSentenceNonConformanceV3_1 | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnChangeFlexibleWOOpStatusToComplete | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationSerialized | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | SnagAndNoteNotificationSgn | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | StatusChanged | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnReopenWorkOrderOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSetHoldWorkOrder | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnDisassemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnUsedToolSignal | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkInstructionStatusChangedSignal | WorkInstruction | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkOrderSerialNumbersScrapped | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSentenceNonConformanceV3_1 | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnReopenWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAIRemoved | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICompleted | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnPauseWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | SnagAndNoteNotificationSgn | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCreateNonConformanceV3_1 | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteReworkOrder | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICandidateDeclared | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | StatusChanged | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSkipWOOperation | AppU4DM | Yes |
+| OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionSectionCompletedSignal | WorkInstruction | Yes |
+| OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionStepCompletedSignal | WorkInstruction | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | WorkInstructions | OnLinkWIOnDemandToSerialNumber | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools_Backup | OnUsedToolSignal | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | CoProductProduced | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | ByProductProduced | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | OutputMaterialProduced | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCStartTransferEvent | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCCompleteTransferEvent | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnDisassemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | ScrapMaterials | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | MaterialTrackingUnitActivationEvent | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | ScrewingExecuted | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | OnUsedToolSignal | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | MaterialTrackingUnitDeactivationEvent | AppU4DM | Yes |
+| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | InspectionExecutionChrReprRuntimeNumberChanged | WorkInstruction | Yes |
+| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | OnCompleteInspectionSampleScenarioInstance | WorkInstruction | Yes |
+| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | InspectionSampleConfirmed | WorkInstruction | Yes |
+| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | DelayedExecution | WorkInstruction | Yes |
 
 ---
 
