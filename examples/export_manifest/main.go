@@ -545,11 +545,21 @@ func processSingleFile(mprPathArg string, outputDir string, options *ReportOptio
 
 	// Count enabled sections
 	totalPhases := 0
-	if options.IncludeEntities { totalPhases++ }
-	if options.IncludeMicroflows { totalPhases++ }
-	if options.IncludeWidgets { totalPhases++ }
-	if options.IncludeRoles || options.IncludeNavigation { totalPhases++ }
-	if options.IncludeNavigation { totalPhases++ }
+	if options.IncludeEntities {
+		totalPhases++
+	}
+	if options.IncludeMicroflows {
+		totalPhases++
+	}
+	if options.IncludeWidgets {
+		totalPhases++
+	}
+	if options.IncludeRoles || options.IncludeNavigation {
+		totalPhases++
+	}
+	if options.IncludeNavigation {
+		totalPhases++
+	}
 	totalPhases++ // Final report generation
 
 	fmt.Printf("\n📋 Analysis plan: %d phase(s) to complete\n", totalPhases)
@@ -2862,7 +2872,7 @@ func getModuleNameFromContainerID(db *sql.DB, contentsDir string, containerID st
 
 func collectSystemRolesAndPageAccess(db *sql.DB, contentsDir string, report *ManifestReport) error {
 	fmt.Printf("  🔍 Loading security configuration...\n")
-	
+
 	// Step 1: Collect all System Roles from project security documents
 	systemRoles := make(map[string]SystemRole) // key: RoleID, value: SystemRole
 	roleIDToName := make(map[string]string)    // for quick lookups
