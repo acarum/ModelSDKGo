@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
@@ -8,24 +10,27 @@ import (
 	"strings"
 
 	"github.com/anthropics/modelsdk-go"
+	_ "github.com/mattn/go-sqlite3"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // WidgetCaption holds a single widget with an extractable caption
 type WidgetCaption struct {
-	WidgetType     string
-	WidgetName     string
-	Caption        string
+	WidgetType string
+	WidgetName string
+	Caption    string
 	// For DataGrid2: columns and action buttons are nested under the widget entry
-	Columns        []DataGridColumn
-	ActionButtons  []DataGridActionButton
+	Columns       []DataGridColumn
+	ActionButtons []DataGridActionButton
 }
 
 // DataGridActionButton represents an action button inside a DataGrid 2 widget
 type DataGridActionButton struct {
-	Name    string
-	Caption string
+	Name         string
+	Caption      string
+	NanoflowName string // nanoflow called on click (from parent DivContainer.OnClickAction)
+	ShowPageName string // page opened by ShowFormAction inside that nanoflow
 }
 
 // DataGridColumn represents a column in a DataGrid 2 widget
@@ -53,6 +58,7 @@ type PlaceholderContent struct {
 type PageReport struct {
 	PageName string
 	PageID   string
+	MprPath  string
 	Main     *PlaceholderContent
 	Right    *PlaceholderContent
 }
@@ -128,7 +134,8 @@ func main() {
 			continue
 		}
 
-		report := extractPlaceholders(pageData, page.Name, string(page.ID))
+		report := extractPlaceholders(pageData, page.Name, string(page.ID), mprPath)
+		report.MprPath = mprPath
 		if report.Main != nil || report.Right != nil {
 			reports = append(reports, report)
 		}
@@ -141,7 +148,7 @@ func main() {
 }
 
 // extractPlaceholders parses FormCall.Arguments to find Main and Right placeholders
-func extractPlaceholders(pageData map[string]interface{}, pageName, pageID string) PageReport {
+func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprPath string) PageReport {
 	report := PageReport{PageName: pageName, PageID: pageID}
 
 	formCall, ok := getMap(pageData, "FormCall")
@@ -173,6 +180,12 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID strin
 		var directButtons []DataGridActionButton
 		if len(tabs) == 0 {
 			directButtons = findAllActionButtons(widgets)
+			// Resolve ShowPage for each button's nanoflow
+			for i := range directButtons {
+				if directButtons[i].NanoflowName != "" {
+					directButtons[i].ShowPageName = loadNanoflowShowPage(mprPath, directButtons[i].NanoflowName)
+				}
+			}
 		}
 
 		content := &PlaceholderContent{
@@ -283,31 +296,206 @@ func getTypePointerData(prop map[string]interface{}) string {
 	return extractBinaryKey(prop["TypePointer"])
 }
 
-// findAllActionButtons recursively collects all Forms$ActionButton nodes without any RenderType filter
+// findAllActionButtons recursively collects all Forms$ActionButton nodes,
+// propagating the nanoflow name from any enclosing DivContainer.OnClickAction.
 func findAllActionButtons(data interface{}) []DataGridActionButton {
+	return findAllActionButtonsWithNF(data, "")
+}
+
+func findAllActionButtonsWithNF(data interface{}, inheritedNanoflow string) []DataGridActionButton {
 	var result []DataGridActionButton
 	switch v := data.(type) {
 	case map[string]interface{}:
+		// If this DivContainer has a nanoflow OnClickAction, propagate it to children
+		nf := inheritedNanoflow
+		if v["$Type"] == "Forms$DivContainer" {
+			if oca, ok := v["OnClickAction"].(map[string]interface{}); ok {
+				if oca["$Type"] == "Forms$CallNanoflowClientAction" {
+					if n, ok := oca["Nanoflow"].(string); ok && n != "" {
+						nf = n
+					}
+				}
+			}
+		}
 		if v["$Type"] == "Forms$ActionButton" {
 			result = append(result, DataGridActionButton{
-				Name:    getStr(v, "Name"),
-				Caption: extractCaption(v),
+				Name:         getStr(v, "Name"),
+				Caption:      extractCaption(v),
+				NanoflowName: nf,
 			})
 			return result
 		}
 		for _, val := range v {
-			result = append(result, findAllActionButtons(val)...)
+			result = append(result, findAllActionButtonsWithNF(val, nf)...)
 		}
 	case primitive.A:
 		for _, item := range v {
-			result = append(result, findAllActionButtons(item)...)
+			result = append(result, findAllActionButtonsWithNF(item, inheritedNanoflow)...)
 		}
 	case []interface{}:
 		for _, item := range v {
-			result = append(result, findAllActionButtons(item)...)
+			result = append(result, findAllActionButtonsWithNF(item, inheritedNanoflow)...)
 		}
 	}
 	return result
+}
+
+// loadNanoflowShowPage opens the MPR and searches for a nanoflow by full qualified name
+// (e.g. "Module.NanoflowName") and returns the page opened by its ShowFormAction, if any.
+func loadNanoflowShowPage(mprPath, nanoflowFullName string) string {
+	if nanoflowFullName == "" {
+		return ""
+	}
+	parts := strings.SplitN(nanoflowFullName, ".", 2)
+	if len(parts) != 2 {
+		return ""
+	}
+	nfShortName := parts[1]
+
+	db, err := sql.Open("sqlite3", mprPath)
+	if err != nil {
+		return ""
+	}
+	defer db.Close()
+
+	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
+
+	rows, err := db.Query("SELECT UnitID FROM Unit")
+	if err != nil {
+		return ""
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var idBytes []byte
+		if err := rows.Scan(&idBytes); err != nil {
+			continue
+		}
+		uid := bytesToUUID(idBytes)
+		if uid == "" {
+			continue
+		}
+		p1, p2 := uid[:2], uid[2:4]
+		data, err := os.ReadFile(filepath.Join(contentsDir, p1, p2, uid+".mxunit"))
+		if err != nil {
+			continue
+		}
+		var m map[string]interface{}
+		if bson.Unmarshal(data, &m) != nil {
+			continue
+		}
+		if m["$Type"] != "Microflows$Nanoflow" {
+			continue
+		}
+		name, _ := m["Name"].(string)
+		if name != nfShortName {
+			continue
+		}
+		// Found it — scan for ShowFormAction
+		return findShowFormPage(m)
+	}
+	return ""
+}
+
+// findShowFormPage recursively searches for Microflows$ShowFormAction and returns FormSettings.Form
+func findShowFormPage(data interface{}) string {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if v["$Type"] == "Microflows$ShowFormAction" {
+			if fs, ok := v["FormSettings"].(map[string]interface{}); ok {
+				if f, ok := fs["Form"].(string); ok && f != "" {
+					return f
+				}
+			}
+		}
+		for _, val := range v {
+			if r := findShowFormPage(val); r != "" {
+				return r
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if r := findShowFormPage(item); r != "" {
+				return r
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if r := findShowFormPage(item); r != "" {
+				return r
+			}
+		}
+	}
+	return ""
+}
+
+// loadPanelWidgets opens the MPR and searches for a page by full qualified name
+// (e.g. "Module.PageName") and returns the widgets found on it.
+func loadPanelWidgets(mprPath, fullPageName string) []WidgetCaption {
+	if fullPageName == "" {
+		return nil
+	}
+	parts := strings.SplitN(fullPageName, ".", 2)
+	if len(parts) != 2 {
+		return nil
+	}
+	pageShortName := parts[1]
+
+	db, err := sql.Open("sqlite3", mprPath)
+	if err != nil {
+		return nil
+	}
+	defer db.Close()
+
+	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
+
+	rows, err := db.Query("SELECT UnitID FROM Unit")
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var idBytes []byte
+		if err := rows.Scan(&idBytes); err != nil {
+			continue
+		}
+		uid := bytesToUUID(idBytes)
+		if uid == "" {
+			continue
+		}
+		p1, p2 := uid[:2], uid[2:4]
+		data, err := os.ReadFile(filepath.Join(contentsDir, p1, p2, uid+".mxunit"))
+		if err != nil {
+			continue
+		}
+		var m map[string]interface{}
+		if bson.Unmarshal(data, &m) != nil {
+			continue
+		}
+		if m["$Type"] != "Forms$Page" {
+			continue
+		}
+		name, _ := m["Name"].(string)
+		if name != pageShortName {
+			continue
+		}
+		return findWidgetCaptions(m)
+	}
+	return nil
+}
+
+// bytesToUUID converts a 16-byte SQL BLOB to UUID string (Windows GUID byte order)
+func bytesToUUID(b []byte) string {
+	if len(b) != 16 {
+		return ""
+	}
+	return fmt.Sprintf("%s-%s-%s-%s-%s",
+		hex.EncodeToString([]byte{b[3], b[2], b[1], b[0]}),
+		hex.EncodeToString([]byte{b[5], b[4]}),
+		hex.EncodeToString([]byte{b[7], b[6]}),
+		hex.EncodeToString(b[8:10]),
+		hex.EncodeToString(b[10:16]))
 }
 
 // extractDataGridActionButtons recursively collects all Forms$ActionButton nodes inside a DataGrid 2 widget
@@ -452,13 +640,13 @@ func findWidgetCaptions(data interface{}) []WidgetCaption {
 					if widgetID == "com.mendix.widget.web.datagrid.Datagrid" {
 						name := getStr(v, "Name")
 						cols := extractDataGridColumns(v)
-					btns := extractDataGridActionButtons(v)
-					result = append(result, WidgetCaption{
-						WidgetType:    "DataGrid2",
-						WidgetName:    name,
-						Caption:       "(Data Grid 2)",
-						Columns:       cols,
-						ActionButtons: btns,
+						btns := extractDataGridActionButtons(v)
+						result = append(result, WidgetCaption{
+							WidgetType:    "DataGrid2",
+							WidgetName:    name,
+							Caption:       "(Data Grid 2)",
+							Columns:       cols,
+							ActionButtons: btns,
 						})
 						return result // don't recurse into the DataGrid internals
 					}
@@ -704,7 +892,7 @@ func isMarketplaceModule(moduleName string) bool {
 }
 
 // writePlaceholderSection writes one Main/Right section with tabs and widget captions
-func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderContent) {
+func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderContent, mprPath string) {
 	fmt.Fprintf(file, "### %s\n\n", sectionName)
 	if ph == nil {
 		fmt.Fprintf(file, "_No %s placeholder in this page._\n\n", sectionName)
@@ -718,18 +906,96 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 		}
 		// No tabs, but has direct command-bar buttons (e.g. Right vertical-command-bar)
 		fmt.Fprintf(file, "**Vertical CommandBar Buttons:**\n\n")
-		fmt.Fprintf(file, "| # | Button Name | Caption |\n")
-		fmt.Fprintf(file, "|---|---|---|\n")
+		fmt.Fprintf(file, "| # | Button Name | Caption | Nanoflow | Show Page |\n")
+		fmt.Fprintf(file, "|---|---|---|---|---|\n")
 		for i, btn := range ph.Buttons {
 			btnCap := btn.Caption
 			if btnCap == "" {
 				btnCap = "(no caption)"
 			}
-			fmt.Fprintf(file, "| %d | %s | %s |\n", i+1,
+			nfName := btn.NanoflowName
+			if nfName == "" {
+				nfName = "-"
+			} else {
+				// Show only the short name after the module prefix
+				if idx := strings.LastIndex(nfName, "."); idx >= 0 {
+					nfName = nfName[idx+1:]
+				}
+			}
+			showPage := btn.ShowPageName
+			if showPage == "" {
+				showPage = "-"
+			} else if idx := strings.LastIndex(showPage, "."); idx >= 0 {
+				showPage = showPage[idx+1:]
+			}
+			fmt.Fprintf(file, "| %d | %s | %s | %s | %s |\n", i+1,
 				strings.ReplaceAll(btn.Name, "|", "\\|"),
-				strings.ReplaceAll(btnCap, "|", "\\|"))
+				strings.ReplaceAll(btnCap, "|", "\\|"),
+				strings.ReplaceAll(nfName, "|", "\\|"),
+				strings.ReplaceAll(showPage, "|", "\\|"))
 		}
 		fmt.Fprintf(file, "\n")
+
+		// Button → Page navigation section (only buttons that open a page)
+		var navButtons []DataGridActionButton
+		for _, btn := range ph.Buttons {
+			if btn.ShowPageName != "" {
+				navButtons = append(navButtons, btn)
+			}
+		}
+		if len(navButtons) > 0 {
+			fmt.Fprintf(file, "**Button → Page Navigation:**\n\n")
+			fmt.Fprintf(file, "| Button Caption | Nanoflow | Page Opened |\n")
+			fmt.Fprintf(file, "|---|---|---|\n")
+			for _, btn := range navButtons {
+				nfShort := btn.NanoflowName
+				if idx := strings.LastIndex(nfShort, "."); idx >= 0 {
+					nfShort = nfShort[idx+1:]
+				}
+				pageShort := btn.ShowPageName
+				if idx := strings.LastIndex(pageShort, "."); idx >= 0 {
+					pageShort = pageShort[idx+1:]
+				}
+				fmt.Fprintf(file, "| %s | %s | %s |\n",
+					strings.ReplaceAll(btn.Caption, "|", "\\|"),
+					strings.ReplaceAll(nfShort, "|", "\\|"),
+					strings.ReplaceAll(pageShort, "|", "\\|"))
+			}
+			fmt.Fprintf(file, "\n")
+
+			// Per-panel widget details: one subsection per unique page
+			seen := make(map[string]bool)
+			for _, btn := range navButtons {
+				if seen[btn.ShowPageName] {
+					continue
+				}
+				seen[btn.ShowPageName] = true
+				pageShort := btn.ShowPageName
+				if idx := strings.LastIndex(pageShort, "."); idx >= 0 {
+					pageShort = pageShort[idx+1:]
+				}
+				fmt.Fprintf(file, "**Panel: `%s`**\n\n", pageShort)
+				widgets := loadPanelWidgets(mprPath, btn.ShowPageName)
+				if len(widgets) == 0 {
+					fmt.Fprintf(file, "_No widgets with captions found._\n\n")
+				} else {
+					fmt.Fprintf(file, "| Widget Type | Name | Caption |\n")
+					fmt.Fprintf(file, "|---|---|---|\n")
+					for _, w := range widgets {
+						wCap := w.Caption
+						if wCap == "" {
+							wCap = "(no caption)"
+						}
+						fmt.Fprintf(file, "| %s | %s | %s |\n",
+							strings.ReplaceAll(w.WidgetType, "|", "\\|"),
+							strings.ReplaceAll(w.WidgetName, "|", "\\|"),
+							strings.ReplaceAll(wCap, "|", "\\|"))
+					}
+					fmt.Fprintf(file, "\n")
+				}
+			}
+		}
+
 		return
 	}
 	for i, tab := range ph.Tabs {
@@ -828,8 +1094,8 @@ func exportMarkdown(reports []PageReport, outputFile string) {
 	for _, r := range reports {
 		fmt.Fprintf(file, "## 📄 %s\n\n", r.PageName)
 
-		writePlaceholderSection(file, "Main", r.Main)
-		writePlaceholderSection(file, "Right", r.Right)
+		writePlaceholderSection(file, "Main", r.Main, r.MprPath)
+		writePlaceholderSection(file, "Right", r.Right, r.MprPath)
 
 		fmt.Fprintf(file, "---\n\n")
 	}

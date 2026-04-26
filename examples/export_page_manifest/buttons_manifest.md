@@ -97,13 +97,29 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Right`
 
 **Vertical CommandBar Buttons:**
 
-| # | Button Name | Caption |
+| # | Button Name | Caption | Nanoflow | Show Page |
+|---|---|---|---|---|
+| 1 | actionButton12 | Edit State Machine | ACT_UpdateStateMachine_ShowPanel | PANEL_UpdateStateMachine |
+| 2 | actionButton13 | Hide State Machine | ACT_HideStateMachine | - |
+| 3 | actionButton14 | Unhide State Machine | ACT_UnhideStateMachine | - |
+| 4 | actionButton8 | Freeze State Machine | ACT_FreezeStateMachine | - |
+| 5 | actionButton9 | Unfreeze State Machine | ACT_UnfreezeStateMachine | - |
+
+**Button → Page Navigation:**
+
+| Button Caption | Nanoflow | Page Opened |
 |---|---|---|
-| 1 | actionButton12 | Edit State Machine |
-| 2 | actionButton13 | Hide State Machine |
-| 3 | actionButton14 | Unhide State Machine |
-| 4 | actionButton8 | Freeze State Machine |
-| 5 | actionButton9 | Unfreeze State Machine |
+| Edit State Machine | ACT_UpdateStateMachine_ShowPanel | PANEL_UpdateStateMachine |
+
+**Panel: `PANEL_UpdateStateMachine`**
+
+| Widget Type | Name | Caption |
+|---|---|---|
+| ActionButton | actionButton1 | Save |
+| ActionButton | actionButton2 | Cancel |
+| TextBox | textBox7 | Id |
+| TextBox | textBox5 | Name |
+| TextBox | textBox6 | Description |
 
 ---
 
