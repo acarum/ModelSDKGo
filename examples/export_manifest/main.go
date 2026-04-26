@@ -87,6 +87,7 @@ type PageAccessInfo struct {
 type ManifestReport struct {
 	ProjectName     string
 	MendixVersion   string
+	MPRPath         string
 	GeneratedAt     string
 	Entities        map[string][]EntityInfo // by module
 	MicroflowCalls  []MicroflowCallInfo     // all calls
@@ -176,6 +177,7 @@ func main() {
 	report := ManifestReport{
 		ProjectName:   projectName,
 		MendixVersion: mendixVersion,
+		MPRPath:       mprPath,
 		GeneratedAt:   time.Now().Format("2006-01-02 15:04:05"),
 		Entities:      make(map[string][]EntityInfo),
 	}
@@ -386,7 +388,7 @@ func findExternalEntitiesInDomainModel(dm DomainModelInfo, moduleName string) []
 
 			// Only process if it's an entity
 			if entityType == "DomainModels$EntityImpl" || entityType == "DomainModels$ExternalEntity" {
-				if isExternalEntity(entityMap) {
+				if isExternalEntity(entityMap) && isPersistableEntity(entityMap) {
 					entityName := extractNameFromContents(entityMap)
 					publishedFrom := extractPublishedFrom(entityMap, entityName)
 					attributes := extractAttributes(entityMap)
@@ -453,24 +455,54 @@ func isExternalEntity(entityMap map[string]interface{}) bool {
 	return false
 }
 
+func isPersistableEntity(entityMap map[string]interface{}) bool {
+	// Check MaybeGeneralization.Persistable field
+	// This field indicates if the entity is persistable (stored in database)
+	// Non-persistable entities are typically transient/temporary objects used for operations
+	if maybeGen, ok := entityMap["MaybeGeneralization"].(map[string]interface{}); ok {
+		if persistable, ok := maybeGen["Persistable"].(bool); ok {
+			return persistable
+		}
+	}
+	
+	// If Persistable field is not found, assume it's persistable (default)
+	// This ensures we don't accidentally filter out entities from older Mendix versions
+	return true
+}
+
 func extractPublishedFrom(entityMap map[string]interface{}, entityName string) string {
 	// Extract from Source field (OData entities)
 	if source, ok := entityMap["Source"].(map[string]interface{}); ok {
-		if entityTypeName, ok := source["EntityTypeName"].(string); ok {
-			// EntityTypeName usually contains the service/app name
+		// First try EntityTypeName (direct service name)
+		if entityTypeName, ok := source["EntityTypeName"].(string); ok && entityTypeName != "" {
 			return entityTypeName
+		}
+		
+		// Try SourceDocument (format: "ModuleName.ServiceName")
+		if sourceDoc, ok := source["SourceDocument"].(string); ok && sourceDoc != "" {
+			// Extract service name from "ModuleName.ServiceName" format
+			parts := strings.Split(sourceDoc, ".")
+			if len(parts) == 2 {
+				return parts[1] // Return "ServiceName"
+			}
+			return sourceDoc // Return as-is if format is different
+		}
+		
+		// Try RemoteName as fallback
+		if remoteName, ok := source["RemoteName"].(string); ok && remoteName != "" {
+			return remoteName
 		}
 	}
 
 	// Fallback to other location indicators
-	if remoteSource, ok := entityMap["RemoteSourceDocument"].(string); ok {
+	if remoteSource, ok := entityMap["RemoteSourceDocument"].(string); ok && remoteSource != "" {
 		return remoteSource
 	}
-	if remoteSource, ok := entityMap["RemoteSource"].(string); ok {
+	if remoteSource, ok := entityMap["RemoteSource"].(string); ok && remoteSource != "" {
 		return remoteSource
 	}
 
-	// Use entity name as fallback (often the entity name matches the service name)
+	// Use entity name as fallback
 	if entityName != "" {
 		return entityName
 	}
@@ -2621,6 +2653,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	// Header
 	fmt.Fprintf(file, "# Manifest Report: %s\n\n", report.ProjectName)
 	fmt.Fprintf(file, "**Mendix Version:** %s  \n", report.MendixVersion)
+	fmt.Fprintf(file, "**MPR File:** %s  \n", report.MPRPath)
 	fmt.Fprintf(file, "**Generated:** %s  \n\n", report.GeneratedAt)
 	fmt.Fprintf(file, "---\n\n")
 
@@ -2633,24 +2666,21 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	fmt.Fprintf(file, "## Summary\n\n")
 	if options.IncludeEntities {
 		fmt.Fprintf(file, "- **External Entities:** %d (across %d modules)\n", totalEntities, len(report.Entities))
-	} else {
-		fmt.Fprintf(file, "- **External Entities:** _Excluded from report_\n")
 	}
 	if options.IncludeMicroflows {
 		fmt.Fprintf(file, "- **Microflow/Action Calls:** %d\n", len(report.MicroflowCalls))
-	} else {
-		fmt.Fprintf(file, "- **Microflow/Action Calls:** _Excluded from report_\n")
 	}
 	if options.IncludeWidgets {
 		fmt.Fprintf(file, "- **Signal Manager Widgets:** %d subscription(s)\n", len(report.Widgets))
-	} else {
-		fmt.Fprintf(file, "- **Signal Manager Widgets:** _Excluded from report_\n")
 	}
 	if options.IncludeNavigation {
-		fmt.Fprintf(file, "- **Navigation Items:** %d\n\n", len(report.NavigationItems))
-	} else {
-		fmt.Fprintf(file, "- **Navigation Items:** _Excluded from report_\n\n")
+		fmt.Fprintf(file, "- **Navigation Items:** %d\n", len(report.NavigationItems))
 	}
+	if options.IncludeRoles {
+		fmt.Fprintf(file, "- **System Roles:** %d\n", len(report.SystemRoles))
+		fmt.Fprintf(file, "- **Pages/Snippets:** %d\n", len(report.PageAccess))
+	}
+	fmt.Fprintf(file, "\n")
 	fmt.Fprintf(file, "---\n\n")
 
 	// Section 1: External Entities
@@ -2678,7 +2708,6 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 			for _, moduleName := range moduleNames {
 				entities := report.Entities[moduleName]
 				fmt.Fprintf(file, "### Module: %s\n\n", moduleName)
-				fmt.Fprintf(file, "Found %d external entity/entities:\n\n", len(entities))
 
 				for _, entity := range entities {
 					// Header for each entity
@@ -2700,8 +2729,6 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 						} else {
 							fmt.Fprintf(file, "_No attributes_\n\n")
 						}
-					} else {
-						fmt.Fprintf(file, "_Attributes excluded from report_\n\n")
 					}
 				}
 			}
