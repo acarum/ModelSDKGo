@@ -60,13 +60,28 @@ type WidgetInfo struct {
 }
 
 type NavigationItem struct {
-	ItemName   string
-	Caption    string
-	Target     string // Page or microflow name
-	Module     string
-	ItemType   string // "Page", "Microflow", "Nanoflow"
-	ParentItem string // For hierarchical structure
-	Level      int    // Indentation level
+	ItemName     string
+	Caption      string
+	Target       string // Page or microflow name
+	Module       string
+	MenuDocument string // Name of the menu document (e.g., "System", "System Counters")
+	ItemType     string // "Page", "Microflow", "Nanoflow"
+	ParentItem   string // For hierarchical structure
+	Level        int    // Indentation level
+	AllowedRoles []string // User roles that can access this item
+}
+
+type SystemRole struct {
+	Name   string
+	Module string
+}
+
+type PageAccessInfo struct {
+	PageName     string
+	Module       string
+	DocumentType string // "Page" or "Snippet"
+	AllowedRoles []string
+	IsPublic     bool // No role restrictions
 }
 
 type ManifestReport struct {
@@ -77,6 +92,8 @@ type ManifestReport struct {
 	MicroflowCalls  []MicroflowCallInfo     // all calls
 	Widgets         []WidgetInfo            // signal manager widgets
 	NavigationItems []NavigationItem        // navigation menu items
+	SystemRoles     []SystemRole            // system roles
+	PageAccess      []PageAccessInfo        // page accessibility
 }
 
 type ReportOptions struct {
@@ -85,6 +102,7 @@ type ReportOptions struct {
 	IncludeMicroflows bool
 	IncludeWidgets    bool
 	IncludeNavigation bool
+	IncludeRoles      bool
 }
 
 func main() {
@@ -94,6 +112,7 @@ func main() {
 	includeMicroflows := flag.Bool("include-microflows", true, "Include microflow/action calls in the report")
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
 	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
+	includeRoles := flag.Bool("include-roles", true, "Include system roles and page accessibility in the report")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: export_manifest [options] <mpr_file_path> <output_md_path>\n\n")
 		fmt.Fprintf(os.Stderr, "Arguments:\n")
@@ -127,6 +146,7 @@ func main() {
 		IncludeMicroflows: *includeMicroflows,
 		IncludeWidgets:    *includeWidgets,
 		IncludeNavigation: *includeNavigation,
+		IncludeRoles:      *includeRoles,
 	}
 
 	fmt.Printf("🔍 Opening MPR: %s\n", mprPath)
@@ -200,10 +220,27 @@ func main() {
 		}
 	}
 
-	// ==== SECTION 4: Navigation Items ====
+	// ==== SECTION 4: System Roles & Page Accessibility ====
+	// Collect this first to use for navigation items
+	pageAccessMap := make(map[string][]string) // Map: pageQualifiedName -> []roleNames
+	if options.IncludeRoles || options.IncludeNavigation {
+		fmt.Println("\n🔎 Scanning for system roles and page accessibility...")
+		err = collectSystemRolesAndPageAccess(db, contentsDir, &report)
+		if err != nil {
+			fmt.Printf("Error collecting roles and page access: %v\n", err)
+			os.Exit(1)
+		}
+		
+		// Build map for quick lookup
+		for _, pageAccess := range report.PageAccess {
+			pageAccessMap[pageAccess.PageName] = pageAccess.AllowedRoles
+		}
+	}
+
+	// ==== SECTION 5: Navigation Items ====
 	if options.IncludeNavigation {
 		fmt.Println("\n🔎 Scanning for navigation items...")
-		err = collectNavigationItems(db, contentsDir, &report)
+		err = collectNavigationItems(db, contentsDir, &report, pageAccessMap)
 		if err != nil {
 			fmt.Printf("Error collecting navigation items: %v\n", err)
 			os.Exit(1)
@@ -1452,6 +1489,40 @@ func blobToUUID(blob []byte) string {
 		hexStr[20:32])
 }
 
+// uuidToBlob converts UUID string to Windows GUID blob format (mixed-endian)
+func uuidToBlob(uuid string) []byte {
+	// Remove dashes
+	cleanUUID := strings.ReplaceAll(uuid, "-", "")
+	
+	// Decode hex string
+	bytes, err := hex.DecodeString(cleanUUID)
+	if err != nil || len(bytes) != 16 {
+		return make([]byte, 16)
+	}
+
+	// Convert from UUID format to Windows GUID format (reverse byte order for first 3 parts)
+	blob := make([]byte, 16)
+	
+	// Part 1: 4 bytes (reverse)
+	blob[0] = bytes[3]
+	blob[1] = bytes[2]
+	blob[2] = bytes[1]
+	blob[3] = bytes[0]
+
+	// Part 2: 2 bytes (reverse)
+	blob[4] = bytes[5]
+	blob[5] = bytes[4]
+
+	// Part 3: 2 bytes (reverse)
+	blob[6] = bytes[7]
+	blob[7] = bytes[6]
+
+	// Part 4-5: 8 bytes (copy as-is)
+	copy(blob[8:], bytes[8:16])
+
+	return blob
+}
+
 func loadUnitContents(contentsDir string, unitID string) (map[string]interface{}, error) {
 	// Remove dashes from UUID for directory structure
 	cleanID := strings.ReplaceAll(unitID, "-", "")
@@ -1666,9 +1737,9 @@ func parseAttribute(attr string) (name, attrType string) {
 
 // ==== SECTION 4: Navigation Items Collection ====
 
-func collectNavigationItems(db *sql.DB, contentsDir string, report *ManifestReport) error {
-	// Query all units (will filter by $Type in BSON)
-	query := `SELECT UnitID, ContainerID, ContainmentName, ContentsHash FROM Unit`
+func collectNavigationItems(db *sql.DB, contentsDir string, report *ManifestReport, pageAccessMap map[string][]string) error {
+	// Query NavigationDocument only
+	query := `SELECT UnitID FROM Unit`
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -1677,46 +1748,28 @@ func collectNavigationItems(db *sql.DB, contentsDir string, report *ManifestRepo
 	defer rows.Close()
 
 	for rows.Next() {
-		var unitID, containerID []byte
-		var containmentName string
-		var contentsHash interface{}
-
-		err := rows.Scan(&unitID, &containerID, &containmentName, &contentsHash)
+		var unitID []byte
+		err := rows.Scan(&unitID)
 		if err != nil {
 			continue
 		}
 
-		// Convert UUID blob to string
 		unitIDStr := blobToUUID(unitID)
-		containerIDStr := blobToUUID(containerID)
-
-		// Load content from mprcontents
 		contentMap, err := loadUnitContents(contentsDir, unitIDStr)
 		if err != nil {
 			continue
 		}
 
-		// Extract type from BSON content
 		typeName := ""
 		if t, ok := contentMap["$Type"].(string); ok {
 			typeName = t
 		}
 
-		// Process both NavigationDocument and MenuDocument
 		if typeName == "Navigation$NavigationDocument" {
-			// Extract module name from containerID
-			moduleName := getModuleNameFromContainerID(db, containerIDStr)
-
-			// Extract navigation items from content
-			items := extractNavigationItemsFromBSON(contentMap, moduleName, db, contentsDir)
+			// Extract from NavigationDocument with hierarchy
+			items := extractNavigationHierarchy(contentMap, db, contentsDir, pageAccessMap)
 			report.NavigationItems = append(report.NavigationItems, items...)
-		} else if typeName == "Menus$MenuDocument" {
-			// Extract module name from containerID
-			moduleName := getModuleNameFromContainerID(db, containerIDStr)
-
-			// Extract menu items directly
-			items := extractMenuItemsFromMenuDocument(contentMap, containmentName, moduleName, 0)
-			report.NavigationItems = append(report.NavigationItems, items...)
+			break // Only process first NavigationDocument
 		}
 	}
 
@@ -1724,30 +1777,70 @@ func collectNavigationItems(db *sql.DB, contentsDir string, report *ManifestRepo
 	return nil
 }
 
-// extractNavigationItemsFromBSON extracts menu items from navigation document BSON
-func extractNavigationItemsFromBSON(content map[string]interface{}, moduleName string, db *sql.DB, contentsDir string) []NavigationItem {
+// extractNavigationHierarchy extracts the complete navigation hierarchy from NavigationDocument
+func extractNavigationHierarchy(content map[string]interface{}, db *sql.DB, contentsDir string, pageAccessMap map[string][]string) []NavigationItem {
 	var items []NavigationItem
 
-	// Look for Desktop/Tablet/Phone profiles
-	profiles := []string{"DesktopProfile", "TabletProfile", "PhoneProfile"}
-
-	for _, profileKey := range profiles {
-		if profile, ok := content[profileKey]; ok {
-			if profileMap, ok := profile.(map[string]interface{}); ok {
-				// Extract menu document reference
-				if menuDocRef, ok := profileMap["MenuDocument"]; ok {
-					menuItems := extractMenuItems(menuDocRef, db, contentsDir, moduleName, 0)
-					items = append(items, menuItems...)
+	// Get Profiles array
+	if profiles, ok := content["Profiles"]; ok {
+		if profilesArr, ok := profiles.(primitive.A); ok {
+			for i, profile := range profilesArr {
+				if i == 0 {
+					continue // Skip count
 				}
 
-				// Also check HomepageSettings for additional navigation info
-				if homePage, ok := profileMap["HomepageSettings"]; ok {
-					if homeMap, ok := homePage.(map[string]interface{}); ok {
-						// Extract homepage as a navigation item
-						if pageRef, ok := homeMap["Page"]; ok {
-							pageItem := extractPageReference(pageRef, db, contentsDir, moduleName, "HomePage", 0)
-							if pageItem.Target != "" {
-								items = append(items, pageItem)
+				if profileMap, ok := profile.(map[string]interface{}); ok {
+					// Get Menu
+					if menu, ok := profileMap["Menu"]; ok {
+						if menuMap, ok := menu.(map[string]interface{}); ok {
+							// Get Items
+							if menuItems, ok := menuMap["Items"]; ok {
+								if itemsArr, ok := menuItems.(primitive.A); ok {
+									// Process each top-level item
+									for j, item := range itemsArr {
+										if j == 0 {
+											continue // Skip count
+										}
+
+										if itemMap, ok := item.(map[string]interface{}); ok {
+											// Extract recursively
+											extracted := extractNavigationItemRecursive(itemMap, db, contentsDir, "", 1, pageAccessMap)
+											items = append(items, extracted...)
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Process only first profile (usually Responsive)
+				break
+			}
+		}
+	}
+
+	return items
+}
+
+// extractNavigationItemRecursive extracts a navigation item and its children recursively
+func extractNavigationItemRecursive(itemMap map[string]interface{}, db *sql.DB, contentsDir string, parentCaption string, level int, pageAccessMap map[string][]string) []NavigationItem {
+	var items []NavigationItem
+
+	// Extract Caption
+	caption := ""
+	if captionData, ok := itemMap["Caption"]; ok {
+		if captionMap, ok := captionData.(map[string]interface{}); ok {
+			if captionItems, ok := captionMap["Items"]; ok {
+				if capArr, ok := captionItems.(primitive.A); ok {
+					for i, capItem := range capArr {
+						if i == 0 {
+							continue
+						}
+						if capMap, ok := capItem.(map[string]interface{}); ok {
+							if text, ok := capMap["Text"].(string); ok {
+								caption = text
+								break
 							}
 						}
 					}
@@ -1756,7 +1849,124 @@ func extractNavigationItemsFromBSON(content map[string]interface{}, moduleName s
 		}
 	}
 
+	// Check if item has sub-items
+	if subItems, ok := itemMap["Items"]; ok {
+		if subItemsArr, ok := subItems.(primitive.A); ok {
+			hasChildren := len(subItemsArr) > 1 // More than just count
+
+			if hasChildren {
+				// This is a menu group - add it without action
+				groupItem := NavigationItem{
+					ItemName:     caption,
+					Caption:      caption,
+					Target:       "",
+					Module:       "",
+					MenuDocument: "",
+					ItemType:     "MenuGroup",
+					ParentItem:   parentCaption,
+					Level:        level,
+					AllowedRoles: []string{}, // Menu groups don't have specific roles
+				}
+				items = append(items, groupItem)
+
+				// Process children
+				for i, subItem := range subItemsArr {
+					if i == 0 {
+						continue
+					}
+					if subItemMap, ok := subItem.(map[string]interface{}); ok {
+						childItems := extractNavigationItemRecursive(subItemMap, db, contentsDir, caption, level+1, pageAccessMap)
+						items = append(items, childItems...)
+					}
+				}
+
+				return items
+			}
+		}
+	}
+
+	// This is a leaf item - extract action
+	target := ""
+	targetQualifiedName := "" // For role lookup
+	itemType := "Unknown"
+	moduleName := ""
+
+	if action, ok := itemMap["Action"]; ok {
+		if actionMap, ok := action.(map[string]interface{}); ok {
+			// Check $Type to determine action type
+			if actionType, ok := actionMap["$Type"].(string); ok {
+				itemType = actionType
+
+				// Extract target based on action type
+				if strings.Contains(actionType, "ShowPage") || strings.Contains(actionType, "FormAction") {
+					// Extract page reference from FormSettings
+					if formSettings, ok := actionMap["FormSettings"]; ok {
+						if formMap, ok := formSettings.(map[string]interface{}); ok {
+							if formID, ok := formMap["Form"].(string); ok {
+								// formID is the qualified name (e.g., "Module.PageName")
+								targetQualifiedName = formID
+								target = formID
+								
+								// Try to load as UUID first, but formID might be qualified name
+								formContent, err := loadUnitContents(contentsDir, formID)
+								if err == nil {
+									if formType, ok := formContent["$Type"].(string); ok {
+										if formType == "Menus$MenuDocument" {
+											// This item opens a menu - expand its items
+											menuItems := extractMenuItemsFromMenuDocument(formContent, "", "", level+1)
+											for i := range menuItems {
+												menuItems[i].ParentItem = caption
+											}
+											items = append(items, menuItems...)
+											return items
+										}
+									}
+								}
+								
+								// Extract module name from qualified name
+								parts := strings.Split(formID, ".")
+								if len(parts) == 2 {
+									moduleName = parts[0]
+								}
+							}
+						}
+					}
+				} else if strings.Contains(actionType, "Nanoflow") || strings.Contains(actionType, "Microflow") {
+					itemType = "Nanoflow"
+				}
+			}
+		}
+	}
+
+	// Add leaf item
+	// Get allowed roles from page access map
+	allowedRoles := []string{}
+	if targetQualifiedName != "" {
+		if roles, ok := pageAccessMap[targetQualifiedName]; ok {
+			allowedRoles = roles
+		}
+	}
+	
+	leafItem := NavigationItem{
+		ItemName:     caption,
+		Caption:      caption,
+		Target:       target,
+		Module:       moduleName,
+		MenuDocument: "",
+		ItemType:     itemType,
+		ParentItem:   parentCaption,
+		Level:        level,
+		AllowedRoles: allowedRoles,
+	}
+	items = append(items, leafItem)
+
 	return items
+}
+
+// extractNavigationItemsFromBSON - DEPRECATED, kept for compatibility
+func extractNavigationItemsFromBSON(content map[string]interface{}, moduleName string, db *sql.DB, contentsDir string) []NavigationItem {
+	// Old implementation - no longer used
+	return []NavigationItem{}
 }
 
 // extractMenuItemsFromMenuDocument extracts menu items directly from a MenuDocument
@@ -1811,8 +2021,9 @@ func extractMenuItemsFromMenuDocument(content map[string]interface{}, documentNa
 // parseMenuItemSimple parses a menu item without database lookups (simpler version)
 func parseMenuItemSimple(itemMap map[string]interface{}, moduleName string, documentName string, level int) NavigationItem {
 	item := NavigationItem{
-		Module: moduleName,
-		Level:  level,
+		Module:       moduleName,
+		MenuDocument: documentName,
+		Level:        level,
 	}
 
 	// Extract caption from Text structure
@@ -2148,38 +2359,254 @@ func loadDocumentByReference(db *sql.DB, contentsDir string, refID string) map[s
 }
 
 // getModuleNameFromContainerID gets module name from a container ID
-func getModuleNameFromContainerID(db *sql.DB, containerID string) string {
-	// First, try to get the unit with this ID and check if it's a module
-	query := `SELECT ContainmentName, ContentsHash FROM Unit WHERE UnitID = ?`
-	var name string
-	var contentsHash interface{}
-
+func getModuleNameFromContainerID(db *sql.DB, contentsDir string, containerID string) string {
 	// Convert containerID string to binary format for query
 	containerIDBytes := stringToWindowsGUID(containerID)
 	if containerIDBytes == nil {
 		return "Unknown"
 	}
 
-	err := db.QueryRow(query, containerIDBytes).Scan(&name, &contentsHash)
-	if err == nil && name != "" {
-		// Check if this unit is a module by checking ContainmentName pattern
-		// Modules typically have simple names without dots or slashes
-		if !strings.Contains(name, ".") && !strings.Contains(name, "/") {
-			return name
-		}
-	}
+	// Traverse up the hierarchy to find the module (Projects$ModuleImpl)
+	currentID := containerIDBytes
+	maxDepth := 10 // Prevent infinite loops
 
-	// Try parent traversal - get the container's container
-	query = `SELECT u2.ContainmentName 
-			 FROM Unit u1 
-			 JOIN Unit u2 ON u1.ContainerID = u2.UnitID 
-			 WHERE u1.UnitID = ?`
-	err = db.QueryRow(query, containerIDBytes).Scan(&name)
-	if err == nil && name != "" {
-		return name
+	for depth := 0; depth < maxDepth; depth++ {
+		query := `SELECT ContainmentName, ContainerID, UnitID FROM Unit WHERE UnitID = ?`
+		var name string
+		var parentID, unitID []byte
+
+		err := db.QueryRow(query, currentID).Scan(&name, &parentID, &unitID)
+		if err != nil {
+			return "Unknown"
+		}
+
+		// Load the unit content to check its type
+		unitIDStr := blobToUUID(unitID)
+		content, err := loadUnitContents(contentsDir, unitIDStr)
+		if err == nil {
+			// Check if this is a ModuleImpl
+			if typeName, ok := content["$Type"].(string); ok {
+				if typeName == "Projects$ModuleImpl" || typeName == "Projects$Module" {
+					// Extract module name from BSON content (not ContainmentName)
+					if moduleName, ok := content["Name"].(string); ok && moduleName != "" {
+						return moduleName
+					}
+					// Fallback to ContainmentName if Name field is not available
+					if name != "" {
+						return name
+					}
+				}
+			}
+		}
+
+		// Move to parent
+		if len(parentID) == 0 {
+			break
+		}
+		currentID = parentID
 	}
 
 	return "Unknown"
+}
+
+// ==== System Roles & Page Accessibility Collection ====
+
+func collectSystemRolesAndPageAccess(db *sql.DB, contentsDir string, report *ManifestReport) error {
+	// Step 1: Collect all System Roles from project security documents
+	systemRoles := make(map[string]SystemRole) // key: RoleID, value: SystemRole
+	roleIDToName := make(map[string]string)    // for quick lookups
+
+	// Step 2: Collect module roles and map them to system roles
+	moduleRoleToSystemRoles := make(map[string][]string) // key: ModuleRoleID, value: []SystemRoleNames
+
+	// Step 3: Collect page access information
+	var pageAccessList []PageAccessInfo
+
+	// Query all units
+	query := `SELECT UnitID, ContainerID, ContainmentName, ContentsHash FROM Unit`
+	rows, err := db.Query(query)
+	if err != nil {
+		return fmt.Errorf("query failed: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var unitID, containerID []byte
+		var containmentName string
+		var contentsHash interface{}
+
+		if err := rows.Scan(&unitID, &containerID, &containmentName, &contentsHash); err != nil {
+			continue
+		}
+
+		unitIDStr := blobToUUID(unitID)
+		containerIDStr := blobToUUID(containerID)
+		content, err := loadUnitContents(contentsDir, unitIDStr)
+		if err != nil {
+			continue
+		}
+
+		// Extract document type
+		typeName := ""
+		if t, ok := content["$Type"].(string); ok {
+			typeName = t
+		}
+
+		// Process ProjectSecurity documents to extract System Roles
+		if typeName == "Security$ProjectSecurity" {
+			if userRoles, ok := content["UserRoles"]; ok {
+				extractSystemRoles(userRoles, systemRoles, roleIDToName, moduleRoleToSystemRoles)
+			}
+		}
+
+		// Process Page and Snippet documents to extract AllowedModuleRoles
+		if typeName == "Forms$Page" || typeName == "Forms$Snippet" {
+			// Get module name from containerID
+			moduleName := getModuleNameFromContainerID(db, contentsDir, containerIDStr)
+			if moduleName == "" {
+				moduleName = "Unknown"
+			}
+			
+			// Get page name from BSON content "Name" field
+			pageName := containmentName // Fallback
+			if name, ok := content["Name"].(string); ok && name != "" {
+				pageName = name
+			}
+			
+			// Get qualified name from BSON content or construct it
+			qualifiedName := ""
+			if qName, ok := content["QualifiedName"].(string); ok && qName != "" {
+				qualifiedName = qName
+			} else {
+				// Construct from module + pageName
+				qualifiedName = moduleName + "." + pageName
+			}
+			
+			pageAccess := extractPageAccess(content, qualifiedName, moduleName, typeName, moduleRoleToSystemRoles)
+			pageAccessList = append(pageAccessList, pageAccess)
+		}
+	}
+
+	// Convert systemRoles map to slice
+	for _, role := range systemRoles {
+		report.SystemRoles = append(report.SystemRoles, role)
+	}
+
+	report.PageAccess = pageAccessList
+
+	fmt.Printf("✅ Found %d system role(s) and %d page(s)/snippet(s)\n", len(report.SystemRoles), len(report.PageAccess))
+	return nil
+}
+
+// extractSystemRoles extracts system roles from ProjectSecurity UserRoles
+func extractSystemRoles(userRoles interface{}, systemRoles map[string]SystemRole, roleIDToName map[string]string, moduleRoleToSystemRoles map[string][]string) {
+	// UserRoles is directly a primitive.A array
+	var itemsList []interface{}
+	if primitiveArr, ok := userRoles.(primitive.A); ok {
+		itemsList = primitiveArr
+	} else if arrInterface, ok := userRoles.([]interface{}); ok {
+		itemsList = arrInterface
+	}
+
+	for i, item := range itemsList {
+		if i == 0 {
+			continue // Skip count element
+		}
+		if roleMap, ok := item.(map[string]interface{}); ok {
+			roleID := ""
+			roleName := ""
+
+			// Get role ID (it's a primitive.Binary, need to convert to string)
+			if binID, ok := roleMap["$ID"].(primitive.Binary); ok {
+				roleID = blobToUUID(binID.Data)
+			} else if strID, ok := roleMap["$ID"].(string); ok {
+				roleID = strID
+			}
+
+			// Get role name
+			if name, ok := roleMap["Name"].(string); ok {
+				roleName = name
+			}
+
+			if roleID != "" && roleName != "" {
+				systemRoles[roleID] = SystemRole{
+					Name:   roleName,
+					Module: "System", // System roles are at project level
+				}
+				roleIDToName[roleID] = roleName
+				
+				// Extract ModuleRoles from SystemRole to build reverse mapping
+				if moduleRolesData, ok := roleMap["ModuleRoles"]; ok {
+					var moduleRolesList []interface{}
+					if primitiveArr, ok := moduleRolesData.(primitive.A); ok {
+						moduleRolesList = primitiveArr
+					} else if arrInterface, ok := moduleRolesData.([]interface{}); ok {
+						moduleRolesList = arrInterface
+					}
+					
+					for j, mrItem := range moduleRolesList {
+						if j == 0 {
+							continue // Skip count
+						}
+						// ModuleRoles contains qualified names as strings
+						if moduleRoleQName, ok := mrItem.(string); ok {
+							// Add this SystemRole to the list for this ModuleRole
+							if _, exists := moduleRoleToSystemRoles[moduleRoleQName]; !exists {
+								moduleRoleToSystemRoles[moduleRoleQName] = []string{}
+							}
+							moduleRoleToSystemRoles[moduleRoleQName] = append(moduleRoleToSystemRoles[moduleRoleQName], roleName)
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// extractModuleRoleMapping maps module roles to system roles
+// extractPageAccess extracts page access information
+func extractPageAccess(content map[string]interface{}, pageName string, moduleName string, docType string, moduleRoleToSystemRoles map[string][]string) PageAccessInfo {
+	// Clean up document type to show only "Page" or "Snippet"
+	cleanType := strings.TrimPrefix(docType, "Forms$")
+
+	pageAccess := PageAccessInfo{
+		PageName:     pageName,
+		Module:       moduleName,
+		DocumentType: cleanType,
+		AllowedRoles: []string{},
+		IsPublic:     true, // Assume public unless roles are found
+	}
+
+	// Extract AllowedModuleRoles
+	if allowedRoles, ok := content["AllowedModuleRoles"]; ok {
+		// AllowedModuleRoles is directly a primitive.A array
+		var itemsList []interface{}
+		if primitiveArr, ok := allowedRoles.(primitive.A); ok {
+			itemsList = primitiveArr
+		} else if arrInterface, ok := allowedRoles.([]interface{}); ok {
+			itemsList = arrInterface
+		}
+
+		for i, item := range itemsList {
+			if i == 0 {
+				continue // Skip count element
+			}
+			refID := extractReferenceID(item)
+			if refID != "" {
+				// Map module role to system roles
+				if systemRoles, exists := moduleRoleToSystemRoles[refID]; exists {
+					pageAccess.AllowedRoles = append(pageAccess.AllowedRoles, systemRoles...)
+				}
+			}
+		}
+	}
+
+	// If roles were found, it's not public
+	if len(pageAccess.AllowedRoles) > 0 {
+		pageAccess.IsPublic = false
+	}
+
+	return pageAccess
 }
 
 // ==== Markdown Report Generation ====
@@ -2375,47 +2802,119 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	// Section 4: Navigation Items
 	if options.IncludeNavigation {
 		fmt.Fprintf(file, "## 4. Navigation Items\n\n")
-		fmt.Fprintf(file, "Navigation menu items found in the project.\n\n")
+		fmt.Fprintf(file, "Navigation menu hierarchy.\n\n")
 
 		if len(report.NavigationItems) == 0 {
 			fmt.Fprintf(file, "_No navigation items found._\n\n")
 		} else {
 			fmt.Fprintf(file, "Found %d navigation item(s):\n\n", len(report.NavigationItems))
-			fmt.Fprintf(file, "| Navigation Item | Caption | Target | Module | Type |\n")
-			fmt.Fprintf(file, "|-----------------|---------|--------|--------|------|\n")
+			fmt.Fprintf(file, "| Parent Node | Node | User Roles |\n")
+			fmt.Fprintf(file, "|-------------|------|------------|\n")
 
 			for _, item := range report.NavigationItems {
-				itemName := item.ItemName
-				if itemName == "" {
-					itemName = "-"
+				parent := item.ParentItem
+				if parent == "" {
+					parent = "-"
 				}
-				// Add indentation for hierarchical display
-				indent := strings.Repeat("  ", item.Level)
-				itemName = indent + itemName
-
+				
 				caption := item.Caption
+				if caption == "" {
+					caption = item.ItemName
+				}
 				if caption == "" {
 					caption = "-"
 				}
-				target := item.Target
-				if target == "" {
-					target = "-"
+				
+				roles := "-"
+				if len(item.AllowedRoles) > 0 {
+					roles = strings.Join(item.AllowedRoles, ", ")
 				}
-				module := item.Module
-				if module == "" {
-					module = "-"
+
+				fmt.Fprintf(file, "| %s | %s | %s |\n", parent, caption, roles)
+			}
+			fmt.Fprintf(file, "\n")
+		}
+
+		fmt.Fprintf(file, "---\n\n")
+	}
+
+	// Section 5: System Roles & Page Accessibility
+	if options.IncludeRoles {
+		fmt.Fprintf(file, "## 5. System Roles & Page Accessibility\n\n")
+
+		// Part 1: System Roles List
+		fmt.Fprintf(file, "### 5.1 System Roles\n\n")
+		if len(report.SystemRoles) == 0 {
+			fmt.Fprintf(file, "_No system roles found._\n\n")
+		} else {
+			fmt.Fprintf(file, "Found %d system role(s):\n\n", len(report.SystemRoles))
+			fmt.Fprintf(file, "| Role Name | Module |\n")
+			fmt.Fprintf(file, "|-----------|--------|\n")
+
+			for _, role := range report.SystemRoles {
+				fmt.Fprintf(file, "| %s | %s |\n", role.Name, role.Module)
+			}
+			fmt.Fprintf(file, "\n")
+		}
+
+		// Part 2: Page Accessibility - Group by Role
+		fmt.Fprintf(file, "### 5.2 Page Accessibility by Role\n\n")
+
+		// Create a map: SystemRole -> []Pages
+		roleToPages := make(map[string][]string)
+		for _, pageAccess := range report.PageAccess {
+			if pageAccess.IsPublic {
+				// Public pages accessible by all roles
+				roleToPages["Public (No Restrictions)"] = append(roleToPages["Public (No Restrictions)"], fmt.Sprintf("%s (%s)", pageAccess.PageName, pageAccess.Module))
+			} else {
+				for _, roleName := range pageAccess.AllowedRoles {
+					roleToPages[roleName] = append(roleToPages[roleName], fmt.Sprintf("%s (%s)", pageAccess.PageName, pageAccess.Module))
 				}
-				itemType := item.ItemType
-				if itemType == "" {
-					itemType = "-"
+			}
+		}
+
+		if len(roleToPages) == 0 {
+			fmt.Fprintf(file, "_No page access information found._\n\n")
+		} else {
+			fmt.Fprintf(file, "| System Role | Accessible Pages Count | Pages |\n")
+			fmt.Fprintf(file, "|-------------|------------------------|-------|\n")
+
+			for roleName, pages := range roleToPages {
+				pagesStr := strings.Join(pages, ", ")
+				if len(pagesStr) > 100 {
+					pagesStr = pagesStr[:100] + "..."
+				}
+				fmt.Fprintf(file, "| %s | %d | %s |\n", roleName, len(pages), pagesStr)
+			}
+			fmt.Fprintf(file, "\n")
+		}
+
+		// Part 3: Page Accessibility - View by Page
+		fmt.Fprintf(file, "### 5.3 Page Accessibility by Page\n\n")
+
+		if len(report.PageAccess) == 0 {
+			fmt.Fprintf(file, "_No pages found._\n\n")
+		} else {
+			fmt.Fprintf(file, "Found %d page(s)/snippet(s):\n\n", len(report.PageAccess))
+			fmt.Fprintf(file, "| Page Name | Module | Type | Allowed Roles | Access |\n")
+			fmt.Fprintf(file, "|-----------|--------|------|---------------|--------|\n")
+
+			for _, pageAccess := range report.PageAccess {
+				rolesStr := strings.Join(pageAccess.AllowedRoles, ", ")
+				if rolesStr == "" {
+					rolesStr = "-"
+				}
+				accessType := "Restricted"
+				if pageAccess.IsPublic {
+					accessType = "**Public**"
 				}
 
 				fmt.Fprintf(file, "| %s | %s | %s | %s | %s |\n",
-					itemName,
-					caption,
-					target,
-					module,
-					itemType,
+					pageAccess.PageName,
+					pageAccess.Module,
+					pageAccess.DocumentType,
+					rolesStr,
+					accessType,
 				)
 			}
 			fmt.Fprintf(file, "\n")

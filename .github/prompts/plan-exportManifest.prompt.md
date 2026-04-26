@@ -193,32 +193,50 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
    - **Implementato in**: `examples/export_manifest/main.go` (linee ~1659-2050)
    - *depends on 1*
 
-6. **Implementare Sezione 5: System Roles & Page Accessibility Report**
-   - Estrarre lista di tutti i System Roles definiti nel progetto
-   - Per ogni page/snippet del progetto:
-     * Identificare AllowedModuleRoles dal BSON
-     * Mappare module roles a system roles
-   - Creare due viste nel report:
-     * **Vista per Role**: Per ogni System Role, lista delle pages accessibili
+6. **✅ COMPLETATO - Implementare Sezione 5: System Roles & Page Accessibility Report**
+   - ✅ Estrarre lista di tutti i System Roles definiti nel progetto da `Security$ProjectSecurity.UserRoles`
+   - ✅ Per ogni page/snippet del progetto (Forms$Page, Forms$Snippet):
+     * Identificare AllowedModuleRoles dal BSON (primitive.A array)
+     * Mappare module roles (Security$ModuleSecurity) a system roles tramite SecurityRoles references
+   - ✅ Creare due viste nel report:
+     * **Vista per Role**: Per ogni System Role, lista delle pages accessibili con count
      * **Vista per Page**: Per ogni Page, lista dei System Roles che possono accedervi
-   - Formattare in MD: 
-     * Sezione 5.1: tabella (System Role | Module | Accessible Pages Count)
-     * Sezione 5.2: tabella dettagliata (Page | Module | Allowed System Roles)
-   - Evidenziare pages con accesso non ristretto (nessun role requirement)
+   - ✅ Formattare in MD: 
+     * Sezione 5.1: tabella (Role Name | Module)
+     * Sezione 5.2: tabella aggregata (System Role | Accessible Pages Count | Pages preview)
+     * Sezione 5.3: tabella dettagliata (Page Name | Module | Type | Allowed Roles | Access)
+   - ✅ Evidenziare pages con accesso non ristretto ("**Public**" badge)
+   - ✅ **CLI flag aggiunto**: `-include-roles` (default: true)
+   - ✅ **Gestione primitive.Binary**: Role IDs convertiti da binary a UUID string format
+   - ✅ **Type cleaning**: DocumentType mostra "Page" o "Snippet" (non "Forms$Page")
+   - ✅ **Implementato in**: 
+     * Data structures: SystemRole, PageAccessInfo (linee ~69-84)
+     * Collection: collectSystemRolesAndPageAccess() (linee ~2216-2285)
+     * Helper functions: extractSystemRoles(), extractModuleRoleMapping(), extractPageAccess() (linee ~2287-2424)
+     * Report generation: Section 5 with 3 subsections (linee ~2707-2800)
+   - ✅ **Testato**: 2 system roles trovati (Administrator, User), 79 page/snippet analizzati
    - *depends on 1*
 
 7. **✅ COMPLETATO - Finalizzare e Testare Report**
    - ✅ Aggregare tutte le sezioni in unico file MD
-   - ✅ Aggiungere sommario iniziale con conteggi (N entities, N calls, N widgets)
+   - ✅ Aggiungere sommario iniziale con conteggi (N entities, N calls, N widgets, N navigation items, N roles)
    - ✅ Aggiungere timestamp generazione in header
-   - ✅ **CLI flags implementati** per controllo sezioni report (include-entities, include-attributes, include-microflows, include-widgets)
-   - ✅ Compilare: `go build -o export_manifest.exe examples/export_manifest/main.go`
+   - ✅ **CLI flags implementati** per controllo sezioni report:
+     * `-include-entities` (default: false) - External entities section
+     * `-include-attributes` (default: true) - Entity attributes details
+     * `-include-microflows` (default: true) - Microflow/action calls section
+     * `-include-widgets` (default: true) - Signal Manager widgets section
+     * `-include-navigation` (default: true) - Navigation items section
+     * `-include-roles` (default: true) - System roles & page accessibility section
+   - ✅ Compilare: `go build` in `examples/export_manifest/`
    - ✅ Testare su MPR target: `.\export_manifest.exe "OC EX System.mpr" manifest_report.md`
    - ✅ Verificare output MD per completezza e formattazione
-   - ✅ **Risultato finale**:
-     * 156 external entities in 3 moduli
+   - ✅ **Risultato finale** (test su OC EX System.mpr):
+     * 156 external entities in 3 moduli (con flag)
      * 78 microflow/action calls con moduli e variabili risolti
      * 3 signal subscriptions (2 in pages, 1 in snippet)
+     * 16 navigation items con Caption, Target, Module, Type
+     * 2 system roles (Administrator, User) + 79 pages/snippets analizzate
      * Report MD formattato correttamente con tutte le sezioni
    - *depends on 2, 3, 4, 5, 6*
 
@@ -234,10 +252,14 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
   - Activity checks: `searchActivities()`, `checkMicroflowCall()`, `checkJavaAction()`, `checkExternalAction()` (tutti con contentMap per variable resolution)
   - **Signal Manager Widgets (Step 4)**: `collectSignalManagerWidgets()`, `extractSignalSubscriptions()`, `collectPrimitiveValuesWithKeys()`
   - **Module extraction per snippets**: `extractModuleAndNameFromBSON()`, `findModuleByTraversal()`, `guidToString()`, `stringToWindowsGUID()`
-  - Utility: `extractPublishedFrom()`, `extractAttributes()`, `parseAttribute()`, `isExternalEntity()`
+  - **Navigation Items (Step 5)**: `collectNavigationItems()`, `extractMenuItemsFromMenuDocument()`, `parseMenuItemSimple()`, `resolvePageReference()`, `resolveMicroflowReference()`, `resolveNanoflowReference()`
+  - **System Roles & Page Access (Step 6)**: `collectSystemRolesAndPageAccess()`, `extractSystemRoles()`, `extractModuleRoleMapping()`, `extractPageAccess()`
+  - **BSON primitive.A handling**: Gestione corretta di array count-prefixed per UserRoles, ModuleRoles, SecurityRoles, AllowedModuleRoles
+  - **primitive.Binary to UUID**: Conversione ID roles da binary format a UUID string con `blobToUUID()`
+  - Utility: `extractPublishedFrom()`, `extractAttributes()`, `parseAttribute()`, `isExternalEntity()`, `extractReferenceID()`
   - Marketplace filtering: `isMarketplaceModule()`, `extractModuleName()`
   - BSON/UUID: `loadUnitContents()`, `blobToUUID()`, `extractNameFromContents()`
-  - Report generation: `generateMarkdownReport()` con sezioni condizionali basate su ReportOptions
+  - Report generation: `generateMarkdownReport()` con sezioni condizionali basate su ReportOptions (6 flags totali)
 - `examples/find_entities/main.go` — ✅ Riutilizzata logica SQL query per DomainModel, pattern matching `Rest$ODataEntityTypeSource`, funzione `isExternalEntity()`
 - `examples/finds_microflows/main.go` — ✅ Riutilizzate funzioni `findMicroflowCalls()`, `checkMicroflowCall()`, `checkJavaAction()`, `checkExternalAction()` per estrazione AppName/CommandName con adattamento per export_manifest e aggiunta variable resolution
 - `examples/find_custom_widgets/main.go` — ✅ Riutilizzata logica `loadUnitBSON()`, `searchForMatchingWidgets()`, `collectPrimitiveValues()` per widget search e signal extraction con adattamento per subscription-level reporting
