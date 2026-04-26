@@ -49,10 +49,12 @@ type TabInfo struct {
 
 // PlaceholderContent holds widgets and tabs found in a layout placeholder
 type PlaceholderContent struct {
-	Name      string
-	Parameter string // full parameter path e.g. "Atlas_Default.Main"
-	Tabs      []TabInfo
-	Buttons   []DataGridActionButton // direct ActionButtons outside of tabs (e.g. Right command bar)
+	Name                  string
+	Parameter             string // full parameter path e.g. "Atlas_Default.Main"
+	RootContainerName     string // name of the first DivContainer in the placeholder
+	CommandBarContainerName string // name of DivContainer with CSS class containing "vertical-command-bar"
+	Tabs                  []TabInfo
+	Buttons               []DataGridActionButton // direct ActionButtons outside of tabs (e.g. Right command bar)
 }
 
 // PageReport represents the full report for one page
@@ -202,10 +204,12 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprP
 		}
 
 		content := &PlaceholderContent{
-			Name:      placeholderName,
-			Parameter: param,
-			Tabs:      tabs,
-			Buttons:   directButtons,
+			Name:                    placeholderName,
+			Parameter:               param,
+			RootContainerName:       findFirstContainerName(widgets),
+			CommandBarContainerName: findContainerByClass(widgets, "vertical-command-bar"),
+			Tabs:                    tabs,
+			Buttons:                 directButtons,
 		}
 
 		switch strings.ToLower(placeholderName) {
@@ -307,6 +311,67 @@ func buildTypePointerMap(data interface{}, m map[string]string) {
 // getTypePointerData extracts a consistent key from a WidgetProperty's TypePointer field
 func getTypePointerData(prop map[string]interface{}) string {
 	return extractBinaryKey(prop["TypePointer"])
+}
+
+// findContainerByClass returns the Name of the first Forms$DivContainer whose
+// Appearance.Class contains the given CSS class substring.
+func findContainerByClass(data interface{}, cssClass string) string {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if v["$Type"] == "Forms$DivContainer" {
+			if app, ok := v["Appearance"].(map[string]interface{}); ok {
+				if cls, ok := app["Class"].(string); ok && strings.Contains(cls, cssClass) {
+					return getStr(v, "Name")
+				}
+			}
+		}
+		for _, val := range v {
+			if r := findContainerByClass(val, cssClass); r != "" {
+				return r
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if r := findContainerByClass(item, cssClass); r != "" {
+				return r
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if r := findContainerByClass(item, cssClass); r != "" {
+				return r
+			}
+		}
+	}
+	return ""
+}
+
+// findFirstContainerName returns the Name of the first Forms$DivContainer found in data.
+func findFirstContainerName(data interface{}) string {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if v["$Type"] == "Forms$DivContainer" {
+			return getStr(v, "Name")
+		}
+		for _, val := range v {
+			if r := findFirstContainerName(val); r != "" {
+				return r
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if r := findFirstContainerName(item); r != "" {
+				return r
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if r := findFirstContainerName(item); r != "" {
+				return r
+			}
+		}
+	}
+	return ""
 }
 
 // findAllActionButtons recursively collects all Forms$ActionButton nodes,
@@ -935,6 +1000,19 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 			return
 		}
 		// No tabs, but has direct command-bar buttons (e.g. Right vertical-command-bar)
+		fmt.Fprintf(file, "**Vertical CommandBar**\n\n")
+		fmt.Fprintf(file, "| | Name |\n")
+		fmt.Fprintf(file, "|---|---|\n")
+		rootName := ph.RootContainerName
+		if rootName == "" {
+			rootName = "-"
+		}
+		cbName := ph.CommandBarContainerName
+		if cbName == "" {
+			cbName = "-"
+		}
+		fmt.Fprintf(file, "| Container | `%s` |\n", rootName)
+		fmt.Fprintf(file, "| VerticalCommandBarClass | `%s` |\n\n", cbName)
 		fmt.Fprintf(file, "**Vertical CommandBar Buttons:**\n\n")
 		fmt.Fprintf(file, "| # | Button Name | Caption | Container | Nanoflow | Show Page |\n")
 		fmt.Fprintf(file, "|---|---|---|---|---|---|\n")

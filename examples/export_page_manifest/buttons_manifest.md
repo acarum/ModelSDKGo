@@ -75,14 +75,14 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Main`
 
   | Widget Type | Name | Caption |
   |---|---|---|
+  | ActionButton | actionButton1 | Save |
+  | ActionButton | actionButton2 | Cancel |
   | TextBox | textBox1 | Id |
   | TextBox | textBox2 | Name |
   | TextBox | textBox3 | Color |
   | TextBox | textBox4 | Description |
   | RadioButtonGroup | radioButtons1 | Is initial |
   | DropDown | dropDown1 | Outcome |
-  | ActionButton | actionButton1 | Save |
-  | ActionButton | actionButton2 | Cancel |
 
 
 #### Tab 3 — `tabPage3` _Transitions_
@@ -121,10 +121,10 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Main`
 
   | Widget Type | Name | Caption |
   |---|---|---|
-  | ActionButton | actionButton1 | Save |
-  | ActionButton | actionButton2 | Cancel |
   | TextBox | textBox1 | Source Status |
   | CheckBox | checkBox1 | Raise Event |
+  | ActionButton | actionButton1 | Save |
+  | ActionButton | actionButton2 | Cancel |
 
 
 #### Tab 4 — `tabPage4` _State Machine Graph_
@@ -138,6 +138,13 @@ _No widgets with captions found._
 ### Right
 
 _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Right`
+
+**Vertical CommandBar**
+
+| | Name |
+|---|---|
+| Container | `container30` |
+| VerticalCommandBarClass | `container11` |
 
 **Vertical CommandBar Buttons:**
 
