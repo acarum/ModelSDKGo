@@ -464,7 +464,7 @@ func isPersistableEntity(entityMap map[string]interface{}) bool {
 			return persistable
 		}
 	}
-	
+
 	// If Persistable field is not found, assume it's persistable (default)
 	// This ensures we don't accidentally filter out entities from older Mendix versions
 	return true
@@ -477,7 +477,7 @@ func extractPublishedFrom(entityMap map[string]interface{}, entityName string) s
 		if entityTypeName, ok := source["EntityTypeName"].(string); ok && entityTypeName != "" {
 			return entityTypeName
 		}
-		
+
 		// Try SourceDocument (format: "ModuleName.ServiceName")
 		if sourceDoc, ok := source["SourceDocument"].(string); ok && sourceDoc != "" {
 			// Extract service name from "ModuleName.ServiceName" format
@@ -487,7 +487,7 @@ func extractPublishedFrom(entityMap map[string]interface{}, entityName string) s
 			}
 			return sourceDoc // Return as-is if format is different
 		}
-		
+
 		// Try RemoteName as fallback
 		if remoteName, ok := source["RemoteName"].(string); ok && remoteName != "" {
 			return remoteName
