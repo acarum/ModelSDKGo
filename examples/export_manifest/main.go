@@ -145,14 +145,14 @@ func main() {
 			fmt.Printf("Error getting current directory: %v\n", err)
 			os.Exit(1)
 		}
-		
+
 		// Search for .mpr files in current directory
 		mprFiles, err := filepath.Glob(filepath.Join(currentDir, "*.mpr"))
 		if err != nil {
 			fmt.Printf("Error searching for .mpr files: %v\n", err)
 			os.Exit(1)
 		}
-		
+
 		if len(mprFiles) == 0 {
 			fmt.Printf("❌ No .mpr files found in current directory\n")
 			os.Exit(1)
@@ -179,7 +179,7 @@ func main() {
 	if *outputDir != "" {
 		// Join with outputDir
 		finalOutputPath = filepath.Join(*outputDir, outputFilename)
-		
+
 		// Create output directory if it doesn't exist
 		err := os.MkdirAll(*outputDir, 0755)
 		if err != nil {
