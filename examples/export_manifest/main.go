@@ -2829,12 +2829,10 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	// Section 4: Navigation Items
 	if options.IncludeNavigation {
 		fmt.Fprintf(file, "## 4. Navigation Items\n\n")
-		fmt.Fprintf(file, "Navigation menu hierarchy.\n\n")
 
 		if len(report.NavigationItems) == 0 {
 			fmt.Fprintf(file, "_No navigation items found._\n\n")
 		} else {
-			fmt.Fprintf(file, "Found %d navigation item(s):\n\n", len(report.NavigationItems))
 			fmt.Fprintf(file, "| Parent Node | Node | User Roles |\n")
 			fmt.Fprintf(file, "|-------------|------|------------|\n")
 
