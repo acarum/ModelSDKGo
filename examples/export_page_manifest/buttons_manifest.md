@@ -75,14 +75,14 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Main`
 
   | Widget Type | Name | Caption |
   |---|---|---|
-  | ActionButton | actionButton1 | Save |
-  | ActionButton | actionButton2 | Cancel |
   | TextBox | textBox1 | Id |
   | TextBox | textBox2 | Name |
   | TextBox | textBox3 | Color |
   | TextBox | textBox4 | Description |
   | RadioButtonGroup | radioButtons1 | Is initial |
   | DropDown | dropDown1 | Outcome |
+  | ActionButton | actionButton1 | Save |
+  | ActionButton | actionButton2 | Cancel |
 
 
 #### Tab 3 — `tabPage3` _Transitions_
@@ -141,13 +141,13 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Right`
 
 **Vertical CommandBar Buttons:**
 
-| # | Button Name | Caption | Nanoflow | Show Page |
-|---|---|---|---|---|
-| 1 | actionButton12 | Edit State Machine | ACT_UpdateStateMachine_ShowPanel | PANEL_UpdateStateMachine |
-| 2 | actionButton13 | Hide State Machine | ACT_HideStateMachine | - |
-| 3 | actionButton14 | Unhide State Machine | ACT_UnhideStateMachine | - |
-| 4 | actionButton8 | Freeze State Machine | ACT_FreezeStateMachine | - |
-| 5 | actionButton9 | Unfreeze State Machine | ACT_UnfreezeStateMachine | - |
+| # | Button Name | Caption | Container | Nanoflow | Show Page |
+|---|---|---|---|---|---|
+| 1 | actionButton12 | Edit State Machine | container14 | ACT_UpdateStateMachine_ShowPanel | PANEL_UpdateStateMachine |
+| 2 | actionButton13 | Hide State Machine | container15 | ACT_HideStateMachine | - |
+| 3 | actionButton14 | Unhide State Machine | container16 | ACT_UnhideStateMachine | - |
+| 4 | actionButton8 | Freeze State Machine | container17 | ACT_FreezeStateMachine | - |
+| 5 | actionButton9 | Unfreeze State Machine | container18 | ACT_UnfreezeStateMachine | - |
 
 **Button → Page Navigation:**
 

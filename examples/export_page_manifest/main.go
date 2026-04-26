@@ -27,10 +27,11 @@ type WidgetCaption struct {
 
 // DataGridActionButton represents an action button inside a DataGrid 2 widget
 type DataGridActionButton struct {
-	Name         string
-	Caption      string
-	NanoflowName string // nanoflow called on click (from parent DivContainer.OnClickAction)
-	ShowPageName string // page opened by ShowFormAction inside that nanoflow
+	Name          string
+	Caption       string
+	ContainerName string // name of the direct parent DivContainer
+	NanoflowName  string // nanoflow called on click (from parent DivContainer.OnClickAction)
+	ShowPageName  string // page opened by ShowFormAction inside that nanoflow
 }
 
 // DataGridColumn represents a column in a DataGrid 2 widget
@@ -311,42 +312,45 @@ func getTypePointerData(prop map[string]interface{}) string {
 // findAllActionButtons recursively collects all Forms$ActionButton nodes,
 // propagating the nanoflow name from any enclosing DivContainer.OnClickAction.
 func findAllActionButtons(data interface{}) []DataGridActionButton {
-	return findAllActionButtonsWithNF(data, "")
+	return findAllActionButtonsWithNF(data, "", "")
 }
 
-func findAllActionButtonsWithNF(data interface{}, inheritedNanoflow string) []DataGridActionButton {
+func findAllActionButtonsWithNF(data interface{}, inheritedNanoflow, inheritedContainer string) []DataGridActionButton {
 	var result []DataGridActionButton
 	switch v := data.(type) {
 	case map[string]interface{}:
-		// If this DivContainer has a nanoflow OnClickAction, propagate it to children
+		// If this DivContainer has a nanoflow OnClickAction, propagate nanoflow and container name to children
 		nf := inheritedNanoflow
+		containerName := inheritedContainer
 		if v["$Type"] == "Forms$DivContainer" {
 			if oca, ok := v["OnClickAction"].(map[string]interface{}); ok {
 				if oca["$Type"] == "Forms$CallNanoflowClientAction" {
 					if n, ok := oca["Nanoflow"].(string); ok && n != "" {
 						nf = n
+						containerName = getStr(v, "Name")
 					}
 				}
 			}
 		}
 		if v["$Type"] == "Forms$ActionButton" {
 			result = append(result, DataGridActionButton{
-				Name:         getStr(v, "Name"),
-				Caption:      extractCaption(v),
-				NanoflowName: nf,
+				Name:          getStr(v, "Name"),
+				Caption:       extractCaption(v),
+				ContainerName: containerName,
+				NanoflowName:  nf,
 			})
 			return result
 		}
 		for _, val := range v {
-			result = append(result, findAllActionButtonsWithNF(val, nf)...)
+			result = append(result, findAllActionButtonsWithNF(val, nf, containerName)...)
 		}
 	case primitive.A:
 		for _, item := range v {
-			result = append(result, findAllActionButtonsWithNF(item, inheritedNanoflow)...)
+			result = append(result, findAllActionButtonsWithNF(item, inheritedNanoflow, inheritedContainer)...)
 		}
 	case []interface{}:
 		for _, item := range v {
-			result = append(result, findAllActionButtonsWithNF(item, inheritedNanoflow)...)
+			result = append(result, findAllActionButtonsWithNF(item, inheritedNanoflow, inheritedContainer)...)
 		}
 	}
 	return result
@@ -932,12 +936,16 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 		}
 		// No tabs, but has direct command-bar buttons (e.g. Right vertical-command-bar)
 		fmt.Fprintf(file, "**Vertical CommandBar Buttons:**\n\n")
-		fmt.Fprintf(file, "| # | Button Name | Caption | Nanoflow | Show Page |\n")
-		fmt.Fprintf(file, "|---|---|---|---|---|\n")
+		fmt.Fprintf(file, "| # | Button Name | Caption | Container | Nanoflow | Show Page |\n")
+		fmt.Fprintf(file, "|---|---|---|---|---|---|\n")
 		for i, btn := range ph.Buttons {
 			btnCap := btn.Caption
 			if btnCap == "" {
 				btnCap = "(no caption)"
+			}
+			containerName := btn.ContainerName
+			if containerName == "" {
+				containerName = "-"
 			}
 			nfName := btn.NanoflowName
 			if nfName == "" {
@@ -954,9 +962,10 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 			} else if idx := strings.LastIndex(showPage, "."); idx >= 0 {
 				showPage = showPage[idx+1:]
 			}
-			fmt.Fprintf(file, "| %d | %s | %s | %s | %s |\n", i+1,
+			fmt.Fprintf(file, "| %d | %s | %s | %s | %s | %s |\n", i+1,
 				strings.ReplaceAll(btn.Name, "|", "\\|"),
 				strings.ReplaceAll(btnCap, "|", "\\|"),
+				strings.ReplaceAll(containerName, "|", "\\|"),
 				strings.ReplaceAll(nfName, "|", "\\|"),
 				strings.ReplaceAll(showPage, "|", "\\|"))
 		}
