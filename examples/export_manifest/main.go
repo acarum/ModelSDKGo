@@ -64,10 +64,10 @@ type NavigationItem struct {
 	Caption      string
 	Target       string // Page or microflow name
 	Module       string
-	MenuDocument string // Name of the menu document (e.g., "System", "System Counters")
-	ItemType     string // "Page", "Microflow", "Nanoflow"
-	ParentItem   string // For hierarchical structure
-	Level        int    // Indentation level
+	MenuDocument string   // Name of the menu document (e.g., "System", "System Counters")
+	ItemType     string   // "Page", "Microflow", "Nanoflow"
+	ParentItem   string   // For hierarchical structure
+	Level        int      // Indentation level
 	AllowedRoles []string // User roles that can access this item
 }
 
@@ -230,7 +230,7 @@ func main() {
 			fmt.Printf("Error collecting roles and page access: %v\n", err)
 			os.Exit(1)
 		}
-		
+
 		// Build map for quick lookup
 		for _, pageAccess := range report.PageAccess {
 			pageAccessMap[pageAccess.PageName] = pageAccess.AllowedRoles
@@ -1493,7 +1493,7 @@ func blobToUUID(blob []byte) string {
 func uuidToBlob(uuid string) []byte {
 	// Remove dashes
 	cleanUUID := strings.ReplaceAll(uuid, "-", "")
-	
+
 	// Decode hex string
 	bytes, err := hex.DecodeString(cleanUUID)
 	if err != nil || len(bytes) != 16 {
@@ -1502,7 +1502,7 @@ func uuidToBlob(uuid string) []byte {
 
 	// Convert from UUID format to Windows GUID format (reverse byte order for first 3 parts)
 	blob := make([]byte, 16)
-	
+
 	// Part 1: 4 bytes (reverse)
 	blob[0] = bytes[3]
 	blob[1] = bytes[2]
@@ -1906,7 +1906,7 @@ func extractNavigationItemRecursive(itemMap map[string]interface{}, db *sql.DB, 
 								// formID is the qualified name (e.g., "Module.PageName")
 								targetQualifiedName = formID
 								target = formID
-								
+
 								// Try to load as UUID first, but formID might be qualified name
 								formContent, err := loadUnitContents(contentsDir, formID)
 								if err == nil {
@@ -1922,7 +1922,7 @@ func extractNavigationItemRecursive(itemMap map[string]interface{}, db *sql.DB, 
 										}
 									}
 								}
-								
+
 								// Extract module name from qualified name
 								parts := strings.Split(formID, ".")
 								if len(parts) == 2 {
@@ -1946,7 +1946,7 @@ func extractNavigationItemRecursive(itemMap map[string]interface{}, db *sql.DB, 
 			allowedRoles = roles
 		}
 	}
-	
+
 	leafItem := NavigationItem{
 		ItemName:     caption,
 		Caption:      caption,
@@ -2466,13 +2466,13 @@ func collectSystemRolesAndPageAccess(db *sql.DB, contentsDir string, report *Man
 			if moduleName == "" {
 				moduleName = "Unknown"
 			}
-			
+
 			// Get page name from BSON content "Name" field
 			pageName := containmentName // Fallback
 			if name, ok := content["Name"].(string); ok && name != "" {
 				pageName = name
 			}
-			
+
 			// Get qualified name from BSON content or construct it
 			qualifiedName := ""
 			if qName, ok := content["QualifiedName"].(string); ok && qName != "" {
@@ -2481,7 +2481,7 @@ func collectSystemRolesAndPageAccess(db *sql.DB, contentsDir string, report *Man
 				// Construct from module + pageName
 				qualifiedName = moduleName + "." + pageName
 			}
-			
+
 			pageAccess := extractPageAccess(content, qualifiedName, moduleName, typeName, moduleRoleToSystemRoles)
 			pageAccessList = append(pageAccessList, pageAccess)
 		}
@@ -2534,7 +2534,7 @@ func extractSystemRoles(userRoles interface{}, systemRoles map[string]SystemRole
 					Module: "System", // System roles are at project level
 				}
 				roleIDToName[roleID] = roleName
-				
+
 				// Extract ModuleRoles from SystemRole to build reverse mapping
 				if moduleRolesData, ok := roleMap["ModuleRoles"]; ok {
 					var moduleRolesList []interface{}
@@ -2543,7 +2543,7 @@ func extractSystemRoles(userRoles interface{}, systemRoles map[string]SystemRole
 					} else if arrInterface, ok := moduleRolesData.([]interface{}); ok {
 						moduleRolesList = arrInterface
 					}
-					
+
 					for j, mrItem := range moduleRolesList {
 						if j == 0 {
 							continue // Skip count
@@ -2816,7 +2816,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 				if parent == "" {
 					parent = "-"
 				}
-				
+
 				caption := item.Caption
 				if caption == "" {
 					caption = item.ItemName
@@ -2824,7 +2824,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 				if caption == "" {
 					caption = "-"
 				}
-				
+
 				roles := "-"
 				if len(item.AllowedRoles) > 0 {
 					roles = strings.Join(item.AllowedRoles, ", ")
