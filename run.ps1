@@ -10,15 +10,27 @@ param(
 )
 
 # Setup CGO environment
-$env:PATH = "C:\msys64\mingw64\bin;$env:PATH"
+# Try Scoop first, then fall back to MSYS2
+$gccPath = if (Test-Path "$env:USERPROFILE\scoop\apps\gcc\current\bin") {
+    "$env:USERPROFILE\scoop\apps\gcc\current\bin"
+} elseif (Test-Path "C:\msys64\mingw64\bin") {
+    "C:\msys64\mingw64\bin"
+} else {
+    $null
+}
+
+if ($gccPath) {
+    $env:PATH = "$gccPath;$env:PATH"
+}
+
 $env:CGO_ENABLED = "1"
 
 # Check if gcc is available
 $gccVersion = & gcc --version 2>$null
 if (-not $gccVersion) {
-    Write-Host "Error: gcc not found. Please install MSYS2 and mingw-w64-x86_64-gcc" -ForegroundColor Red
-    Write-Host "Run: winget install -e --id MSYS2.MSYS2" -ForegroundColor Yellow
-    Write-Host "Then: C:\msys64\usr\bin\bash.exe -lc 'pacman -S --noconfirm mingw-w64-x86_64-gcc'" -ForegroundColor Yellow
+    Write-Host "Error: gcc not found. Please install either:" -ForegroundColor Red
+    Write-Host "  Option A (Scoop): scoop install gcc" -ForegroundColor Yellow
+    Write-Host "  Option B (MSYS2): winget install -e --id MSYS2.MSYS2" -ForegroundColor Yellow
     exit 1
 }
 
