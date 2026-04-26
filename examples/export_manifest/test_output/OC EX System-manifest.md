@@ -1,15 +1,16 @@
 # Manifest Report: OC EX System
 
 **Mendix Version:** 11.9.0  
-**Generated:** 2026-04-25 18:08:15  
+**MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
+**Generated:** 2026-04-26 14:22:47  
 
 ---
 
 ## Summary
 
-- **External Entities:** _Excluded from report_
 - **Microflow/Action Calls:** 78
 - **Signal Manager Widgets:** 3 subscription(s)
+- **Navigation Items:** 10
 
 ---
 
@@ -115,6 +116,23 @@ Found 3 subscription(s):
 | OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN | APPName | filter0 |
 | OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN2 | AN2 | filter |
 | OpcenterEXFN_ReferenceData | Snippet | MySnippet | SNIPPET_SN | SNIPPET_APPName | SNIPPET_filter0 |
+
+---
+
+## 4. Navigation Items
+
+| Parent Node | Node | User Roles |
+|-------------|------|------------|
+| - | System | - |
+| System | Counters | Administrator, User |
+| System | Numbering Patterns | Administrator, User |
+| System | State Machines | Administrator, User |
+| System | Statuses | Administrator, User |
+| System | Status Behavior Definitions | Administrator, User |
+| System | Status Definitions | Administrator, User |
+| System | Status Transition Definitions | Administrator, User |
+| System | Unit of Measures | Administrator, User |
+| System | UoM Dimensions | Administrator, User |
 
 ---
 
