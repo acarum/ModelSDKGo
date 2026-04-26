@@ -113,7 +113,7 @@ func main() {
 	includeMicroflows := flag.Bool("include-microflows", true, "Include microflow/action calls in the report")
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
 	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
-	includeRoles := flag.Bool("include-roles", true, "Include system roles and page accessibility in the report")
+	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: export_manifest [options] <mpr_file_path> <output_md_path>\n\n")
 		fmt.Fprintf(os.Stderr, "Arguments:\n")

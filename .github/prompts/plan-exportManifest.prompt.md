@@ -14,7 +14,7 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
      * `-include-microflows` (default: true): Include sezione Microflow/Action Calls nel report
      * `-include-widgets` (default: true): Include sezione Signal Manager Widgets nel report
      * ✅ `-include-navigation` (default: true): Include sezione Navigation Items nel report
-     * ⏳ `-include-roles` (default: true): Include sezione System Roles & Page Accessibility nel report (da implementare)
+     * ⏳ `-include-roles` (default: false): Include sezione System Roles & Page Accessibility nel report (implementato, da testare)
      * **Usage**: `export_manifest -include-entities=true -include-attributes=false MyApp.mpr report.md`
    - ✅ Aprire MPR con `modelsdk.Open()`
    - ✅ Ottenere nome progetto (da filename) e versione Mendix (`reader.GetMendixVersion()`)
@@ -193,7 +193,7 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
    - **Implementato in**: `examples/export_manifest/main.go` (linee ~1659-2050)
    - *depends on 1*
 
-6. **✅ COMPLETATO - Implementare Sezione 5: System Roles & Page Accessibility Report**
+6. **⏳ DA TESTARE - Implementare Sezione 5: System Roles & Page Accessibility Report**
    - ✅ Estrarre lista di tutti i System Roles definiti nel progetto da `Security$ProjectSecurity.UserRoles`
    - ✅ Per ogni page/snippet del progetto (Forms$Page, Forms$Snippet):
      * Identificare AllowedModuleRoles dal BSON (primitive.A array)
@@ -206,7 +206,7 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
      * Sezione 5.2: tabella aggregata (System Role | Accessible Pages Count | Pages preview)
      * Sezione 5.3: tabella dettagliata (Page Name | Module | Type | Allowed Roles | Access)
    - ✅ Evidenziare pages con accesso non ristretto ("**Public**" badge)
-   - ✅ **CLI flag aggiunto**: `-include-roles` (default: true)
+   - ✅ **CLI flag aggiunto**: `-include-roles` (default: false)
    - ✅ **Gestione primitive.Binary**: Role IDs convertiti da binary a UUID string format
    - ✅ **Type cleaning**: DocumentType mostra "Page" o "Snippet" (non "Forms$Page")
    - ✅ **Implementato in**: 
@@ -214,7 +214,7 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
      * Collection: collectSystemRolesAndPageAccess() (linee ~2216-2285)
      * Helper functions: extractSystemRoles(), extractModuleRoleMapping(), extractPageAccess() (linee ~2287-2424)
      * Report generation: Section 5 with 3 subsections (linee ~2707-2800)
-   - ✅ **Testato**: 2 system roles trovati (Administrator, User), 79 page/snippet analizzati
+   - ⏳ **Da testare**: Implementazione completa, necessita test finale dopo spostamento sezione all'inizio report
    - *depends on 1*
 
 7. **✅ COMPLETATO - Finalizzare e Testare Report**
@@ -227,7 +227,7 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
      * `-include-microflows` (default: true) - Microflow/action calls section
      * `-include-widgets` (default: true) - Signal Manager widgets section
      * `-include-navigation` (default: true) - Navigation items section
-     * `-include-roles` (default: true) - System roles & page accessibility section
+     * `-include-roles` (default: false) - System roles & page accessibility section
    - ✅ Compilare: `go build` in `examples/export_manifest/`
    - ✅ Testare su MPR target: `.\export_manifest.exe "OC EX System.mpr" manifest_report.md`
    - ✅ Verificare output MD per completezza e formattazione
@@ -301,17 +301,18 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
      * AppName: "APPName", "AN2", "SNIPPET_APPName" (da Properties_2 PrimitiveValue)
      * SubscriptionFilter: "filter0", "filter", "SNIPPET_filter0" (da Properties_3 Expression)
    - Tabella MD con Document Type (Page/Snippet) per identificazione sorgente
-6. ⏳ Verificare sezione 4: lista navigation items con struttura menu - **DA IMPLEMENTARE**:
-   - Navigation items estratti correttamente con gerarchia
-   - Target (page/microflow) identificati
-   - Moduli di appartenenza corretti
-   - Tabella/lista gerarchica formattata correttamente
-7. ⏳ Verificare sezione 5: system roles e page accessibility - **DA IMPLEMENTARE**:
-   - Lista completa system roles definiti nel progetto
-   - Mapping roles → pages accessibili
-   - Mapping pages → allowed roles
-   - Identificazione pages senza restrizioni di accesso
-   - Tabelle formattate correttamente per entrambe le viste
+6. ✅ Verificare sezione 4: lista navigation items con struttura menu - **VERIFICATO E COMPLETATO**:
+   - Navigation items estratti correttamente con gerarchia (10 items: 1 parent + 9 children)
+   - Formato semplificato: Parent Node | Node | User Roles
+   - User Roles correttamente mappati (Administrator, User per tutti i child items)
+   - Tabella formattata correttamente senza linee superflue
+7. ⏳ Verificare sezione 1: system roles e page accessibility (spostato all'inizio) - **DA TESTARE**:
+   - ✅ Lista completa system roles definiti nel progetto (2 roles: Administrator, User)
+   - ✅ Mapping roles → pages accessibili (implementato)
+   - ✅ Mapping pages → allowed roles (implementato)
+   - ✅ Identificazione pages senza restrizioni di accesso (Public badge)
+   - ⏳ Verifica dopo spostamento sezione all'inizio del report (Section 1 invece di Section 5)
+   - ⏳ Tabelle formattate correttamente per entrambe le viste con nuova numerazione
 8. ✅ Aprire manifest_report.md e confermare formattazione Markdown valida (headers, tabelle, liste) - **VERIFICATO E COMPLETATO**:
    - Tutte le sezioni implementate generate correttamente
    - Header e summary con conteggi accurati
@@ -366,11 +367,16 @@ Creare un tool Go chiamato `export_manifest` che genera un report Markdown compl
   * Estrazione SignalName, AppName, SubscriptionFilter da Properties array
   * Windows GUID encoding per SQL queries
   * Risultato: 3 subscriptions (2 in pages, 1 in snippet)
-- **Step 7**: Finalizzazione e testing completo con report MD completo generato correttamente (per le sezioni 1-4)
+- **Step 5**: Navigation Items Report con:
+  * Estrazione gerarchica da NavigationDocument
+  * Supporto multi-profilo (Desktop, Tablet, Phone)
+  * Target resolution (Pages, Microflows, Nanoflows)
+  * Formato semplificato: Parent Node | Node | User Roles
+  * Risultato: 10 navigation items (1 parent + 9 children)
+- **Step 7**: Finalizzazione e testing completo con report MD completo generato correttamente
 
 ### 🔄 In Corso / Da Fare
-- **Step 5**: Navigation Items Report - da implementare
-- **Step 6**: System Roles & Page Accessibility Report - da implementare
+- **Step 6**: System Roles & Page Accessibility Report - **implementato, da testare dopo spostamento sezione**
 
 ### 🎯 Obiettivo
 Completare tutti gli step per avere un manifest report completo con 5 sezioni principali: Entities, Microflows, Widgets, Navigation, Roles & Accessibility.
