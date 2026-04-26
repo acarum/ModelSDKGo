@@ -175,6 +175,18 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprP
 		widgets := getArray(argMap, "Widgets")
 		tabs := findTabs(widgets)
 
+		// Resolve ShowPage for DataGrid action buttons inside tabs
+		for ti := range tabs {
+			for wi := range tabs[ti].Widgets {
+				for bi := range tabs[ti].Widgets[wi].ActionButtons {
+					btn := &tabs[ti].Widgets[wi].ActionButtons[bi]
+					if btn.NanoflowName != "" {
+						btn.ShowPageName = loadNanoflowShowPage(mprPath, btn.NanoflowName)
+					}
+				}
+			}
+		}
+
 		// Collect direct ActionButtons at placeholder level (e.g. Right vertical-command-bar)
 		// Only when there are no tabs, to avoid duplicating DataGrid toolbar buttons
 		var directButtons []DataGridActionButton
@@ -498,34 +510,48 @@ func bytesToUUID(b []byte) string {
 		hex.EncodeToString(b[10:16]))
 }
 
-// extractDataGridActionButtons recursively collects all Forms$ActionButton nodes inside a DataGrid 2 widget
+// extractDataGridActionButtons recursively collects all Forms$ActionButton nodes inside a DataGrid 2 widget,
+// propagating the nanoflow from any enclosing DivContainer.OnClickAction and excluding row-inline buttons.
 func extractDataGridActionButtons(data interface{}) []DataGridActionButton {
+	return extractDataGridActionButtonsWithNF(data, "")
+}
+
+func extractDataGridActionButtonsWithNF(data interface{}, inheritedNF string) []DataGridActionButton {
 	var result []DataGridActionButton
 	switch v := data.(type) {
 	case map[string]interface{}:
+		nf := inheritedNF
+		if v["$Type"] == "Forms$DivContainer" {
+			if oca, ok := v["OnClickAction"].(map[string]interface{}); ok {
+				if oca["$Type"] == "Forms$CallNanoflowClientAction" {
+					if n, ok := oca["Nanoflow"].(string); ok && n != "" {
+						nf = n
+					}
+				}
+			}
+		}
 		if v["$Type"] == "Forms$ActionButton" {
 			// Skip inline row buttons (RenderType "Link"); only include toolbar buttons (RenderType "Button")
 			if getStr(v, "RenderType") == "Link" {
 				return result
 			}
-			cap := extractCaption(v)
 			result = append(result, DataGridActionButton{
-				Name:    getStr(v, "Name"),
-				Caption: cap,
+				Name:         getStr(v, "Name"),
+				Caption:      extractCaption(v),
+				NanoflowName: nf,
 			})
-			// Don't recurse into the button itself
 			return result
 		}
 		for _, val := range v {
-			result = append(result, extractDataGridActionButtons(val)...)
+			result = append(result, extractDataGridActionButtonsWithNF(val, nf)...)
 		}
 	case primitive.A:
 		for _, item := range v {
-			result = append(result, extractDataGridActionButtons(item)...)
+			result = append(result, extractDataGridActionButtonsWithNF(item, inheritedNF)...)
 		}
 	case []interface{}:
 		for _, item := range v {
-			result = append(result, extractDataGridActionButtons(item)...)
+			result = append(result, extractDataGridActionButtonsWithNF(item, inheritedNF)...)
 		}
 	}
 	return result
@@ -998,6 +1024,21 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 
 		return
 	}
+	// Tabs overview list
+	fmt.Fprintf(file, "**Tabs:**\n\n")
+	fmt.Fprintf(file, "| # | Name | Caption |\n")
+	fmt.Fprintf(file, "|---|---|---|\n")
+	for i, tab := range ph.Tabs {
+		tc := tab.Caption
+		if tc == "" {
+			tc = "(no caption)"
+		}
+		fmt.Fprintf(file, "| %d | `%s` | %s |\n", i+1,
+			strings.ReplaceAll(tab.Name, "|", "\\|"),
+			strings.ReplaceAll(tc, "|", "\\|"))
+	}
+	fmt.Fprintf(file, "\n")
+
 	for i, tab := range ph.Tabs {
 		tabCaption := tab.Caption
 		if tabCaption == "" {
@@ -1053,6 +1094,66 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 							strings.ReplaceAll(btnCap, "|", "\\|"))
 					}
 					fmt.Fprintf(file, "\n")
+
+					// Button → Page navigation for this DataGrid
+					var navBtns []DataGridActionButton
+					for _, btn := range w.ActionButtons {
+						if btn.ShowPageName != "" {
+							navBtns = append(navBtns, btn)
+						}
+					}
+					if len(navBtns) > 0 {
+						fmt.Fprintf(file, "  **Button \u2192 Page Navigation:**\n\n")
+						fmt.Fprintf(file, "  | Button Caption | Nanoflow | Page Opened |\n")
+						fmt.Fprintf(file, "  |---|---|---|\n")
+						for _, btn := range navBtns {
+							nfShort := btn.NanoflowName
+							if idx := strings.LastIndex(nfShort, "."); idx >= 0 {
+								nfShort = nfShort[idx+1:]
+							}
+							pageShort := btn.ShowPageName
+							if idx := strings.LastIndex(pageShort, "."); idx >= 0 {
+								pageShort = pageShort[idx+1:]
+							}
+							fmt.Fprintf(file, "  | %s | %s | %s |\n",
+								strings.ReplaceAll(btn.Caption, "|", "\\|"),
+								strings.ReplaceAll(nfShort, "|", "\\|"),
+								strings.ReplaceAll(pageShort, "|", "\\|"))
+						}
+						fmt.Fprintf(file, "\n")
+
+						// Panel widget details
+						seen := make(map[string]bool)
+						for _, btn := range navBtns {
+							if seen[btn.ShowPageName] {
+								continue
+							}
+							seen[btn.ShowPageName] = true
+							pageShort := btn.ShowPageName
+							if idx := strings.LastIndex(pageShort, "."); idx >= 0 {
+								pageShort = pageShort[idx+1:]
+							}
+							fmt.Fprintf(file, "  **Panel: `%s`**\n\n", pageShort)
+							panelWidgets := loadPanelWidgets(mprPath, btn.ShowPageName)
+							if len(panelWidgets) == 0 {
+								fmt.Fprintf(file, "  _No widgets with captions found._\n\n")
+							} else {
+								fmt.Fprintf(file, "  | Widget Type | Name | Caption |\n")
+								fmt.Fprintf(file, "  |---|---|---|\n")
+								for _, pw := range panelWidgets {
+									pwCap := pw.Caption
+									if pwCap == "" {
+										pwCap = "(no caption)"
+									}
+									fmt.Fprintf(file, "  | %s | %s | %s |\n",
+										strings.ReplaceAll(pw.WidgetType, "|", "\\|"),
+										strings.ReplaceAll(pw.WidgetName, "|", "\\|"),
+										strings.ReplaceAll(pwCap, "|", "\\|"))
+								}
+								fmt.Fprintf(file, "\n")
+							}
+						}
+					}
 				}
 			}
 			fmt.Fprintf(file, "\n")

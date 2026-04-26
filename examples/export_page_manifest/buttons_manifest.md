@@ -14,6 +14,16 @@
 
 _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Main`
 
+**Tabs:**
+
+| # | Name | Caption |
+|---|---|---|
+| 1 | `tabPage1` | Overview |
+| 2 | `tabPage2` | Statuses |
+| 3 | `tabPage3` | Transitions |
+| 4 | `tabPage4` | State Machine Graph |
+| 5 | `tabPage5` | Audit Trail |
+
 #### Tab 1 — `tabPage1` _Overview_
 
 | Widget Type | Name | Caption |
@@ -55,6 +65,25 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Main`
   | 3 | actionButton10 | Set Status As Initial |
   | 4 | actionButton11 | Delete |
 
+  **Button → Page Navigation:**
+
+  | Button Caption | Nanoflow | Page Opened |
+  |---|---|---|
+  | Edit  | ACT_UpdateStatusStateMachine_ShowPanel | PANEL_UpdateStatusStateMachine |
+
+  **Panel: `PANEL_UpdateStatusStateMachine`**
+
+  | Widget Type | Name | Caption |
+  |---|---|---|
+  | ActionButton | actionButton1 | Save |
+  | ActionButton | actionButton2 | Cancel |
+  | TextBox | textBox1 | Id |
+  | TextBox | textBox2 | Name |
+  | TextBox | textBox3 | Color |
+  | TextBox | textBox4 | Description |
+  | RadioButtonGroup | radioButtons1 | Is initial |
+  | DropDown | dropDown1 | Outcome |
+
 
 #### Tab 3 — `tabPage3` _Transitions_
 
@@ -81,6 +110,21 @@ _Placeholder:_ `OpcenterEXFN_DISW_DesignSystem.EXFN_Master.Main`
   | 1 | actionButton1 | Create |
   | 2 | actionButton2 | Edit |
   | 3 | actionButton3 | Delete |
+
+  **Button → Page Navigation:**
+
+  | Button Caption | Nanoflow | Page Opened |
+  |---|---|---|
+  | Edit | ACT_UpdateStatusTransitionShowPanel | PANEL_UpdateStatusTransition |
+
+  **Panel: `PANEL_UpdateStatusTransition`**
+
+  | Widget Type | Name | Caption |
+  |---|---|---|
+  | ActionButton | actionButton1 | Save |
+  | ActionButton | actionButton2 | Cancel |
+  | TextBox | textBox1 | Source Status |
+  | CheckBox | checkBox1 | Raise Event |
 
 
 #### Tab 4 — `tabPage4` _State Machine Graph_
