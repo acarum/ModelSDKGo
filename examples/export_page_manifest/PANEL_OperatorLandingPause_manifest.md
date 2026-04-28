@@ -10,12 +10,16 @@
 
 **Layout:** `OpcenterEXFN_DISW_DesignSystem.EXFN_ModalPanel.Main`
 
+**DataView:** `pauseReasonDataView`
+
 #### Contents
 
 | # | Type | Name | Caption |
 |---|---|---|---|
-| 1 | Gallery | WOPausePanelGalleryReason |  |
-| 2 | Gallery | WOPausePanelGalleryEquipment |  |
+| 1 | DynamicText | text2 | Reason |
+| 2 | Gallery | WOPausePanelGalleryReason |  |
+| 3 | DynamicText | text1 | Select Equipment |
+| 4 | Gallery | WOPausePanelGalleryEquipment |  |
 
 ##### Gallery: WOPausePanelGalleryReason
 

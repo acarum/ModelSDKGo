@@ -912,6 +912,7 @@ func findAllWidgetsSummary(data interface{}) []WidgetCaption {
 		"Forms$DataView": true, "Forms$ListView": true, "Forms$ReferenceSelector": true,
 		"Forms$InputReferenceSelector": true, "Forms$FileManager": true,
 		"Forms$Image": true, "Forms$DynamicImage": true,
+		"Forms$DynamicText": true,
 	}
 	switch v := data.(type) {
 	case map[string]interface{}:
@@ -1088,6 +1089,15 @@ func extractCaption(data map[string]interface{}) string {
 		}
 	}
 
+	// Pattern 6: Content.Template (Forms$DynamicText / Text widget)
+	if content, ok := data["Content"].(map[string]interface{}); ok {
+		if tmpl, ok := content["Template"].(map[string]interface{}); ok {
+			if t := extractTextsTextEnUS(tmpl); t != "" {
+				return t
+			}
+		}
+	}
+
 	return ""
 }
 
@@ -1193,6 +1203,14 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 		return
 	}
 	fmt.Fprintf(file, "**Layout:** `%s`\n\n", ph.Parameter)
+
+	// DataView: first DataView found in widgets
+	for _, w := range ph.Widgets {
+		if w.WidgetType == "DataView" {
+			fmt.Fprintf(file, "**DataView:** `%s`\n\n", w.WidgetName)
+			break
+		}
+	}
 
 	// Contents section: all widgets with name and caption (only for EXFN_ModalPanel)
 	if isModalPanel && len(ph.Widgets) > 0 {
