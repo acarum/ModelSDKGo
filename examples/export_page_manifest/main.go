@@ -51,10 +51,10 @@ type TabInfo struct {
 // PlaceholderContent holds widgets and tabs found in a layout placeholder
 type PlaceholderContent struct {
 	Name                    string
-	Parameter               string // full parameter path e.g. "Atlas_Default.Main"
-	RootContainerName       string // name of the first DivContainer in the placeholder
-	CommandBarContainerName string // name of DivContainer with CSS class containing "vertical-command-bar"
-	Widgets                 []WidgetCaption        // all widgets with captions (for Contents section)
+	Parameter               string          // full parameter path e.g. "Atlas_Default.Main"
+	RootContainerName       string          // name of the first DivContainer in the placeholder
+	CommandBarContainerName string          // name of DivContainer with CSS class containing "vertical-command-bar"
+	Widgets                 []WidgetCaption // all widgets with captions (for Contents section)
 	Tabs                    []TabInfo
 	Buttons                 []DataGridActionButton // direct ActionButtons outside of tabs (e.g. Right command bar)
 }
