@@ -74,17 +74,17 @@ namespace OperatorTerminals_EXDS.SidePanels
         
         public class ContentsLocators
         {
-            public virtual string actualTargetQuantity => "Actual Target Quantity:";
+            public virtual string actualTargetQuantityCaption => "Actual Target Quantity:";
             public virtual string mxActualTargetQuantity => "mx-name-label1";
-            public virtual string textBox2 => "textBox2";
+            public virtual string textBox2Caption => "textBox2";
             public virtual string mxTextBox2 => "mx-name-textBox2";
         }
         
         public class ButtonsLocators
         {
-            public virtual string start => "Start";
+            public virtual string startCaption => "Start";
             public virtual string mxStart => "mx-name-startActionButton";
-            public virtual string cancel => "Cancel";
+            public virtual string cancelCaption => "Cancel";
             public virtual string mxCancel => "mx-name-cancelActionButton";
         }
         
@@ -135,9 +135,9 @@ For each section found in the markdown:
 Parse the Contents table and create **two properties per row**:
 
 1. **Caption-based property**:
-   - **Property name**: Use Caption (remove spaces, camelCase)
+   - **Property name**: Use Caption (remove spaces, camelCase) + "Caption" suffix
    - **Property value**: Return Caption text
-   - **If Caption is empty**: Use Name instead
+   - **If Caption is empty**: Use Name + "Caption" suffix instead
 
 2. **mx-prefixed property**:
    - **Property name**: "mx" + Caption (camelCase)
@@ -151,7 +151,7 @@ Example transformation:
 ```
 →
 ```csharp
-public virtual string actualTargetQuantity => "Actual Target Quantity:";
+public virtual string actualTargetQuantityCaption => "Actual Target Quantity:";
 public virtual string mxActualTargetQuantity => "mx-name-label1";
 ```
 
@@ -160,7 +160,7 @@ public virtual string mxActualTargetQuantity => "mx-name-label1";
 Parse the Buttons table and create **two properties per row**:
 
 1. **Caption-based property**:
-   - **Property name**: Use Caption (camelCase, no spaces)
+   - **Property name**: Use Caption (camelCase, no spaces) + "Caption" suffix
    - **Property value**: Return Caption text
 
 2. **mx-prefixed property**:
@@ -175,7 +175,7 @@ Example:
 ```
 →
 ```csharp
-public virtual string start => "Start";
+public virtual string startCaption => "Start";
 public virtual string mxStart => "mx-name-startActionButton";
 ```
 
@@ -200,9 +200,9 @@ public virtual string woStartPanelSNGallery => "container8";
 
 Track used property names per section class. When a duplicate Caption is found, apply suffix to **both properties**:
 
-1. First occurrence: `propertyName` and `mxPropertyName`
-2. Second occurrence: `propertyName_1` and `mxPropertyName_1`
-3. Third occurrence: `propertyName_2` and `mxPropertyName_2`
+1. First occurrence: `propertyNameCaption` and `mxPropertyName`
+2. Second occurrence: `propertyNameCaption_1` and `mxPropertyName_1`
+3. Third occurrence: `propertyNameCaption_2` and `mxPropertyName_2`
 
 Example:
 ```markdown
@@ -211,9 +211,9 @@ Example:
 ```
 →
 ```csharp
-public virtual string quantity => "Quantity";
+public virtual string quantityCaption => "Quantity";
 public virtual string mxQuantity => "mx-name-label1";
-public virtual string quantity_1 => "Quantity";
+public virtual string quantityCaption_1 => "Quantity";
 public virtual string mxQuantity_1 => "mx-name-label2";
 ```
 
@@ -249,13 +249,13 @@ Save the generated C# file:
 **For each row, generate TWO properties:**
 
 1. **Caption-based property**:
-   - **From Caption**: Convert to camelCase, remove spaces and special characters
-     - "Actual Target Quantity:" → `actualTargetQuantity`
-     - "Start" → `start`
-     - "OR" → `or`
-   - **From Name (if Caption empty)**: Use as-is, camelCase
-     - "textBox2" → `textBox2`
-     - "label1" → `label1`
+   - **From Caption**: Convert to camelCase, remove spaces and special characters, add "Caption" suffix
+     - "Actual Target Quantity:" → `actualTargetQuantityCaption`
+     - "Start" → `startCaption`
+     - "OR" → `orCaption`
+   - **From Name (if Caption empty)**: Use as-is, camelCase, add "Caption" suffix
+     - "textBox2" → `textBox2Caption`
+     - "label1" → `label1Caption`
 
 2. **mx-prefixed property**:
    - **Name**: "mx" + Caption/Name (camelCase)
@@ -283,7 +283,7 @@ When Caption column is empty or contains only whitespace:
 
 Generate both properties using the Name value:
 ```csharp
-public virtual string textBox2 => "textBox2";
+public virtual string textBox2Caption => "textBox2";
 public virtual string mxTextBox2 => "mx-name-textBox2";
 ```
 
@@ -398,11 +398,12 @@ After generation, verify:
 
 1. ✅ Class names are valid C# identifiers (no spaces, special chars)
 2. ✅ Property names are unique within each section class (both caption-based and mx-prefixed)
-3. ✅ All mx-prefixed properties use "mx-name-" + Name format
-4. ✅ All quotes in property values are properly escaped
-5. ✅ File compiles without syntax errors
-6. ✅ Namespace matches project conventions
-7. ✅ Each row generates exactly TWO properties (caption + mx-prefixed)
+3. ✅ All caption-based properties end with "Caption" suffix
+4. ✅ All mx-prefixed properties use "mx-name-" + Name format
+5. ✅ All quotes in property values are properly escaped
+6. ✅ File compiles without syntax errors
+7. ✅ Namespace matches project conventions
+8. ✅ Each row generates exactly TWO properties (captionSuffixed + mx-prefixed)
 
 ## Common Issues
 
