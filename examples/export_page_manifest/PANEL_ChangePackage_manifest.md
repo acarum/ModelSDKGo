@@ -27,5 +27,4 @@
 
 ## Summary
 
-- **Pages with placeholders:** 1
-- **Total tabs:** 0
+- **Total Buttons:** 2

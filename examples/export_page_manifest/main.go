@@ -1355,11 +1355,17 @@ func exportMarkdown(reports []PageReport, outputFile string, pageFilter string) 
 	totalMain := 0
 	totalRight := 0
 	totalTabs := 0
+	totalButtons := 0
+	isModalPanelReport := false
 
 	for _, r := range reports {
 		if r.Main != nil {
 			totalMain++
 			totalTabs += len(r.Main.Tabs)
+			totalButtons += len(r.Main.Buttons)
+			if strings.Contains(r.Main.Parameter, "EXFN_ModalPanel") {
+				isModalPanelReport = true
+			}
 		}
 		if r.Right != nil {
 			totalRight++
@@ -1395,8 +1401,14 @@ func exportMarkdown(reports []PageReport, outputFile string, pageFilter string) 
 	}
 
 	fmt.Fprintf(file, "## Summary\n\n")
-	fmt.Fprintf(file, "- **Pages with placeholders:** %d\n", len(reports))
-	fmt.Fprintf(file, "- **Total tabs:** %d\n", totalTabs)
+	if !isModalPanelReport {
+		fmt.Fprintf(file, "- **Pages with placeholders:** %d\n", len(reports))
+	}
+	if isModalPanelReport {
+		fmt.Fprintf(file, "- **Total Buttons:** %d\n", totalButtons)
+	} else {
+		fmt.Fprintf(file, "- **Total tabs:** %d\n", totalTabs)
+	}
 
 	fmt.Printf("✓ Markdown exported to: %s\n", outputFile)
 	fmt.Printf("  Pages with Main/Right: %d  |  Total tabs: %d\n", len(reports), totalTabs)
