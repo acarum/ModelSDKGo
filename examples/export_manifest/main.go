@@ -243,7 +243,7 @@ func countFailed(entries []ReportEntry) int {
 
 func main() {
 	// Define CLI flags
-	includeEntities := flag.Bool("include-entities", false, "Include external entities in the report")
+	includeEntities := flag.Bool("include-entities", true, "Include external entities in the report")
 	includeAttributes := flag.Bool("include-attributes", true, "Include entity attributes in the report")
 	includeMicroflows := flag.Bool("include-microflows", true, "Include microflow/action calls in the report")
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
