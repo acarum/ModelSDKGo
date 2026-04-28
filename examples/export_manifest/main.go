@@ -20,11 +20,11 @@ import (
 
 // Data structures
 type EntityInfo struct {
-	Name           string
-	Module         string
-	Attributes     []string
-	PublishedFrom  string
-	EntityTypeName string
+	Name           string   `json:"Name"`
+	Module         string   `json:"Module"`
+	Attributes     []string `json:"Attributes"`
+	PublishedFrom  string   `json:"PublishedFrom"`
+	EntityTypeName string   `json:"EntityTypeName"`
 }
 
 type DomainModelInfo struct {
@@ -34,14 +34,14 @@ type DomainModelInfo struct {
 }
 
 type MicroflowCallInfo struct {
-	MicroflowName string
-	Module        string
-	ActivityName  string
-	Caption       string
-	CallType      string // "MicroflowCall", "JavaAction", or "ExternalAction"
-	TargetName    string // Microflow/JavaAction/ExternalAction name
-	AppName       string
-	CommandName   string
+	MicroflowName string `json:"MicroflowName"`
+	Module        string `json:"Module"`
+	ActivityName  string `json:"ActivityName"`
+	Caption       string `json:"Caption"`
+	CallType      string `json:"CallType"` // "MicroflowCall", "JavaAction", or "ExternalAction"
+	TargetName    string `json:"TargetName"` // Microflow/JavaAction/ExternalAction name
+	AppName       string `json:"AppName"`
+	CommandName   string `json:"CommandName"`
 }
 
 type MicroflowInfo struct {
@@ -52,50 +52,50 @@ type MicroflowInfo struct {
 }
 
 type WidgetInfo struct {
-	DocumentName       string
-	DocumentType       string // "Page" or "Snippet"
-	Module             string
-	SignalName         string
-	AppName            string
-	SubscriptionFilter string
+	DocumentName       string `json:"DocumentName"`
+	DocumentType       string `json:"DocumentType"` // "Page" or "Snippet"
+	Module             string `json:"Module"`
+	SignalName         string `json:"SignalName"`
+	AppName            string `json:"AppName"`
+	SubscriptionFilter string `json:"SubscriptionFilter"`
 }
 
 type NavigationItem struct {
-	ItemName     string
-	Caption      string
-	Target       string // Page or microflow name
-	Module       string
-	MenuDocument string   // Name of the menu document (e.g., "System", "System Counters")
-	ItemType     string   // "Page", "Microflow", "Nanoflow"
-	ParentItem   string   // For hierarchical structure
-	Level        int      // Indentation level
-	AllowedRoles []string // User roles that can access this item
+	ItemName     string   `json:"ItemName"`
+	Caption      string   `json:"Caption"`
+	Target       string   `json:"Target"` // Page or microflow name
+	Module       string   `json:"Module"`
+	MenuDocument string   `json:"MenuDocument"` // Name of the menu document (e.g., "System", "System Counters")
+	ItemType     string   `json:"ItemType"`     // "Page", "Microflow", "Nanoflow"
+	ParentItem   string   `json:"ParentItem"`   // For hierarchical structure
+	Level        int      `json:"Level"`        // Indentation level
+	AllowedRoles []string `json:"AllowedRoles"` // User roles that can access this item
 }
 
 type SystemRole struct {
-	Name   string
-	Module string
+	Name   string `json:"Name"`
+	Module string `json:"Module"`
 }
 
 type PageAccessInfo struct {
-	PageName     string
-	Module       string
-	DocumentType string // "Page" or "Snippet"
-	AllowedRoles []string
-	IsPublic     bool // No role restrictions
+	PageName     string   `json:"PageName"`
+	Module       string   `json:"Module"`
+	DocumentType string   `json:"DocumentType"` // "Page" or "Snippet"
+	AllowedRoles []string `json:"AllowedRoles"`
+	IsPublic     bool     `json:"IsPublic"` // No role restrictions
 }
 
 type ManifestReport struct {
-	ProjectName     string
-	MendixVersion   string
-	MPRPath         string
-	GeneratedAt     string
-	Entities        map[string][]EntityInfo // by module
-	MicroflowCalls  []MicroflowCallInfo     // all calls
-	Widgets         []WidgetInfo            // signal manager widgets
-	NavigationItems []NavigationItem        // navigation menu items
-	SystemRoles     []SystemRole            // system roles
-	PageAccess      []PageAccessInfo        // page accessibility
+	ProjectName     string                  `json:"ProjectName"`
+	MendixVersion   string                  `json:"MendixVersion"`
+	MPRPath         string                  `json:"MPRPath"`
+	GeneratedAt     string                  `json:"GeneratedAt"`
+	Entities        map[string][]EntityInfo `json:"Entities"`        // by module
+	MicroflowCalls  []MicroflowCallInfo     `json:"MicroflowCalls"`  // all calls
+	Widgets         []WidgetInfo            `json:"Widgets"`         // signal manager widgets
+	NavigationItems []NavigationItem        `json:"NavigationItems"` // navigation menu items
+	SystemRoles     []SystemRole            `json:"SystemRoles"`     // system roles
+	PageAccess      []PageAccessInfo        `json:"PageAccess"`      // page accessibility
 }
 
 type ReportOptions struct {
@@ -109,11 +109,11 @@ type ReportOptions struct {
 
 // ReportEntry represents a report generation result
 type ReportEntry struct {
-	ProjectName string
-	MPRPath     string
-	ReportPath  string
-	Success     bool
-	Error       string
+	ProjectName string `json:"ProjectName"`
+	MPRPath     string `json:"MPRPath"`
+	ReportPath  string `json:"ReportPath"`
+	Success     bool   `json:"Success"`
+	Error       string `json:"Error"`
 }
 
 // findMPRFilesRecursive searches for all .mpr files in a directory tree
@@ -251,24 +251,35 @@ func main() {
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
 	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
 	sourceDir := flag.String("source-dir", "", "Source directory to scan for MPR files recursively (batch mode)")
+	outputFormat := flag.String("output-format", "md", "Output format: 'md' (Markdown), 'json' (JSON), or 'both' (Markdown + JSON)")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: export_manifest [options] <mpr_file_path>\n")
 		fmt.Fprintf(os.Stderr, "   OR: export_manifest [options] -source-dir=<directory>\n\n")
 		fmt.Fprintf(os.Stderr, "Single File Mode:\n")
 		fmt.Fprintf(os.Stderr, "  <mpr_file_path>   Path to the Mendix MPR file (use '.' to auto-detect in current directory)\n")
-		fmt.Fprintf(os.Stderr, "  Output: <mpr_filename>-manifest.md\n\n")
+		fmt.Fprintf(os.Stderr, "  Output: <mpr_filename>-manifest.md (or .json)\n\n")
 		fmt.Fprintf(os.Stderr, "Batch Mode (-source-dir):\n")
 		fmt.Fprintf(os.Stderr, "  Recursively scans directory for all .mpr files and generates reports\n")
-		fmt.Fprintf(os.Stderr, "  Output: <source-dir>/reports/ or <output-dir>/ with index.md\n\n")
+		fmt.Fprintf(os.Stderr, "  Output: <source-dir>/reports/ or <output-dir>/ with index.md/index.json\n\n")
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
 		fmt.Fprintf(os.Stderr, "\nExamples:\n")
 		fmt.Fprintf(os.Stderr, "  export_manifest MyApp.mpr\n")
 		fmt.Fprintf(os.Stderr, "  export_manifest .\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest -output-format=json MyApp.mpr\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest -output-format=both MyApp.mpr\n")
 		fmt.Fprintf(os.Stderr, "  export_manifest -source-dir=\"C:\\\\Projects\\\\Mendix\"\n")
-		fmt.Fprintf(os.Stderr, "  export_manifest -source-dir=. -output-dir=\"reports\"\n")
+		fmt.Fprintf(os.Stderr, "  export_manifest -source-dir=. -output-dir=\"reports\" -output-format=json\n")
 	}
 	flag.Parse()
+
+	// Validate output format
+	validFormats := map[string]bool{"md": true, "json": true, "both": true}
+	if !validFormats[*outputFormat] {
+		fmt.Fprintf(os.Stderr, "❌ Invalid output format '%s'. Must be 'md', 'json', or 'both'\n", *outputFormat)
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	// Create report options
 	options := ReportOptions{
@@ -283,19 +294,19 @@ func main() {
 	// Check if batch mode (source-dir) or single file mode
 	if *sourceDir != "" {
 		// Batch mode: process all MPR files in directory
-		processBatchMode(*sourceDir, *outputDir, &options)
+		processBatchMode(*sourceDir, *outputDir, *outputFormat, &options)
 	} else {
 		// Single file mode
 		if flag.NArg() < 1 {
 			flag.Usage()
 			os.Exit(1)
 		}
-		processSingleFile(flag.Arg(0), *outputDir, &options)
+		processSingleFile(flag.Arg(0), *outputDir, *outputFormat, &options)
 	}
 }
 
 // processBatchMode scans a directory recursively for MPR files and generates reports
-func processBatchMode(sourceDir string, outputDir string, options *ReportOptions) {
+func processBatchMode(sourceDir string, outputDir string, outputFormat string, options *ReportOptions) {
 	fmt.Printf("📁 Batch mode: Scanning directory %s\n", sourceDir)
 
 	// Search for all .mpr files recursively
@@ -338,15 +349,23 @@ func processBatchMode(sourceDir string, outputDir string, options *ReportOptions
 	for i, mprPath := range mprFiles {
 		fmt.Printf("[%d/%d] Processing: %s\n", i+1, len(mprFiles), filepath.Base(mprPath))
 
-		// Generate report filename
+		// Generate report filenames based on format
 		mprFilename := filepath.Base(mprPath)
 		mprNameWithoutExt := strings.TrimSuffix(mprFilename, filepath.Ext(mprFilename))
-		outputFilename := mprNameWithoutExt + "-manifest.md"
-		reportPath := filepath.Join(finalOutputDir, outputFilename)
+		
+		var reportPathMD, reportPathJSON string
+		if outputFormat == "md" || outputFormat == "both" {
+			outputFilenameMD := mprNameWithoutExt + "-manifest.md"
+			reportPathMD = filepath.Join(finalOutputDir, outputFilenameMD)
+		}
+		if outputFormat == "json" || outputFormat == "both" {
+			outputFilenameJSON := mprNameWithoutExt + ".json"
+			reportPathJSON = filepath.Join(finalOutputDir, outputFilenameJSON)
+		}
 
 		entry := ReportEntry{
 			MPRPath:    mprPath,
-			ReportPath: reportPath,
+			ReportPath: reportPathMD, // Use MD path for backward compatibility
 		}
 
 		// Store global MPR path for module traversal
@@ -419,35 +438,74 @@ func processBatchMode(sourceDir string, outputDir string, options *ReportOptions
 
 		db.Close()
 
-		// Generate report
-		err = generateMarkdownReport(&report, reportPath, options)
-		if err != nil {
-			fmt.Printf("  ❌ Error generating report: %v\n\n", err)
-			entry.Success = false
-			entry.Error = err.Error()
-			reportEntries = append(reportEntries, entry)
-			continue
+		// Generate reports based on format
+		if outputFormat == "md" || outputFormat == "both" {
+			err = generateMarkdownReport(&report, reportPathMD, options)
+			if err != nil {
+				fmt.Printf("  ❌ Error generating Markdown report: %v\n\n", err)
+				entry.Success = false
+				entry.Error = err.Error()
+				reportEntries = append(reportEntries, entry)
+				continue
+			}
+		}
+		if outputFormat == "json" || outputFormat == "both" {
+			err = generateJSONReport(&report, reportPathJSON, options)
+			if err != nil {
+				fmt.Printf("  ❌ Error generating JSON report: %v\n\n", err)
+				entry.Success = false
+				entry.Error = err.Error()
+				reportEntries = append(reportEntries, entry)
+				continue
+			}
+			// Update entry.ReportPath to JSON if JSON-only
+			if outputFormat == "json" {
+				entry.ReportPath = reportPathJSON
+			}
 		}
 
 		entry.Success = true
 		reportEntries = append(reportEntries, entry)
-		fmt.Printf("  ✅ Report generated: %s\n\n", outputFilename)
+		
+		if outputFormat == "md" {
+			fmt.Printf("  ✅ Report generated: %s\n\n", filepath.Base(reportPathMD))
+		} else if outputFormat == "json" {
+			fmt.Printf("  ✅ Report generated: %s\n\n", filepath.Base(reportPathJSON))
+		} else {
+			fmt.Printf("  ✅ Reports generated: %s, %s\n\n", filepath.Base(reportPathMD), filepath.Base(reportPathJSON))
+		}
 	}
 
-	// Generate index.md
-	indexPath := filepath.Join(finalOutputDir, "index.md")
-	err = generateIndexFile(indexPath, reportEntries)
-	if err != nil {
-		fmt.Printf("❌ Error generating index: %v\n", err)
-		os.Exit(1)
+	// Generate index files based on format
+	if outputFormat == "md" || outputFormat == "both" {
+		indexPath := filepath.Join(finalOutputDir, "index.md")
+		err = generateIndexFile(indexPath, reportEntries)
+		if err != nil {
+			fmt.Printf("❌ Error generating index.md: %v\n", err)
+			os.Exit(1)
+		}
+	}
+	if outputFormat == "json" || outputFormat == "both" {
+		indexJSONPath := filepath.Join(finalOutputDir, "index.json")
+		err = generateIndexJSON(indexJSONPath, reportEntries)
+		if err != nil {
+			fmt.Printf("❌ Error generating index.json: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	fmt.Printf("\n📊 Summary: %d successful, %d failed\n", countSuccessful(reportEntries), countFailed(reportEntries))
-	fmt.Printf("📝 Index file: %s\n", indexPath)
+	if outputFormat == "md" {
+		fmt.Printf("📝 Index file: %s\n", filepath.Join(finalOutputDir, "index.md"))
+	} else if outputFormat == "json" {
+		fmt.Printf("📝 Index file: %s\n", filepath.Join(finalOutputDir, "index.json"))
+	} else {
+		fmt.Printf("📝 Index files: %s, %s\n", filepath.Join(finalOutputDir, "index.md"), filepath.Join(finalOutputDir, "index.json"))
+	}
 }
 
 // processSingleFile processes a single MPR file
-func processSingleFile(mprPathArg string, outputDir string, options *ReportOptions) {
+func processSingleFile(mprPathArg string, outputDir string, outputFormat string, options *ReportOptions) {
 	mprPath := mprPathArg
 
 	// If "." is passed, search for .mpr file in current directory
@@ -481,18 +539,31 @@ func processSingleFile(mprPathArg string, outputDir string, options *ReportOptio
 		}
 	}
 
-	// Generate output filename from MPR filename
+	// Generate output filename base from MPR filename
 	mprFilename := filepath.Base(mprPath)
 	mprNameWithoutExt := strings.TrimSuffix(mprFilename, filepath.Ext(mprFilename))
-	outputFilename := mprNameWithoutExt + "-manifest.md"
 
-	// Construct final output path
-	finalOutputPath := outputFilename
+	// Determine output paths based on format
+	var finalOutputPathMD, finalOutputPathJSON string
+	if outputFormat == "md" || outputFormat == "both" {
+		outputFilenameMD := mprNameWithoutExt + "-manifest.md"
+		if outputDir != "" {
+			finalOutputPathMD = filepath.Join(outputDir, outputFilenameMD)
+		} else {
+			finalOutputPathMD = outputFilenameMD
+		}
+	}
+	if outputFormat == "json" || outputFormat == "both" {
+		outputFilenameJSON := mprNameWithoutExt + ".json"
+		if outputDir != "" {
+			finalOutputPathJSON = filepath.Join(outputDir, outputFilenameJSON)
+		} else {
+			finalOutputPathJSON = outputFilenameJSON
+		}
+	}
+
+	// Create output directory if needed
 	if outputDir != "" {
-		// Join with outputDir
-		finalOutputPath = filepath.Join(outputDir, outputFilename)
-
-		// Create output directory if it doesn't exist
 		err := os.MkdirAll(outputDir, 0755)
 		if err != nil {
 			fmt.Printf("Error creating output directory: %v\n", err)
@@ -631,14 +702,29 @@ func processSingleFile(mprPathArg string, outputDir string, options *ReportOptio
 		}
 	}
 
-	// Generate Markdown report
+	// Generate reports based on format
 	currentPhase++
-	fmt.Printf("\n[Phase %d/%d] 📝 Generating markdown report...\n", currentPhase, totalPhases)
-	fmt.Printf("  📄 Output file: %s\n", finalOutputPath)
-	err = generateMarkdownReport(&report, finalOutputPath, options)
-	if err != nil {
-		fmt.Printf("Error generating report: %v\n", err)
-		os.Exit(1)
+	if outputFormat == "md" || outputFormat == "both" {
+		fmt.Printf("\n[Phase %d/%d] 📝 Generating Markdown report...\n", currentPhase, totalPhases)
+		fmt.Printf("  📄 Output file: %s\n", finalOutputPathMD)
+		err = generateMarkdownReport(&report, finalOutputPathMD, options)
+		if err != nil {
+			fmt.Printf("Error generating Markdown report: %v\n", err)
+			os.Exit(1)
+		}
+	}
+	if outputFormat == "json" || outputFormat == "both" {
+		if outputFormat == "both" {
+			fmt.Printf("\n[Phase %d/%d] 📝 Generating JSON report...\n", currentPhase, totalPhases)
+		} else {
+			fmt.Printf("\n[Phase %d/%d] 📝 Generating JSON report...\n", currentPhase, totalPhases)
+		}
+		fmt.Printf("  📄 Output file: %s\n", finalOutputPathJSON)
+		err = generateJSONReport(&report, finalOutputPathJSON, options)
+		if err != nil {
+			fmt.Printf("Error generating JSON report: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	fmt.Println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -664,7 +750,15 @@ func processSingleFile(mprPathArg string, outputDir string, options *ReportOptio
 		fmt.Printf("  • System Roles: %d\n", len(report.SystemRoles))
 		fmt.Printf("  • Page Access Rules: %d\n", len(report.PageAccess))
 	}
-	fmt.Printf("\n📁 Report saved to: %s\n", finalOutputPath)
+	if outputFormat == "md" {
+		fmt.Printf("\n📁 Report saved to: %s\n", finalOutputPathMD)
+	} else if outputFormat == "json" {
+		fmt.Printf("\n📁 Report saved to: %s\n", finalOutputPathJSON)
+	} else {
+		fmt.Printf("\n📁 Reports saved to:\n")
+		fmt.Printf("  • Markdown: %s\n", finalOutputPathMD)
+		fmt.Printf("  • JSON: %s\n", finalOutputPathJSON)
+	}
 }
 
 // ==== SECTION 1: External Entities Collection ====
@@ -3430,6 +3524,121 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 
 	// Footer
 	fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
+
+	return nil
+}
+
+// generateJSONReport generates a JSON report file respecting the provided options
+func generateJSONReport(report *ManifestReport, outputPath string, options *ReportOptions) error {
+	// Create a filtered copy of the report based on options
+	filteredReport := ManifestReport{
+		ProjectName:   report.ProjectName,
+		MendixVersion: report.MendixVersion,
+		MPRPath:       report.MPRPath,
+		GeneratedAt:   report.GeneratedAt,
+	}
+
+	// Include entities if enabled
+	if options.IncludeEntities {
+		if options.IncludeAttributes {
+			// Include entities with attributes
+			filteredReport.Entities = report.Entities
+		} else {
+			// Include entities but remove attributes
+			filteredReport.Entities = make(map[string][]EntityInfo)
+			for module, entities := range report.Entities {
+				filteredEntities := make([]EntityInfo, len(entities))
+				for i, entity := range entities {
+					filteredEntities[i] = EntityInfo{
+						Name:           entity.Name,
+						Module:         entity.Module,
+						Attributes:     []string{}, // Empty attributes
+						PublishedFrom:  entity.PublishedFrom,
+						EntityTypeName: entity.EntityTypeName,
+					}
+				}
+				filteredReport.Entities[module] = filteredEntities
+			}
+		}
+	} else {
+		filteredReport.Entities = make(map[string][]EntityInfo)
+	}
+
+	// Include microflows if enabled
+	if options.IncludeMicroflows {
+		filteredReport.MicroflowCalls = report.MicroflowCalls
+	} else {
+		filteredReport.MicroflowCalls = []MicroflowCallInfo{}
+	}
+
+	// Include widgets if enabled
+	if options.IncludeWidgets {
+		filteredReport.Widgets = report.Widgets
+	} else {
+		filteredReport.Widgets = []WidgetInfo{}
+	}
+
+	// Include navigation if enabled
+	if options.IncludeNavigation {
+		filteredReport.NavigationItems = report.NavigationItems
+	} else {
+		filteredReport.NavigationItems = []NavigationItem{}
+	}
+
+	// Include roles if enabled
+	if options.IncludeRoles {
+		filteredReport.SystemRoles = report.SystemRoles
+		filteredReport.PageAccess = report.PageAccess
+	} else {
+		filteredReport.SystemRoles = []SystemRole{}
+		filteredReport.PageAccess = []PageAccessInfo{}
+	}
+
+	// Marshal with pretty-print (2 spaces indentation)
+	jsonData, err := json.MarshalIndent(&filteredReport, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal JSON: %w", err)
+	}
+
+	// Write to file
+	err = os.WriteFile(outputPath, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write JSON file: %w", err)
+	}
+
+	return nil
+}
+
+// IndexReport represents the index file structure for batch mode
+type IndexReport struct {
+	GeneratedAt  string        `json:\"GeneratedAt\"`
+	TotalReports int           `json:\"TotalReports\"`
+	SuccessCount int           `json:\"SuccessCount\"`
+	FailedCount  int           `json:\"FailedCount\"`
+	Reports      []ReportEntry `json:\"Reports\"`
+}
+
+// generateIndexJSON creates an index.json file listing all generated reports
+func generateIndexJSON(indexPath string, entries []ReportEntry) error {
+	index := IndexReport{
+		GeneratedAt:  time.Now().Format("2006-01-02 15:04:05"),
+		TotalReports: len(entries),
+		SuccessCount: countSuccessful(entries),
+		FailedCount:  countFailed(entries),
+		Reports:      entries,
+	}
+
+	// Marshal with pretty-print (2 spaces indentation)
+	jsonData, err := json.MarshalIndent(index, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal index JSON: %w", err)
+	}
+
+	// Write to file
+	err = os.WriteFile(indexPath, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write index JSON file: %w", err)
+	}
 
 	return nil
 }
