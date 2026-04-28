@@ -33,26 +33,26 @@ func main() {
 	for _, snippet := range snippets {
 		if snippet.Name == "MySnippet" {
 			fmt.Printf("=== MySnippet from ListSnippets() ===\n\n")
-			
+
 			// Convert to JSON to see structure
 			data, err := json.MarshalIndent(snippet, "", "  ")
 			if err != nil {
 				fmt.Printf("Error: %v\n", err)
 				continue
 			}
-			
+
 			fmt.Printf("%s\n\n", string(data))
-			
+
 			// Check if Widget field is populated
 			fmt.Printf("Widget field type: %T\n", snippet.Widget)
 			fmt.Printf("Widget is nil: %v\n", snippet.Widget == nil)
-			
+
 			if snippet.Widget != nil {
 				fmt.Printf("Widget details:\n")
 				widgetData, _ := json.MarshalIndent(snippet.Widget, "  ", "  ")
 				fmt.Printf("  %s\n", string(widgetData))
 			}
-			
+
 			break
 		}
 	}
