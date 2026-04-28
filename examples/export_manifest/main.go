@@ -38,7 +38,7 @@ type MicroflowCallInfo struct {
 	Module        string `json:"Module"`
 	ActivityName  string `json:"ActivityName"`
 	Caption       string `json:"Caption"`
-	CallType      string `json:"CallType"` // "MicroflowCall", "JavaAction", or "ExternalAction"
+	CallType      string `json:"CallType"`   // "MicroflowCall", "JavaAction", or "ExternalAction"
 	TargetName    string `json:"TargetName"` // Microflow/JavaAction/ExternalAction name
 	AppName       string `json:"AppName"`
 	CommandName   string `json:"CommandName"`
@@ -352,7 +352,7 @@ func processBatchMode(sourceDir string, outputDir string, outputFormat string, o
 		// Generate report filenames based on format
 		mprFilename := filepath.Base(mprPath)
 		mprNameWithoutExt := strings.TrimSuffix(mprFilename, filepath.Ext(mprFilename))
-		
+
 		var reportPathMD, reportPathJSON string
 		if outputFormat == "md" || outputFormat == "both" {
 			outputFilenameMD := mprNameWithoutExt + "-manifest.md"
@@ -466,7 +466,7 @@ func processBatchMode(sourceDir string, outputDir string, outputFormat string, o
 
 		entry.Success = true
 		reportEntries = append(reportEntries, entry)
-		
+
 		if outputFormat == "md" {
 			fmt.Printf("  ✅ Report generated: %s\n\n", filepath.Base(reportPathMD))
 		} else if outputFormat == "json" {
