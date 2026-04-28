@@ -85,8 +85,23 @@ func extractBool(v interface{}, defaultVal bool) bool {
 	return defaultVal
 }
 
+// toStringMap converts a value to map[string]interface{}, handling both
+// map[string]interface{} and primitive.D (mongo-driver BSON embedded doc).
+func toStringMap(v interface{}) map[string]interface{} {
+	if m, ok := v.(map[string]interface{}); ok {
+		return m
+	}
+	if d, ok := v.(primitive.D); ok {
+		m := make(map[string]interface{}, len(d))
+		for _, e := range d {
+			m[e.Key] = e.Value
+		}
+		return m
+	}
+	return nil
+}
+
 // extractBsonArray extracts items from a Mendix BSON array.
-// Mendix arrays start with a type indicator (3 for array), followed by items.
 func extractBsonArray(v interface{}) []interface{} {
 	if v == nil {
 		return nil
@@ -635,8 +650,8 @@ func (r *Reader) parsePage(unitID, containerID string, contents []byte) (*pages.
 	}
 
 	// Parse title
-	if title, ok := raw["Title"].(map[string]interface{}); ok {
-		page.Title = parseText(title)
+	if titleMap := toStringMap(raw["Title"]); titleMap != nil {
+		page.Title = parseText(titleMap)
 	}
 
 	// Parse parameters
@@ -660,11 +675,32 @@ func parseText(raw map[string]interface{}) *model.Text {
 	}
 
 	text.Translations = make(map[string]string)
+
+	// Try flat map format: {"en_US": "...", "en_GB": "..."}
 	if translations, ok := raw["Translations"].(map[string]interface{}); ok {
 		for lang, val := range translations {
 			if str, ok := val.(string); ok {
 				text.Translations[lang] = str
 			}
+		}
+	}
+
+	// MPR v2 format: Title is {$Type: "Texts$Text", Items: [{$Type: "Texts$Translation", LanguageCode: "en_US", Text: "..."}]}
+	// So translations are under raw["Items"]
+	for _, key := range []string{"Items", "Translations"} {
+		if items := extractBsonArray(raw[key]); items != nil {
+			for _, item := range items {
+				m := toStringMap(item)
+				if m == nil {
+					continue
+				}
+				lang, _ := m["LanguageCode"].(string)
+				txt, _ := m["Text"].(string)
+				if lang != "" && txt != "" {
+					text.Translations[lang] = txt
+				}
+			}
+			break
 		}
 	}
 

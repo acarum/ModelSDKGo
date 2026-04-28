@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -53,31 +54,43 @@ type PlaceholderContent struct {
 	Parameter               string // full parameter path e.g. "Atlas_Default.Main"
 	RootContainerName       string // name of the first DivContainer in the placeholder
 	CommandBarContainerName string // name of DivContainer with CSS class containing "vertical-command-bar"
+	Widgets                 []WidgetCaption        // all widgets with captions (for Contents section)
 	Tabs                    []TabInfo
 	Buttons                 []DataGridActionButton // direct ActionButtons outside of tabs (e.g. Right command bar)
 }
 
 // PageReport represents the full report for one page
 type PageReport struct {
-	PageName string
-	PageID   string
-	MprPath  string
-	Main     *PlaceholderContent
-	Right    *PlaceholderContent
+	PageName  string
+	PageTitle string
+	PageID    string
+	MprPath   string
+	Main      *PlaceholderContent
+	Right     *PlaceholderContent
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: export_page_manifest <mpr_file_path> [page_name]")
+	typeFlag := flag.String("type", "", "Filter pages by type: 'eng' or 'runtime' (default: all)")
+	flag.Parse()
+
+	args := flag.Args()
+	if len(args) < 1 {
+		fmt.Println("Usage: export_page_manifest [--type eng|runtime] <mpr_file_path> [page_name]")
 		fmt.Println("Example: export_page_manifest MyApp.mpr")
 		fmt.Println("         export_page_manifest MyApp.mpr StateMachine_Details")
+		fmt.Println("         export_page_manifest --type eng MyApp.mpr")
+		fmt.Println("         export_page_manifest --type runtime MyApp.mpr")
 		os.Exit(1)
 	}
 
-	mprPath := os.Args[1]
+	if *typeFlag != "" && *typeFlag != "eng" && *typeFlag != "runtime" {
+		log.Fatalf("Invalid --type value %q: must be 'eng' or 'runtime'", *typeFlag)
+	}
+
+	mprPath := args[0]
 	pageFilter := ""
-	if len(os.Args) > 2 {
-		pageFilter = os.Args[2]
+	if len(args) > 1 {
+		pageFilter = args[1]
 	}
 	outputDir := filepath.Join("examples", "export_page_manifest")
 
@@ -125,20 +138,38 @@ func main() {
 			}
 		}
 
+		// Filter by page type if requested
+		if *typeFlag != "" && !matchesPageType(page.Name, *typeFlag) {
+			continue
+		}
+
 		fmt.Printf("\r[%d/%d] Scanning: %s", i+1, len(pages), page.Name)
 
 		bsonData, err := loadPageBSON(mprPath, string(page.ID))
 		if err != nil {
+			if pageFilter != "" {
+				fmt.Printf("\n[DEBUG] loadPageBSON failed for %s (ID=%s): %v\n", page.Name, page.ID, err)
+			}
 			continue
 		}
 
 		var pageData map[string]interface{}
 		if err := bson.Unmarshal(bsonData, &pageData); err != nil {
+			if pageFilter != "" {
+				fmt.Printf("\n[DEBUG] bson.Unmarshal failed for %s: %v\n", page.Name, err)
+			}
 			continue
 		}
 
 		report := extractPlaceholders(pageData, page.Name, string(page.ID), mprPath)
 		report.MprPath = mprPath
+		// Extract page title using en_US
+		if page.Title != nil {
+			report.PageTitle = page.Title.GetTranslation("en_US")
+		}
+		if pageFilter != "" {
+			fmt.Printf("\n[DEBUG] %s → Main=%v Right=%v\n", page.Name, report.Main != nil, report.Right != nil)
+		}
 		if report.Main != nil || report.Right != nil {
 			reports = append(reports, report)
 		}
@@ -146,8 +177,27 @@ func main() {
 
 	fmt.Printf("\n\nPages with Main/Right placeholders: %d\n\n", len(reports))
 
-	outputFile := filepath.Join(outputDir, "buttons_manifest.md")
-	exportMarkdown(reports, outputFile)
+	outputFileName := "buttons_manifest.md"
+	if pageFilter != "" {
+		outputFileName = pageFilter + "_manifest.md"
+	}
+	outputFile := filepath.Join(outputDir, outputFileName)
+	exportMarkdown(reports, outputFile, pageFilter)
+}
+
+// matchesPageType returns true if the page matches the requested type filter.
+// type "eng"     → engineering pages (TODO: add your criteria here)
+// type "runtime" → runtime/user-facing pages (TODO: add your criteria here)
+func matchesPageType(pageName, pageType string) bool {
+	switch pageType {
+	case "eng":
+		// TODO: replace with actual eng-page detection logic
+		return true
+	case "runtime":
+		// TODO: replace with actual runtime-page detection logic
+		return true
+	}
+	return true
 }
 
 // extractPlaceholders parses FormCall.Arguments to find Main and Right placeholders
@@ -208,6 +258,7 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprP
 			Parameter:               param,
 			RootContainerName:       findFirstContainerName(widgets),
 			CommandBarContainerName: findContainerByClass(widgets, "vertical-command-bar"),
+			Widgets:                 findAllWidgetsSummary(widgets),
 			Tabs:                    tabs,
 			Buttons:                 directButtons,
 		}
@@ -773,6 +824,45 @@ func findWidgetCaptions(data interface{}) []WidgetCaption {
 	return result
 }
 
+// findAllWidgetsSummary recursively collects all widget-like nodes with their type, name and caption.
+// Unlike findWidgetCaptions, it includes widgets even when caption is empty.
+func findAllWidgetsSummary(data interface{}) []WidgetCaption {
+	var result []WidgetCaption
+	// widget types to include (skip containers, layout helpers, etc.)
+	include := map[string]bool{
+		"Forms$TextBox": true, "Forms$TextArea": true, "Forms$DatePicker": true,
+		"Forms$DropDown": true, "Forms$CheckBox": true, "Forms$RadioButton": true,
+		"Forms$Label": true, "Forms$StaticLabel": true, "Forms$ActionButton": true,
+		"Forms$DataView": true, "Forms$ListView": true, "Forms$ReferenceSelector": true,
+		"Forms$InputReferenceSelector": true, "Forms$FileManager": true,
+		"Forms$Image": true, "Forms$DynamicImage": true,
+	}
+	switch v := data.(type) {
+	case map[string]interface{}:
+		t, _ := v["$Type"].(string)
+		if include[t] {
+			cap := extractCaption(v)
+			result = append(result, WidgetCaption{
+				WidgetType: shortType(t),
+				WidgetName: getStr(v, "Name"),
+				Caption:    cap,
+			})
+		}
+		for _, val := range v {
+			result = append(result, findAllWidgetsSummary(val)...)
+		}
+	case primitive.A:
+		for _, item := range v {
+			result = append(result, findAllWidgetsSummary(item)...)
+		}
+	case []interface{}:
+		for _, item := range v {
+			result = append(result, findAllWidgetsSummary(item)...)
+		}
+	}
+	return result
+}
+
 // shortType strips the "Forms$" prefix for readability
 func shortType(t string) string {
 	parts := strings.SplitN(t, "$", 2)
@@ -988,64 +1078,70 @@ func isMarketplaceModule(moduleName string) bool {
 
 // writePlaceholderSection writes one Main/Right section with tabs and widget captions
 func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderContent, mprPath string) {
+	isModalPanel := ph != nil && strings.Contains(ph.Parameter, "EXFN_ModalPanel")
 	fmt.Fprintf(file, "### %s\n\n", sectionName)
 	if ph == nil {
 		fmt.Fprintf(file, "_No %s placeholder in this page._\n\n", sectionName)
 		return
 	}
-	fmt.Fprintf(file, "_Placeholder:_ `%s`\n\n", ph.Parameter)
+	fmt.Fprintf(file, "**Layout:** `%s`\n\n", ph.Parameter)
+
+	// Contents section: all widgets with name and caption (only for EXFN_ModalPanel)
+	if isModalPanel && len(ph.Widgets) > 0 {
+		fmt.Fprintf(file, "#### Contents\n\n")
+		fmt.Fprintf(file, "| # | Type | Name | Caption |\n")
+		fmt.Fprintf(file, "|---|---|---|---|\n")
+		row := 0
+		for _, w := range ph.Widgets {
+			if w.WidgetType == "ActionButton" || w.WidgetType == "DataView" {
+				continue
+			}
+			row++
+			fmt.Fprintf(file, "| %d | %s | %s | %s |\n", row,
+				strings.ReplaceAll(w.WidgetType, "|", "\\|"),
+				strings.ReplaceAll(w.WidgetName, "|", "\\|"),
+				strings.ReplaceAll(w.Caption, "|", "\\|"))
+		}
+		fmt.Fprintf(file, "\n")
+	}
+
 	if len(ph.Tabs) == 0 {
 		if len(ph.Buttons) == 0 {
-			fmt.Fprintf(file, "_No tabs found in %s placeholder._\n\n", sectionName)
+			if !isModalPanel {
+				fmt.Fprintf(file, "_No tabs found in %s placeholder._\n\n", sectionName)
+			}
 			return
 		}
-		// No tabs, but has direct command-bar buttons (e.g. Right vertical-command-bar)
-		fmt.Fprintf(file, "**Vertical CommandBar**\n\n")
-		fmt.Fprintf(file, "| | Name |\n")
-		fmt.Fprintf(file, "|---|---|\n")
-		rootName := ph.RootContainerName
-		if rootName == "" {
-			rootName = "-"
+		if isModalPanel {
+			// Skip Vertical CommandBar header for modal panel layout
+			fmt.Fprintf(file, "**Buttons:**\n\n")
+		} else {
+			// No tabs, but has direct command-bar buttons (e.g. Right vertical-command-bar)
+			fmt.Fprintf(file, "**Vertical CommandBar**\n\n")
+			fmt.Fprintf(file, "| | Name |\n")
+			fmt.Fprintf(file, "|---|---|\n")
+			rootName := ph.RootContainerName
+			if rootName == "" {
+				rootName = "-"
+			}
+			cbName := ph.CommandBarContainerName
+			if cbName == "" {
+				cbName = "-"
+			}
+			fmt.Fprintf(file, "| Container | `%s` |\n", rootName)
+			fmt.Fprintf(file, "| VerticalCommandBarClass | `%s` |\n\n", cbName)
+			fmt.Fprintf(file, "**Vertical CommandBar Buttons:**\n\n")
 		}
-		cbName := ph.CommandBarContainerName
-		if cbName == "" {
-			cbName = "-"
-		}
-		fmt.Fprintf(file, "| Container | `%s` |\n", rootName)
-		fmt.Fprintf(file, "| VerticalCommandBarClass | `%s` |\n\n", cbName)
-		fmt.Fprintf(file, "**Vertical CommandBar Buttons:**\n\n")
-		fmt.Fprintf(file, "| # | Button Name | Caption | Container | Nanoflow | Show Page |\n")
-		fmt.Fprintf(file, "|---|---|---|---|---|---|\n")
+		fmt.Fprintf(file, "| # | Name | Caption |\n")
+		fmt.Fprintf(file, "|---|---|---|\n")
 		for i, btn := range ph.Buttons {
 			btnCap := btn.Caption
 			if btnCap == "" {
 				btnCap = "(no caption)"
 			}
-			containerName := btn.ContainerName
-			if containerName == "" {
-				containerName = "-"
-			}
-			nfName := btn.NanoflowName
-			if nfName == "" {
-				nfName = "-"
-			} else {
-				// Show only the short name after the module prefix
-				if idx := strings.LastIndex(nfName, "."); idx >= 0 {
-					nfName = nfName[idx+1:]
-				}
-			}
-			showPage := btn.ShowPageName
-			if showPage == "" {
-				showPage = "-"
-			} else if idx := strings.LastIndex(showPage, "."); idx >= 0 {
-				showPage = showPage[idx+1:]
-			}
-			fmt.Fprintf(file, "| %d | %s | %s | %s | %s | %s |\n", i+1,
+			fmt.Fprintf(file, "| %d | %s | %s |\n", i+1,
 				strings.ReplaceAll(btn.Name, "|", "\\|"),
-				strings.ReplaceAll(btnCap, "|", "\\|"),
-				strings.ReplaceAll(containerName, "|", "\\|"),
-				strings.ReplaceAll(nfName, "|", "\\|"),
-				strings.ReplaceAll(showPage, "|", "\\|"))
+				strings.ReplaceAll(btnCap, "|", "\\|"))
 		}
 		fmt.Fprintf(file, "\n")
 
@@ -1169,7 +1265,7 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 				// If DataGrid2, add action buttons sub-table
 				if w.WidgetType == "DataGrid2" && len(w.ActionButtons) > 0 {
 					fmt.Fprintf(file, "  **Contextual CommandBar Buttons of `%s`:**\n\n", w.WidgetName)
-					fmt.Fprintf(file, "  | # | Button Name | Caption |\n")
+					fmt.Fprintf(file, "  | # | Name | Caption |\n")
 					fmt.Fprintf(file, "  |---|---|---|\n")
 					for j, btn := range w.ActionButtons {
 						btnCap := btn.Caption
@@ -1249,7 +1345,7 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 }
 
 // exportMarkdown writes the full report to a .md file
-func exportMarkdown(reports []PageReport, outputFile string) {
+func exportMarkdown(reports []PageReport, outputFile string, pageFilter string) {
 	file, err := os.Create(outputFile)
 	if err != nil {
 		log.Fatalf("Error creating Markdown file: %v", err)
@@ -1271,19 +1367,29 @@ func exportMarkdown(reports []PageReport, outputFile string) {
 		}
 	}
 
-	fmt.Fprintf(file, "# Page Manifest — Layout Placeholders & Tabs\n\n")
-	fmt.Fprintf(file, "| Metric | Count |\n")
-	fmt.Fprintf(file, "|---|---|\n")
-	fmt.Fprintf(file, "| Pages with Main placeholder | %d |\n", totalMain)
-	fmt.Fprintf(file, "| Pages with Right placeholder | %d |\n", totalRight)
-	fmt.Fprintf(file, "| Total tabs found | %d |\n\n", totalTabs)
+	title := "Page Manifest — Layout Placeholders & Tabs"
+	if pageFilter != "" {
+		title = pageFilter
+	}
+	fmt.Fprintf(file, "# %s\n\n", title)
 	fmt.Fprintf(file, "---\n\n")
 
 	for _, r := range reports {
 		fmt.Fprintf(file, "## 📄 %s\n\n", r.PageName)
+		if r.PageTitle != "" {
+			fmt.Fprintf(file, "**Title:** %s\n\n", r.PageTitle)
+		}
 
 		writePlaceholderSection(file, "Main", r.Main, r.MprPath)
-		writePlaceholderSection(file, "Right", r.Right, r.MprPath)
+
+		// Skip Right section if the layout is EXFN_ModalPanel (modal panel has no Right placeholder)
+		mainParam := ""
+		if r.Main != nil {
+			mainParam = r.Main.Parameter
+		}
+		if !strings.Contains(mainParam, "EXFN_ModalPanel") {
+			writePlaceholderSection(file, "Right", r.Right, r.MprPath)
+		}
 
 		fmt.Fprintf(file, "---\n\n")
 	}
