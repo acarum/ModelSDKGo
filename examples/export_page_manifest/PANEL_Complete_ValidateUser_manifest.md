@@ -1,0 +1,37 @@
+# PANEL_Complete_ValidateUser
+
+---
+
+## 📄 PANEL_Complete_ValidateUser
+
+**Title:** Validate User
+
+### Main
+
+**Layout:** `DISW_DesignSystem.ModalPopupLayout.Main`
+
+**Vertical CommandBar**
+
+| | Name |
+|---|---|
+| Container | `-` |
+| VerticalCommandBarClass | `-` |
+
+**Vertical CommandBar Buttons:**
+
+| # | Name | Caption |
+|---|---|---|
+| 1 | ValidateUserSaveActionButton | Save |
+| 2 | ValidateUserSaveActionButton1 | Save |
+| 3 | ESCancelActionButton | Cancel |
+
+### Right
+
+_No Right placeholder in this page._
+
+---
+
+## Summary
+
+- **Pages with placeholders:** 1
+- **Total tabs:** 0
