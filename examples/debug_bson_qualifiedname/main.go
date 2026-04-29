@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	
+
 	"github.com/anthropics/modelsdk-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	mprPath := os.Args[1]
-	
+
 	reader, err := modelsdk.Open(mprPath)
 	if err != nil {
 		log.Fatalf("Error opening MPR: %v", err)
@@ -36,11 +36,11 @@ func main() {
 	// Take first 3 pages as sample
 	for i := 0; i < 3 && i < len(pages); i++ {
 		page := pages[i]
-		
+
 		fmt.Printf("=== Page %d: %s ===\n", i+1, page.Name)
 		fmt.Printf("ID: %s\n", page.ID)
 		fmt.Printf("ContainerID: %s\n", page.ContainerID)
-		
+
 		// Read the BSON directly
 		contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
 		pageID := string(page.ID)
@@ -48,19 +48,19 @@ func main() {
 		dir1 := cleanID[0:2]
 		dir2 := cleanID[2:4]
 		filePath := filepath.Join(contentsDir, dir1, dir2, pageID+".mxunit")
-		
+
 		data, err := os.ReadFile(filePath)
 		if err != nil {
 			fmt.Printf("Error reading BSON: %v\n\n", err)
 			continue
 		}
-		
+
 		var content map[string]interface{}
 		if err := bson.Unmarshal(data, &content); err != nil {
 			fmt.Printf("Error unmarshaling BSON: %v\n\n", err)
 			continue
 		}
-		
+
 		// List all top-level keys
 		fmt.Println("Available BSON fields:")
 		for key := range content {
@@ -68,14 +68,14 @@ func main() {
 				fmt.Printf("  %s: %v\n", key, content[key])
 			}
 		}
-		
+
 		// Specifically check for QualifiedName
 		if qn, ok := content["QualifiedName"]; ok {
 			fmt.Printf("\n✅ QualifiedName FOUND: %v\n", qn)
 		} else {
 			fmt.Printf("\n❌ QualifiedName field NOT found\n")
 		}
-		
+
 		// Check for other name-related fields
 		nameFields := []string{"Name", "FullName", "FullyQualifiedName", "ModuleName", "QualifiedName"}
 		for _, field := range nameFields {
@@ -83,8 +83,7 @@ func main() {
 				fmt.Printf("  %s: %v\n", field, val)
 			}
 		}
-		
+
 		fmt.Println()
 	}
 }
-

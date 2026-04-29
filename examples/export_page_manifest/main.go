@@ -1087,12 +1087,12 @@ func exportPageListJSON(pagesList []*pages.Page, moduleMap map[string]string, mp
 
 		// Get module name by traversing container hierarchy
 		moduleName := findModuleByTraversal(string(page.ID), db, mprPath)
-		
+
 		// Skip marketplace modules
 		if isMarketplaceModule(moduleName) {
 			continue
 		}
-		
+
 		// Filter: exclude UI modules (keep only non-UI, non-marketplace)
 		if moduleName != "" && isUIModule(moduleName) {
 			continue

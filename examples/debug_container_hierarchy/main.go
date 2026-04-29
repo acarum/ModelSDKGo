@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 	"strings"
-	
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -31,7 +31,7 @@ func main() {
 	}
 
 	mprPath := os.Args[1]
-	
+
 	// Open SQLite database
 	db, err := sql.Open("sqlite3", mprPath)
 	if err != nil {
@@ -47,69 +47,69 @@ func main() {
 		FROM Unit 
 		LIMIT 1
 	`).Scan(&pageUnitID, &pageContainerID, &pageName)
-	
+
 	if err != nil {
 		log.Fatalf("Error getting sample page: %v", err)
 	}
-	
+
 	pageID := blobToUUID(pageUnitID)
 	containerID := blobToUUID(pageContainerID)
-	
+
 	fmt.Printf("=== Sample Unit ===\n")
 	fmt.Printf("UnitID: %s\n", pageID)
 	fmt.Printf("ContainerID: %s\n", containerID)
 	fmt.Printf("ContainmentName: %s\n\n", pageName)
-	
+
 	// Trace the container hierarchy
 	fmt.Println("=== Container Hierarchy ===")
 	currentID := pageContainerID
 	level := 0
-	
+
 	for len(currentID) > 0 && level < 10 {
 		var unitID, containerID []byte
 		var containmentName string
-		
+
 		err := db.QueryRow(`
 			SELECT UnitID, ContainerID, ContainmentName 
 			FROM Unit 
 			WHERE UnitID = ?
 		`, currentID).Scan(&unitID, &containerID, &containmentName)
-		
+
 		if err != nil {
 			if err == sql.ErrNoRows {
-				fmt.Printf("%sLevel %d: %s (ROOT - no parent found)\n", 
+				fmt.Printf("%sLevel %d: %s (ROOT - no parent found)\n",
 					strings.Repeat("  ", level), level, blobToUUID(currentID))
 				break
 			}
 			log.Fatalf("Error tracing hierarchy: %v", err)
 		}
-		
-		fmt.Printf("%sLevel %d: %s (ContainmentName: %s)\n", 
+
+		fmt.Printf("%sLevel %d: %s (ContainmentName: %s)\n",
 			strings.Repeat("  ", level), level, blobToUUID(unitID), containmentName)
-		
+
 		// Check if this is a module by querying the Contents
 		// Modules have $Type starting with "Projects$Module"
 		var contents []byte
 		contentErr := db.QueryRow(`
 			SELECT ContentsHash FROM Unit WHERE UnitID = ?
 		`, unitID).Scan(&contents)
-		
+
 		if contentErr == nil {
 			// For MPR v2, we can't easily read contents, but we can check ContainmentName
 			if containmentName == "Modules" {
 				fmt.Printf("%s  ^ This is likely a MODULE\n", strings.Repeat("  ", level))
 			}
 		}
-		
+
 		if len(containerID) == 0 || hex.EncodeToString(containerID) == "00000000000000000000000000000000" {
 			fmt.Printf("%s  ^ This is the ROOT\n", strings.Repeat("  ", level))
 			break
 		}
-		
+
 		currentID = containerID
 		level++
 	}
-	
+
 	fmt.Println("\n=== Testing Module Detection ===")
 	// Query modules directly
 	rows, err := db.Query(`

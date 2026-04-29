@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -17,7 +17,7 @@ func main() {
 	}
 
 	mprPath := os.Args[1]
-	
+
 	// Open SQLite database
 	db, err := sql.Open("sqlite3", mprPath)
 	if err != nil {
@@ -45,28 +45,28 @@ func main() {
 		fmt.Printf("%d. %s (%s)\n", cid, name, typeName)
 		cols = append(cols, name)
 	}
-	
+
 	fmt.Println("\n=== Sample Page Data ===")
-	
+
 	// Query a sample page to see all available columns
 	query := fmt.Sprintf("SELECT %s FROM Unit WHERE UnitID IN (SELECT UnitID FROM Unit LIMIT 1)", "*")
 	row := db.QueryRow(query)
-	
+
 	// Create a slice to hold the column values
 	columns := make([]interface{}, len(cols))
 	columnPointers := make([]interface{}, len(cols))
 	for i := range columns {
 		columnPointers[i] = &columns[i]
 	}
-	
+
 	if err := row.Scan(columnPointers...); err != nil {
 		log.Fatalf("Error scanning row: %v", err)
 	}
-	
+
 	for i, col := range cols {
 		fmt.Printf("%s: %v\n", col, columns[i])
 	}
-	
+
 	fmt.Println("\n=== Checking for QualifiedName in Unit table ===")
 	// Try to query QualifiedName column
 	testQuery := "SELECT UnitID, QualifiedName FROM Unit LIMIT 1"
@@ -78,7 +78,7 @@ func main() {
 	} else {
 		fmt.Printf("✅ QualifiedName column EXISTS!\n")
 		fmt.Printf("Sample: UnitID=%s, QualifiedName=%s\n", unitID, qualName)
-		
+
 		// Query all pages with QualifiedName
 		fmt.Println("\n=== Pages with QualifiedName ===")
 		pageRows, err := db.Query(`
@@ -91,7 +91,7 @@ func main() {
 			log.Fatalf("Error querying pages: %v", err)
 		}
 		defer pageRows.Close()
-		
+
 		for pageRows.Next() {
 			var id, qn, cn string
 			if err := pageRows.Scan(&id, &qn, &cn); err != nil {
