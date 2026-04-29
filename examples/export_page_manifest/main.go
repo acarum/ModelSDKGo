@@ -18,6 +18,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// GalleryInfo holds sort and search widget names found inside a Gallery widget
+type GalleryInfo struct {
+	SortBy        []string // names of DropdownSort widgets
+	Search        []string // names of DatagridTextFilter widgets
+	TileContainer string   // name of DivContainer with Class "exfn-tile-container"
+}
+
 // WidgetCaption holds a single widget with an extractable caption
 type WidgetCaption struct {
 	WidgetType string
@@ -26,6 +33,8 @@ type WidgetCaption struct {
 	// For DataGrid2: columns and action buttons are nested under the widget entry
 	Columns       []DataGridColumn
 	ActionButtons []DataGridActionButton
+	// For Gallery: sort and search info
+	Gallery *GalleryInfo
 }
 
 // DataGridActionButton represents an action button inside a DataGrid 2 widget
@@ -88,6 +97,7 @@ func main() {
 		fmt.Println("Usage: export_page_manifest [--type eng|runtime] [--pages] <mpr_file_path> [page_name]")
 		fmt.Println("Example: export_page_manifest MyApp.mpr")
 		fmt.Println("         export_page_manifest MyApp.mpr StateMachine_Details")
+		fmt.Println("         export_page_manifest --filter PANEL_* MyApp.mpr")
 		fmt.Println("         export_page_manifest --type eng MyApp.mpr")
 		fmt.Println("         export_page_manifest --type runtime MyApp.mpr")
 		fmt.Println("         export_page_manifest --pages MyApp.mpr")
@@ -153,6 +163,12 @@ func main() {
 		if pageFilter != "" && page.Name != pageFilter {
 			continue
 		}
+		if wildcardFilter != "" {
+			matched, matchErr := filepath.Match(wildcardFilter, page.Name)
+			if matchErr != nil || !matched {
+				continue
+			}
+		}
 
 		// Skip marketplace modules
 		if moduleName, ok := moduleMap[string(page.ContainerID)]; ok {
@@ -200,12 +216,20 @@ func main() {
 
 	fmt.Printf("\n\nPages with Main/Right placeholders: %d\n\n", len(reports))
 
-	outputFileName := "buttons_manifest.md"
-	if pageFilter != "" {
-		outputFileName = pageFilter + "_manifest.md"
+	if wildcardFilter != "" {
+		// One file per page
+		for _, r := range reports {
+			outputFile := filepath.Join(outputDir, r.PageName+"_manifest.md")
+			exportMarkdown([]PageReport{r}, outputFile, r.PageName)
+		}
+	} else {
+		outputFileName := "buttons_manifest.md"
+		if pageFilter != "" {
+			outputFileName = pageFilter + "_manifest.md"
+		}
+		outputFile := filepath.Join(outputDir, outputFileName)
+		exportMarkdown(reports, outputFile, pageFilter)
 	}
-	outputFile := filepath.Join(outputDir, outputFileName)
-	exportMarkdown(reports, outputFile, pageFilter)
 }
 
 // matchesPageType returns true if the page matches the requested type filter.
@@ -847,6 +871,57 @@ func findWidgetCaptions(data interface{}) []WidgetCaption {
 	return result
 }
 
+// extractGalleryInfo scans a Gallery widget node for DropdownSort, DatagridTextFilter children
+// and the first DivContainer with Class "exfn-tile-container".
+func extractGalleryInfo(data interface{}) *GalleryInfo {
+	var sortBy, search []string
+	tileContainer := ""
+	var walk func(v interface{})
+	walk = func(v interface{}) {
+		switch m := v.(type) {
+		case map[string]interface{}:
+			t, _ := m["$Type"].(string)
+			if t == "CustomWidgets$CustomWidget" {
+				if typeNode, ok := m["Type"].(map[string]interface{}); ok {
+					wid, _ := typeNode["WidgetId"].(string)
+					name := getStr(m, "Name")
+					switch wid {
+					case "com.mendix.widget.web.dropdownsort.DropdownSort":
+						sortBy = append(sortBy, name)
+						return // don't recurse into this widget's type definition
+					case "com.mendix.widget.web.datagridtextfilter.DatagridTextFilter":
+						search = append(search, name)
+						return
+					}
+				}
+			}
+			if t == "Forms$DivContainer" && tileContainer == "" {
+				if app, ok := m["Appearance"].(map[string]interface{}); ok {
+					if cls, _ := app["Class"].(string); cls == "exfn-tile-container" {
+						tileContainer = getStr(m, "Name")
+					}
+				}
+			}
+			for _, val := range m {
+				walk(val)
+			}
+		case primitive.A:
+			for _, item := range m {
+				walk(item)
+			}
+		case []interface{}:
+			for _, item := range m {
+				walk(item)
+			}
+		}
+	}
+	walk(data)
+	if len(sortBy) == 0 && len(search) == 0 && tileContainer == "" {
+		return nil
+	}
+	return &GalleryInfo{SortBy: sortBy, Search: search, TileContainer: tileContainer}
+}
+
 // findAllWidgetsSummary recursively collects all widget-like nodes with their type, name and caption.
 // Unlike findWidgetCaptions, it includes widgets even when caption is empty.
 func findAllWidgetsSummary(data interface{}) []WidgetCaption {
@@ -859,10 +934,43 @@ func findAllWidgetsSummary(data interface{}) []WidgetCaption {
 		"Forms$DataView": true, "Forms$ListView": true, "Forms$ReferenceSelector": true,
 		"Forms$InputReferenceSelector": true, "Forms$FileManager": true,
 		"Forms$Image": true, "Forms$DynamicImage": true,
+		"Forms$DynamicText": true,
 	}
 	switch v := data.(type) {
 	case map[string]interface{}:
 		t, _ := v["$Type"].(string)
+		if t == "CustomWidgets$CustomWidget" {
+			if typeNode, ok := v["Type"].(map[string]interface{}); ok {
+				wid, _ := typeNode["WidgetId"].(string)
+				switch wid {
+				case "com.mendix.widget.web.gallery.Gallery":
+					gi := extractGalleryInfo(v)
+					result = append(result, WidgetCaption{
+						WidgetType: "Gallery",
+						WidgetName: getStr(v, "Name"),
+						Caption:    "",
+						Gallery:    gi,
+					})
+					return result // don't recurse into Gallery internals
+				case "com.mendix.widget.web.datagrid.Datagrid":
+					cols := extractDataGridColumns(v)
+					result = append(result, WidgetCaption{
+						WidgetType: "DataGrid2",
+						WidgetName: getStr(v, "Name"),
+						Caption:    "",
+						Columns:    cols,
+					})
+					return result // don't recurse into DataGrid2 internals
+				case "com.mendix.widget.custom.switch.Switch":
+					result = append(result, WidgetCaption{
+						WidgetType: "Switch",
+						WidgetName: getStr(v, "Name"),
+						Caption:    "",
+					})
+					return result
+				}
+			}
+		}
 		if include[t] {
 			cap := extractCaption(v)
 			result = append(result, WidgetCaption{
@@ -1000,6 +1108,15 @@ func extractCaption(data map[string]interface{}) string {
 	if tt, ok := data["Tooltip"].(map[string]interface{}); ok {
 		if t := extractTextsText(tt); t != "" {
 			return t
+		}
+	}
+
+	// Pattern 6: Content.Template (Forms$DynamicText / Text widget)
+	if content, ok := data["Content"].(map[string]interface{}); ok {
+		if tmpl, ok := content["Template"].(map[string]interface{}); ok {
+			if t := extractTextsTextEnUS(tmpl); t != "" {
+				return t
+			}
 		}
 	}
 
@@ -1328,6 +1445,14 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 	}
 	fmt.Fprintf(file, "**Layout:** `%s`\n\n", ph.Parameter)
 
+	// DataView: first DataView found in widgets
+	for _, w := range ph.Widgets {
+		if w.WidgetType == "DataView" {
+			fmt.Fprintf(file, "**DataView:** `%s`\n\n", w.WidgetName)
+			break
+		}
+	}
+
 	// Contents section: all widgets with name and caption (only for EXFN_ModalPanel)
 	if isModalPanel && len(ph.Widgets) > 0 {
 		fmt.Fprintf(file, "#### Contents\n\n")
@@ -1345,6 +1470,37 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 				strings.ReplaceAll(w.Caption, "|", "\\|"))
 		}
 		fmt.Fprintf(file, "\n")
+		// Gallery subsections
+		for _, w := range ph.Widgets {
+			if w.WidgetType != "Gallery" || w.Gallery == nil {
+				continue
+			}
+			fmt.Fprintf(file, "##### Gallery: %s\n\n", w.WidgetName)
+			if w.Gallery.TileContainer != "" {
+				fmt.Fprintf(file, "- **Tile container:** %s\n", w.Gallery.TileContainer)
+			}
+			if len(w.Gallery.SortBy) > 0 {
+				fmt.Fprintf(file, "- **Sort by:** %s\n", strings.Join(w.Gallery.SortBy, ", "))
+			}
+			if len(w.Gallery.Search) > 0 {
+				fmt.Fprintf(file, "- **Search:** %s\n", strings.Join(w.Gallery.Search, ", "))
+			}
+			fmt.Fprintf(file, "\n")
+		}
+		// DataGrid2 subsections
+		for _, w := range ph.Widgets {
+			if w.WidgetType != "DataGrid2" || len(w.Columns) == 0 {
+				continue
+			}
+			fmt.Fprintf(file, "##### DataGrid2: %s\n\n", w.WidgetName)
+			fmt.Fprintf(file, "| # | Caption |\n")
+			fmt.Fprintf(file, "|---|---|\n")
+			for i, col := range w.Columns {
+				fmt.Fprintf(file, "| %d | %s |\n", i+1,
+					strings.ReplaceAll(col.Caption, "|", "\\|"))
+			}
+			fmt.Fprintf(file, "\n")
+		}
 	}
 
 	if len(ph.Tabs) == 0 {

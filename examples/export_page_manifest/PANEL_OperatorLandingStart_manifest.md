@@ -4,6 +4,8 @@
 
 ## 📄 PANEL_OperatorLandingStart
 
+**Title:** Start Work Order Operation
+
 ### Main
 
 **Layout:** `OpcenterEXFN_DISW_DesignSystem.EXFN_ModalPanel.Main`
@@ -12,31 +14,33 @@
 
 | # | Type | Name | Caption |
 |---|---|---|---|
-| 1 | DataView | dataView1 |  |
-| 2 | Label | label1 | Actual Target Quantity: |
-| 3 | Label | label2 | Planned Target Quantity: |
-| 4 | Label | label4 | Show available Serial Numbers |
-| 5 | Label | label3 | Select a Serial Number to associate |
-| 6 | ActionButton | AssociateSNFromDropDown | Associate |
-| 7 | Label | label6 | Associate or auto-generate Serial Number |
-| 8 | Label | label8 | Associate the Serial Number found in system |
-| 9 | TextBox | textBox2 |  |
-| 10 | Label | label5 | OR |
-| 11 | TextBox | textBox3 |  |
-| 12 | ActionButton | GenerateAndAssociateSNFromNId | Generate and Associate |
-| 13 | ActionButton | GenerateAndAssociateSNFromQuantity | Generate and Associate |
-| 14 | ActionButton | AssociateSNFromInputNId | Associate |
-| 15 | ActionButton | GenerateAndAssociateSNFromNIdPlaceholder | Generate and Associate |
-| 16 | DataView | SelectSerialNumberDataView |  |
-| 17 | DataView | dataView2 |  |
-| 18 | ActionButton | startActionButton | Start |
-| 19 | ActionButton | startActionButton1 | Start |
-| 20 | ActionButton | startActionButton2 |   Start All   |
-| 21 | ActionButton | cancelActionButton | Cancel |
+| 1 | Label | label1 | Actual Target Quantity: |
+| 2 | Label | label2 | Planned Target Quantity: |
+| 3 | Label | label4 | Show available Serial Numbers |
+| 4 | Label | label3 | Select a Serial Number to associate |
+| 5 | Label | label6 | Associate or auto-generate Serial Number |
+| 6 | Label | label8 | Associate the Serial Number found in system |
+| 7 | TextBox | textBox2 |  |
+| 8 | Label | label5 | OR |
+| 9 | TextBox | textBox3 |  |
+| 10 | Gallery | WOStartPanelSNGallery |  |
+| 11 | Gallery | WOStartPanelEquipmentGallery |  |
+
+##### Gallery: WOStartPanelSNGallery
+
+- **Tile container:** container8
+- **Sort by:** drop_downSort2
+- **Search:** textFilter2
+
+##### Gallery: WOStartPanelEquipmentGallery
+
+- **Tile container:** container4
+- **Sort by:** drop_downSort1
+- **Search:** textFilter1
 
 **Buttons:**
 
-| # | Button Name | Caption |
+| # | Name | Caption |
 |---|---|---|
 | 1 | AssociateSNFromDropDown | Associate |
 | 2 | GenerateAndAssociateSNFromNId | Generate and Associate |
@@ -52,5 +56,4 @@
 
 ## Summary
 
-- **Pages with placeholders:** 1
-- **Total tabs:** 0
+- **Total Buttons:** 9
