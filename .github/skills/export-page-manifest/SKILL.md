@@ -1,6 +1,6 @@
 ---
 name: export-page-manifest
-description: Generate detailed page layout reports from Mendix MPR files. Extract Main/Right placeholders, tabs, widgets, buttons, DataGrid 2 columns and action buttons, button-to-page navigation flows. Use for page structure documentation, UI catalog generation, button navigation mapping, DataGrid toolbar analysis, modal panel content extraction, page type filtering (engineering vs runtime).
+description: Generate detailed page layout reports from Mendix MPR files. Extract Main/Right placeholders, tabs, widgets, buttons, DataGrid 2 columns and action buttons, button-to-page navigation flows. Export JSON page catalogs with module filtering. Use for page structure documentation, UI catalog generation, button navigation mapping, DataGrid toolbar analysis, modal panel content extraction, automation pipelines, page type filtering (engineering vs runtime).
 userInvocable: true
 ---
 
@@ -12,6 +12,7 @@ Generate comprehensive page layout reports from Mendix MPR files, including plac
 
 Use `export_page_manifest.exe` when you need to:
 
+- **Export page catalog as JSON**: Get a machine-readable list of all pages with module and layout info
 - **Document page layouts**: Extract Main/Right placeholder structures with tabs and widgets
 - **Analyze button flows**: Map button → nanoflow → page navigation chains
 - **Catalog DataGrid 2 widgets**: Extract columns and toolbar action buttons
@@ -19,6 +20,7 @@ Use `export_page_manifest.exe` when you need to:
 - **Filter pages by type**: Generate reports for engineering pages vs runtime/user-facing pages
 - **Audit UI consistency**: Review widget captions and button labels across pages
 - **Generate UI specifications**: Create technical documentation for page designs
+- **Automate documentation pipelines**: Integrate page metadata into CI/CD or documentation generators
 
 ## Tool Location
 
@@ -61,12 +63,51 @@ Generate reports only for pages matching a type filter:
 
 **Output:** `buttons_manifest.md` (filtered pages only)
 
+### Mode 4: JSON Page List Export
+
+Export a JSON list of all pages with name, module, and layout (excludes UI and marketplace modules):
+
+```powershell
+.\export_page_manifest.exe --pages <mpr_file_path>
+```
+
+**Output:** `page_list.json` (JSON array with page metadata)
+
+**JSON Structure Example:**
+
+```json
+[
+  {
+    "name": "AuditTrailRecord_View",
+    "module": "EXFN_AuditTrailViewer",
+    "layout": "Atlas_Default"
+  },
+  {
+    "name": "PANEL_UpdateUoMDimension",
+    "module": "OpcenterEXFN_ReferenceData",
+    "layout": "OpcenterEXFN_DISW_DesignSystem.EXFN_ModalPanel"
+  },
+  {
+    "name": "PANEL_CreateBaseUoM_UoMDimension",
+    "module": "OpcenterEXFN_ReferenceData",
+    "layout": "OpcenterEXFN_DISW_DesignSystem.EXFN_ModalPanel"
+  }
+]
+```
+
+**Filtering Applied:**
+- ✅ **Includes**: Business/application modules
+- ❌ **Excludes**: UI modules (containing DISW, DesignSystem, _UI, UI_)
+- ❌ **Excludes**: Marketplace modules (Atlas, Administration, System, etc.)
+
 ## Command-Line Options
 
 | Option | Values | Default | Description |
 |--------|--------|---------|-------------|
 | `--type` | `eng`, `runtime` | _(none)_ | Filter pages by type: engineering pages or runtime/user-facing pages |
-| `<mpr_file_path>` | File path | _(required)_ | Path to Mendix MPR file (absolute or relative) |
+| `--pages` | _(flag)_ | `false` | Export JSON page list (name, module, layout) instead of Markdown report |
+| `--filter` | Wildcard pattern | _(none)_ | Filter page names with wildcard (e.g., `PANEL_*`) |
+| `<mpr_file_path>` | File path | _(required)_ | Path to Mendix MPR file (absolute or relative, must have .mpr extension) |
 | `[page_name]` | Page name | _(none)_ | Optional: analyze only this page (exact name match) |
 
 ## Example Commands
@@ -97,6 +138,24 @@ Generate reports only for pages matching a type filter:
 .\export_page_manifest.exe --type eng "MyApp.mpr" "StateMachine_Details"
 ```
 
+### JSON Export Examples
+
+```powershell
+# Export page list to JSON
+.\export_page_manifest.exe --pages "C:\Projects\MyApp.mpr"
+
+# Filter pages with wildcard pattern
+.\export_page_manifest.exe --pages --filter "PANEL_*" "MyApp.mpr"
+
+# Combine filters (type + pages)
+.\export_page_manifest.exe --pages --type eng "MyApp.mpr"
+
+# Process JSON output
+$pages = Get-Content "page_list.json" | ConvertFrom-Json
+Write-Host "Total pages: $($pages.Count)"
+$pages | Group-Object module | Format-Table Name, Count
+```
+
 ### Automation Examples
 
 ```powershell
@@ -109,6 +168,11 @@ foreach ($mpr in $projects) {
 # Generate report and open in editor
 .\export_page_manifest.exe "MyApp.mpr" "PANEL_ChangePackage"
 code "PANEL_ChangePackage_manifest.md"
+
+# Export JSON page list and analyze
+.\export_page_manifest.exe --pages "MyApp.mpr"
+$json = Get-Content "page_list.json" -Raw | ConvertFrom-Json
+$json | Where-Object { $_.layout -like "*ModalPanel*" } | Select-Object name, module
 ```
 
 ## Output Structure
@@ -328,6 +392,40 @@ Pages with Main/Right placeholders: 1
 Exported page manifest to: PANEL_ChangePackage_manifest.md
 ```
 
+### JSON Export Mode
+
+```
+Opened: C:\Projects\MyApp.mpr
+MPR Version: 2
+
+Scanning 51 pages...
+
+Filtering modules:
+  ✗ Excluded UI module: OpcenterEXFN_DISW_DesignSystem (2 pages)
+  ✗ Excluded marketplace module: Atlas_Core (3 pages)
+  ✓ Included business module: OpcenterEXFN_ReferenceData (49 pages)
+  ✓ Included business module: EXFN_AuditTrailViewer (2 pages)
+
+Exported page list to: page_list.json
+Total pages exported: 51
+```
+
+**Output file (page_list.json):**
+```json
+[
+  {
+    "name": "AuditTrailRecord_View",
+    "module": "EXFN_AuditTrailViewer",
+    "layout": "Atlas_Default"
+  },
+  {
+    "name": "PANEL_UpdateUoMDimension",
+    "module": "OpcenterEXFN_ReferenceData",
+    "layout": "OpcenterEXFN_DISW_DesignSystem.EXFN_ModalPanel"
+  }
+]
+```
+
 ## Marketplace Module Filtering
 
 The tool automatically excludes pages from marketplace/system modules:
@@ -341,6 +439,21 @@ The tool automatically excludes pages from marketplace/system modules:
 **Rationale**: Focus on custom application pages, not framework/library pages.
 
 ## Troubleshooting
+
+### Error: "ERROR: MPR file path is required"
+
+**Cause**: No MPR file path provided as command-line argument  
+**Solution**: Provide MPR file path: `.\export_page_manifest.exe "MyApp.mpr"`
+
+### Error: "ERROR: File must have .mpr extension"
+
+**Cause**: Provided file does not have .mpr extension  
+**Solution**: Ensure you're pointing to a valid Mendix project file (*.mpr)
+
+### Error: "ERROR: MPR file does not exist"
+
+**Cause**: Specified MPR file path does not exist on disk  
+**Solution**: Verify the file path is correct and the file exists
 
 ### Error: "mprcontents folder not found"
 
@@ -484,7 +597,7 @@ A: No, it's read-only. The tool only reads from the SQLite database and BSON fil
 A: MPR Version 2 format (Mendix 7.0+). Tested with Mendix 10.x and 11.x.
 
 **Q: Can I export to JSON instead of Markdown?**  
-A: Currently, only Markdown output is supported. For JSON export, use `export_page_json.exe` (exports full BSON structure of one page).
+A: Yes! Use the `--pages` flag to export a JSON list of all pages with metadata (name, module, layout). Example: `.\export_page_manifest.exe --pages "MyApp.mpr"` → `page_list.json`. For full BSON structure of a single page, use `export_page_json.exe`.
 
 **Q: How do I find the exact page name?**  
 A: Use `find_pages.exe` to list all pages in the MPR, then copy the exact name to use as filter.
@@ -508,18 +621,30 @@ A: The tool resolves one level of navigation (button → nanoflow → page). For
 
 ## Best Practices
 
-1. **Start with full report** (`buttons_manifest.md`) to see all pages, then drill down to specific pages
-2. **Use `--type` filter** (once implemented) to separate engineering UI from runtime UI
-3. **Store reports in version control** to track page layout changes over time
-4. **Generate before/after reports** when refactoring page layouts
-5. **Use single-page mode** for detailed analysis during development
-6. **Parse navigation sections** to generate flow diagrams or test plans
+1. **Start with JSON export** (`--pages`) to get a full page catalog, then generate detailed reports for specific pages
+2. **Use JSON mode for automation** to integrate page lists into build pipelines or documentation tools
+3. **Combine filters** (`--pages --filter "PANEL_*"`) to focus on specific page naming patterns
+4. **Use `--type` filter** (once implemented) to separate engineering UI from runtime UI
+5. **Store reports in version control** to track page layout changes over time
+6. **Generate before/after reports** when refactoring page layouts
+7. **Use single-page mode** for detailed analysis during development
+8. **Parse navigation sections** to generate flow diagrams or test plans
 
 ## Output File Management
 
-- **Default output location**: `examples\export_page_manifest\` (tool's directory)
-- **Single page**: `<PageName>_manifest.md`
-- **All pages**: `buttons_manifest.md`
+- **Default output location**: Current directory (where the command is executed)
+- **Single page report**: `<PageName>_manifest.md`
+- **All pages report**: `buttons_manifest.md`
+- **JSON page list**: `page_list.json`
 - **Overwrite behavior**: Files are overwritten without confirmation
+
+**Output Format by Mode:**
+
+| Mode | Flag | Output File | Format |
+|------|------|-------------|--------|
+| All pages | _(none)_ | `buttons_manifest.md` | Markdown |
+| Single page | `[page_name]` | `<PageName>_manifest.md` | Markdown |
+| Page list | `--pages` | `page_list.json` | JSON |
+| Filtered | `--type eng` | `buttons_manifest.md` | Markdown |
 
 **Tip**: Navigate to the output directory or move generated files to a central documentation folder for long-term storage.
