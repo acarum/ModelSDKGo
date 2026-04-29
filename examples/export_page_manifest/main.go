@@ -90,11 +90,14 @@ type PageListItem struct {
 func main() {
 	typeFlag := flag.String("type", "", "Filter pages by type: 'eng' or 'runtime' (default: all)")
 	pagesMode := flag.Bool("pages", false, "Export page list as JSON (name, module, layout)")
+	filterFlag := flag.String("filter", "", "Wildcard filter for page names (e.g., PANEL_*)")
 	flag.Parse()
 
 	args := flag.Args()
 	if len(args) < 1 {
-		fmt.Println("Usage: export_page_manifest [--type eng|runtime] [--pages] <mpr_file_path> [page_name]")
+		fmt.Println("ERROR: MPR file path is required")
+		fmt.Println()
+		fmt.Println("Usage: export_page_manifest [--type eng|runtime] [--pages] [--filter pattern] <mpr_file_path> [page_name]")
 		fmt.Println("Example: export_page_manifest MyApp.mpr")
 		fmt.Println("         export_page_manifest MyApp.mpr StateMachine_Details")
 		fmt.Println("         export_page_manifest --filter PANEL_* MyApp.mpr")
@@ -104,15 +107,28 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Validate MPR path
+	mprPath := args[0]
+	if mprPath == "" {
+		log.Fatalf("ERROR: MPR file path cannot be empty")
+	}
+	if !strings.HasSuffix(strings.ToLower(mprPath), ".mpr") {
+		log.Fatalf("ERROR: File must have .mpr extension, got: %s", mprPath)
+	}
+	if _, err := os.Stat(mprPath); os.IsNotExist(err) {
+		log.Fatalf("ERROR: MPR file does not exist: %s", mprPath)
+	}
+
+	// Validate type flag
 	if *typeFlag != "" && *typeFlag != "eng" && *typeFlag != "runtime" {
 		log.Fatalf("Invalid --type value %q: must be 'eng' or 'runtime'", *typeFlag)
 	}
 
-	mprPath := args[0]
 	pageFilter := ""
 	if len(args) > 1 {
 		pageFilter = args[1]
 	}
+	wildcardFilter := *filterFlag
 	outputDir := "." // Current directory
 
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
