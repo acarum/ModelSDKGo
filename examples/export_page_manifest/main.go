@@ -1219,7 +1219,7 @@ func exportPageListJSON(pagesList []*pages.Page, moduleMap map[string]string, mp
 		fmt.Printf("\r[%d/%d] Processing: %s", i+1, len(pagesList), page.Name)
 
 		// Get module name by traversing container hierarchy
-		moduleName := findModuleByTraversal(string(page.ID), db, mprPath)
+		moduleName := findModuleByTraversal(string(page.ID), db, mprPath, moduleMap)
 
 		// Skip marketplace modules
 		if isMarketplaceModule(moduleName) {
@@ -1258,7 +1258,7 @@ func exportPageListJSON(pagesList []*pages.Page, moduleMap map[string]string, mp
 }
 
 // findModuleByTraversal traces up the unit hierarchy to find the parent module
-func findModuleByTraversal(pageID string, db *sql.DB, mprPath string) string {
+func findModuleByTraversal(pageID string, db *sql.DB, mprPath string, moduleMap map[string]string) string {
 	if db == nil {
 		return ""
 	}
@@ -1268,53 +1268,8 @@ func findModuleByTraversal(pageID string, db *sql.DB, mprPath string) string {
 		return ""
 	}
 
-	// Build a map of all modules (GUID -> Module Name)
-	moduleMap := make(map[string]string)
-
-	rows, err := db.Query("SELECT UnitID FROM Unit")
-	if err != nil {
-		return ""
-	}
-	defer rows.Close()
-
-	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
-
-	for rows.Next() {
-		var unitIDBytes []byte
-		if err := rows.Scan(&unitIDBytes); err != nil {
-			continue
-		}
-
-		unitGUID := guidToString(unitIDBytes)
-		if unitGUID == "" {
-			continue
-		}
-
-		// Read BSON to check if it's a module
-		cleanID := strings.ReplaceAll(unitGUID, "-", "")
-		dir1 := cleanID[0:2]
-		dir2 := cleanID[2:4]
-		filePath := filepath.Join(contentsDir, dir1, dir2, unitGUID+".mxunit")
-
-		data, err := os.ReadFile(filePath)
-		if err != nil {
-			continue
-		}
-
-		var content map[string]interface{}
-		if err := bson.Unmarshal(data, &content); err != nil {
-			continue
-		}
-
-		// Check if this is a module
-		if typeVal, ok := content["$Type"].(string); ok && strings.Contains(typeVal, "Projects$Module") {
-			if moduleName, ok := content["Name"].(string); ok && moduleName != "" {
-				moduleMap[unitGUID] = moduleName
-			}
-		}
-	}
-
-	// Now trace up the hierarchy
+	// Use the provided moduleMap (already built once in main)
+	// Trace up the hierarchy to find the parent module
 	currentID := guidBytes
 	for i := 0; i < 20; i++ {
 		var parentID []byte
