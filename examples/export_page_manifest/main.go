@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/anthropics/modelsdk-go"
+	"github.com/anthropics/modelsdk-go/pages"
 	_ "github.com/mattn/go-sqlite3"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,17 +71,26 @@ type PageReport struct {
 	Right     *PlaceholderContent
 }
 
+// PageListItem represents a page in the JSON list export
+type PageListItem struct {
+	Name   string `json:"name"`
+	Module string `json:"module"`
+	Layout string `json:"layout"`
+}
+
 func main() {
 	typeFlag := flag.String("type", "", "Filter pages by type: 'eng' or 'runtime' (default: all)")
+	pagesMode := flag.Bool("pages", false, "Export page list as JSON (name, module, layout)")
 	flag.Parse()
 
 	args := flag.Args()
 	if len(args) < 1 {
-		fmt.Println("Usage: export_page_manifest [--type eng|runtime] <mpr_file_path> [page_name]")
+		fmt.Println("Usage: export_page_manifest [--type eng|runtime] [--pages] <mpr_file_path> [page_name]")
 		fmt.Println("Example: export_page_manifest MyApp.mpr")
 		fmt.Println("         export_page_manifest MyApp.mpr StateMachine_Details")
 		fmt.Println("         export_page_manifest --type eng MyApp.mpr")
 		fmt.Println("         export_page_manifest --type runtime MyApp.mpr")
+		fmt.Println("         export_page_manifest --pages MyApp.mpr")
 		os.Exit(1)
 	}
 
@@ -92,7 +103,7 @@ func main() {
 	if len(args) > 1 {
 		pageFilter = args[1]
 	}
-	outputDir := filepath.Join("examples", "export_page_manifest")
+	outputDir := "." // Current directory
 
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		log.Fatalf("Error creating output directory: %v", err)
@@ -120,6 +131,18 @@ func main() {
 	pages, err := reader.ListPages()
 	if err != nil {
 		log.Fatalf("Error listing pages: %v", err)
+	}
+
+	// If pages mode, generate JSON and exit
+	if *pagesMode {
+		// Open database for module hierarchy traversal
+		db, err := sql.Open("sqlite3", mprPath)
+		if err != nil {
+			log.Fatalf("Error opening database: %v", err)
+		}
+		defer db.Close()
+		exportPageListJSON(pages, moduleMap, mprPath, outputDir, db)
+		return
 	}
 
 	fmt.Printf("Scanning %d pages...\n\n", len(pages))
@@ -1053,6 +1076,210 @@ func loadPageBSON(mprPath, pageID string) ([]byte, error) {
 	return os.ReadFile(filePath)
 }
 
+// exportPageListJSON generates a JSON file with the list of all pages
+func exportPageListJSON(pagesList []*pages.Page, moduleMap map[string]string, mprPath string, outputDir string, db *sql.DB) {
+	var pageList []PageListItem
+
+	fmt.Printf("Extracting page list from %d pages...\n", len(pagesList))
+
+	for i, page := range pagesList {
+		fmt.Printf("\r[%d/%d] Processing: %s", i+1, len(pagesList), page.Name)
+
+		// Get module name by traversing container hierarchy
+		moduleName := findModuleByTraversal(string(page.ID), db, mprPath)
+		
+		// Skip marketplace modules
+		if isMarketplaceModule(moduleName) {
+			continue
+		}
+		
+		// Filter: exclude UI modules (keep only non-UI, non-marketplace)
+		if moduleName != "" && isUIModule(moduleName) {
+			continue
+		}
+
+		// Extract layout from page BSON
+		layout := extractPageLayout(mprPath, string(page.ID))
+
+		pageList = append(pageList, PageListItem{
+			Name:   page.Name,
+			Module: moduleName,
+			Layout: layout,
+		})
+	}
+
+	fmt.Printf("\n\nTotal pages (excluding marketplace): %d\n\n", len(pageList))
+
+	// Generate JSON output
+	jsonData, err := json.MarshalIndent(pageList, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling JSON: %v", err)
+	}
+
+	outputFile := filepath.Join(outputDir, "page_list.json")
+	if err := os.WriteFile(outputFile, jsonData, 0644); err != nil {
+		log.Fatalf("Error writing JSON file: %v", err)
+	}
+
+	fmt.Printf("✅ Page list exported to: %s\n", outputFile)
+}
+
+// findModuleByTraversal traces up the unit hierarchy to find the parent module
+func findModuleByTraversal(pageID string, db *sql.DB, mprPath string) string {
+	if db == nil {
+		return ""
+	}
+
+	guidBytes := stringToWindowsGUID(pageID)
+	if guidBytes == nil {
+		return ""
+	}
+
+	// Build a map of all modules (GUID -> Module Name)
+	moduleMap := make(map[string]string)
+
+	rows, err := db.Query("SELECT UnitID FROM Unit")
+	if err != nil {
+		return ""
+	}
+	defer rows.Close()
+
+	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
+
+	for rows.Next() {
+		var unitIDBytes []byte
+		if err := rows.Scan(&unitIDBytes); err != nil {
+			continue
+		}
+
+		unitGUID := guidToString(unitIDBytes)
+		if unitGUID == "" {
+			continue
+		}
+
+		// Read BSON to check if it's a module
+		cleanID := strings.ReplaceAll(unitGUID, "-", "")
+		dir1 := cleanID[0:2]
+		dir2 := cleanID[2:4]
+		filePath := filepath.Join(contentsDir, dir1, dir2, unitGUID+".mxunit")
+
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			continue
+		}
+
+		var content map[string]interface{}
+		if err := bson.Unmarshal(data, &content); err != nil {
+			continue
+		}
+
+		// Check if this is a module
+		if typeVal, ok := content["$Type"].(string); ok && strings.Contains(typeVal, "Projects$Module") {
+			if moduleName, ok := content["Name"].(string); ok && moduleName != "" {
+				moduleMap[unitGUID] = moduleName
+			}
+		}
+	}
+
+	// Now trace up the hierarchy
+	currentID := guidBytes
+	for i := 0; i < 20; i++ {
+		var parentID []byte
+		err := db.QueryRow("SELECT ContainerID FROM Unit WHERE UnitID = ?", currentID).Scan(&parentID)
+		if err != nil || len(parentID) == 0 {
+			break
+		}
+
+		// Check if this parent is a module
+		parentGUID := guidToString(parentID)
+		if moduleName, found := moduleMap[parentGUID]; found {
+			return moduleName
+		}
+
+		currentID = parentID
+	}
+
+	return ""
+}
+
+// guidToString converts Windows GUID bytes to UUID string format
+func guidToString(guidBytes []byte) string {
+	if len(guidBytes) != 16 {
+		return ""
+	}
+	// Reverse the Windows GUID encoding
+	b := make([]byte, 16)
+	copy(b, guidBytes)
+	b[0], b[1], b[2], b[3] = b[3], b[2], b[1], b[0]
+	b[4], b[5] = b[5], b[4]
+	b[6], b[7] = b[7], b[6]
+	return fmt.Sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15])
+}
+
+// stringToWindowsGUID converts UUID string to Windows GUID bytes
+func stringToWindowsGUID(uuidStr string) []byte {
+	cleaned := strings.ReplaceAll(uuidStr, "-", "")
+	if len(cleaned) != 32 {
+		return nil
+	}
+
+	bytes, err := hex.DecodeString(cleaned)
+	if err != nil || len(bytes) != 16 {
+		return nil
+	}
+
+	// Windows GUID encoding: swap bytes for first 3 groups
+	// Bytes 0-3: little-endian (reverse)
+	bytes[0], bytes[1], bytes[2], bytes[3] = bytes[3], bytes[2], bytes[1], bytes[0]
+	// Bytes 4-5: little-endian (reverse)
+	bytes[4], bytes[5] = bytes[5], bytes[4]
+	// Bytes 6-7: little-endian (reverse)
+	bytes[6], bytes[7] = bytes[7], bytes[6]
+	// Bytes 8-15: big-endian (unchanged)
+
+	return bytes
+}
+
+// extractPageLayout extracts the layout parameter from a page BSON
+func extractPageLayout(mprPath, pageID string) string {
+	bsonData, err := loadPageBSON(mprPath, pageID)
+	if err != nil {
+		return ""
+	}
+
+	var pageData map[string]interface{}
+	if err := bson.Unmarshal(bsonData, &pageData); err != nil {
+		return ""
+	}
+
+	// Extract FormCall.Arguments[].Parameter
+	formCall, ok := getMap(pageData, "FormCall")
+	if !ok {
+		return ""
+	}
+
+	args := getArray(formCall, "Arguments")
+	for _, arg := range args {
+		argMap, ok := arg.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		argType, _ := argMap["$Type"].(string)
+		if argType != "Forms$FormCallArgument" {
+			continue
+		}
+
+		param, _ := argMap["Parameter"].(string)
+		if param != "" {
+			return param // Return first parameter found (typically Main placeholder)
+		}
+	}
+
+	return ""
+}
+
 // isMarketplaceModule checks if a module name belongs to a marketplace/system module
 func isMarketplaceModule(moduleName string) bool {
 	marketplaceIndicators := []string{
@@ -1066,10 +1293,25 @@ func isMarketplaceModule(moduleName string) bool {
 		"NanoflowCommons",
 		"DataWidgets",
 		"WebActions",
-		"DISW_DesignSystem",
 	}
 	for _, indicator := range marketplaceIndicators {
 		if strings.HasPrefix(moduleName, indicator) {
+			return true
+		}
+	}
+	return false
+}
+
+// isUIModule checks if a module is a UI module based on naming patterns
+func isUIModule(moduleName string) bool {
+	uiIndicators := []string{
+		"DISW",
+		"DesignSystem",
+		"_UI",
+		"UI_",
+	}
+	for _, indicator := range uiIndicators {
+		if strings.Contains(moduleName, indicator) {
 			return true
 		}
 	}
