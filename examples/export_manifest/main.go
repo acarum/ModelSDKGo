@@ -63,7 +63,7 @@ type WidgetInfo struct {
 type NavigationItem struct {
 	ItemName     string   `json:"ItemName"`
 	Caption      string   `json:"Caption"`
-	Target       string   `json:"Target"` // Page or microflow name
+	Target       string   `json:"Target"`     // Page or microflow name
 	TargetPage   string   `json:"TargetPage"` // Resolved page qualified name(s) - qualified name (Module.PageName) for Page items, or page(s) opened by Microflow/Nanoflow
 	Module       string   `json:"Module"`
 	MenuDocument string   `json:"MenuDocument"` // Name of the menu document (e.g., "System", "System Counters")
