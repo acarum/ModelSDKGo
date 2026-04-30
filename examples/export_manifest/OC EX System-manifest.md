@@ -1,16 +1,16 @@
 # Manifest Report: OC EX System
 
-**Mendix Version:** 11.10.0  
-**MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-04-30 15:01:57  
+**Mendix Version:** 11.6.4  
+**MPR File:** C:\Workspaces\Mendix\MDUI\MX_OC_EX_System\OC EX System.mpr  
+**Generated:** 2026-04-30 15:19:18  
 
 ---
 
 ## Summary
 
 - **External Entities:** 21 (across 2 modules)
-- **Microflow/Action Calls:** 78
-- **Signal Manager Subscriptions:** 3 subscription(s)
+- **Microflow/Action Calls:** 75
+- **Signal Manager Subscriptions:** 0 subscription(s)
 - **Navigation Items:** 10
 
 ---
@@ -436,16 +436,14 @@ External OData entities used in the project, grouped by module.
 
 Microflow and action calls found in the project (MicroflowCall, JavaAction, ExternalAction).
 
-Found 78 call(s):
+Found 75 call(s):
 
 | Microflow | Module | Call Type | AppName | CommandName |
 |-----------|--------|-----------|---------|-------------|
-| Microflow | Documents | ExternalAction | TripPinServiceRW | ResetDataSource |
 | UpdateStatus | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateStatus |
 | SUB_SetStatusAsInitial | OpcenterEXFN_ReferenceData | ExternalAction | Reference | SetStatusAsInitial |
 | SUB_DeleteCommand_StartArrayWithTwoParameter | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
-| SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | JavaAction | 'AppName' | 'CommandName' |
 | SUB_DeleteCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_FreezeAndUnfreezeCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_CallCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
@@ -484,9 +482,6 @@ Found 78 call(s):
 | UnfreezeCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UnfreezeCounter |
 | ResetCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | ResetCounter |
 | DeleteCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | DeleteCounter |
-| DeleteCounter | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | 'AppName'
- | 'CommandName'
- |
 | UpdateCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateCounter |
 | HideCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | HideCounter |
 | CreateCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | CreateCounter |
@@ -527,30 +522,24 @@ Found 78 call(s):
 
 Signal subscriptions from Signal Manager widgets (siemens.mxtosignal.MxToSignal).
 
-Found 3 subscription(s):
-
-| Module | Document Type | Document | Signal Name | App Name | Subscription Filter |
-|--------|---------------|----------|-------------|----------|---------------------|
-| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN | APPName | Yes |
-| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN2 | AN2 | Yes |
-| OpcenterEXFN_ReferenceData | Snippet | MySnippet | SNIPPET_SN | SNIPPET_APPName | Yes |
+_No signal subscriptions found._
 
 ---
 
 ## 4. Navigation Items
 
-| Parent Node | Node | User Roles |
-|-------------|------|------------|
-| - | System | - |
-| System | Counters | Administrator, User, Manager |
-| System | Numbering Patterns | Administrator, User, Manager |
-| System | State Machines | Administrator, User, Manager |
-| System | Statuses | Administrator, User, Manager |
-| System | Status Behavior Definitions | Administrator, User, Manager |
-| System | Status Definitions | Administrator, User, Manager |
-| System | Status Transition Definitions | Administrator, User, Manager |
-| System | Unit of Measures | Administrator, User, Manager |
-| System | UoM Dimensions | Administrator, User, Manager |
+| Parent Node | Node | Target Page | User Roles |
+|-------------|------|-------------|------------|
+| - | System | - | - |
+| System | Counters | OpcenterEXFN_ReferenceData.Counter_Master | Administrator, User |
+| System | Numbering Patterns | OpcenterEXFN_ReferenceData.NumberingPattern_Master | Administrator, User |
+| System | State Machines | OpcenterEXFN_ReferenceData.StateMachine_Master | Administrator, User |
+| System | Statuses | OpcenterEXFN_ReferenceData.Status_Master | Administrator, User |
+| System | Status Behavior Definitions | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master | Administrator, User |
+| System | Status Definitions | OpcenterEXFN_ReferenceData.StatusDefinition_Master | Administrator, User |
+| System | Status Transition Definitions | OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master | Administrator, User |
+| System | Unit of Measures | OpcenterEXFN_ReferenceData.UoM_Master | Administrator, User |
+| System | UoM Dimensions | OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection | Administrator, User |
 
 ---
 

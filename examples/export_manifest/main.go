@@ -64,6 +64,7 @@ type NavigationItem struct {
 	ItemName     string   `json:"ItemName"`
 	Caption      string   `json:"Caption"`
 	Target       string   `json:"Target"` // Page or microflow name
+	TargetPage   string   `json:"TargetPage"` // Resolved page qualified name(s) - qualified name (Module.PageName) for Page items, or page(s) opened by Microflow/Nanoflow
 	Module       string   `json:"Module"`
 	MenuDocument string   `json:"MenuDocument"` // Name of the menu document (e.g., "System", "System Counters")
 	ItemType     string   `json:"ItemType"`     // "Page", "Microflow", "Nanoflow"
@@ -2335,6 +2336,128 @@ func parseAttribute(attr string) (name, attrType string) {
 
 // ==== SECTION 4: Navigation Items Collection ====
 
+// findAllShowPagesInFlow recursively searches BSON structure for all ShowPage/ShowFormAction activities
+// Returns a slice of qualified page names (Module.PageName format)
+func findAllShowPagesInFlow(data interface{}) []string {
+	var pages []string
+
+	switch v := data.(type) {
+	case map[string]interface{}:
+		// Check if this is a ShowPage or ShowFormAction
+		if typeStr, ok := v["$Type"].(string); ok {
+			if strings.Contains(typeStr, "ShowPageAction") || strings.Contains(typeStr, "ShowFormAction") {
+				// Try to extract page from FormSettings.Form
+				if formSettings, ok := v["FormSettings"].(map[string]interface{}); ok {
+					if formName, ok := formSettings["Form"].(string); ok && formName != "" {
+						// Keep qualified name (Module.PageName)
+						pages = append(pages, formName)
+					}
+				}
+			}
+		}
+
+		// Recursively search all fields
+		for _, val := range v {
+			childPages := findAllShowPagesInFlow(val)
+			pages = append(pages, childPages...)
+		}
+
+	case primitive.A: // BSON array
+		for i, item := range v {
+			if i == 0 {
+				continue // Skip count element
+			}
+			childPages := findAllShowPagesInFlow(item)
+			pages = append(pages, childPages...)
+		}
+
+	case []interface{}: // Regular slice
+		for _, item := range v {
+			childPages := findAllShowPagesInFlow(item)
+			pages = append(pages, childPages...)
+		}
+	}
+
+	return pages
+}
+
+// resolveTargetPage determines the actual page(s) opened by a navigation item
+// For Page items: returns qualified page name (Module.PageName)
+// For Microflow/Nanoflow items: loads the flow and searches for ShowPage activities
+// Returns comma-separated list of qualified page names if multiple pages found
+func resolveTargetPage(db *sql.DB, contentsDir string, itemType string, target string, module string) string {
+	// For Page items, return the qualified name as-is
+	if strings.Contains(itemType, "Page") || strings.Contains(itemType, "FormAction") {
+		return target // Return qualified name (Module.PageName)
+	}
+
+	// For Microflow/Nanoflow items, load the flow and search for ShowPage activities
+	if strings.Contains(itemType, "Microflow") || strings.Contains(itemType, "Nanoflow") {
+		// Construct qualified name if we have module
+		qualifiedName := target
+		if module != "" && !strings.Contains(target, ".") {
+			qualifiedName = module + "." + target
+		}
+
+		// Load all microflows/nanoflows
+		microflows, err := listMicroflows(db, contentsDir)
+		if err != nil {
+			return "" // Failed to load microflows
+		}
+
+		// Find the matching microflow/nanoflow
+		for _, mf := range microflows {
+			// Try to match by qualified name or just name
+			fullName := mf.ModuleName + "." + mf.Name
+			if fullName == qualifiedName || mf.Name == target {
+				// Search for all ShowPage activities in the flow
+				pages := findAllShowPagesInFlow(mf.Content)
+				if len(pages) > 0 {
+					// Return comma-separated list of page names
+					return strings.Join(pages, ", ")
+				}
+				break
+			}
+		}
+
+		// Also check nanoflows (they use same structure as microflows)
+		query := `SELECT UnitID FROM Unit`
+		rows, err := db.Query(query)
+		if err != nil {
+			return ""
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var unitID []byte
+			if err := rows.Scan(&unitID); err != nil {
+				continue
+			}
+
+			unitIDStr := blobToUUID(unitID)
+			content, err := loadUnitContents(contentsDir, unitIDStr)
+			if err != nil {
+				continue
+			}
+
+			// Check if this is a Nanoflow
+			if typeName, ok := content["$Type"].(string); ok && typeName == "Microflows$Nanoflow" {
+				name := extractNameFromContents(content)
+				if name == target || (module+"."+name) == qualifiedName {
+					// Search for ShowPage activities
+					pages := findAllShowPagesInFlow(content)
+					if len(pages) > 0 {
+						return strings.Join(pages, ", ")
+					}
+					break
+				}
+			}
+		}
+	}
+
+	return "" // No page found or unsupported item type
+}
+
 func collectNavigationItems(db *sql.DB, contentsDir string, report *ManifestReport, pageAccessMap map[string][]string) error {
 	// Query NavigationDocument only
 	fmt.Printf("  🔍 Looking for NavigationDocument...\n")
@@ -2548,10 +2671,14 @@ func extractNavigationItemRecursive(itemMap map[string]interface{}, db *sql.DB, 
 		}
 	}
 
+	// Resolve target page(s) - extract page name for Page items, or find pages opened by Microflow/Nanoflow
+	targetPage := resolveTargetPage(db, contentsDir, itemType, target, moduleName)
+
 	leafItem := NavigationItem{
 		ItemName:     caption,
 		Caption:      caption,
 		Target:       target,
+		TargetPage:   targetPage,
 		Module:       moduleName,
 		MenuDocument: "",
 		ItemType:     itemType,
@@ -3407,8 +3534,8 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		if len(report.NavigationItems) == 0 {
 			fmt.Fprintf(file, "_No navigation items found._\n\n")
 		} else {
-			fmt.Fprintf(file, "| Parent Node | Node | User Roles |\n")
-			fmt.Fprintf(file, "|-------------|------|------------|\n")
+			fmt.Fprintf(file, "| Parent Node | Node | Target Page | User Roles |\n")
+			fmt.Fprintf(file, "|-------------|------|-------------|------------|\n")
 
 			for _, item := range report.NavigationItems {
 				parent := item.ParentItem
@@ -3424,12 +3551,17 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 					caption = "-"
 				}
 
+				targetPage := item.TargetPage
+				if targetPage == "" {
+					targetPage = "-"
+				}
+
 				roles := "-"
 				if len(item.AllowedRoles) > 0 {
 					roles = strings.Join(item.AllowedRoles, ", ")
 				}
 
-				fmt.Fprintf(file, "| %s | %s | %s |\n", parent, caption, roles)
+				fmt.Fprintf(file, "| %s | %s | %s | %s |\n", parent, caption, targetPage, roles)
 			}
 			fmt.Fprintf(file, "\n")
 		}
