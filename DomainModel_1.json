@@ -1,0 +1,933 @@
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "RQ6vNzhMrU+LdKW3qkeDdA=="
+  },
+  "$Type": "DomainModels$DomainModel",
+  "Annotations": [
+    3
+  ],
+  "Associations": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "3YOyyRo5wUWgw5eOI1Oo8w=="
+      },
+      "$Type": "DomainModels$Association",
+      "ChildConnection": "100;54",
+      "ChildPointer": {
+        "Subtype": 0,
+        "Data": "xHqRq0YgaECp97PkrNd5Kg=="
+      },
+      "DeleteBehavior": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "lmPvC0rljUqqWNkgCn+U4A=="
+        },
+        "$Type": "DomainModels$DeleteBehavior",
+        "ChildDeleteBehavior": "DeleteMeButKeepReferences",
+        "ChildErrorMessage": null,
+        "ParentDeleteBehavior": "DeleteMeButKeepReferences",
+        "ParentErrorMessage": null
+      },
+      "Documentation": "",
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "leAlT45QB0S1x982e80gsQ=="
+      },
+      "Name": "AccountPasswordData_Account",
+      "Owner": "Default",
+      "ParentConnection": "0;54",
+      "ParentPointer": {
+        "Subtype": 0,
+        "Data": "hpUXEHCsMUm9pdIzS5bMIA=="
+      },
+      "Source": null,
+      "StorageFormat": "Table",
+      "Type": "Reference"
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "//AupTC6GkeqHSQIotKLxA=="
+      },
+      "$Type": "DomainModels$Association",
+      "ChildConnection": "0;46",
+      "ChildPointer": {
+        "Subtype": 0,
+        "Data": "380RZLT3AkmwIKsbmnVO6w=="
+      },
+      "DeleteBehavior": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "I1qJER5cSE66Da3umrHkfg=="
+        },
+        "$Type": "DomainModels$DeleteBehavior",
+        "ChildDeleteBehavior": "DeleteMeButKeepReferences",
+        "ChildErrorMessage": null,
+        "ParentDeleteBehavior": "DeleteMeButKeepReferences",
+        "ParentErrorMessage": null
+      },
+      "Documentation": "",
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "ecYzJH1HTESTEV+U+AIYzQ=="
+      },
+      "Name": "AccountExtension_AccountProfilePicture",
+      "Owner": "Both",
+      "ParentConnection": "100;46",
+      "ParentPointer": {
+        "Subtype": 0,
+        "Data": "J7aDk9E7JUKQ7demf/83GA=="
+      },
+      "Source": null,
+      "StorageFormat": "Table",
+      "Type": "Reference"
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "hLQ3Ktw2VEqMjxDRlUi07g=="
+      },
+      "$Type": "DomainModels$Association",
+      "ChildConnection": "45;100",
+      "ChildPointer": {
+        "Subtype": 0,
+        "Data": "xHqRq0YgaECp97PkrNd5Kg=="
+      },
+      "DeleteBehavior": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "arrQ9DjBeU6c8YrG98JXtA=="
+        },
+        "$Type": "DomainModels$DeleteBehavior",
+        "ChildDeleteBehavior": "DeleteMeButKeepReferences",
+        "ChildErrorMessage": null,
+        "ParentDeleteBehavior": "DeleteMeButKeepReferences",
+        "ParentErrorMessage": null
+      },
+      "Documentation": "",
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "Oxd5braOj0mBl3XmpBZNHg=="
+      },
+      "Name": "AccountExtension_Account",
+      "Owner": "Both",
+      "ParentConnection": "45;0",
+      "ParentPointer": {
+        "Subtype": 0,
+        "Data": "J7aDk9E7JUKQ7demf/83GA=="
+      },
+      "Source": null,
+      "StorageFormat": "Table",
+      "Type": "Reference"
+    }
+  ],
+  "CrossAssociations": [
+    3
+  ],
+  "Documentation": "",
+  "Entities": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "xHqRq0YgaECp97PkrNd5Kg=="
+      },
+      "$Type": "DomainModels$EntityImpl",
+      "AccessRules": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "95vTvc4iNUqw8w7GVy2SUg=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": true,
+          "AllowDelete": true,
+          "AllowedModuleRoles": [
+            1,
+            "Administration.Administrator"
+          ],
+          "DefaultMemberAccessRights": "None",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "cblLzUPJCk610Dr2oAESmw=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.Account.FullName"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "lwdYMC7540uDY9N1lq3KGw=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.Account.Email"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "oO0nX9HJKEWt+2+0pCurpA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "Administration.Account.IsLocalUser"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "CNW8wG4S3k6/mlqxyOQz0w=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "Administration.AccountExtension_Account",
+              "Attribute": ""
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "TSLLCruU0EeSW4k9E6Qcog=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": false,
+          "AllowDelete": false,
+          "AllowedModuleRoles": [
+            1,
+            "Administration.User"
+          ],
+          "DefaultMemberAccessRights": "ReadOnly",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "R5nHcPhS3EeAUpY/3HiCAA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "Administration.Account.FullName"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "NS8Y7gazf0W3SggRYmzu3g=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "Administration.Account.Email"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "ILax9IDdDUGhkACe6ZI7Yg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "None",
+              "Association": "",
+              "Attribute": "Administration.Account.IsLocalUser"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "TETXuzafJEK+HQTy40gcNg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "Administration.AccountExtension_Account",
+              "Attribute": ""
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "mf/vL4BHhEyVpHFdoRb7ow=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": false,
+          "AllowDelete": false,
+          "AllowedModuleRoles": [
+            1,
+            "Administration.User"
+          ],
+          "DefaultMemberAccessRights": "None",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "7MXukgnx/E6TJ9drtS//UA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.Account.FullName"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "HZKD2Tq3i06pXC5fNDFKGQ=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "None",
+              "Association": "",
+              "Attribute": "Administration.Account.Email"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "8WwUhgMNE0iVe5+3OTpy5w=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "None",
+              "Association": "",
+              "Attribute": "Administration.Account.IsLocalUser"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "xskeGzGmY0C6QilQE3OI9w=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "None",
+              "Association": "Administration.AccountExtension_Account",
+              "Attribute": ""
+            }
+          ],
+          "XPathConstraint": "[id='[%CurrentUser%]']",
+          "XPathConstraintCaption": ""
+        }
+      ],
+      "Attributes": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "pWr47RTbnUaea6l7ntYTYw=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "DhjrQt82JUOLl97B4W8OmQ=="
+          },
+          "Name": "FullName",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "FsP3W/Od00GK+vsQQYlE7w=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 200
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "rnhhM9EIWEyyb4of4PFpOA=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "dyIacp8SqE2kVHNut9XiYA=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "f1MrVBnEMk6h067mYsO6gA=="
+          },
+          "Name": "Email",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "xziW7ENr6UWG7ivm7nmTWg=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 200
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "GVflrORzZ0ab0ov3HXz3yA=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "olpP5cBbj0u/xqeQnt4bng=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "ZzHo+7p0W0KkBcmd5/0KSw=="
+          },
+          "Name": "IsLocalUser",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "I2pyE5YhREKlYLVJPuiprQ=="
+            },
+            "$Type": "DomainModels$BooleanAttributeType"
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "r1L3896AqkitCNYzFVy8zg=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": "true"
+          }
+        }
+      ],
+      "Documentation": "",
+      "Events": [
+        3
+      ],
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "PqJ4MLITm0qE5CiB/e5Txg=="
+      },
+      "Image": "",
+      "ImageData": {
+        "Subtype": 0,
+        "Data": ""
+      },
+      "Indexes": [
+        3
+      ],
+      "Location": "220;140",
+      "MaybeGeneralization": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "YVPZjJky10S4d0XPta3exQ=="
+        },
+        "$Type": "DomainModels$Generalization",
+        "Generalization": "System.User"
+      },
+      "Name": "Account",
+      "Source": null,
+      "ValidationRules": [
+        3
+      ]
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "hpUXEHCsMUm9pdIzS5bMIA=="
+      },
+      "$Type": "DomainModels$EntityImpl",
+      "AccessRules": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "fq/wOrevtkq6NMIWGqWJhw=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": false,
+          "AllowDelete": false,
+          "AllowedModuleRoles": [
+            1,
+            "Administration.Administrator",
+            "Administration.User"
+          ],
+          "DefaultMemberAccessRights": "ReadWrite",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "zV0krcqLHku8LsAy/Wv4oA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.AccountPasswordData.OldPassword"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "NrphYgNgdkmtniEns+6bdg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.AccountPasswordData.NewPassword"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "N69GhA7vy0OvQfW0B/hoWg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.AccountPasswordData.ConfirmPassword"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "vHZSFo7ZpEq7EYt6OBMcpw=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "Administration.AccountPasswordData_Account",
+              "Attribute": ""
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        }
+      ],
+      "Attributes": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "qaGgniPVLkyXUUS2Sk23CA=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "yrC1He8tWESS/dBOyC64gw=="
+          },
+          "Name": "OldPassword",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "msMEMYfwrEGSb9TBvpdv+w=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 200
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "s3I0hgZCE0aOq1dDqQCJxQ=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "F5JWWryhN0u3yRFHp2zb+A=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "MuVndmYJ10+CcvZxn+WzoA=="
+          },
+          "Name": "NewPassword",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "FG4HaTUK40uMHQagIWBTug=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 200
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "UX5iCBYf40+QchpgtcUlVA=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "/ZTtwORRtUysxAPOlW3MJw=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "Q2WD+dlGhEW2j2T40yf2tw=="
+          },
+          "Name": "ConfirmPassword",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "vbN0CCHv2Ea2zizigswXwg=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 200
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "oxWo6XXGJkCvpyeIkPpCcw=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        }
+      ],
+      "Documentation": "",
+      "Events": [
+        3
+      ],
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "VHAadpR3mUeJhi5s1opT/Q=="
+      },
+      "Image": "",
+      "ImageData": {
+        "Subtype": 0,
+        "Data": ""
+      },
+      "Indexes": [
+        3
+      ],
+      "Location": "600;140",
+      "MaybeGeneralization": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "CV+BqQwNbU2HWN0YhidaTg=="
+        },
+        "$Type": "DomainModels$NoGeneralization",
+        "HasChangedByAttr": false,
+        "HasChangedDateAttr": false,
+        "HasCreatedDateAttr": false,
+        "HasOwnerAttr": false,
+        "Persistable": false
+      },
+      "Name": "AccountPasswordData",
+      "Source": null,
+      "ValidationRules": [
+        3
+      ]
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "J7aDk9E7JUKQ7demf/83GA=="
+      },
+      "$Type": "DomainModels$EntityImpl",
+      "AccessRules": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "THJ6bBJ2lEeZObAxqhNYww=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": false,
+          "AllowDelete": false,
+          "AllowedModuleRoles": [
+            1,
+            "Administration.Administrator",
+            "Administration.User"
+          ],
+          "DefaultMemberAccessRights": "ReadWrite",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "MckPnK85qUiq91sGaKyh+A=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "Administration.AccountExtension.Initials"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "RUw4gg67c0+PohW6JFEBVg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "Administration.AccountExtension_AccountProfilePicture",
+              "Attribute": ""
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "OnWbLux52UW5nBLzsNpgPg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "Administration.AccountExtension_Account",
+              "Attribute": ""
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        }
+      ],
+      "Attributes": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "U0I5MfjJp06w0z5grpVfiA=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "yV0HLAs5LkmpSnAOOUoPJg=="
+          },
+          "Name": "Initials",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "vc99IooYvEimC5s/wdv33g=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 2
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "UntsQsjOHUKLCfhNOGb/yA=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        }
+      ],
+      "Documentation": "",
+      "Events": [
+        3
+      ],
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "//QlkYeoZUe+ppx+x6zrnQ=="
+      },
+      "Image": "",
+      "ImageData": {
+        "Subtype": 0,
+        "Data": ""
+      },
+      "Indexes": [
+        3
+      ],
+      "Location": "220;320",
+      "MaybeGeneralization": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "on9ZqlEQQUeA80HCkqDNJA=="
+        },
+        "$Type": "DomainModels$NoGeneralization",
+        "HasChangedByAttr": false,
+        "HasChangedDateAttr": false,
+        "HasCreatedDateAttr": false,
+        "HasOwnerAttr": false,
+        "Persistable": true
+      },
+      "Name": "AccountExtension",
+      "Source": null,
+      "ValidationRules": [
+        3
+      ]
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "380RZLT3AkmwIKsbmnVO6w=="
+      },
+      "$Type": "DomainModels$EntityImpl",
+      "AccessRules": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "RpUqCSyQCESgVJlhkDtpcA=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": false,
+          "AllowDelete": false,
+          "AllowedModuleRoles": [
+            1,
+            "Administration.Administrator",
+            "Administration.User"
+          ],
+          "DefaultMemberAccessRights": "ReadWrite",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "ikP8XF8S2UWWU+xQ+5l9jA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "System.Image.PublicThumbnailPath"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "+xaU61lkuUWLKjWkApESEQ=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "System.Image.EnableCaching"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "f2GCnWsGsEip69kIwmQfYw=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "System.FileDocument.FileID"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "qV3pMMvxOkaRty9GVDG6hQ=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "System.FileDocument.Name"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "WGzFwpaW40Om3hqswwMZ9A=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "System.FileDocument.DeleteAfterDownload"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "Xjg8+U+fzU+oeU1KTeSM2w=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "System.FileDocument.Contents"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "1x24MRqu00W9zoiQnYaZBQ=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "System.FileDocument.HasContents"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "qz4dOea1AkmA2GQQxV5KDw=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadOnly",
+              "Association": "",
+              "Attribute": "System.FileDocument.Size"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "lW9MAurM50KN0rMeH8TeZA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "Administration.AccountExtension_AccountProfilePicture",
+              "Attribute": ""
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        }
+      ],
+      "Attributes": [
+        3
+      ],
+      "Documentation": "",
+      "Events": [
+        3
+      ],
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "DuBHiMz9MUidkPV+xWj3VQ=="
+      },
+      "Image": "",
+      "ImageData": {
+        "Subtype": 0,
+        "Data": ""
+      },
+      "Indexes": [
+        3
+      ],
+      "Location": "610;320",
+      "MaybeGeneralization": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "NmfO4WxnjEuid0tlILMb/Q=="
+        },
+        "$Type": "DomainModels$Generalization",
+        "Generalization": "System.Image"
+      },
+      "Name": "AccountProfilePicture",
+      "Source": null,
+      "ValidationRules": [
+        3
+      ]
+    }
+  ]
+}

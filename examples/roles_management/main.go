@@ -702,6 +702,25 @@ func runImport(mprPath, csvPath, cloneFrom string) {
 			fmt.Printf("  ✓ %s.%s\n", row.Module, row.Page)
 		}
 	}
+	// Clone microflow/nanoflow and entity access rights for new roles
+	if len(effectiveNewRoles) > 0 {
+		fmt.Print("\nCloning flow accesses (microflows + nanoflows)... ")
+		flowsUpdated, flowErr := cloneFlowAccesses(db, contentsDir, effectiveNewRoles, cloneFrom)
+		if flowErr != nil {
+			fmt.Printf("warning: %v\n", flowErr)
+		} else {
+			fmt.Printf("✓ %d flows updated\n", flowsUpdated)
+		}
+
+		fmt.Print("Cloning entity access rules... ")
+		dmUpdated, dmErr := cloneEntityAccessRules(db, contentsDir, effectiveNewRoles, cloneFrom)
+		if dmErr != nil {
+			fmt.Printf("warning: %v\n", dmErr)
+		} else {
+			fmt.Printf("✓ %d domain models updated\n", dmUpdated)
+		}
+	}
+
 	fmt.Printf("\n✓ Import complete. Pages updated: %d\n", pagesUpdated)
 }
 
@@ -988,6 +1007,191 @@ func createUserRolesForNewModuleRoles(db *sql.DB, contentsDir string, newRoles [
 		return 0, fmt.Errorf("marshal: %w", err)
 	}
 	return created, updateUnitFile(contentsDir, secUnitID, secBytes)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Access-rights cloning
+// ─────────────────────────────────────────────────────────────────────────────
+
+// buildSourceRoleMap builds a map from newRole → sourceRole (cloneFrom in the same module).
+// E.g., for newRole "OpcenterEXFN_ReferenceData.PippoTest" and cloneFrom "User",
+// the sourceRole is "OpcenterEXFN_ReferenceData.User".
+func buildSourceRoleMap(newRoles []string, cloneFrom string) map[string]string {
+	m := make(map[string]string)
+	for _, nr := range newRoles {
+		parts := strings.SplitN(nr, ".", 2)
+		if len(parts) == 2 {
+			m[nr] = parts[0] + "." + cloneFrom
+		}
+	}
+	return m
+}
+
+// cloneFlowAccesses copies AllowedModuleRoles access from the cloneFrom role to each new role
+// for all Microflows$Microflow and Microflows$Nanoflow units.
+// Returns the number of flow units updated.
+func cloneFlowAccesses(db *sql.DB, contentsDir string, newRoles []string, cloneFrom string) (int, error) {
+	if len(newRoles) == 0 {
+		return 0, nil
+	}
+	sourceMap := buildSourceRoleMap(newRoles, cloneFrom)
+	updated := 0
+	var lastErr error
+
+	scanUnitsWithUnitID(db, contentsDir, func(data map[string]interface{}, unitID string, _ string) {
+		t, _ := data["$Type"].(string)
+		if t != "Microflows$Microflow" && t != "Microflows$Nanoflow" {
+			return
+		}
+		arr, _ := data["AllowedModuleRoles"].(primitive.A)
+		if len(arr) <= 1 {
+			return
+		}
+		existing := make(map[string]bool)
+		for i, item := range arr {
+			if i == 0 {
+				continue
+			}
+			if s, ok := item.(string); ok {
+				existing[s] = true
+			}
+		}
+		changed := false
+		for newRole, sourceRole := range sourceMap {
+			if existing[sourceRole] && !existing[newRole] {
+				arr = append(arr, newRole)
+				existing[newRole] = true
+				changed = true
+			}
+		}
+		if !changed {
+			return
+		}
+		data["AllowedModuleRoles"] = arr
+		b, _ := bson.Marshal(data)
+		if err := updateUnitFile(contentsDir, unitID, b); err != nil {
+			lastErr = err
+		} else {
+			updated++
+		}
+	})
+
+	return updated, lastErr
+}
+
+// cloneEntityAccessRules clones entity access rules from the cloneFrom role to each new role
+// for all DomainModels$DomainModel units (entities are embedded in the domain model BSON).
+// Returns the number of domain model units updated.
+func cloneEntityAccessRules(db *sql.DB, contentsDir string, newRoles []string, cloneFrom string) (int, error) {
+	if len(newRoles) == 0 {
+		return 0, nil
+	}
+	sourceMap := buildSourceRoleMap(newRoles, cloneFrom)
+	updated := 0
+	var lastErr error
+
+	scanUnitsWithUnitID(db, contentsDir, func(data map[string]interface{}, unitID string, _ string) {
+		if data["$Type"] != "DomainModels$DomainModel" {
+			return
+		}
+		entities, _ := data["Entities"].(primitive.A)
+		if len(entities) <= 1 {
+			return
+		}
+		dmChanged := false
+		for i, entityItem := range entities {
+			if i == 0 {
+				continue
+			}
+			entityMap, ok := toMap(entityItem)
+			if !ok {
+				continue
+			}
+			accessRules, _ := entityMap["AccessRules"].(primitive.A)
+			if len(accessRules) <= 1 {
+				continue
+			}
+			entityChanged := false
+			origLen := len(accessRules)
+			for ri := 1; ri < origLen; ri++ {
+				ruleMap, ok := toMap(accessRules[ri])
+				if !ok {
+					continue
+				}
+				amr, _ := ruleMap["AllowedModuleRoles"].(primitive.A)
+				for newRole, sourceRole := range sourceMap {
+					sourceFound, newFound := false, false
+					for j, mr := range amr {
+						if j == 0 {
+							continue
+						}
+						if s, ok := mr.(string); ok {
+							if s == sourceRole {
+								sourceFound = true
+							}
+							if s == newRole {
+								newFound = true
+							}
+						}
+					}
+					if sourceFound && !newFound {
+						accessRules = append(accessRules, cloneAccessRule(ruleMap, newRole))
+						entityChanged = true
+					}
+				}
+			}
+			if entityChanged {
+				entityMap["AccessRules"] = accessRules
+				entities[i] = entityMap
+				dmChanged = true
+			}
+		}
+		if !dmChanged {
+			return
+		}
+		data["Entities"] = entities
+		b, _ := bson.Marshal(data)
+		if err := updateUnitFile(contentsDir, unitID, b); err != nil {
+			lastErr = err
+		} else {
+			updated++
+		}
+	})
+
+	return updated, lastErr
+}
+
+// cloneAccessRule creates a copy of a DomainModels$AccessRule map with a new $ID,
+// the given newRole in AllowedModuleRoles, and cloned MemberAccesses with new $IDs.
+func cloneAccessRule(ruleMap map[string]interface{}, newRole string) map[string]interface{} {
+	clone := make(map[string]interface{}, len(ruleMap))
+	for k, v := range ruleMap {
+		clone[k] = v
+	}
+	clone["$ID"] = newBinaryID()
+	clone["AllowedModuleRoles"] = primitive.A{int32(1), newRole}
+	if maArr, ok := ruleMap["MemberAccesses"].(primitive.A); ok && len(maArr) > 1 {
+		newMA := make(primitive.A, 0, len(maArr))
+		newMA = append(newMA, maArr[0]) // keep count prefix
+		for j, maItem := range maArr {
+			if j == 0 {
+				continue
+			}
+			maMap, ok := toMap(maItem)
+			if !ok {
+				newMA = append(newMA, maItem)
+				continue
+			}
+			newMAMap := make(map[string]interface{}, len(maMap))
+			for k, v := range maMap {
+				newMAMap[k] = v
+			}
+			newMAMap["$ID"] = newBinaryID()
+			newMA = append(newMA, newMAMap)
+		}
+		clone["MemberAccesses"] = newMA
+	}
+	return clone
 }
 
 // buildEmptyModuleSecurityBSON returns BSON bytes for an empty Security$ModuleSecurity unit.

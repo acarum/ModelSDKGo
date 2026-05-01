@@ -1,0 +1,315 @@
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "la4m3CCYaEWysuT6zOwnBg=="
+  },
+  "$Type": "DomainModels$DomainModel",
+  "Annotations": [
+    3
+  ],
+  "Associations": [
+    3
+  ],
+  "CrossAssociations": [
+    3
+  ],
+  "Documentation": "",
+  "Entities": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "YLq3oR41sU+ECqsCKnt7lg=="
+      },
+      "$Type": "DomainModels$EntityImpl",
+      "AccessRules": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "/KJKpRL6HEiiAnyfIohesQ=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": true,
+          "AllowDelete": true,
+          "AllowedModuleRoles": [
+            1,
+            "CommunityCommons.Administrator",
+            "CommunityCommons.User"
+          ],
+          "DefaultMemberAccessRights": "ReadWrite",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "Q9P+6Pl1u0SDgtByfbHOZA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "CommunityCommons.ImageDimensions.Height"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "e0aTznNqFkKtg3DbLfvpCQ=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "CommunityCommons.ImageDimensions.Width"
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        }
+      ],
+      "Attributes": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "09olDh2P30e6iqpogxBrMQ=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "7X86BlOpJ0+FfRESOBp+CA=="
+          },
+          "Name": "Height",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "kTChDO2IVkCBQziI34APxQ=="
+            },
+            "$Type": "DomainModels$IntegerAttributeType"
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "DkKyzOEG9E6fZtj2tS7yFg=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": "0"
+          }
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "03m8VwxHn0a31yLCBtts1Q=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "zzWtd5DLukuFVqFOgtUEkw=="
+          },
+          "Name": "Width",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "aPJ9mZWUe0uMGqHpsQhqNw=="
+            },
+            "$Type": "DomainModels$IntegerAttributeType"
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "ASiNXFXXy0+k04v6G/ZWww=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": "0"
+          }
+        }
+      ],
+      "Documentation": "",
+      "Events": [
+        3
+      ],
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "7pB0yTXchkardL5cA/blOg=="
+      },
+      "Image": "",
+      "ImageData": {
+        "Subtype": 0,
+        "Data": ""
+      },
+      "Indexes": [
+        3
+      ],
+      "Location": "240;270",
+      "MaybeGeneralization": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "dI/6kvmuJk610PL/jv7tYA=="
+        },
+        "$Type": "DomainModels$NoGeneralization",
+        "HasChangedByAttr": false,
+        "HasChangedDateAttr": false,
+        "HasCreatedDateAttr": false,
+        "HasOwnerAttr": false,
+        "Persistable": false
+      },
+      "Name": "ImageDimensions",
+      "Source": null,
+      "ValidationRules": [
+        3
+      ]
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "e9QLdYvNLU2EvGjllDr48w=="
+      },
+      "$Type": "DomainModels$EntityImpl",
+      "AccessRules": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "epwJgfLO1kqVakM4QpqTxg=="
+          },
+          "$Type": "DomainModels$AccessRule",
+          "AllowCreate": true,
+          "AllowDelete": true,
+          "AllowedModuleRoles": [
+            1,
+            "CommunityCommons.Administrator",
+            "CommunityCommons.User"
+          ],
+          "DefaultMemberAccessRights": "ReadWrite",
+          "Documentation": "",
+          "MemberAccesses": [
+            3,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "4VmZtUC+0U+4obmgX2zInA=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "CommunityCommons.SplitItem.Index"
+            },
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "6nNuXJq0f0K4fSe/toRXAg=="
+              },
+              "$Type": "DomainModels$MemberAccess",
+              "AccessRights": "ReadWrite",
+              "Association": "",
+              "Attribute": "CommunityCommons.SplitItem.Value"
+            }
+          ],
+          "XPathConstraint": "",
+          "XPathConstraintCaption": ""
+        }
+      ],
+      "Attributes": [
+        3,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "yuY/ZcOJh0Wh+S0PBvuklw=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "k9oP3S1X7UStPmGlo+wUGw=="
+          },
+          "Name": "Index",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "mGAmTChsWE2X1Bf9jKiXlw=="
+            },
+            "$Type": "DomainModels$IntegerAttributeType"
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "BWWPrpkvY06LWJ4MkRLzhg=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": "0"
+          }
+        },
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "aW+NJtNjaESqmavbkk+/pg=="
+          },
+          "$Type": "DomainModels$Attribute",
+          "Documentation": "",
+          "ExportLevel": "Hidden",
+          "GUID": {
+            "Subtype": 0,
+            "Data": "0R0eIUkmUUKuno43KkA5Uw=="
+          },
+          "Name": "Value",
+          "NewType": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "qYO23o1OD02FNZ+8+uTmsg=="
+            },
+            "$Type": "DomainModels$StringAttributeType",
+            "Length": 2000
+          },
+          "Value": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "973cfih7yUuA4R/kbL9+gA=="
+            },
+            "$Type": "DomainModels$StoredValue",
+            "DefaultValue": ""
+          }
+        }
+      ],
+      "Documentation": "",
+      "Events": [
+        3
+      ],
+      "ExportLevel": "Hidden",
+      "GUID": {
+        "Subtype": 0,
+        "Data": "8JCbsZn46Ey3EVcGyrHGig=="
+      },
+      "Image": "",
+      "ImageData": {
+        "Subtype": 0,
+        "Data": ""
+      },
+      "Indexes": [
+        3
+      ],
+      "Location": "240;160",
+      "MaybeGeneralization": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "0vca4wyiO0CAOyCwUk/9Bg=="
+        },
+        "$Type": "DomainModels$NoGeneralization",
+        "HasChangedByAttr": false,
+        "HasChangedDateAttr": false,
+        "HasCreatedDateAttr": false,
+        "HasOwnerAttr": false,
+        "Persistable": false
+      },
+      "Name": "SplitItem",
+      "Source": null,
+      "ValidationRules": [
+        3
+      ]
+    }
+  ]
+}
