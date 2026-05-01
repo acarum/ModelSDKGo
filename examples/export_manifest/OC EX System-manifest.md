@@ -1,17 +1,19 @@
 # Manifest Report: OC EX System
 
-**Mendix Version:** 11.6.4  
-**MPR File:** C:\Workspaces\Mendix\MDUI\MX_OC_EX_System\OC EX System.mpr  
-**Generated:** 2026-04-30 15:19:18  
+**Mendix Version:** 11.10.0  
+**MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
+**Generated:** 2026-05-01 09:17:02  
 
 ---
 
 ## Summary
 
 - **External Entities:** 21 (across 2 modules)
-- **Microflow/Action Calls:** 75
-- **Signal Manager Subscriptions:** 0 subscription(s)
+- **Microflow/Action Calls:** 78
+- **Signal Manager Subscriptions:** 3 subscription(s)
 - **Navigation Items:** 10
+- **Pages with Commands:** 6 page(s) analyzed
+- **Command Buttons:** 38 total, 34 with extracted commands
 
 ---
 
@@ -436,14 +438,16 @@ External OData entities used in the project, grouped by module.
 
 Microflow and action calls found in the project (MicroflowCall, JavaAction, ExternalAction).
 
-Found 75 call(s):
+Found 78 call(s):
 
 | Microflow | Module | Call Type | AppName | CommandName |
 |-----------|--------|-----------|---------|-------------|
+| Microflow | Documents | ExternalAction | TripPinServiceRW | ResetDataSource |
 | UpdateStatus | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateStatus |
 | SUB_SetStatusAsInitial | OpcenterEXFN_ReferenceData | ExternalAction | Reference | SetStatusAsInitial |
 | SUB_DeleteCommand_StartArrayWithTwoParameter | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
+| SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | JavaAction | 'AppName' | 'CommandName' |
 | SUB_DeleteCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_FreezeAndUnfreezeCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_CallCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
@@ -482,6 +486,9 @@ Found 75 call(s):
 | UnfreezeCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UnfreezeCounter |
 | ResetCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | ResetCounter |
 | DeleteCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | DeleteCounter |
+| DeleteCounter | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | 'AppName'
+ | 'CommandName'
+ |
 | UpdateCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateCounter |
 | HideCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | HideCounter |
 | CreateCounter | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | CreateCounter |
@@ -522,7 +529,13 @@ Found 75 call(s):
 
 Signal subscriptions from Signal Manager widgets (siemens.mxtosignal.MxToSignal).
 
-_No signal subscriptions found._
+Found 3 subscription(s):
+
+| Module | Document Type | Document | Signal Name | App Name | Subscription Filter |
+|--------|---------------|----------|-------------|----------|---------------------|
+| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN | APPName | Yes |
+| OpcenterEXFN_ReferenceData | Page | StateMachine_Details | SN2 | AN2 | Yes |
+| OpcenterEXFN_ReferenceData | Snippet | MySnippet | SNIPPET_SN | SNIPPET_APPName | Yes |
 
 ---
 
@@ -531,15 +544,91 @@ _No signal subscriptions found._
 | Parent Node | Node | Target Page | User Roles |
 |-------------|------|-------------|------------|
 | - | System | - | - |
-| System | Counters | OpcenterEXFN_ReferenceData.Counter_Master | Administrator, User |
-| System | Numbering Patterns | OpcenterEXFN_ReferenceData.NumberingPattern_Master | Administrator, User |
-| System | State Machines | OpcenterEXFN_ReferenceData.StateMachine_Master | Administrator, User |
-| System | Statuses | OpcenterEXFN_ReferenceData.Status_Master | Administrator, User |
-| System | Status Behavior Definitions | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master | Administrator, User |
-| System | Status Definitions | OpcenterEXFN_ReferenceData.StatusDefinition_Master | Administrator, User |
-| System | Status Transition Definitions | OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master | Administrator, User |
-| System | Unit of Measures | OpcenterEXFN_ReferenceData.UoM_Master | Administrator, User |
-| System | UoM Dimensions | OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection | Administrator, User |
+| System | Counters | OpcenterEXFN_ReferenceData.Counter_Master | Administrator, User, Manager |
+| System | Numbering Patterns | OpcenterEXFN_ReferenceData.NumberingPattern_Master | Administrator, User, Manager |
+| System | State Machines | OpcenterEXFN_ReferenceData.StateMachine_Master | Administrator, User, Manager |
+| System | Statuses | OpcenterEXFN_ReferenceData.Status_Master | Administrator, User, Manager |
+| System | Status Behavior Definitions | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master | Administrator, User, Manager |
+| System | Status Definitions | OpcenterEXFN_ReferenceData.StatusDefinition_Master | Administrator, User, Manager |
+| System | Status Transition Definitions | OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master | Administrator, User, Manager |
+| System | Unit of Measures | OpcenterEXFN_ReferenceData.UoM_Master | Administrator, User, Manager |
+| System | UoM Dimensions | OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection | Administrator, User, Manager |
+
+---
+
+## 5. Page Commands
+
+Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.
+
+Found commands in 6 page(s):
+
+### OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition | CreateStatusBehaviorDefinition |
+| Details | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | UpdateStatusBehaviorDefinition |
+| Delete | - | DeleteStatusBehaviorDefinition |
+
+### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension | CreateUoMDimension |
+| Details | OpcenterEXFN_ReferenceData.UoMDimension_Details | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension | UpdateUoMDimension |
+| Unhide | - | UnhideUoMDimension |
+| Hide | - | HideUoMDimension |
+| Freeze | - | FreezeUoMDimension |
+| Unfreeze | - | UnfreezeUoMDimension |
+| Delete | - | DeleteUoMDimension |
+
+### OpcenterEXFN_ReferenceData.StateMachine_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine | CreateStateMachine |
+| Details | OpcenterEXFN_ReferenceData.StateMachine_Details | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine | UpdateStateMachine |
+| Hide | - | HideStateMachine |
+| Unhide | - | UnhideStateMachine |
+| Freeze | - | FreezeStateMachine |
+| Unfreeze | - | UnfreezeStateMachine |
+| Delete | - | DeleteStateMachine |
+
+### OpcenterEXFN_ReferenceData.Status_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatus | CreateStatus |
+| Details | - | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatus | UpdateStatus |
+| Initial | - | SetStatusAsInitial |
+| Delete | - | DeleteStatus |
+
+### OpcenterEXFN_ReferenceData.StatusDefinition_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusDefinition | CreateStatusDefinition |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusDefinition | UpdateStatusDefinition |
+| Hide | - | HideStatusDefinition |
+| Unhide | - | UnhideStatusDefinition |
+| Freeze | - | FreezeStatusDefinition |
+| Unfreeze | - | UnfreezeStatusDefinition |
+| Delete | - | DeleteStatusDefinition |
+
+### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | CreateStatusTransitionDefinition |
+| Hide | - | HideStatusTransitionDefinition |
+| Unhide | - | UnhideStatusTransitionDefinition |
+| Freeze | - | FreezeStatusTransitionDefinition |
+| Unfreeze | - | UnfreezeStatusTransitionDefinition |
+| Delete | - | DeleteStatusTransitionDefinition |
 
 ---
 
