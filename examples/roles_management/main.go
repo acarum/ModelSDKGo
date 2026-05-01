@@ -536,7 +536,7 @@ func runImport(mprPath, csvPath, cloneFrom string) {
 
 	// Scan all Security$ModuleSecurity units
 	existingModuleRoles := make(map[string]bool) // "Module.Role" → true
-	moduleSecurityUID := make(map[string]string)  // moduleName → Security unit UUID
+	moduleSecurityUID := make(map[string]string) // moduleName → Security unit UUID
 
 	scanUnitsWithUnitID(db, contentsDir, func(data map[string]interface{}, unitID string, containerIDRaw string) {
 		if data["$Type"] != "Security$ModuleSecurity" {
