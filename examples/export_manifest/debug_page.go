@@ -55,25 +55,25 @@ func main() {
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Println("📋 FormCall Arguments:")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-	
+
 	if formCall, ok := pageData["FormCall"].(map[string]interface{}); ok {
 		if args, ok := formCall["Arguments"].(primitive.A); ok {
 			fmt.Printf("Found %d argument(s)\n\n", len(args)-1) // -1 for count element
-			
+
 			for i, arg := range args {
 				if i == 0 {
 					continue // Skip count
 				}
-				
+
 				if argMap, ok := arg.(map[string]interface{}); ok {
 					if param, ok := argMap["Parameter"].(string); ok {
 						fmt.Printf("[Argument %d]\n", i)
 						fmt.Printf("  Parameter: %s\n", param)
-						
+
 						// Check if this is Right placeholder
 						if strings.HasSuffix(param, ".Right") {
 							fmt.Printf("  ✨ This is the RIGHT placeholder!\n\n")
-							
+
 							// Inspect widgets
 							if widgets, ok := argMap["Widgets"]; ok {
 								fmt.Println("  📦 Widgets structure:")
@@ -136,14 +136,14 @@ func inspectWidgets(data interface{}, indent string) {
 			fmt.Printf("%s[%d]:\n", indent, i)
 			inspectWidget(item, indent+"  ")
 		}
-		
+
 	case []interface{}:
 		fmt.Printf("%sSlice with %d elements\n", indent, len(v))
 		for i, item := range v {
 			fmt.Printf("%s[%d]:\n", indent, i)
 			inspectWidget(item, indent+"  ")
 		}
-		
+
 	default:
 		fmt.Printf("%s%T: %v\n", indent, data, data)
 	}
@@ -154,11 +154,11 @@ func inspectWidget(data interface{}, indent string) {
 	case map[string]interface{}:
 		if typeStr, ok := v["$Type"].(string); ok {
 			fmt.Printf("%s$Type: %s\n", indent, typeStr)
-			
+
 			if name, ok := v["Name"].(string); ok {
 				fmt.Printf("%sName: %s\n", indent, name)
 			}
-			
+
 			// Check for DivContainer with class
 			if typeStr == "Forms$DivContainer" {
 				if appearance, ok := v["Appearance"].(map[string]interface{}); ok {
@@ -168,12 +168,12 @@ func inspectWidget(data interface{}, indent string) {
 						}
 					}
 				}
-				
+
 				// Check for OnClickAction on container
 				if onClickAction, ok := v["OnClickAction"].(map[string]interface{}); ok {
 					actionType, _ := onClickAction["$Type"].(string)
 					fmt.Printf("%s🔗 Container OnClickAction: %s\n", indent, actionType)
-					
+
 					// For any action type, show full structure
 					if strings.Contains(actionType, "CreateObjectClientAction") || strings.Contains(actionType, "FormAction") {
 						fmt.Printf("%s  Full structure:\n", indent)
@@ -183,11 +183,11 @@ func inspectWidget(data interface{}, indent string) {
 					}
 				}
 			}
-			
+
 			// Check for ActionButton
 			if typeStr == "Forms$ActionButton" {
 				fmt.Printf("%s🔘 ACTION BUTTON: %v\n", indent, v["Name"])
-				
+
 				if captionTemplate, ok := v["CaptionTemplate"].(map[string]interface{}); ok {
 					if template, ok := captionTemplate["Template"].(map[string]interface{}); ok {
 						if items, ok := template["Items"].(primitive.A); ok {
@@ -205,13 +205,13 @@ func inspectWidget(data interface{}, indent string) {
 					}
 				}
 			}
-			
+
 			// Check for DynamicText - might contain actual button labels!
 			if typeStr == "Forms$DynamicText" {
 				name, _ := v["Name"].(string)
 				if name == "text66" || name == "text69" || name == "text68" || name == "text70" || name == "text73" {
 					fmt.Printf("%s📝 DYNAMIC TEXT: %v\n", indent, name)
-					
+
 					// Check Content field
 					if content, ok := v["Content"].(map[string]interface{}); ok {
 						// Check Template.Items
@@ -230,7 +230,7 @@ func inspectWidget(data interface{}, indent string) {
 								}
 							}
 						}
-						
+
 						// Check Fallback.Items
 						if fallback, ok := content["Fallback"].(map[string]interface{}); ok {
 							if items, ok := fallback["Items"].(primitive.A); ok {
@@ -250,13 +250,13 @@ func inspectWidget(data interface{}, indent string) {
 					}
 				}
 			}
-			
+
 			// Recursively inspect nested structures
 			for key, val := range v {
 				if key == "$Type" || key == "Name" || key == "Appearance" || key == "Children" {
 					continue // Already printed
 				}
-				
+
 				// Look for nested widgets
 				if key == "Widgets" || key == "Items" {
 					fmt.Printf("%s%s:\n", indent, key)
@@ -264,7 +264,7 @@ func inspectWidget(data interface{}, indent string) {
 				}
 			}
 		}
-		
+
 	default:
 		fmt.Printf("%s%T\n", indent, data)
 	}

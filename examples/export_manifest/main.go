@@ -2419,14 +2419,14 @@ func findAllShowPagesInFlow(data interface{}) []string {
 // findAllShowPagesInFlowRecursive searches for ShowPage actions recursively through called flows
 func findAllShowPagesInFlowRecursive(db *sql.DB, contentsDir string, flowContent map[string]interface{}, visited map[string]bool) []string {
 	var pages []string
-	
+
 	// Find direct ShowPage actions
 	directPages := findAllShowPagesInFlow(flowContent)
 	pages = append(pages, directPages...)
-	
+
 	// Find called microflows/nanoflows
 	calledFlows := findCalledFlows(flowContent)
-	
+
 	// Recursively search in called flows
 	for _, flowRef := range calledFlows {
 		// Skip if already visited (avoid infinite loops)
@@ -2434,7 +2434,7 @@ func findAllShowPagesInFlowRecursive(db *sql.DB, contentsDir string, flowContent
 			continue
 		}
 		visited[flowRef] = true
-		
+
 		// Load the called flow
 		flowData := loadFlowByReference(db, contentsDir, flowRef)
 		if flowData != nil {
@@ -2443,14 +2443,14 @@ func findAllShowPagesInFlowRecursive(db *sql.DB, contentsDir string, flowContent
 			pages = append(pages, childPages...)
 		}
 	}
-	
+
 	return pages
 }
 
 // findCalledFlows extracts all microflow/nanoflow references from a flow
 func findCalledFlows(data interface{}) []string {
 	var flows []string
-	
+
 	switch v := data.(type) {
 	case map[string]interface{}:
 		if typeStr, ok := v["$Type"].(string); ok {
@@ -2475,13 +2475,13 @@ func findCalledFlows(data interface{}) []string {
 				}
 			}
 		}
-		
+
 		// Recursively search all fields
 		for _, val := range v {
 			childFlows := findCalledFlows(val)
 			flows = append(flows, childFlows...)
 		}
-		
+
 	case primitive.A: // BSON array
 		for i, item := range v {
 			if i == 0 {
@@ -2490,14 +2490,14 @@ func findCalledFlows(data interface{}) []string {
 			childFlows := findCalledFlows(item)
 			flows = append(flows, childFlows...)
 		}
-		
+
 	case []interface{}: // Regular slice
 		for _, item := range v {
 			childFlows := findCalledFlows(item)
 			flows = append(flows, childFlows...)
 		}
 	}
-	
+
 	return flows
 }
 
@@ -2511,20 +2511,20 @@ func loadFlowByReference(db *sql.DB, contentsDir string, flowRef string) map[str
 			}
 		}
 	}
-	
+
 	// Try loading by qualified name
 	microflows, err := listMicroflows(db, contentsDir)
 	if err != nil {
 		return nil
 	}
-	
+
 	for _, mf := range microflows {
 		fullName := mf.ModuleName + "." + mf.Name
 		if fullName == flowRef || mf.Name == flowRef {
 			return mf.Content
 		}
 	}
-	
+
 	return nil
 }
 
@@ -2584,14 +2584,14 @@ func resolveTargetPage(db *sql.DB, contentsDir string, itemType string, target s
 			}
 
 			unitIDStr := blobToUUID(unitID)
-			
+
 			// Check if UUID matches target
 			if unitIDStr == target {
 				content, err := loadUnitContents(contentsDir, unitIDStr)
 				if err != nil {
 					continue
 				}
-				
+
 				// Check if this is a Nanoflow
 				if typeName, ok := content["$Type"].(string); ok && typeName == "Microflows$Nanoflow" {
 					// Search for ShowPage activities recursively
@@ -2604,7 +2604,7 @@ func resolveTargetPage(db *sql.DB, contentsDir string, itemType string, target s
 					break
 				}
 			}
-			
+
 			// Also try matching by name
 			content, err := loadUnitContents(contentsDir, unitIDStr)
 			if err != nil {
@@ -2814,19 +2814,19 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 		switch v := data.(type) {
 		case map[string]interface{}:
 			typeStr, _ := v["$Type"].(string)
-			
+
 			// Capture OnClickAction from DivContainer to pass to children
 			currentAction := parentAction
 			if typeStr == "Forms$DivContainer" {
 				if onClickAction, ok := v["OnClickAction"].(map[string]interface{}); ok {
 					currentAction = onClickAction
 				}
-				
+
 				// When we find a DivContainer, check its Widgets for ActionButton + DynamicText pairs
 				if widgets, ok := v["Widgets"].(primitive.A); ok {
 					var actionButton map[string]interface{}
 					var dynamicText map[string]interface{}
-					
+
 					for i, widget := range widgets {
 						if i == 0 {
 							continue // Skip count
@@ -2840,7 +2840,7 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 							}
 						}
 					}
-					
+
 					// If we found both, extract button with caption from DynamicText
 					if actionButton != nil {
 						button := PageCommandButton{
@@ -2853,7 +2853,7 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 						if onClickAction, ok := actionButton["OnClickAction"].(map[string]interface{}); ok {
 							actionToUse = onClickAction
 						}
-						
+
 						// Extract action information
 						if actionToUse != nil {
 							if actionType, ok := actionToUse["$Type"].(string); ok {
@@ -2934,7 +2934,7 @@ func extractCaptionFromDynamicText(dynamicText map[string]interface{}) string {
 	if dynamicText == nil {
 		return ""
 	}
-	
+
 	// Navigate: Content -> Template -> Items -> find en_US translation
 	if content, ok := dynamicText["Content"].(map[string]interface{}); ok {
 		if template, ok := content["Template"].(map[string]interface{}); ok {
@@ -2951,7 +2951,7 @@ func extractCaptionFromDynamicText(dynamicText map[string]interface{}) string {
 						}
 					}
 				}
-				
+
 				// Fallback to first non-empty text if en_US not found
 				for i, item := range items {
 					if i == 0 {
@@ -2966,7 +2966,7 @@ func extractCaptionFromDynamicText(dynamicText map[string]interface{}) string {
 			}
 		}
 	}
-	
+
 	return ""
 }
 
@@ -2979,11 +2979,11 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 		parts := strings.Split(pageName, ".")
 		pageName = parts[len(parts)-1]
 	}
-	
+
 	// Extract entity name from page name (e.g., "StateMachine_Master" -> "StateMachine")
 	entityName := pageName
 	suffixes := []string{"_Master", "_Details", "_Edit", "_New", "_SingleSelection"}
-	
+
 	// Remove all known suffixes (some pages have multiple, e.g., "_Master_SingleSelection")
 	changed := true
 	for changed {
@@ -2996,14 +2996,14 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 			}
 		}
 	}
-	
+
 	if entityName == "" || buttonCaption == "" {
 		return ""
 	}
-	
+
 	// Build expected command name (e.g., "Hide" + "StateMachine" = "HideStateMachine")
 	expectedCommandName := buttonCaption + entityName
-	
+
 	// Strategy 1: Try exact match
 	for _, call := range allMicroflowCalls {
 		if call.CallType == "ExternalAction" {
@@ -3012,7 +3012,7 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 			}
 		}
 	}
-	
+
 	// Strategy 2: Try case-insensitive match
 	expectedLower := strings.ToLower(expectedCommandName)
 	for _, call := range allMicroflowCalls {
@@ -3022,7 +3022,7 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 			}
 		}
 	}
-	
+
 	// Strategy 3: Try with "Set" prefix (e.g., "Set" + "Initial" + "Status" = "SetStatusAsInitial" or "SetInitialStatus")
 	// Try both orders: SetCaptionEntity and SetEntityCaption
 	patterns := []string{
@@ -3030,7 +3030,7 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 		"Set" + entityName + buttonCaption,        // SetStatusInitial
 		"Set" + entityName + "As" + buttonCaption, // SetStatusAsInitial
 	}
-	
+
 	for _, pattern := range patterns {
 		patternLower := strings.ToLower(pattern)
 		for _, call := range allMicroflowCalls {
@@ -3041,7 +3041,7 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 			}
 		}
 	}
-	
+
 	// Strategy 4: Try commands that contain both caption and entity name
 	captionLower := strings.ToLower(buttonCaption)
 	entityLower := strings.ToLower(entityName)
@@ -3053,7 +3053,7 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 			}
 		}
 	}
-	
+
 	return ""
 }
 
@@ -3066,7 +3066,7 @@ func findSaveButtonCommand(db *sql.DB, contentsDir string, pageQualifiedName str
 		// If page loading fails, try heuristic approach
 		return findCommandByPageNameHeuristic(pageQualifiedName, allMicroflowCalls)
 	}
-	
+
 	// First try to find "Save" button specifically
 	saveButtonFlow := findSaveButtonFlow(pageData)
 	if saveButtonFlow != "" {
@@ -3075,7 +3075,7 @@ func findSaveButtonCommand(db *sql.DB, contentsDir string, pageQualifiedName str
 			return command
 		}
 	}
-	
+
 	// If no Save button found, try to find any flow that might contain a command
 	// This handles PANEL pages that might have different button structures
 	flows := findAllFlowsInPage(pageData)
@@ -3085,7 +3085,7 @@ func findSaveButtonCommand(db *sql.DB, contentsDir string, pageQualifiedName str
 			return command
 		}
 	}
-	
+
 	// If no command found through flow analysis, try heuristic approach
 	return findCommandByPageNameHeuristic(pageQualifiedName, allMicroflowCalls)
 }
@@ -3099,7 +3099,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 		parts := strings.Split(pageName, ".")
 		pageName = parts[len(parts)-1]
 	}
-	
+
 	// Common patterns: PANEL_CreateXXX, PANEL_UpdateXXX, etc.
 	patterns := []string{
 		"PANEL_Create",
@@ -3109,10 +3109,10 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 		"_Create",
 		"_Update",
 	}
-	
+
 	var actionName string
 	var operation string // "Create" or "Update"
-	
+
 	for _, pattern := range patterns {
 		if strings.Contains(pageName, pattern) {
 			actionName = strings.Replace(pageName, pattern, "", 1)
@@ -3124,17 +3124,17 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			break
 		}
 	}
-	
+
 	if actionName == "" {
 		return ""
 	}
-	
+
 	// Strip "Base" prefix if present (e.g., "BaseUoMDimension" -> "UoMDimension")
 	alternativeActionName := actionName
 	if strings.HasPrefix(actionName, "Base") {
 		alternativeActionName = strings.TrimPrefix(actionName, "Base")
 	}
-	
+
 	// Strategy 1: Try exact match with operation prefix (e.g., "CreateStateMachine")
 	exactMatch := operation + actionName
 	for _, call := range allMicroflowCalls {
@@ -3144,7 +3144,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			}
 		}
 	}
-	
+
 	// Strategy 1b: Try exact match with operation prefix and alternative name (e.g., "CreateUoMDimension")
 	if alternativeActionName != actionName {
 		exactMatchAlt := operation + alternativeActionName
@@ -3156,7 +3156,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			}
 		}
 	}
-	
+
 	// Strategy 2: Try exact match with just the action name (e.g., "StateMachine" -> "StateMachine" command)
 	for _, call := range allMicroflowCalls {
 		if call.CallType == "ExternalAction" {
@@ -3165,7 +3165,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			}
 		}
 	}
-	
+
 	// Strategy 3: Try match where command name ends with action name (e.g., "CreateStateMachine", "UpdateStateMachine")
 	for _, call := range allMicroflowCalls {
 		if call.CallType == "ExternalAction" {
@@ -3177,7 +3177,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			}
 		}
 	}
-	
+
 	// Strategy 4: Try match where command name contains action name
 	for _, call := range allMicroflowCalls {
 		if call.CallType == "ExternalAction" {
@@ -3189,7 +3189,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			}
 		}
 	}
-	
+
 	// Strategy 5: Last resort - any command containing action name
 	for _, call := range allMicroflowCalls {
 		if call.CallType == "ExternalAction" {
@@ -3198,7 +3198,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 			}
 		}
 	}
-	
+
 	return ""
 }
 
@@ -3209,19 +3209,19 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 		switch v := data.(type) {
 		case map[string]interface{}:
 			typeStr, _ := v["$Type"].(string)
-			
+
 			// Capture OnClickAction from DivContainer
 			currentAction := parentAction
 			if typeStr == "Forms$DivContainer" {
 				if onClickAction, ok := v["OnClickAction"].(map[string]interface{}); ok {
 					currentAction = onClickAction
 				}
-				
+
 				// Check Widgets for ActionButton + DynamicText pairs
 				if widgets, ok := v["Widgets"].(primitive.A); ok {
 					var actionButton map[string]interface{}
 					var dynamicText map[string]interface{}
-					
+
 					for i, widget := range widgets {
 						if i == 0 {
 							continue
@@ -3235,7 +3235,7 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 							}
 						}
 					}
-					
+
 					// Check if this is a Save button
 					if actionButton != nil && dynamicText != nil {
 						caption := extractCaptionFromDynamicText(dynamicText)
@@ -3245,7 +3245,7 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 							if onClickAction, ok := actionButton["OnClickAction"].(map[string]interface{}); ok {
 								actionToUse = onClickAction
 							}
-							
+
 							if actionToUse != nil {
 								if actionType, ok := actionToUse["$Type"].(string); ok {
 									if strings.Contains(actionType, "CallNanoflowClientAction") {
@@ -3263,14 +3263,14 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 					}
 				}
 			}
-			
+
 			// Recursively search
 			for _, val := range v {
 				if result := search(val, currentAction); result != "" {
 					return result
 				}
 			}
-			
+
 		case primitive.A:
 			for i, item := range v {
 				if i == 0 {
@@ -3280,7 +3280,7 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 					return result
 				}
 			}
-			
+
 		case []interface{}:
 			for _, item := range v {
 				if result := search(item, parentAction); result != "" {
@@ -3290,7 +3290,7 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 		}
 		return ""
 	}
-	
+
 	return search(pageData, nil)
 }
 
@@ -3298,7 +3298,7 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 func findAllFlowsInPage(pageData map[string]interface{}) []string {
 	var flows []string
 	seen := make(map[string]bool)
-	
+
 	var search func(data interface{})
 	search = func(data interface{}) {
 		switch v := data.(type) {
@@ -3319,12 +3319,12 @@ func findAllFlowsInPage(pageData map[string]interface{}) []string {
 					}
 				}
 			}
-			
+
 			// Recursively search
 			for _, val := range v {
 				search(val)
 			}
-			
+
 		case primitive.A:
 			for i, item := range v {
 				if i == 0 {
@@ -3332,14 +3332,14 @@ func findAllFlowsInPage(pageData map[string]interface{}) []string {
 				}
 				search(item)
 			}
-			
+
 		case []interface{}:
 			for _, item := range v {
 				search(item)
 			}
 		}
 	}
-	
+
 	search(pageData)
 	return flows
 }
@@ -3352,25 +3352,25 @@ func extractCommandFromFlow(db *sql.DB, contentsDir string, flowName string) str
 		return ""
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		var unitID []byte
 		if err := rows.Scan(&unitID); err != nil {
 			continue
 		}
-		
+
 		unitIDStr := blobToUUID(unitID)
 		data, err := loadUnitContents(contentsDir, unitIDStr)
 		if err != nil {
 			continue
 		}
-		
+
 		// Check if this is a Nanoflow or Microflow
 		typeStr, _ := data["$Type"].(string)
 		if typeStr != "Microflows$Nanoflow" && typeStr != "Microflows$Microflow" {
 			continue
 		}
-		
+
 		// Check if this is the flow we're looking for (match by QualifiedName or Name)
 		matched := false
 		if qualifiedName, ok := data["QualifiedName"].(string); ok {
@@ -3386,13 +3386,13 @@ func extractCommandFromFlow(db *sql.DB, contentsDir string, flowName string) str
 				}
 			}
 		}
-		
+
 		if matched {
 			// Search for command calls in the flow
 			return searchFlowForCommand(data)
 		}
 	}
-	
+
 	return ""
 }
 
@@ -3425,7 +3425,7 @@ func searchFlowForCommand(data interface{}) string {
 					}
 				}
 			}
-			
+
 			// Check for ExternalAction (OData calls)
 			if typeStr == "Microflows$ExternalAction" {
 				if appName, ok := v["AppName"].(string); ok {
@@ -3434,7 +3434,7 @@ func searchFlowForCommand(data interface{}) string {
 					}
 				}
 			}
-			
+
 			// Check for JavaAction
 			if typeStr == "Microflows$JavaAction" {
 				if javaAction, ok := v["JavaAction"].(string); ok {
@@ -3459,14 +3459,14 @@ func searchFlowForCommand(data interface{}) string {
 				}
 			}
 		}
-		
+
 		// Recursively search all fields
 		for _, val := range v {
 			if result := searchFlowForCommand(val); result != "" {
 				return result
 			}
 		}
-		
+
 	case primitive.A:
 		for i, item := range v {
 			if i == 0 {
@@ -3476,7 +3476,7 @@ func searchFlowForCommand(data interface{}) string {
 				return result
 			}
 		}
-		
+
 	case []interface{}:
 		for _, item := range v {
 			if result := searchFlowForCommand(item); result != "" {
@@ -3484,7 +3484,7 @@ func searchFlowForCommand(data interface{}) string {
 			}
 		}
 	}
-	
+
 	return ""
 }
 
@@ -3595,10 +3595,10 @@ func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []Navig
 					buttons[i].TargetCommand = findSaveButtonCommand(db, contentsDir, buttons[i].TargetPage, allMicroflowCalls)
 				} else if buttons[i].ActionName != "" {
 					// Strategy 2: If button calls a nanoflow/microflow directly, try to find command in that flow
-					if strings.Contains(buttons[i].ActionType, "CallNanoflowClientAction") || 
-					   strings.Contains(buttons[i].ActionType, "CallMicroflowClientAction") {
+					if strings.Contains(buttons[i].ActionType, "CallNanoflowClientAction") ||
+						strings.Contains(buttons[i].ActionType, "CallMicroflowClientAction") {
 						buttons[i].TargetCommand = extractCommandFromFlow(db, contentsDir, buttons[i].ActionName)
-						
+
 						// Strategy 3: If no command found in flow, use heuristic based on button caption + page entity
 						if buttons[i].TargetCommand == "" {
 							buttons[i].TargetCommand = findCommandByButtonHeuristic(pageName, buttons[i].Caption, allMicroflowCalls)
@@ -3606,7 +3606,7 @@ func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []Navig
 					}
 				}
 			}
-			
+
 			pageCommands = append(pageCommands, PageCommandInfo{
 				PageName: pageName,
 				Commands: buttons,
@@ -3635,7 +3635,7 @@ func validateTargetCommands(pageCommands []PageCommandInfo, allMicroflowCalls []
 			availableCommands[commandKey] = true
 		}
 	}
-	
+
 	// Check each Target Command
 	missingCommands := make(map[string]bool)
 	for _, pageInfo := range pageCommands {
@@ -3647,7 +3647,7 @@ func validateTargetCommands(pageCommands []PageCommandInfo, allMicroflowCalls []
 			}
 		}
 	}
-	
+
 	// Report missing commands
 	if len(missingCommands) > 0 {
 		fmt.Printf("  ⚠️  Warning: %d command(s) not found in Microflow/Action Calls:\n", len(missingCommands))
@@ -3858,7 +3858,7 @@ func extractNavigationItemRecursive(itemMap map[string]interface{}, db *sql.DB, 
 					}
 				} else if strings.Contains(actionType, "Nanoflow") || strings.Contains(actionType, "Microflow") {
 					itemType = "Nanoflow"
-					
+
 					// Extract nanoflow/microflow reference
 					if strings.Contains(actionType, "Nanoflow") {
 						if nanoflowRef, ok := actionMap["Nanoflow"].(string); ok {
@@ -4826,7 +4826,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 					if targetPage == "" {
 						targetPage = "-"
 					}
-					
+
 					targetCommand := cmd.TargetCommand
 					if targetCommand == "" {
 						targetCommand = "-"

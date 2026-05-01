@@ -61,7 +61,7 @@ func main() {
 	fmt.Println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Println("🔎 Searching for Command calls...")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-	
+
 	commands := findAllCommands(flowData)
 	if len(commands) == 0 {
 		fmt.Println("❌ No commands found")

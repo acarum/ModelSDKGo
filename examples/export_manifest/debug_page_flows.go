@@ -38,7 +38,7 @@ func main() {
 	}
 
 	fmt.Println("✅ Page loaded\n")
-	
+
 	flows := findAllFlowsWithContext(pageData)
 	if len(flows) == 0 {
 		fmt.Println("❌ No flows found")
@@ -73,7 +73,7 @@ func findAllFlowsWithContext(pageData map[string]interface{}) []FlowInfo {
 					if name, ok := v["Name"].(string); ok {
 						buttonName = name
 					}
-					
+
 					// Try to get caption from DynamicText in same container
 					if parent, ok := v["Parent"].(map[string]interface{}); ok {
 						caption = extractCaptionFromParent(parent)

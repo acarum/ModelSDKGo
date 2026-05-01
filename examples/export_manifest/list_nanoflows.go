@@ -55,7 +55,7 @@ func main() {
 		if typeStr == "Microflows$Nanoflow" {
 			name, _ := data["Name"].(string)
 			qname, _ := data["QualifiedName"].(string)
-			
+
 			if searchPattern == "" || strings.Contains(strings.ToLower(name), searchPattern) || strings.Contains(strings.ToLower(qname), searchPattern) {
 				fmt.Printf("Name: %s\n", name)
 				if qname != "" {

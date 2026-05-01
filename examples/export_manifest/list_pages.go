@@ -18,7 +18,7 @@ func main() {
 	}
 
 	mprPath := os.Args[1]
-	
+
 	fmt.Printf("📦 MPR: %s\n\n", mprPath)
 
 	db, err := sql.Open("sqlite3", mprPath)
@@ -40,7 +40,7 @@ func main() {
 
 	fmt.Println("📄 Pages found:")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-	
+
 	count := 0
 	for rows.Next() {
 		var unitID []byte
@@ -60,17 +60,17 @@ func main() {
 			if qn, ok := content["QualifiedName"].(string); ok {
 				qualifiedName = qn
 			}
-			
+
 			count++
 			fmt.Printf("%3d. %-40s (QualifiedName: %s)\n", count, name, qualifiedName)
-			
+
 			// Show if it starts with "Counter"
 			if strings.HasPrefix(name, "Counter") {
 				fmt.Printf("     👉 MATCHES Counter*\n")
 			}
 		}
 	}
-	
+
 	fmt.Printf("\n✅ Total: %d page(s)\n", count)
 }
 
