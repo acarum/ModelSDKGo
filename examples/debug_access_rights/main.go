@@ -63,9 +63,13 @@ func main() {
 			if arr, ok := data["ModuleRoles"].(primitive.A); ok {
 				fmt.Printf("  ModuleRoles (%d):\n", len(arr)-1)
 				for i, item := range arr {
-					if i == 0 { continue }
+					if i == 0 {
+						continue
+					}
 					rm := toMap(item)
-					if rm == nil { continue }
+					if rm == nil {
+						continue
+					}
 					fmt.Printf("    [%d] Name=%q $ID=%v\n", i, rm["Name"], rm["$ID"])
 				}
 			}
@@ -79,47 +83,73 @@ func main() {
 			// Find entities and their access rules
 			entities, _ := data["Entities"].(primitive.A)
 			for i, item := range entities {
-				if i == 0 { continue }
+				if i == 0 {
+					continue
+				}
 				e := toMap(item)
-				if e == nil { continue }
+				if e == nil {
+					continue
+				}
 				eName, _ := e["Name"].(string)
 				accessRules, _ := e["AccessRules"].(primitive.A)
-				if len(accessRules) <= 1 { continue }
+				if len(accessRules) <= 1 {
+					continue
+				}
 				// Check if any rule references filterModule
 				hasModule := false
 				for j, ar := range accessRules {
-					if j == 0 { continue }
+					if j == 0 {
+						continue
+					}
 					arm := toMap(ar)
-					if arm == nil { continue }
+					if arm == nil {
+						continue
+					}
 					if mrArr, ok := arm["ModuleRoles"].(primitive.A); ok {
 						for k, mr := range mrArr {
-							if k == 0 { continue }
+							if k == 0 {
+								continue
+							}
 							if s, ok := mr.(string); ok && strings.HasPrefix(s, filterModule+".") {
 								hasModule = true
 							}
 						}
 					}
 				}
-				if !hasModule { continue }
+				if !hasModule {
+					continue
+				}
 				fmt.Printf("\n=== Entity %s (in DomainModel unit: %s) ===\n", eName, uid)
 				for j, ar := range accessRules {
-					if j == 0 { continue }
+					if j == 0 {
+						continue
+					}
 					arm := toMap(ar)
-					if arm == nil { continue }
+					if arm == nil {
+						continue
+					}
 					mrArr, _ := arm["ModuleRoles"].(primitive.A)
 					roles := []string{}
 					for k, mr := range mrArr {
-						if k == 0 { continue }
-						if s, ok := mr.(string); ok { roles = append(roles, s) }
+						if k == 0 {
+							continue
+						}
+						if s, ok := mr.(string); ok {
+							roles = append(roles, s)
+						}
 					}
 					fmt.Printf("  AccessRule[%d] ModuleRoles=%v AllowedCreate=%v AllowedDelete=%v\n",
 						j, roles, arm["AllowedCreate"], arm["AllowedDelete"])
 					// MemberAccesses
 					if ma, ok := arm["MemberAccesses"].(primitive.A); ok {
 						for k, maItem := range ma {
-							if k == 0 { continue }
+							if k == 0 {
+								continue
+							}
 							mam := toMap(maItem)
-							if mam == nil { continue }
+							if mam == nil {
+								continue
+							}
 							fmt.Printf("    MemberAccess: Attr=%v AccessRights=%v\n", mam["Attribute"], mam["AccessRights"])
 						}
 					}
@@ -132,9 +162,13 @@ func main() {
 func inferModuleName(data map[string]interface{}) string {
 	if arr, ok := data["ModuleRoles"].(primitive.A); ok {
 		for i, item := range arr {
-			if i == 0 { continue }
+			if i == 0 {
+				continue
+			}
 			rm := toMap(item)
-			if rm == nil { continue }
+			if rm == nil {
+				continue
+			}
 			if name, _ := rm["Name"].(string); name != "" {
 				// The qualified role name is stored in MicroflowAccesses as "Module.Role"
 				// We need to find it another way — look at MicroflowAccesses
@@ -145,9 +179,13 @@ func inferModuleName(data map[string]interface{}) string {
 	// Try MicroflowAccesses to find module prefix
 	if arr, ok := data["MicroflowAccesses"].(primitive.A); ok {
 		for i, item := range arr {
-			if i == 0 { continue }
+			if i == 0 {
+				continue
+			}
 			rm := toMap(item)
-			if rm == nil { continue }
+			if rm == nil {
+				continue
+			}
 			if mf, _ := rm["Microflow"].(string); strings.Contains(mf, ".") {
 				return strings.SplitN(mf, ".", 2)[0]
 			}
@@ -165,17 +203,25 @@ func dumpAccessArray(data map[string]interface{}, field string) {
 	}
 	fmt.Printf("  %s (%d):\n", field, len(arr)-1)
 	for i, item := range arr {
-		if i == 0 { continue }
+		if i == 0 {
+			continue
+		}
 		rm := toMap(item)
 		if rm == nil {
 			fmt.Printf("    [%d] <non-map: %T>\n", i, item)
 			continue
 		}
 		mfName := ""
-		if v, ok := rm["Microflow"].(string); ok { mfName = v }
-		if v, ok := rm["Nanoflow"].(string); ok { mfName = v }
+		if v, ok := rm["Microflow"].(string); ok {
+			mfName = v
+		}
+		if v, ok := rm["Nanoflow"].(string); ok {
+			mfName = v
+		}
 		role := ""
-		if v, ok := rm["ModuleRole"].(string); ok { role = v }
+		if v, ok := rm["ModuleRole"].(string); ok {
+			role = v
+		}
 		allowed := rm["Allowed"]
 		fmt.Printf("    [%d] Flow=%-50s Role=%-40s Allowed=%v\n", i, mfName, role, allowed)
 	}
