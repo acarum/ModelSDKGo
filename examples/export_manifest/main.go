@@ -728,7 +728,7 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	if options.IncludePageCommands {
 		currentPhase++
 		fmt.Printf("\n[Phase %d/%d] 🖋️ Scanning for page commands...\n", currentPhase, totalPhases)
-		pageCommands, err := collectPageCommands(db, contentsDir, report.NavigationItems, report.MicroflowCalls)
+		pageCommands, err := collectPageCommands(db, contentsDir, mprPath, report.NavigationItems, report.MicroflowCalls)
 		if err != nil {
 			fmt.Printf("Error collecting page commands: %v\n", err)
 			os.Exit(1)
@@ -2698,15 +2698,177 @@ func findRightPlaceholder(pageData map[string]interface{}) interface{} {
 	return nil
 }
 
-// findFirstCommandBarContainer recursively searches for the first DivContainer with "vertical-command-bar" class
+// loadSnippetContent loads snippet BSON from mprcontents folder
+func loadSnippetContent(contentsDir, snippetID string) (map[string]interface{}, error) {
+	// Remove dashes from UUID for directory structure
+	cleanID := strings.ReplaceAll(snippetID, "-", "")
+	if len(cleanID) < 4 {
+		return nil, fmt.Errorf("invalid snippet ID: %s", snippetID)
+	}
+
+	// Build path: mprcontents/{first2}/{next2}/{uuid}.mxunit
+	dir1 := cleanID[0:2]
+	dir2 := cleanID[2:4]
+	filePath := filepath.Join(contentsDir, dir1, dir2, snippetID+".mxunit")
+
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read snippet file %s: %w", filePath, err)
+	}
+
+	// Parse BSON
+	var snippetData map[string]interface{}
+	if err := bson.Unmarshal(data, &snippetData); err != nil {
+		return nil, fmt.Errorf("failed to parse snippet BSON: %w", err)
+	}
+
+	return snippetData, nil
+}
+
+// findSnippetInWidgets searches for snippet widget in widgets array and returns snippet ID
+// Searches recursively through nested widgets
+func findSnippetInWidgets(widgets interface{}) string {
+	switch v := widgets.(type) {
+	case map[string]interface{}:
+		// Check if THIS is a snippet widget
+		if typeStr, ok := v["$Type"].(string); ok {
+			if strings.Contains(typeStr, "Snippet") {
+				// Extract snippet reference - different locations depending on type
+				if snippetRef, ok := v["Snippet"].(string); ok && snippetRef != "" {
+					return snippetRef
+				}
+				// Forms$SnippetCall has Form field directly
+				if form, ok := v["Form"].(string); ok && form != "" {
+					return form
+				}
+				// Forms$SnippetCallWidget has SnippetCall sub-object with Form
+				if snippetCall, ok := v["SnippetCall"].(map[string]interface{}); ok {
+					if form, ok := snippetCall["Form"].(string); ok && form != "" {
+						return form
+					}
+				}
+			}
+		}
+		// Recursively search nested fields
+		for key, val := range v {
+			if key == "$ID" || key == "$Type" {
+				continue
+			}
+			if result := findSnippetInWidgets(val); result != "" {
+				return result
+			}
+		}
+	case primitive.A:
+		for i, item := range v {
+			if i == 0 {
+				continue // Skip count
+			}
+			if result := findSnippetInWidgets(item); result != "" {
+				return result
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if result := findSnippetInWidgets(item); result != "" {
+				return result
+			}
+		}
+	}
+	return ""
+}
+
+func getKeys(m map[string]interface{}) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+// resolveRightPlaceholderWidgets checks if Right placeholder contains a snippet and loads it
+// Returns (widgets, snippetLoaded) where snippetLoaded indicates if a snippet was successfully resolved
+func resolveRightPlaceholderWidgets(rightWidgets interface{}, contentsDir string, db *sql.DB, mprPath string) (interface{}, bool) {
+	if rightWidgets == nil {
+		return nil, false
+	}
+
+	// Check if there's a snippet in the widgets
+	snippetQName := findSnippetInWidgets(rightWidgets)
+	if snippetQName == "" {
+		// No snippet found, return original widgets
+		return rightWidgets, false
+	}
+	
+	// Convert qualified name to UUID using reader
+	snippetUUID, err := getSnippetUUIDByQualifiedName(mprPath, snippetQName)
+	if err != nil {
+		return rightWidgets, false
+	}
+	
+	// Load snippet content
+	snippetData, err := loadSnippetContent(contentsDir, snippetUUID)
+	if err != nil {
+		return rightWidgets, false
+	}
+
+	// Extract widgets from snippet - they should be in the Widget or Widgets field
+	if widgets, ok := snippetData["Widget"]; ok {
+		return widgets, true
+	}
+	if widgets, ok := snippetData["Widgets"]; ok {
+		return widgets, true
+	}
+
+	// Snippet loaded but no widgets found, return original
+	return rightWidgets, false
+}
+
+// getSnippetUUIDByQualifiedName retrieves the UUID of a snippet by its qualified name using reader
+func getSnippetUUIDByQualifiedName(mprPath, qualifiedName string) (string, error) {
+	// Open reader to get snippets
+	reader, err := modelsdk.Open(mprPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open MPR: %w", err)
+	}
+	defer reader.Close()
+	
+	// List all snippets
+	snippets, err := reader.ListSnippets()
+	if err != nil {
+		return "", fmt.Errorf("failed to list snippets: %w", err)
+	}
+	
+	// Extract just the snippet name from qualified name (Module.SnippetName -> SnippetName)
+	parts := strings.Split(qualifiedName, ".")
+	snippetName := qualifiedName
+	if len(parts) == 2 {
+		snippetName = parts[1]
+	}
+	
+	// Find snippet by name
+	for _, snippet := range snippets {
+		if snippet.Name == snippetName {
+			return string(snippet.ID), nil
+		}
+	}
+	
+	return "", fmt.Errorf("snippet not found: %s (tried name: %s)", qualifiedName, snippetName)
+}
+
+// findFirstCommandBarContainer recursively searches for the first DivContainer with command bar class
+// Supports various class name patterns: vertical-command-bar, verticalCommandBar, command-bar, commandBar, etc.
 func findFirstCommandBarContainer(data interface{}) map[string]interface{} {
 	switch v := data.(type) {
 	case map[string]interface{}:
-		// Check if this is a DivContainer with vertical-command-bar class
+		// Check if this is a DivContainer with command bar class
 		if typeStr, ok := v["$Type"].(string); ok && typeStr == "Forms$DivContainer" {
 			if appearance, ok := v["Appearance"].(map[string]interface{}); ok {
 				if class, ok := appearance["Class"].(string); ok {
-					if strings.Contains(class, "vertical-command-bar") {
+					classLower := strings.ToLower(class)
+					// Match various command bar class patterns
+					if strings.Contains(classLower, "vertical-command-bar") ||
+						strings.Contains(classLower, "verticalcommandbar") ||
+						(strings.Contains(classLower, "vertical") && strings.Contains(classLower, "command")) {
 						return v // Found it!
 					}
 				}
@@ -2809,8 +2971,9 @@ func extractButtonCaption(button map[string]interface{}) string {
 func extractActionButtons(container map[string]interface{}, db *sql.DB, contentsDir string) []PageCommandButton {
 	var buttons []PageCommandButton
 
-	var search func(data interface{}, parentAction map[string]interface{})
-	search = func(data interface{}, parentAction map[string]interface{}) {
+	// Recursive search that only follows Widgets field, not all fields
+	var searchWidgets func(data interface{}, parentAction map[string]interface{})
+	searchWidgets = func(data interface{}, parentAction map[string]interface{}) {
 		switch v := data.(type) {
 		case map[string]interface{}:
 			typeStr, _ := v["$Type"].(string)
@@ -2842,59 +3005,49 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 					}
 
 					// If we found both, extract button with caption from DynamicText
-					if actionButton != nil {
+					if actionButton != nil && currentAction != nil {
 						button := PageCommandButton{
 							ButtonName: extractNameFromContents(actionButton),
-							Caption:    extractCaptionFromDynamicText(dynamicText), // Get from DynamicText
-						}
-
-						// Use inherited or own OnClickAction
-						actionToUse := currentAction
-						if onClickAction, ok := actionButton["OnClickAction"].(map[string]interface{}); ok {
-							actionToUse = onClickAction
+							Caption:    extractCaptionFromDynamicText(dynamicText),
 						}
 
 						// Extract action information
-						if actionToUse != nil {
-							if actionType, ok := actionToUse["$Type"].(string); ok {
-								button.ActionType = actionType
+						if actionType, ok := currentAction["$Type"].(string); ok {
+							button.ActionType = actionType
 
-								if strings.Contains(actionType, "CallNanoflowClientAction") {
-									if nanoflow, ok := actionToUse["Nanoflow"].(string); ok {
-										button.ActionName = nanoflow
-										nanoflowPages := loadNanoflowShowPages(db, contentsDir, nanoflow)
-										if len(nanoflowPages) > 0 {
-											button.TargetPage = strings.Join(nanoflowPages, ", ")
-										}
+							if strings.Contains(actionType, "CallNanoflowClientAction") {
+								if nanoflow, ok := currentAction["Nanoflow"].(string); ok {
+									button.ActionName = nanoflow
+									nanoflowPages := loadNanoflowShowPages(db, contentsDir, nanoflow)
+									if len(nanoflowPages) > 0 {
+										button.TargetPage = strings.Join(nanoflowPages, ", ")
 									}
-								} else if strings.Contains(actionType, "CallMicroflowClientAction") {
-									if microflow, ok := actionToUse["Microflow"].(string); ok {
-										button.ActionName = microflow
-										microflowPages := loadMicroflowShowPages(db, contentsDir, microflow)
-										if len(microflowPages) > 0 {
-											button.TargetPage = strings.Join(microflowPages, ", ")
-										}
+								}
+							} else if strings.Contains(actionType, "CallMicroflowClientAction") {
+								if microflow, ok := currentAction["Microflow"].(string); ok {
+									button.ActionName = microflow
+									microflowPages := loadMicroflowShowPages(db, contentsDir, microflow)
+									if len(microflowPages) > 0 {
+										button.TargetPage = strings.Join(microflowPages, ", ")
 									}
-								} else if strings.Contains(actionType, "ShowPage") {
-									if pageSettings, ok := actionToUse["PageSettings"].(map[string]interface{}); ok {
-										if page, ok := pageSettings["Page"].(string); ok {
-											button.TargetPage = page
-										}
+								}
+							} else if strings.Contains(actionType, "ShowPage") {
+								if pageSettings, ok := currentAction["PageSettings"].(map[string]interface{}); ok {
+									if page, ok := pageSettings["Page"].(string); ok {
+										button.TargetPage = page
 									}
-								} else if strings.Contains(actionType, "CreateObjectClientAction") {
-									button.ActionName = "Create Object"
-									// Extract target page from PageSettings.Form
-									if pageSettings, ok := actionToUse["PageSettings"].(map[string]interface{}); ok {
-										if form, ok := pageSettings["Form"].(string); ok {
-											button.TargetPage = form
-										}
+								}
+							} else if strings.Contains(actionType, "CreateObjectClientAction") {
+								button.ActionName = "Create Object"
+								if pageSettings, ok := currentAction["PageSettings"].(map[string]interface{}); ok {
+									if form, ok := pageSettings["Form"].(string); ok {
+										button.TargetPage = form
 									}
-								} else if strings.Contains(actionType, "FormAction") {
-									// Extract target page from FormSettings.Form
-									if formSettings, ok := actionToUse["FormSettings"].(map[string]interface{}); ok {
-										if form, ok := formSettings["Form"].(string); ok {
-											button.TargetPage = form
-										}
+								}
+							} else if strings.Contains(actionType, "FormAction") {
+								if formSettings, ok := currentAction["FormSettings"].(map[string]interface{}); ok {
+									if form, ok := formSettings["Form"].(string); ok {
+										button.TargetPage = form
 									}
 								}
 							}
@@ -2902,12 +3055,25 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 
 						buttons = append(buttons, button)
 					}
+					
+					// Continue recursively searching in widgets
+					for i, widget := range widgets {
+						if i == 0 {
+							continue
+						}
+						searchWidgets(widget, currentAction)
+					}
 				}
-			}
-
-			// Recursively search all fields with current action context
-			for _, val := range v {
-				search(val, currentAction)
+			} else if typeStr == "Forms$DataView" {
+				// DataView can contain nested DivContainers, search in its Widgets
+				if widgets, ok := v["Widgets"].(primitive.A); ok {
+					for i, widget := range widgets {
+						if i == 0 {
+							continue
+						}
+						searchWidgets(widget, parentAction)
+					}
+				}
 			}
 
 		case primitive.A:
@@ -2915,17 +3081,12 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 				if i == 0 {
 					continue
 				}
-				search(item, parentAction)
-			}
-
-		case []interface{}:
-			for _, item := range v {
-				search(item, parentAction)
+				searchWidgets(item, parentAction)
 			}
 		}
 	}
 
-	search(container, nil)
+	searchWidgets(container, nil)
 	return buttons
 }
 
@@ -3545,7 +3706,7 @@ func loadMicroflowShowPages(db *sql.DB, contentsDir string, microflowName string
 }
 
 // collectPageCommands extracts command bar actions from pages listed in navigation items
-func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []NavigationItem, allMicroflowCalls []MicroflowCallInfo) ([]PageCommandInfo, error) {
+func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigationItems []NavigationItem, allMicroflowCalls []MicroflowCallInfo) ([]PageCommandInfo, error) {
 	// Get unique list of target pages from navigation items (filter out "-" and empty strings)
 	uniquePages := make(map[string]bool)
 	for _, item := range navigationItems {
@@ -3572,15 +3733,16 @@ func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []Navig
 		// Find Right placeholder
 		rightWidgets := findRightPlaceholder(pageData)
 		if rightWidgets == nil {
-			// No Right placeholder, skip
 			skipped++
 			continue
 		}
 
+		// Resolve snippet if present in Right placeholder
+		resolvedWidgets, _ := resolveRightPlaceholderWidgets(rightWidgets, contentsDir, db, mprPath)
+
 		// Find first command bar container
-		commandBarContainer := findFirstCommandBarContainer(rightWidgets)
+		commandBarContainer := findFirstCommandBarContainer(resolvedWidgets)
 		if commandBarContainer == nil {
-			// No command bar found, skip
 			skipped++
 			continue
 		}

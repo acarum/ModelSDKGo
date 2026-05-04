@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-01 09:17:02  
+**Generated:** 2026-05-04 11:40:00  
 
 ---
 
@@ -562,14 +562,16 @@ Command bar actions extracted from navigation pages. Shows buttons in the vertic
 
 Found commands in 6 page(s):
 
-### OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master
+### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
 
 | Caption | Target Page | Target Command |
 |---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition | CreateStatusBehaviorDefinition |
-| Details | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | UpdateStatusBehaviorDefinition |
-| Delete | - | DeleteStatusBehaviorDefinition |
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | CreateStatusTransitionDefinition |
+| Hide | - | HideStatusTransitionDefinition |
+| Unhide | - | UnhideStatusTransitionDefinition |
+| Freeze | - | FreezeStatusTransitionDefinition |
+| Unfreeze | - | UnfreezeStatusTransitionDefinition |
+| Delete | - | DeleteStatusTransitionDefinition |
 
 ### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
 
@@ -607,6 +609,15 @@ Found commands in 6 page(s):
 | Initial | - | SetStatusAsInitial |
 | Delete | - | DeleteStatus |
 
+### OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition | CreateStatusBehaviorDefinition |
+| Details | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | UpdateStatusBehaviorDefinition |
+| Delete | - | DeleteStatusBehaviorDefinition |
+
 ### OpcenterEXFN_ReferenceData.StatusDefinition_Master
 
 | Caption | Target Page | Target Command |
@@ -618,17 +629,6 @@ Found commands in 6 page(s):
 | Freeze | - | FreezeStatusDefinition |
 | Unfreeze | - | UnfreezeStatusDefinition |
 | Delete | - | DeleteStatusDefinition |
-
-### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
-
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | CreateStatusTransitionDefinition |
-| Hide | - | HideStatusTransitionDefinition |
-| Unhide | - | UnhideStatusTransitionDefinition |
-| Freeze | - | FreezeStatusTransitionDefinition |
-| Unfreeze | - | UnfreezeStatusTransitionDefinition |
-| Delete | - | DeleteStatusTransitionDefinition |
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.6.4  
 **MPR File:** C:\Workspaces\Mendix\Complex\main\Opcenter EX DS Complex Manufacturing.mpr  
-**Generated:** 2026-05-01 09:14:49  
+**Generated:** 2026-05-04 11:33:32  
 
 ---
 
@@ -12,6 +12,8 @@
 - **Microflow/Action Calls:** 82
 - **Signal Manager Subscriptions:** 64 subscription(s)
 - **Navigation Items:** 3
+- **Pages with Commands:** 1 page(s) analyzed
+- **Command Buttons:** 13 total, 0 with extracted commands
 
 ---
 
@@ -2145,50 +2147,50 @@ Found 64 subscription(s):
 
 | Module | Document Type | Document | Signal Name | App Name | Subscription Filter |
 |--------|---------------|----------|-------------|----------|---------------------|
-| OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCCompleteTransferEvent | AppU4DM | Yes |
 | OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCStartTransferEvent | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSkipWOOperation | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationSerialized | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | StatusChanged | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | WorkOrderSerialNumbersScrapped | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICompleted | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationFullQty | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationFullQty | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSetHoldWorkOrder | AppU4DM | No |
+| OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCCompleteTransferEvent | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSentenceNonConformanceV3_1 | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCreateNonConformanceV3_1 | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnPauseWorkOrderOperation | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnChangeFlexibleWOOpStatusToComplete | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICandidateDeclared | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteReworkOrder | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationSerialized | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationSerialized | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | SnagAndNoteNotificationSgn | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | StatusChanged | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | WorkOrderSerialNumbersScrapped | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnReopenWorkOrderOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteReworkOrder | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICandidateDeclared | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSkipWOOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationFullQty | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnChangeFlexibleWOOpStatusToComplete | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICompleted | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationSerialized | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationFullQty | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnPauseWorkOrderOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSetHoldWorkOrder | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteReworkOrder | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSkipWOOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationSerialized | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnPauseWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepSerialized | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnUsedToolSignal | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnReopenWorkOrderOperation | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCreateNonConformanceV3_1 | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteReworkOrder | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkInstructionStatusChangedSignal | WorkInstruction | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSkipWOOperation | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationSerialized | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepSerialized | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSetHoldWorkOrder | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | StatusChanged | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkOrderSerialNumbersScrapped | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICompleted | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationSerialized | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSentenceNonConformanceV3_1 | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | SnagAndNoteNotificationSgn | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnDisassemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCreateNonConformanceV3_1 | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAIRemoved | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICandidateDeclared | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnDisassemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSetHoldWorkOrder | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnUsedToolSignal | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkInstructionStatusChangedSignal | WorkInstruction | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnReopenWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionSectionCompletedSignal | WorkInstruction | Yes |
 | OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionStepCompletedSignal | WorkInstruction | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | WorkInstructions | OnLinkWIOnDemandToSerialNumber | AppU4DM | Yes |
@@ -2196,19 +2198,19 @@ Found 64 subscription(s):
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | CoProductProduced | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | ByProductProduced | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeCoByProducedMaterials | OutputMaterialProduced | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCStartTransferEvent | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCCompleteTransferEvent | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | PartProgram | DNCStartTransferEvent | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnDisassemblyWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | ScrapMaterials | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Snippet | ToBeProducedMaterial | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | OnUsedToolSignal | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | MaterialTrackingUnitDeactivationEvent | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | MaterialTrackingUnitActivationEvent | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | ToBeUsedTools | ScrewingExecuted | AppU4DM | Yes |
-| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | OnCompleteInspectionSampleScenarioInstance | WorkInstruction | Yes |
 | EXFN_Quality | Snippet | SNP_QualityInspectionContainer | InspectionSampleConfirmed | WorkInstruction | Yes |
 | EXFN_Quality | Snippet | SNP_QualityInspectionContainer | DelayedExecution | WorkInstruction | Yes |
 | EXFN_Quality | Snippet | SNP_QualityInspectionContainer | InspectionExecutionChrReprRuntimeNumberChanged | WorkInstruction | Yes |
+| EXFN_Quality | Snippet | SNP_QualityInspectionContainer | OnCompleteInspectionSampleScenarioInstance | WorkInstruction | Yes |
 
 ---
 
@@ -2219,6 +2221,39 @@ Found 64 subscription(s):
 | - | Home | OpcenterEXDS_OperatorLanding.OperatorLanding | - |
 | - | Configuration | - | - |
 | - | Accounts | Administration.Account_Overview | Administrator |
+
+---
+
+## 5. Page Commands
+
+Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.
+
+Found commands in 1 page(s):
+
+### OpcenterEXDS_OperatorLanding.OperatorLanding
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Open
+ | OpcenterEXDS_OperatorLanding.OperatorTerminal, OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingGoToDetailsSN | - |
+| Start
+ | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingStart, OpcenterEXDS_OperatorLanding.OperatorTerminal, OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingGoToDetailsSN, OpcenterEXDS_OperatorLanding.PANEL_Start_ValidateUser, OpcenterEXDS_OperatorLanding.PANEL_Start_ValidateUser_FromDetails | - |
+| Pause
+ | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingPause, OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingPause, OpcenterEXDS_OperatorLanding.PANEL_Pause_ValidateUser | - |
+| Hold
+ | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingHold | - |
+| Skip | OpcenterEXDS_OperatorLanding.PANEL_SkipWOOperation | - |
+| Complete | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingComplete, OpcenterEXDS_OperatorLanding.PANEL_Complete_ValidateUser | - |
+| Documents
+ | - | - |
+| NC | OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarNC, OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarNC_Details | - |
+| Change Package | OpcenterEXDS_OperatorLanding.PANEL_ChangePackage | - |
+| Add Documents | OpcenterEXDS_OperatorLanding.AddDocumentsPopup | - |
+| Notes
+ | OpcenterEXDS_OperatorLanding.PANEL_Notes | - |
+| Scrap | OpcenterEXDS_OperatorLanding.ScrapProducedMaterialPopup | - |
+| More
+ | OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarMore, OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarMore_Details | - |
 
 ---
 

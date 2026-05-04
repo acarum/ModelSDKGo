@@ -1,0 +1,362 @@
+Opened: C:\Workspaces\Mendix\Complex\main\Opcenter EX DS Complex Manufacturing.mpr
+Searching for page: OperatorLanding
+
+=== Page Found ===
+Name: OperatorLanding
+ID: effaf390-5e7c-43df-9026-3831525e3b43
+Type: Forms$Page
+
+=== Page Structure (JSON) ===
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "kPP673xe30OQJjgxUl47Qw=="
+  },
+  "$Type": "Forms$Page",
+  "AllowedModuleRoles": [
+    1,
+    "OpcenterEXDS_OperatorLanding.User"
+  ],
+  "Appearance": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "DR22+0NX60Oc5A9JkmOoYg=="
+    },
+    "$Type": "Forms$Appearance",
+    "Class": "exds-operatorLanding-page",
+    "DesignProperties": [
+      3
+    ],
+    "DynamicClasses": "",
+    "Style": ""
+  },
+  "Autofocus": "DesktopOnly",
+  "CanvasHeight": 600,
+  "CanvasWidth": 1561,
+  "Documentation": "###norecommender/mxToSignal1/OnStartWorkOrderOperationSerialized###\r\n###norecommender/mxToSignal1/OnStartWorkOrderOperationFullQty###\r\n###norecommender/mxToSignal1/OnCompleteWorkOrderOperationFullQty###\r\n###norecommender/mxToSignal1/OnCompleteWorkOrderOperationSerialized###\r\n###norecommender/mxToSignal1/OnPauseWorkOrderOperation###\r\n###norecommender/mxToSignal1/WorkOrderSerialNumbersScrapped###\r\n###norecommender/mxToSignal1/OnSetHoldWorkOrder###\r\n###norecommender/mxToSignal1/NonConformanceNotificationSgn###\r\n###norecommender/mxToSignal1/OnSentenceNonConformanceV3_1###\r\n###norecommender/mxToSignal1/OnCreateNonConformanceV3_1###\r\n###norecommender/mxToSignal1/SnagAndNoteNotificationSgn###\r\n###norecommender/mxToSignal1/OnReopenWorkOrderOperation###\r\n###norecommender/mxToSignal1/OnChangeFlexibleWOOpStatusToComplete###\r\n###norecommender/mxToSignal1/OnCompleteReworkOrder###\r\n###norecommender/mxToSignal1/OnFAICompleted###\r\n###norecommender/mxToSignal1/OnFAICandidateDeclared###\r\n###norecommender/Page/URL###\r\n###norecommender/mxToSignal1/OnSkipWOOperation###",
+  "Excluded": false,
+  "ExportLevel": "Hidden",
+  "FormCall": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "9N6JCFtJhU2tOYM+NawTIg=="
+    },
+    "$Type": "Forms$LayoutCall",
+    "Arguments": [
+      2,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "pZevaMustU+GsVyX+MXYhw=="
+        },
+        "$Type": "Forms$FormCallArgument",
+        "Parameter": "OpcenterEXFN_DISW_DesignSystem.EXFN_Master_TopMainRight.Right",
+        "Widgets": [
+          2,
+          {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "ipUXX4RoD0m5VA9fSdFGMg=="
+            },
+            "$Type": "Forms$DataView",
+            "Appearance": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "s6ZGoSqYu1WZ2lDdPguODQ=="
+              },
+              "$Type": "Forms$Appearance",
+              "Class": "",
+              "DesignProperties": [
+                3
+              ],
+              "DynamicClasses": "",
+              "Style": ""
+            },
+            "ConditionalEditabilitySettings": null,
+            "ConditionalVisibilitySettings": null,
+            "DataSource": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "eKGEJcGrN1qTeVkd7htf6A=="
+              },
+              "$Type": "Forms$DataViewSource",
+              "EntityRef": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "T9mUPj8tY0KckgQqUcZdiA=="
+                },
+                "$Type": "DomainModels$DirectEntityRef",
+                "Entity": "OpcenterEXDS_OperatorLanding.MasterPageContext"
+              },
+              "ForceFullObjects": false,
+              "SourceVariable": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "T/vyo4LtX1qtq/n2ymdTuw=="
+                },
+                "$Type": "Forms$PageVariable",
+                "LocalVariable": "",
+                "PageParameter": "PageContext",
+                "SnippetParameter": "",
+                "SubKey": "",
+                "UseAllPages": false,
+                "Widget": ""
+              }
+            },
+            "Editability": "Always",
+            "FooterWidgets": [
+              2
+            ],
+            "LabelWidth": 3,
+            "Name": "dataView2",
+            "NoEntityMessage": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "kXDrTwPerFCA6IyjyLFQtw=="
+              },
+              "$Type": "Texts$Text",
+              "Items": [
+                3
+              ]
+            },
+            "ReadOnlyStyle": "Control",
+            "ShowFooter": true,
+            "TabIndex": 0,
+            "Widgets": [
+              2,
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "OEvL41P08UCRjl6exz0/NQ=="
+                },
+                "$Type": "Forms$SnippetCallWidget",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "QekSK6Hr4lC9QiclX5o6nw=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "FormCall": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "p3K2d3RNlV2Z8EqLMbOODg=="
+                  },
+                  "$Type": "Forms$SnippetCall",
+                  "Form": "OpcenterEXDS_OperatorLanding.VerticalCommandBar",
+                  "ParameterMappings": [
+                    2,
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "zPqGIOOXVVeh54tex2IX+g=="
+                      },
+                      "$Type": "Forms$SnippetParameterMapping",
+                      "Parameter": "OpcenterEXDS_OperatorLanding.VerticalCommandBar.SelectedSerialNumberContext",
+                      "Variable": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "0If2DTuDclq+YCDueoYVGA=="
+                        },
+                        "$Type": "Forms$PageVariable",
+                        "LocalVariable": "",
+                        "PageParameter": "SelectedSerialNumberContext",
+                        "SnippetParameter": "",
+                        "SubKey": "",
+                        "UseAllPages": false,
+                        "Widget": ""
+                      }
+                    }
+                  ]
+                },
+                "Name": "snippetCall1",
+                "TabIndex": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "yUiSjjvY6EeMYQKu9BkdJg=="
+        },
+        "$Type": "Forms$FormCallArgument",
+        "Parameter": "OpcenterEXFN_DISW_DesignSystem.EXFN_Master_TopMainRight.Top",
+        "Widgets": [
+          2,
+          {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "IU1DAVR38UyUlvlm8r7WIw=="
+            },
+            "$Type": "Forms$DataView",
+            "Appearance": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "aNYVCcAZMV+bPFxl33Tn3w=="
+              },
+              "$Type": "Forms$Appearance",
+              "Class": "",
+              "DesignProperties": [
+                3
+              ],
+              "DynamicClasses": "",
+              "Style": ""
+            },
+            "ConditionalEditabilitySettings": null,
+            "ConditionalVisibilitySettings": null,
+            "DataSource": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "Z/IEwtcMwVS391icwxpbNA=="
+              },
+              "$Type": "Forms$NanoflowSource",
+              "ForceFullObjects": false,
+              "Nanoflow": "OpcenterEXDS_OperatorLanding.DS_CreateSignalConfiguration",
+              "ParameterMappings": [
+                2,
+                {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "XD/v5+PwulS7Lwp4HQODkA=="
+                  },
+                  "$Type": "Forms$NanoflowParameterMapping",
+                  "Expression": "",
+                  "Parameter": "OpcenterEXDS_OperatorLanding.DS_CreateSignalConfiguration.PageContext",
+                  "Variable": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "ps9QQOECSlawkVuyCr9pRg=="
+                    },
+                    "$Type": "Forms$PageVariable",
+                    "LocalVariable": "",
+                    "PageParameter": "PageContext",
+                    "SnippetParameter": "",
+                    "SubKey": "",
+                    "UseAllPages": false,
+                    "Widget": ""
+                  }
+                }
+              ]
+            },
+            "Editability": "Always",
+            "FooterWidgets": [
+              2
+            ],
+            "LabelWidth": 3,
+            "Name": "dataView3",
+            "NoEntityMessage": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "RYYXMWlKH1C2lDqxH1aKfQ=="
+              },
+              "$Type": "Texts$Text",
+              "Items": [
+                3
+              ]
+            },
+            "ReadOnlyStyle": "Control",
+            "ShowFooter": false,
+            "TabIndex": 0,
+            "Widgets": [
+              2,
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "gEeQtbBo7ESV7NUCFlY4KA=="
+                },
+                "$Type": "Forms$DataView",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "Y3gl+96N+1Gal4qbhpNDIA=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "ConditionalEditabilitySettings": null,
+                "ConditionalVisibilitySettings": null,
+                "DataSource": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "BnCGviRKTly44tY
+
+... [truncated, total size: 4516997 bytes] ...
+
+=== Widgets Found ===
+Total widgets/elements: 3639
+
+Widget types (sorted by frequency):
+  1. Forms$NoAction                                     : 529 occurrences
+  2. CustomWidgets$WidgetValue                          : 502 occurrences
+  3. CustomWidgets$WidgetProperty                       : 502 occurrences
+  4. CustomWidgets$WidgetPropertyType                   : 394 occurrences
+  5. CustomWidgets$WidgetValueType                      : 394 occurrences
+  6. Texts$Translation                                  : 275 occurrences
+  7. CustomWidgets$WidgetEnumerationValue               : 213 occurrences
+  8. Texts$Text                                         : 157 occurrences
+  9. Forms$Appearance                                   : 118 occurrences
+ 10. Forms$ClientTemplate                               : 67 occurrences
+ 11. CustomWidgets$WidgetObject                         : 45 occurrences
+ 12. DomainModels$AttributeRef                          : 35 occurrences
+ 13. Forms$PageVariable                                 : 35 occurrences
+ 14. Forms$NanoflowParameterMapping                     : 31 occurrences
+ 15. Forms$DivContainer                                 : 29 occurrences
+ 16. Forms$CallNanoflowClientAction                     : 29 occurrences
+ 17. Forms$ConditionalVisibilitySettings                : 26 occurrences
+ 18. CustomWidgets$WidgetObjectType                     : 23 occurrences
+ 19. CustomWidgets$CustomWidgetType                     : 21 occurrences
+ 20. CustomWidgets$CustomWidget                         : 21 occurrences
+ 21. CustomWidgets$WidgetReturnType                     : 16 occurrences
+ 22. Forms$DesignPropertyValue                          : 14 occurrences
+ 23. Forms$DynamicText                                  : 13 occurrences
+ 24. Forms$OptionDesignPropertyValue                    : 13 occurrences
+ 25. Forms$ImageIcon                                    : 10 occurrences
+ 26. Forms$LayoutGridColumn                             : 10 occurrences
+ 27. Forms$ActionButton                                 : 10 occurrences
+ 28. Forms$DataView                                     : 8 occurrences
+ 29. CustomWidgets$WidgetTranslation                    : 8 occurrences
+ 30. Forms$FormattingInfo                               : 7 occurrences
+ 31. DomainModels$EntityRefStep                         : 6 occurrences
+ 32. Forms$DataViewSource                               : 5 occurrences
+ 33. Forms$StaticImageViewer                            : 5 occurrences
+ 34. Forms$FormCallArgument                             : 4 occurrences
+ 35. DomainModels$DirectEntityRef                       : 4 occurrences
+ 36. Forms$LayoutGridRow                                : 4 occurrences
+ 37. Forms$ClientTemplateParameter                      : 4 occurrences
+ 38. DomainModels$IndirectEntityRef                     : 4 occurrences
+ 39. Forms$DbTableCell                                  : 4 occurrences
+ 40. Forms$NanoflowSource                               : 4 occurrences
+ 41. Forms$LayoutGrid                                   : 4 occurrences
+ 42. Forms$GridSortBar                                  : 3 occurrences
+ 43. CustomWidgets$CustomWidgetXPathSource              : 3 occurrences
+ 44. Forms$TextBox                                      : 3 occurrences
+ 45. Forms$WidgetValidation                             : 3 occurrences
+ 46. Forms$TableColumn                                  : 3 occurrences
+ 47. Enumerations$Condition                             : 2 occurrences
+ 48. Forms$SnippetCall                                  : 2 occurrences
+ 49. Forms$SnippetCallWidget                            : 2 occurrences
+ 50. Forms$TableRow                                     : 2 occurrences
+ 51. Forms$PageParameter                                : 2 occurrences
+ 52. DataTypes$ObjectType                               : 2 occurrences
+ 53. Forms$LayoutCall                                   : 1 occurrences
+ 54. Forms$MicroflowSettings                            : 1 occurrences
+ 55. Forms$SnippetParameterMapping                      : 1 occurrences
+ 56. Forms$GridSortItem                                 : 1 occurrences
+ 57. Forms$ToggleDesignPropertyValue                    : 1 occurrences
+ 58. Forms$Label                                        : 1 occurrences
+ 59. Forms$Page                                         : 1 occurrences
+ 60. Forms$Table                                        : 1 occurrences
+ 61. Forms$MicroflowSource                              : 1 occurrences
