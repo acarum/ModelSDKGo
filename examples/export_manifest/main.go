@@ -2798,13 +2798,13 @@ func resolveRightPlaceholderWidgets(rightWidgets interface{}, contentsDir string
 		// No snippet found, return original widgets
 		return rightWidgets, false
 	}
-	
+
 	// Convert qualified name to UUID using reader
 	snippetUUID, err := getSnippetUUIDByQualifiedName(mprPath, snippetQName)
 	if err != nil {
 		return rightWidgets, false
 	}
-	
+
 	// Load snippet content
 	snippetData, err := loadSnippetContent(contentsDir, snippetUUID)
 	if err != nil {
@@ -2831,27 +2831,27 @@ func getSnippetUUIDByQualifiedName(mprPath, qualifiedName string) (string, error
 		return "", fmt.Errorf("failed to open MPR: %w", err)
 	}
 	defer reader.Close()
-	
+
 	// List all snippets
 	snippets, err := reader.ListSnippets()
 	if err != nil {
 		return "", fmt.Errorf("failed to list snippets: %w", err)
 	}
-	
+
 	// Extract just the snippet name from qualified name (Module.SnippetName -> SnippetName)
 	parts := strings.Split(qualifiedName, ".")
 	snippetName := qualifiedName
 	if len(parts) == 2 {
 		snippetName = parts[1]
 	}
-	
+
 	// Find snippet by name
 	for _, snippet := range snippets {
 		if snippet.Name == snippetName {
 			return string(snippet.ID), nil
 		}
 	}
-	
+
 	return "", fmt.Errorf("snippet not found: %s (tried name: %s)", qualifiedName, snippetName)
 }
 
@@ -3055,7 +3055,7 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 
 						buttons = append(buttons, button)
 					}
-					
+
 					// Continue recursively searching in widgets
 					for i, widget := range widgets {
 						if i == 0 {
