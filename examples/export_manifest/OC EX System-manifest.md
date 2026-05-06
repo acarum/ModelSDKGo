@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-04 11:40:00  
+**Generated:** 2026-05-06 15:33:15  
 
 ---
 
@@ -11,9 +11,11 @@
 - **External Entities:** 21 (across 2 modules)
 - **Microflow/Action Calls:** 78
 - **Signal Manager Subscriptions:** 3 subscription(s)
-- **Navigation Items:** 10
+- **Navigation Items:** 13
 - **Pages with Commands:** 6 page(s) analyzed
 - **Command Buttons:** 38 total, 34 with extracted commands
+- **System Roles:** 2
+- **Pages/Snippets:** 79
 
 ---
 
@@ -544,60 +546,26 @@ Found 3 subscription(s):
 | Parent Node | Node | Target Page | User Roles |
 |-------------|------|-------------|------------|
 | - | System | - | - |
-| System | Counters | OpcenterEXFN_ReferenceData.Counter_Master | Administrator, User, Manager |
-| System | Numbering Patterns | OpcenterEXFN_ReferenceData.NumberingPattern_Master | Administrator, User, Manager |
-| System | State Machines | OpcenterEXFN_ReferenceData.StateMachine_Master | Administrator, User, Manager |
-| System | Statuses | OpcenterEXFN_ReferenceData.Status_Master | Administrator, User, Manager |
-| System | Status Behavior Definitions | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master | Administrator, User, Manager |
-| System | Status Definitions | OpcenterEXFN_ReferenceData.StatusDefinition_Master | Administrator, User, Manager |
-| System | Status Transition Definitions | OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master | Administrator, User, Manager |
-| System | Unit of Measures | OpcenterEXFN_ReferenceData.UoM_Master | Administrator, User, Manager |
-| System | UoM Dimensions | OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection | Administrator, User, Manager |
+| System | Counters | OpcenterEXFN_ReferenceData.Counter_Master | Administrator, User |
+| System | Numbering Patterns | OpcenterEXFN_ReferenceData.NumberingPattern_Master | Administrator, User |
+| System | State Machines | OpcenterEXFN_ReferenceData.StateMachine_Master | Administrator, User |
+| System | Statuses | OpcenterEXFN_ReferenceData.Status_Master | Administrator, User |
+| System | Status Behavior Definitions | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master | Administrator, User |
+| System | Status Definitions | OpcenterEXFN_ReferenceData.StatusDefinition_Master | Administrator, User |
+| System | Status Transition Definitions | OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master | Administrator, User |
+| System | Unit of Measures | OpcenterEXFN_ReferenceData.UoM_Master | Administrator, User |
+| System | UoM Dimensions | OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection | Administrator, User |
+| - | Accounts | Administration.Account_Overview | Administrator |
+| - | Cross | - | - |
+| Cross | Work Orders | - | - |
 
 ---
 
-## 5. Page Commands
+## 6. Page Commands
 
 Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.
 
 Found commands in 6 page(s):
-
-### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
-
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | CreateStatusTransitionDefinition |
-| Hide | - | HideStatusTransitionDefinition |
-| Unhide | - | UnhideStatusTransitionDefinition |
-| Freeze | - | FreezeStatusTransitionDefinition |
-| Unfreeze | - | UnfreezeStatusTransitionDefinition |
-| Delete | - | DeleteStatusTransitionDefinition |
-
-### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
-
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension | CreateUoMDimension |
-| Details | OpcenterEXFN_ReferenceData.UoMDimension_Details | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension | UpdateUoMDimension |
-| Unhide | - | UnhideUoMDimension |
-| Hide | - | HideUoMDimension |
-| Freeze | - | FreezeUoMDimension |
-| Unfreeze | - | UnfreezeUoMDimension |
-| Delete | - | DeleteUoMDimension |
-
-### OpcenterEXFN_ReferenceData.StateMachine_Master
-
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine | CreateStateMachine |
-| Details | OpcenterEXFN_ReferenceData.StateMachine_Details | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine | UpdateStateMachine |
-| Hide | - | HideStateMachine |
-| Unhide | - | UnhideStateMachine |
-| Freeze | - | FreezeStateMachine |
-| Unfreeze | - | UnfreezeStateMachine |
-| Delete | - | DeleteStateMachine |
 
 ### OpcenterEXFN_ReferenceData.Status_Master
 
@@ -618,6 +586,30 @@ Found commands in 6 page(s):
 | Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | UpdateStatusBehaviorDefinition |
 | Delete | - | DeleteStatusBehaviorDefinition |
 
+### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | CreateStatusTransitionDefinition |
+| Hide | - | HideStatusTransitionDefinition |
+| Unhide | - | UnhideStatusTransitionDefinition |
+| Freeze | - | FreezeStatusTransitionDefinition |
+| Unfreeze | - | UnfreezeStatusTransitionDefinition |
+| Delete | - | DeleteStatusTransitionDefinition |
+
+### OpcenterEXFN_ReferenceData.StateMachine_Master
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine | CreateStateMachine |
+| Details | OpcenterEXFN_ReferenceData.StateMachine_Details | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine | UpdateStateMachine |
+| Hide | - | HideStateMachine |
+| Unhide | - | UnhideStateMachine |
+| Freeze | - | FreezeStateMachine |
+| Unfreeze | - | UnfreezeStateMachine |
+| Delete | - | DeleteStateMachine |
+
 ### OpcenterEXFN_ReferenceData.StatusDefinition_Master
 
 | Caption | Target Page | Target Command |
@@ -629,6 +621,32 @@ Found commands in 6 page(s):
 | Freeze | - | FreezeStatusDefinition |
 | Unfreeze | - | UnfreezeStatusDefinition |
 | Delete | - | DeleteStatusDefinition |
+
+### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
+
+| Caption | Target Page | Target Command |
+|---------|-------------|----------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension | CreateUoMDimension |
+| Details | OpcenterEXFN_ReferenceData.UoMDimension_Details | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension | UpdateUoMDimension |
+| Unhide | - | UnhideUoMDimension |
+| Hide | - | HideUoMDimension |
+| Freeze | - | FreezeUoMDimension |
+| Unfreeze | - | UnfreezeUoMDimension |
+| Delete | - | DeleteUoMDimension |
+
+---
+
+## 7. System Roles
+
+### 7.1 System Roles
+
+Found 2 system role(s):
+
+| Role Name | Module |
+|-----------|--------|
+| Administrator | System |
+| User | System |
 
 ---
 

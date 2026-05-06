@@ -63,11 +63,11 @@ type WidgetInfo struct {
 type NavigationItem struct {
 	ItemName     string   `json:"ItemName"`
 	Caption      string   `json:"Caption"`
-	Target       string   `json:"Target"`     // Page or microflow name
+	Target       string   `json:"-"`          // Page or microflow name - excluded from JSON export
 	TargetPage   string   `json:"TargetPage"` // Resolved page qualified name(s) - qualified name (Module.PageName) for Page items, or page(s) opened by Microflow/Nanoflow
 	Module       string   `json:"Module"`
-	MenuDocument string   `json:"MenuDocument"` // Name of the menu document (e.g., "System", "System Counters")
-	ItemType     string   `json:"ItemType"`     // "Page", "Microflow", "Nanoflow"
+	MenuDocument string   `json:"-"`            // Name of the menu document - excluded from JSON export
+	ItemType     string   `json:"-"`            // "Page", "Microflow", "Nanoflow" - excluded from JSON
 	ParentItem   string   `json:"ParentItem"`   // For hierarchical structure
 	Level        int      `json:"Level"`        // Indentation level
 	AllowedRoles []string `json:"AllowedRoles"` // User roles that can access this item
@@ -110,7 +110,7 @@ type ManifestReport struct {
 	Widgets         []WidgetInfo            `json:"Widgets"`         // signal manager widgets
 	NavigationItems []NavigationItem        `json:"NavigationItems"` // navigation menu items
 	SystemRoles     []SystemRole            `json:"SystemRoles"`     // system roles
-	PageAccess      []PageAccessInfo        `json:"PageAccess"`      // page accessibility
+	PageAccess      []PageAccessInfo        `json:"-"`               // page accessibility - excluded from export
 	PageCommands    []PageCommandInfo       `json:"PageCommands"`    // command bar actions from navigation pages
 }
 
@@ -5012,10 +5012,10 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		if options.IncludePageCommands {
 			sectionNum = 7
 		}
-		fmt.Fprintf(file, "## %d. System Roles & Page Accessibility\n\n", sectionNum)
+		fmt.Fprintf(file, "## %d. System Roles\n\n", sectionNum)
 
 		// Part 1: System Roles List
-		fmt.Fprintf(file, "### 5.1 System Roles\n\n")
+		fmt.Fprintf(file, "### %d.1 System Roles\n\n", sectionNum)
 		if len(report.SystemRoles) == 0 {
 			fmt.Fprintf(file, "_No system roles found._\n\n")
 		} else {
@@ -5025,69 +5025,6 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 
 			for _, role := range report.SystemRoles {
 				fmt.Fprintf(file, "| %s | %s |\n", role.Name, role.Module)
-			}
-			fmt.Fprintf(file, "\n")
-		}
-
-		// Part 2: Page Accessibility - Group by Role
-		fmt.Fprintf(file, "### 5.2 Page Accessibility by Role\n\n")
-
-		// Create a map: SystemRole -> []Pages
-		roleToPages := make(map[string][]string)
-		for _, pageAccess := range report.PageAccess {
-			if pageAccess.IsPublic {
-				// Public pages accessible by all roles
-				roleToPages["Public (No Restrictions)"] = append(roleToPages["Public (No Restrictions)"], fmt.Sprintf("%s (%s)", pageAccess.PageName, pageAccess.Module))
-			} else {
-				for _, roleName := range pageAccess.AllowedRoles {
-					roleToPages[roleName] = append(roleToPages[roleName], fmt.Sprintf("%s (%s)", pageAccess.PageName, pageAccess.Module))
-				}
-			}
-		}
-
-		if len(roleToPages) == 0 {
-			fmt.Fprintf(file, "_No page access information found._\n\n")
-		} else {
-			fmt.Fprintf(file, "| System Role | Accessible Pages Count | Pages |\n")
-			fmt.Fprintf(file, "|-------------|------------------------|-------|\n")
-
-			for roleName, pages := range roleToPages {
-				pagesStr := strings.Join(pages, ", ")
-				if len(pagesStr) > 100 {
-					pagesStr = pagesStr[:100] + "..."
-				}
-				fmt.Fprintf(file, "| %s | %d | %s |\n", roleName, len(pages), pagesStr)
-			}
-			fmt.Fprintf(file, "\n")
-		}
-
-		// Part 3: Page Accessibility - View by Page
-		fmt.Fprintf(file, "### 5.3 Page Accessibility by Page\n\n")
-
-		if len(report.PageAccess) == 0 {
-			fmt.Fprintf(file, "_No pages found._\n\n")
-		} else {
-			fmt.Fprintf(file, "Found %d page(s)/snippet(s):\n\n", len(report.PageAccess))
-			fmt.Fprintf(file, "| Page Name | Module | Type | Allowed Roles | Access |\n")
-			fmt.Fprintf(file, "|-----------|--------|------|---------------|--------|\n")
-
-			for _, pageAccess := range report.PageAccess {
-				rolesStr := strings.Join(pageAccess.AllowedRoles, ", ")
-				if rolesStr == "" {
-					rolesStr = "-"
-				}
-				accessType := "Restricted"
-				if pageAccess.IsPublic {
-					accessType = "**Public**"
-				}
-
-				fmt.Fprintf(file, "| %s | %s | %s | %s | %s |\n",
-					pageAccess.PageName,
-					pageAccess.Module,
-					pageAccess.DocumentType,
-					rolesStr,
-					accessType,
-				)
 			}
 			fmt.Fprintf(file, "\n")
 		}
@@ -5215,3 +5152,5 @@ func generateIndexJSON(indexPath string, entries []ReportEntry) error {
 
 	return nil
 }
+
+
