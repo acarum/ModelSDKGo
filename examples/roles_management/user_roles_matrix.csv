@@ -1,0 +1,4 @@
+UserRole,Administration.Administrator,Administration.User,CommunityCommons.Administrator,CommunityCommons.User,EXFN_AuditTrailViewer.User,EXFN_Authentication.Administrator,EXFN_Authentication.User,EXFN_CrossNavigation.User,EXFN_ServiceLayer.Administrator,EXFN_ServiceLayer.User,OpcenterEXFN_DISW_DesignSystem.Administrator,OpcenterEXFN_DISW_DesignSystem.User,OpcenterEXFN_ReferenceData.Pippo,OpcenterEXFN_ReferenceData.User,OpcenterEXFN_ReferenceData_Connector.User,System.Administrator,System.User,Viewer3D.Administrator,Viewer3D.User
+Administrator,Yes,Yes,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,Yes,No,Yes,Yes
+User,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Pippo,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
