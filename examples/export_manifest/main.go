@@ -5152,5 +5152,3 @@ func generateIndexJSON(indexPath string, entries []ReportEntry) error {
 
 	return nil
 }
-
-
