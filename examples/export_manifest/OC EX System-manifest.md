@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-08 17:33:58  
+**Generated:** 2026-05-08 18:44:32  
 
 ---
 
@@ -583,79 +583,79 @@ Found 3 subscription(s):
 
 ---
 
-## 5. Page Commands
+## 5. Navigation Page Commands
 
 Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.
 
 Found commands in 6 page(s):
 
+### OpcenterEXFN_ReferenceData.Status_Master
+
+| Caption | Target Page | Target AppName | Target CommandName |
+|---------|-------------|----------------|--------------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatus | - | CreateStatus |
+| Details | - | - | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatus | - | UpdateStatus |
+| Initial | - | - | SetStatusAsInitial |
+| Delete | - | - | DeleteStatus |
+
 ### OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master
 
 | Caption | Target Page | Target AppName | Target CommandName |
 |---------|-------------|----------------|--------------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition | Reference | CreateStatusBehaviorDefinition |
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition | - | CreateStatusBehaviorDefinition |
 | Details | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details | - | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | Reference | UpdateStatusBehaviorDefinition |
-| Delete | - | Reference | DeleteStatusBehaviorDefinition |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | - | UpdateStatusBehaviorDefinition |
+| Delete | - | - | DeleteStatusBehaviorDefinition |
 
 ### OpcenterEXFN_ReferenceData.StatusDefinition_Master
 
 | Caption | Target Page | Target AppName | Target CommandName |
 |---------|-------------|----------------|--------------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusDefinition | Reference | CreateStatusDefinition |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusDefinition | Reference | UpdateStatusDefinition |
-| Hide | - | Reference | HideStatusDefinition |
-| Unhide | - | Reference | UnhideStatusDefinition |
-| Freeze | - | Reference | FreezeStatusDefinition |
-| Unfreeze | - | Reference | UnfreezeStatusDefinition |
-| Delete | - | Reference | DeleteStatusDefinition |
-
-### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
-
-| Caption | Target Page | Target AppName | Target CommandName |
-|---------|-------------|----------------|--------------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension | Reference | CreateUoMDimension |
-| Details | OpcenterEXFN_ReferenceData.UoMDimension_Details | - | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension | Reference | UpdateUoMDimension |
-| Unhide | - | Reference | UnhideUoMDimension |
-| Hide | - | Reference | HideUoMDimension |
-| Freeze | - | Reference | FreezeUoMDimension |
-| Unfreeze | - | Reference | UnfreezeUoMDimension |
-| Delete | - | Reference | DeleteUoMDimension |
-
-### OpcenterEXFN_ReferenceData.StateMachine_Master
-
-| Caption | Target Page | Target AppName | Target CommandName |
-|---------|-------------|----------------|--------------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine | Reference | CreateStateMachine |
-| Details | OpcenterEXFN_ReferenceData.StateMachine_Details | - | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine | Reference | UpdateStateMachine |
-| Hide | - | Reference | HideStateMachine |
-| Unhide | - | Reference | UnhideStateMachine |
-| Freeze | - | Reference | FreezeStateMachine |
-| Unfreeze | - | Reference | UnfreezeStateMachine |
-| Delete | - | Reference | DeleteStateMachine |
-
-### OpcenterEXFN_ReferenceData.Status_Master
-
-| Caption | Target Page | Target AppName | Target CommandName |
-|---------|-------------|----------------|--------------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatus | Reference | CreateStatus |
-| Details | - | - | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatus | Reference | UpdateStatus |
-| Initial | - | Reference | SetStatusAsInitial |
-| Delete | - | Reference | DeleteStatus |
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusDefinition | - | CreateStatusDefinition |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusDefinition | - | UpdateStatusDefinition |
+| Hide | - | - | HideStatusDefinition |
+| Unhide | - | - | UnhideStatusDefinition |
+| Freeze | - | - | FreezeStatusDefinition |
+| Unfreeze | - | - | UnfreezeStatusDefinition |
+| Delete | - | - | DeleteStatusDefinition |
 
 ### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
 
 | Caption | Target Page | Target AppName | Target CommandName |
 |---------|-------------|----------------|--------------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | Reference | CreateStatusTransitionDefinition |
-| Hide | - | Reference | HideStatusTransitionDefinition |
-| Unhide | - | Reference | UnhideStatusTransitionDefinition |
-| Freeze | - | Reference | FreezeStatusTransitionDefinition |
-| Unfreeze | - | Reference | UnfreezeStatusTransitionDefinition |
-| Delete | - | Reference | DeleteStatusTransitionDefinition |
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | - | CreateStatusTransitionDefinition |
+| Hide | - | - | HideStatusTransitionDefinition |
+| Unhide | - | - | UnhideStatusTransitionDefinition |
+| Freeze | - | - | FreezeStatusTransitionDefinition |
+| Unfreeze | - | - | UnfreezeStatusTransitionDefinition |
+| Delete | - | - | DeleteStatusTransitionDefinition |
+
+### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
+
+| Caption | Target Page | Target AppName | Target CommandName |
+|---------|-------------|----------------|--------------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension | - | CreateUoMDimension |
+| Details | OpcenterEXFN_ReferenceData.UoMDimension_Details | - | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension | - | UpdateUoMDimension |
+| Unhide | - | - | UnhideUoMDimension |
+| Hide | - | - | HideUoMDimension |
+| Freeze | - | - | FreezeUoMDimension |
+| Unfreeze | - | - | UnfreezeUoMDimension |
+| Delete | - | - | DeleteUoMDimension |
+
+### OpcenterEXFN_ReferenceData.StateMachine_Master
+
+| Caption | Target Page | Target AppName | Target CommandName |
+|---------|-------------|----------------|--------------------|
+| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine | - | CreateStateMachine |
+| Details | OpcenterEXFN_ReferenceData.StateMachine_Details | - | - |
+| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine | - | UpdateStateMachine |
+| Hide | - | - | HideStateMachine |
+| Unhide | - | - | UnhideStateMachine |
+| Freeze | - | - | FreezeStateMachine |
+| Unfreeze | - | - | UnfreezeStateMachine |
+| Delete | - | - | DeleteStateMachine |
 
 ---
 
@@ -1298,7 +1298,7 @@ pages:
 
 ---
 
-## 7. Pages/Panels Commands
+## 7. PageCommands
 
 Simplified view showing only the target commands for each page/panel.
 

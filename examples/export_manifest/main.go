@@ -101,12 +101,17 @@ type PageCommandInfo struct {
 	Commands []PageCommandButton `json:"Commands"`
 }
 
+// TargetInfo represents a single target with app name and command name
+type TargetInfo struct {
+	AppName     string `json:"AppName"`
+	CommandName string `json:"CommandName"`
+}
+
 // PageCommandSummary stores simplified page command information
 type PageCommandSummary struct {
-	PageName       string   `json:"PageName"`
-	Module         string   `json:"Module"`
-	TargetAppNames []string `json:"TargetAppNames"`
-	TargetCommands []string `json:"TargetCommands"`
+	PageName string       `json:"PageName"`
+	Module   string       `json:"Module"`
+	Targets  []TargetInfo `json:"Targets"`
 }
 
 type ManifestReport struct {
@@ -786,22 +791,24 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 
 		// Populate PageCommands (simplified view) from PagesAnalysis
 		for _, page := range report.PagesAnalysis {
-			appNames := make([]string, 0)
-			cmdNames := make([]string, 0)
+			targets := make([]TargetInfo, 0)
 			for _, cmd := range page.TargetCommands {
 				if idx := strings.LastIndex(cmd, "."); idx >= 0 {
-					appNames = append(appNames, cmd[:idx])
-					cmdNames = append(cmdNames, cmd[idx+1:])
+					targets = append(targets, TargetInfo{
+						AppName:     cmd[:idx],
+						CommandName: cmd[idx+1:],
+					})
 				} else {
-					appNames = append(appNames, "-")
-					cmdNames = append(cmdNames, cmd)
+					targets = append(targets, TargetInfo{
+						AppName:     "-",
+						CommandName: cmd,
+					})
 				}
 			}
 			report.PageCommands = append(report.PageCommands, PageCommandSummary{
-				PageName:       page.Name,
-				Module:         page.Module,
-				TargetAppNames: appNames,
-				TargetCommands: cmdNames,
+				PageName: page.Name,
+				Module:   page.Module,
+				Targets:  targets,
 			})
 		}
 	}
