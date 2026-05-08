@@ -2,14 +2,14 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-08 13:11:12  
+**Generated:** 2026-05-08 14:56:08  
 
 ---
 
 ## Summary
 
 - **External Entities:** 22 (across 3 modules)
-- **Microflow/Action Calls:** 78
+- **Microflow/Action Calls:** 80
 - **Signal Manager Subscriptions:** 3 subscription(s)
 - **Navigation Items:** 13
 
@@ -456,7 +456,7 @@ External OData entities used in the project, grouped by module.
 
 Microflow and action calls found in the project (MicroflowCall, JavaAction, ExternalAction).
 
-Found 78 call(s):
+Found 80 call(s):
 
 | Microflow | Module | Call Type | AppName | CommandName |
 |-----------|--------|-----------|---------|-------------|
@@ -525,7 +525,7 @@ Found 78 call(s):
 | UpdateUoMSubmultiple | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateMultipleOrSubmultipleUoM |
 | DeleteUoMFactor | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | DeleteUoMFactor |
 | UpdateUoM | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateUoM |
-| UpdateUoMFactor | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateUoMFactor |
+| UpdateUoMFactor_Action | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateUoMFactor |
 | CreateBaseUoM | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | CreateBaseUoM |
 | UnhideUoM | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UnhideUoM |
 | DeleteUoM | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | DeleteUoM |
@@ -540,6 +540,10 @@ Found 78 call(s):
 | UpdateUoMDimension | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | UpdateUoMDimension |
 | CreateBaseUoM_UoMDimension | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | CreateBaseUoM |
 | FreezeUoMDimension | OpcenterEXFN_ReferenceData_Connector | ExternalAction | Reference | FreezeUoMDimension |
+| UpdateUoMFactor_MF | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | 'APPNAME'
+ | 'COMMANDNAME'
+ |
+| UpdateUoMFactor_MF_JAVA | OpcenterEXFN_ReferenceData_Connector | JavaAction | empty | empty |
 
 ---
 
@@ -741,9 +745,13 @@ pages:
       - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_1
         calls:
           - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_2
-            - name: OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor
+            - name: OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_Action
+            - name: OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_MF
+            - name: OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_MF_JAVA
     target_commands:
       - Reference.UpdateUoMFactor
+      - GenericCommandCall
+      - JavaActionCommand
 
   - name: UoM_Details
     module: OpcenterEXFN_ReferenceData
@@ -889,6 +897,7 @@ pages:
       - Reference.UnfreezeCounter
       - Reference.ResetCounter
       - Reference.DeleteCounter
+      - GenericCommandCall
 
   - name: PANEL_UpdateCounter
     module: OpcenterEXFN_ReferenceData

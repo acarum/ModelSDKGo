@@ -5005,12 +5005,17 @@ func extractMicroflowCallsFromMicroflow(microflowDoc map[string]interface{}) []s
 			// Check for $Type = "Microflows$MicroflowCall" or "Microflows$NanoflowCall"
 			if typeField, ok := val["$Type"].(string); ok {
 				if typeField == "Microflows$MicroflowCall" || typeField == "Microflows$NanoflowCall" {
-					// Extract MicroflowCall field
+					// Extract MicroflowCall field (can be "MicroflowCall" or "Microflow")
+					mfCallName := ""
 					if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
-						if !seen[mfCall] {
-							microflows = append(microflows, mfCall)
-							seen[mfCall] = true
-						}
+						mfCallName = mfCall
+					} else if microflow, ok := val["Microflow"].(string); ok && microflow != "" {
+						mfCallName = microflow
+					}
+					
+					if mfCallName != "" && !seen[mfCallName] {
+						microflows = append(microflows, mfCallName)
+						seen[mfCallName] = true
 					}
 				}
 			}
@@ -5189,6 +5194,35 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 							commands = append(commands, cmd)
 							seen[cmd] = true
 						}
+					}
+				}
+				// Pattern 3: Microflows$MicroflowCall calling CallCommand_MF pattern
+				if typeField == "Microflows$MicroflowCall" {
+					// Check if calling a CallCommand_MF or similar pattern
+					var microflowName string
+					if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
+						microflowName = mfCall
+					} else if microflow, ok := val["Microflow"].(string); ok && microflow != "" {
+						microflowName = microflow
+					}
+					
+					// If calling CallCommand_MF or CallCommandAction, treat as command call
+					if strings.Contains(microflowName, "CallCommand") {
+						// Extract command name from parameters if available
+						cmdMarker := "GenericCommandCall"
+						if !seen[cmdMarker] {
+							commands = append(commands, cmdMarker)
+							seen[cmdMarker] = true
+						}
+					}
+				}
+				// Pattern 4: Microflows$JavaActionCallAction
+				if typeField == "Microflows$JavaActionCallAction" {
+					// Java actions might call commands
+					cmdMarker := "JavaActionCommand"
+					if !seen[cmdMarker] {
+						commands = append(commands, cmdMarker)
+						seen[cmdMarker] = true
 					}
 				}
 			}
