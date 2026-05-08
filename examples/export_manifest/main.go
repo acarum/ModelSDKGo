@@ -1658,7 +1658,7 @@ func checkJavaAction(activity map[string]interface{}, targetJavaAction string, c
 	// Extract AppName and CommandName from ParameterMappings
 	appName := ""
 	commandName := ""
-	
+
 	if paramMappings, ok := action["ParameterMappings"].([]interface{}); ok {
 		for _, mapping := range paramMappings {
 			if mappingMap, ok := mapping.(map[string]interface{}); ok {
@@ -5291,12 +5291,12 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 					// Try to extract AppName and CommandName from ParameterMappings
 					appName := ""
 					commandName := ""
-					
+
 					if paramMappings, ok := val["ParameterMappings"].(primitive.A); ok {
 						for _, pm := range paramMappings {
 							if pmMap, ok := pm.(map[string]interface{}); ok {
 								paramName, _ := pmMap["Parameter"].(string)
-								
+
 								// Extract argument - can be in "Argument" or "Value.Argument"
 								argument := ""
 								if arg, ok := pmMap["Argument"].(string); ok {
@@ -5306,13 +5306,13 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 										argument = arg
 									}
 								}
-								
+
 								// Extract parameter name (last part after dot)
 								if strings.Contains(paramName, ".") {
 									parts := strings.Split(paramName, ".")
 									paramName = parts[len(parts)-1]
 								}
-								
+
 								// Clean argument thoroughly
 								argument = strings.TrimSpace(argument)
 								argument = strings.TrimPrefix(argument, "$")
@@ -5321,7 +5321,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 								argument = strings.ReplaceAll(argument, "\r", "")
 								argument = strings.ReplaceAll(argument, "\\n", "")
 								argument = strings.TrimSpace(argument)
-								
+
 								// Skip invalid values
 								if argument != "" && strings.ToLower(argument) != "empty" {
 									if strings.Contains(strings.ToLower(paramName), "appname") {
@@ -5333,7 +5333,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 							}
 						}
 					}
-					
+
 					// Build command identifier
 					var cmd string
 					if appName != "" && commandName != "" {
@@ -5350,7 +5350,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 							cmd = "JavaActionCommand"
 						}
 					}
-					
+
 					if !seen[cmd] {
 						commands = append(commands, cmd)
 						seen[cmd] = true
