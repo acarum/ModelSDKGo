@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-08 12:27:23  
+**Generated:** 2026-05-08 12:35:47  
 
 ---
 
@@ -585,115 +585,6 @@ Microflows and nanoflows called by each page/panel, showing recursive call hiera
 
 ```yaml
 pages:
-  - name: MyAccount
-    module: Administration
-    flows:
-      - Administration.ShowMyPasswordForm
-    target_commands:
-      []
-
-  - name: ChangeMyPasswordForm
-    module: Administration
-    flows:
-      - Administration.ChangeMyPassword
-    target_commands:
-      []
-
-  - name: Account_Edit
-    module: Administration
-    flows:
-      - Administration.ShowPasswordForm
-    target_commands:
-      []
-
-  - name: Account_New
-    module: Administration
-    flows:
-      - Administration.SaveNewAccount
-    target_commands:
-      []
-
-  - name: ChangePasswordForm
-    module: Administration
-    flows:
-      - Administration.ChangePassword
-    target_commands:
-      []
-
-  - name: Account_Overview
-    module: Administration
-    flows:
-      - name: Administration.NewAccount
-      - name: Administration.NewWebServiceAccount
-    target_commands:
-      []
-
-  - name: RuntimeInstances
-    module: Administration
-    flows:
-      []
-    target_commands:
-      []
-
-  - name: ScheduledEvents
-    module: Administration
-    flows:
-      []
-    target_commands:
-      []
-
-  - name: ActiveSessions
-    module: Administration
-    flows:
-      []
-    target_commands:
-      []
-
-  - name: ClientConfiguration_NewEdit
-    module: OpcenterEXFN_DISW_DesignSystem
-    flows:
-      - name: EXFN_Authentication.SUB_GetDefaultClientConfiguration
-      - name: OpcenterEXFN_DISW_DesignSystem.ACT_ClientConfiguration_NewEdit
-    target_commands:
-      []
-
-  - name: ClientConfiguration_Overview
-    module: OpcenterEXFN_DISW_DesignSystem
-    flows:
-      []
-    target_commands:
-      []
-
-  - name: RuntimeUIApplicationsByPlant
-    module: OpcenterEXFN_DISW_DesignSystem
-    flows:
-      - name: EXFN_ServiceLayer.DS_AvailableRuntimeUIApplications
-      - name: OpcenterEXFN_DISW_DesignSystem.DS_UIApplications
-    target_commands:
-      []
-
-  - name: OC_EX_HomePage
-    module: OpcenterEXFN_DISW_DesignSystem
-    flows:
-      - name: OpcenterEXFN_DISW_DesignSystem.DS_GetOrCreate_SearchTextBox_Criteria
-      - name: OpcenterEXFN_DISW_DesignSystem.OCH_SearchTextBox
-    target_commands:
-      []
-
-  - name: AuditTrailRecord_View
-    module: EXFN_AuditTrailViewer
-    flows:
-      - EXFN_AuditTrailViewer.ACT_ClosePage
-    target_commands:
-      []
-
-  - name: AuditTrail
-    module: EXFN_AuditTrailViewer
-    flows:
-      - EXFN_AuditTrailViewer.DS_AuditTrailContext
-    target_commands:
-      []
-
   - name: PANEL_UpdateUoMDimension
     module: OpcenterEXFN_ReferenceData
     flows:
@@ -750,9 +641,9 @@ pages:
   - name: UoMDimension_Master_MultiSelection
     module: OpcenterEXFN_ReferenceData
     flows:
+      - name: OpcenterEXFN_ReferenceData.DS_UoM_GetCommandBarContext
       - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_MultiSelection
       - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoM_MultiSelection
-      - name: OpcenterEXFN_ReferenceData.DS_UoM_GetCommandBarContext
     target_commands:
       []
 
@@ -865,8 +756,8 @@ pages:
   - name: PANEL_UpdateNumberingPatternPart_ValidatePart
     module: OpcenterEXFN_ReferenceData
     flows:
-      - name: OpcenterEXFN_ReferenceData.EVT_OnChangeValidatePart
       - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart
+      - name: OpcenterEXFN_ReferenceData.EVT_OnChangeValidatePart
     target_commands:
       []
 
@@ -1026,8 +917,8 @@ pages:
   - name: Status_Details
     module: OpcenterEXFN_ReferenceData
     flows:
-      - name: OpcenterEXFN_ReferenceData.ACT_DisassociateStatusBehaviorDefinitionsFromStatus
       - name: OpcenterEXFN_ReferenceData.DS_StatusBehavior
+      - name: OpcenterEXFN_ReferenceData.ACT_DisassociateStatusBehaviorDefinitionsFromStatus
       - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel
       - name: OpcenterEXFN_ReferenceData.ACT_SetStatusInitial
     target_commands:

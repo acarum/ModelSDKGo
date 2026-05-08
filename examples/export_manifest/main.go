@@ -4753,6 +4753,32 @@ func extractPageAccess(content map[string]interface{}, pageName string, moduleNa
 
 // ==== Pages Analysis with Recursive Hierarchy (Section 6) ====
 
+// shouldExcludeModule checks if a module should be excluded from pages analysis
+// Excludes marketplace modules and UI framework modules
+func shouldExcludeModule(moduleName string) bool {
+	// Standard Mendix modules
+	if moduleName == "Administration" || moduleName == "System" {
+		return true
+	}
+	
+	// Marketplace modules (typically start with EXFN_)
+	if strings.HasPrefix(moduleName, "EXFN_") {
+		return true
+	}
+	
+	// UI framework modules (contain _DISW_ or DesignSystem)
+	if strings.Contains(moduleName, "_DISW_") || strings.Contains(moduleName, "DesignSystem") {
+		return true
+	}
+	
+	// Atlas UI modules
+	if strings.HasPrefix(moduleName, "Atlas_") {
+		return true
+	}
+	
+	return false
+}
+
 // collectPagesWithMicroflows collects all pages/panels and analyzes their microflow/nanoflow calls with recursive hierarchy
 func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisInfo, error) {
 	// Query all Units
@@ -4821,6 +4847,11 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 		// Get module name from ContainerID
 		containerID := blobToUUID(containerIDBlob)
 		moduleName := getModuleNameFromContainerID(db, contentsDir, containerID)
+
+		// Filter out marketplace and UI modules
+		if shouldExcludeModule(moduleName) {
+			continue
+		}
 
 		// Extract microflow/nanoflow calls from page
 		microflowCalls := extractMicroflowCallsFromPage(doc)
