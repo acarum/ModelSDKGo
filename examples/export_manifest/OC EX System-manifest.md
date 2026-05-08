@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-08 12:58:01  
+**Generated:** 2026-05-08 13:05:16  
 
 ---
 
@@ -669,8 +669,7 @@ pages:
       - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoM_MultiSelection
         calls:
           - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection
-            calls:
-              - OpcenterEXFN_ReferenceData_Connector.DeleteUoM
+            - OpcenterEXFN_ReferenceData_Connector.DeleteUoM
     target_commands:
       - Reference.DeleteUoM
 
@@ -742,8 +741,7 @@ pages:
       - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_1
         calls:
           - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_2
-            calls:
-              - OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor
+            - OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor
     target_commands:
       - Reference.UpdateUoMFactor
 
@@ -843,13 +841,11 @@ pages:
       - name: OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartUp
         calls:
           - name: OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPart
-            calls:
-              - OpcenterEXFN_ReferenceData_Connector.MoveNumberingPatternPart
+            - OpcenterEXFN_ReferenceData_Connector.MoveNumberingPatternPart
       - name: OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartDown
         calls:
           - name: OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPart
-            calls:
-              - OpcenterEXFN_ReferenceData_Connector.MoveNumberingPatternPart
+            - OpcenterEXFN_ReferenceData_Connector.MoveNumberingPatternPart
       - name: OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPatternPart
         calls:
           - OpcenterEXFN_ReferenceData_Connector.DeleteNumberingPatternPart
