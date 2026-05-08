@@ -5046,6 +5046,12 @@ func extractMicroflowCallsFromMicroflow(microflowDoc map[string]interface{}) []s
 
 // loadMicroflowByName loads a microflow/nanoflow by name from the database
 func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string]interface{} {
+	// Extract simple name from qualified name (Module.Name -> Name)
+	simpleName := name
+	if idx := strings.LastIndex(name, "."); idx >= 0 {
+		simpleName = name[idx+1:]
+	}
+
 	// Query all Units (brute force scan)
 	query := `SELECT UnitID FROM Unit`
 	rows, err := db.Query(query)
@@ -5060,8 +5066,15 @@ func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string
 			continue
 		}
 
-		unitID := hex.EncodeToString(unitIDBlob)
-		filePath := filepath.Join(contentsDir, unitID[:2], unitID[2:4], unitID+".mxunit")
+		// Use blobToUUID instead of hex.EncodeToString
+		unitID := blobToUUID(unitIDBlob)
+		if unitID == "" {
+			continue
+		}
+
+		// Remove dashes for file path
+		cleanID := strings.ReplaceAll(unitID, "-", "")
+		filePath := filepath.Join(contentsDir, cleanID[:2], cleanID[2:4], unitID+".mxunit")
 
 		data, err := os.ReadFile(filePath)
 		if err != nil {
@@ -5084,7 +5097,8 @@ func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string
 		}
 
 		nameField, ok := doc["Name"].(string)
-		if ok && nameField == name {
+		// Match both simple name and qualified name
+		if ok && (nameField == name || nameField == simpleName) {
 			return doc
 		}
 	}
