@@ -30,7 +30,7 @@ func main() {
 	// Check for mprcontents in same directory
 	baseDir := strings.TrimSuffix(mprPath, "OC EX System.mpr")
 	contentsDir := baseDir + "mprcontents"
-	
+
 	// Check if it exists
 	if _, err := os.Stat(contentsDir); os.IsNotExist(err) {
 		// Fallback to old format
@@ -94,13 +94,13 @@ func main() {
 	fmt.Println("📋 Level 0: Panel Direct References")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	refs := extractAllFlowReferences(content, 0)
-	
+
 	if len(refs) == 0 {
 		fmt.Println("  ❌ No microflow/nanoflow references found")
 	} else {
 		for i, ref := range refs {
 			fmt.Printf("  %d. %s → %s\n", i+1, ref.FieldType, ref.FlowName)
-			
+
 			// Try to analyze this flow
 			analyzeFlow(db, contentsDir, ref.FlowName, 1, 5)
 		}
@@ -168,7 +168,7 @@ func analyzeFlow(db *sql.DB, contentsDir, flowName string, level, maxLevel int) 
 	}
 
 	indent := strings.Repeat("  ", level)
-	
+
 	// Parse module.name
 	parts := strings.Split(flowName, ".")
 	if len(parts) != 2 {
@@ -222,15 +222,15 @@ func analyzeFlow(db *sql.DB, contentsDir, flowName string, level, maxLevel int) 
 	// Extract what this flow calls
 	fmt.Printf("\n%s📋 Level %d: %s calls:\n", indent, level, mfName)
 	fmt.Printf("%s━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", indent)
-	
+
 	refs := extractAllFlowReferences(content, level)
-	
+
 	if len(refs) == 0 {
 		fmt.Printf("%s  (no further calls)\n", indent)
 	} else {
 		for i, ref := range refs {
 			fmt.Printf("%s  %d. %s → %s\n", indent, i+1, ref.FieldType, ref.FlowName)
-			
+
 			// Check if this is a command call
 			if ref.FieldType == "MicroflowCall" || ref.FieldType == "Microflow" {
 				// Recurse
@@ -266,7 +266,7 @@ func loadUnitContents(contentsDir, unitID string) (map[string]interface{}, error
 	}
 
 	path := fmt.Sprintf("%s/%s/%s/%s.mxunit", contentsDir, unitID[0:2], unitID[2:4], unitID)
-	
+
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read file: %w", err)

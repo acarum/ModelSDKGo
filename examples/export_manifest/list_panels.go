@@ -19,13 +19,13 @@ func main() {
 	}
 
 	mprPath := os.Args[1]
-	
+
 	// Check for mprcontents in same directory
 	baseDir := filepath.Dir(mprPath)
 	contentsDir := filepath.Join(baseDir, "mprcontents")
-	
+
 	fmt.Printf("📂 Looking for mprcontents at: %s\n", contentsDir)
-	
+
 	// Check if it exists
 	if _, err := os.Stat(contentsDir); os.IsNotExist(err) {
 		// Fallback to old format
@@ -53,7 +53,7 @@ func main() {
 	panelCount := 0
 	errorCount := 0
 	totalUnits := 0
-	
+
 	for rows.Next() {
 		totalUnits++
 		var unitIDBytes []byte
@@ -87,7 +87,7 @@ func main() {
 		if bsonType == "Forms$Page" || bsonType == "Forms$Snippet" {
 			panelCount++
 			fmt.Printf("%d. %s [%s]\n", panelCount, name, bsonType)
-			
+
 			if strings.Contains(name, "UpdateUoMFactor") {
 				fmt.Printf("   ⭐ MATCH! UnitID: %s\n", unitID)
 			}
@@ -125,7 +125,7 @@ func loadUnitContents(contentsDir, unitID string) (map[string]interface{}, error
 
 	// Build path: first 2 chars / next 2 chars / full UUID with dashes.mxunit
 	path := filepath.Join(contentsDir, idNoDashes[0:2], idNoDashes[2:4], unitID+".mxunit")
-	
+
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read file: %w", err)

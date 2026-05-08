@@ -44,7 +44,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Schema query failed: %v", err)
 	}
-	
+
 	fmt.Printf("  Columns:\n")
 	for schemaRows.Next() {
 		var cid int
@@ -63,7 +63,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("List query failed: %v", err)
 	}
-	
+
 	count := 0
 	for listRows.Next() {
 		var unitIDBytes []byte
@@ -103,14 +103,14 @@ func main() {
 		// Check module
 		candidateModule := findModuleByTraversal(candidateID, db)
 		fmt.Printf("  Candidate: UnitID=%s, Module=%s\n", candidateID, candidateModule)
-		
+
 		// Accept first match regardless of module
 		if !found {
 			unitID = candidateID
 			foundModule = candidateModule
 			found = true
 		}
-		
+
 		// But prefer exact module match
 		if candidateModule == moduleName {
 			unitID = candidateID
@@ -144,7 +144,7 @@ func main() {
 	// Search for MicroflowCall patterns
 	fmt.Printf("\n🔎 Searching for microflow calls...\n")
 	calls := findMicroflowCalls(data, 0, 10)
-	
+
 	if len(calls) == 0 {
 		fmt.Printf("\n❌ No microflow calls found!\n")
 		fmt.Printf("\n📋 Full BSON structure (first 150 lines):\n")
@@ -214,11 +214,11 @@ func findMicroflowCalls(obj interface{}, depth int, maxDepth int) []string {
 					for key, val := range v {
 						fmt.Printf("      %s: %v (type: %T)\n", key, val, val)
 					}
-					
+
 					// Try to extract microflow name from various fields
 					for key, val := range v {
-						if strings.Contains(strings.ToLower(key), "microflow") || 
-						   strings.Contains(strings.ToLower(key), "nanoflow") {
+						if strings.Contains(strings.ToLower(key), "microflow") ||
+							strings.Contains(strings.ToLower(key), "nanoflow") {
 							if strVal, ok := val.(string); ok && strVal != "" && strVal != "<parameter>" {
 								if !seen[strVal] {
 									calls = append(calls, strVal)
@@ -250,7 +250,7 @@ func findModuleByTraversal(unitID string, db *sql.DB) string {
 	for i := 0; i < 20; i++ {
 		var containerID sql.NullString
 		var typeName string
-		
+
 		query := "SELECT ContainerID, Type FROM Unit WHERE UnitID = ?"
 		err := db.QueryRow(query, currentID).Scan(&containerID, &typeName)
 		if err != nil {

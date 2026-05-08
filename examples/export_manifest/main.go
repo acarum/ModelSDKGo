@@ -4764,9 +4764,9 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 	defer rows.Close()
 
 	var pagesAnalysis []PageAnalysisInfo
-	microflowCache := make(map[string]map[string]interface{}) // Cache: microflowName -> content
+	microflowCache := make(map[string]map[string]interface{})   // Cache: microflowName -> content
 	hierarchyCache := make(map[string][]MicroflowCallHierarchy) // Cache: microflowName -> hierarchy
-	
+
 	processedCount := 0
 	cacheHits := 0
 	scannedCount := 0
@@ -4785,7 +4785,7 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 		if unitID == "" {
 			continue
 		}
-		
+
 		// Remove dashes for file path
 		cleanID := strings.ReplaceAll(unitID, "-", "")
 		filePath := filepath.Join(contentsDir, cleanID[:2], cleanID[2:4], unitID+".mxunit")
@@ -4809,7 +4809,7 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 		if !ok || typeField != "Forms$Page" {
 			continue
 		}
-		
+
 		pagesFoundCount++
 
 		// Get page name and module
@@ -5496,19 +5496,19 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "**Limitation:** Inline nanoflows (nanoflows embedded directly in pages, not stored as separate Units) are not currently traced.\n\n")
 		fmt.Fprintf(file, "```yaml\n")
 		fmt.Fprintf(file, "pages:\n")
-		
+
 		for _, page := range report.PagesAnalysis {
 			fmt.Fprintf(file, "  - name: %s\n", page.Name)
 			fmt.Fprintf(file, "    module: %s\n", page.Module)
 			fmt.Fprintf(file, "    flows:\n")
-			
+
 			// Write hierarchy using recursive helper
 			if len(page.CallHierarchy) > 0 {
 				writeHierarchy(file, page.CallHierarchy, "      ")
 			} else {
 				fmt.Fprintf(file, "      []\n")
 			}
-			
+
 			fmt.Fprintf(file, "    target_commands:\n")
 			if len(page.TargetCommands) > 0 {
 				for _, cmd := range page.TargetCommands {
@@ -5519,7 +5519,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 			}
 			fmt.Fprintf(file, "\n")
 		}
-		
+
 		fmt.Fprintf(file, "```\n\n")
 		fmt.Fprintf(file, "---\n\n")
 	}

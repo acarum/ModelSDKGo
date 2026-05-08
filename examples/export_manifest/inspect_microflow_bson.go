@@ -51,9 +51,9 @@ func main() {
 
 	// Build cache to find the microflow
 	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
-	
+
 	cache := buildMicroflowNameToUnitIDCacheLazy(db, contentsDir, []string{microflowName})
-	
+
 	unitID, found := cache[microflowName]
 	if !found {
 		log.Fatalf("❌ Microflow not found: %s", microflowName)
@@ -165,7 +165,7 @@ func findModuleByTraversal(unitID string, db *sql.DB) string {
 	for i := 0; i < 20; i++ {
 		var containerIDBytes []byte
 		var bsonTypeBytes []byte
-		
+
 		query := "SELECT ContainerID, Type FROM Unit WHERE UnitID = ?"
 		err := db.QueryRow(query, stringToGUID(currentID)).Scan(&containerIDBytes, &bsonTypeBytes)
 		if err != nil {
