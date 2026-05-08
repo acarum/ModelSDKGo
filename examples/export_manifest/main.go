@@ -5635,22 +5635,17 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 // writeHierarchy recursively writes microflow call hierarchy in YAML format
 // insideCalls indicates if we're already inside a "calls:" section (to avoid repeating it)
 func writeHierarchy(file *os.File, hierarchy []MicroflowCallHierarchy, indent string, insideCalls bool) {
-	for i, node := range hierarchy {
-		if i == 0 && len(hierarchy) == 1 && len(node.Calls) == 0 {
-			// Single leaf node - inline format
-			fmt.Fprintf(file, "%s- %s\n", indent, node.Name)
-		} else {
-			// Multi-node or has children - structured format
-			fmt.Fprintf(file, "%s- name: %s\n", indent, node.Name)
-			if len(node.Calls) > 0 {
-				if !insideCalls {
-					// First level: write "calls:"
-					fmt.Fprintf(file, "%s  calls:\n", indent)
-					writeHierarchy(file, node.Calls, indent+"    ", true)
-				} else {
-					// Nested levels: just indent, no "calls:" keyword
-					writeHierarchy(file, node.Calls, indent+"  ", true)
-				}
+	for _, node := range hierarchy {
+		// Always write "name:" for all nodes
+		fmt.Fprintf(file, "%s- name: %s\n", indent, node.Name)
+		if len(node.Calls) > 0 {
+			if !insideCalls {
+				// First level: write "calls:"
+				fmt.Fprintf(file, "%s  calls:\n", indent)
+				writeHierarchy(file, node.Calls, indent+"    ", true)
+			} else {
+				// Nested levels: just indent, no "calls:" keyword
+				writeHierarchy(file, node.Calls, indent+"  ", true)
 			}
 		}
 	}
