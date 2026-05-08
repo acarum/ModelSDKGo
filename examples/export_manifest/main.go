@@ -116,20 +116,20 @@ type ManifestReport struct {
 }
 
 type ReportOptions struct {
-	IncludeEntities      bool
-	IncludeAttributes    bool
-	IncludeMicroflows    bool
-	IncludeWidgets       bool
-	IncludeNavigation    bool
-	IncludeRoles         bool
-	IncludePageCommands  bool
-	IncludePagesAnalysis bool
+	IncludeEntities               bool
+	IncludeAttributes             bool
+	IncludeMicroflows             bool
+	IncludeWidgets                bool
+	IncludeNavigation             bool
+	IncludeRoles                  bool
+	IncludePageCommands           bool
+	IncludePagesCommandsHierarchy bool
 }
 
 // MicroflowCallHierarchy represents a recursive call tree
 type MicroflowCallHierarchy struct {
 	Name  string
-	Level int
+	Level int `json:"-"`
 	Calls []MicroflowCallHierarchy
 }
 
@@ -284,8 +284,8 @@ func main() {
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
 	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
-	includePageCommands := flag.Bool("include-page-commands", false, "Include command bar actions from navigation pages in the report")
-	includePagesAnalysis := flag.Bool("include-pages-analysis", false, "Include detailed pages/panels analysis with recursive microflow hierarchy (up to 5 levels)")
+	includePageCommands := flag.Bool("include-page-commands", true, "Include command bar actions from navigation pages in the report")
+	includePagesCommandsHierarchy := flag.Bool("include-pages-commands-hierarchy", true, "Include detailed pages/panels analysis with recursive microflow hierarchy (up to 5 levels)")
 	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
 	sourceDir := flag.String("source-dir", "", "Source directory to scan for MPR files recursively (batch mode)")
 	outputFormat := flag.String("output-format", "md", "Output format: 'md' (Markdown), 'json' (JSON), or 'both' (Markdown + JSON)")
@@ -320,14 +320,14 @@ func main() {
 
 	// Create report options
 	options := ReportOptions{
-		IncludeEntities:      *includeEntities,
-		IncludeAttributes:    *includeAttributes,
-		IncludeMicroflows:    *includeMicroflows,
-		IncludeWidgets:       *includeWidgets,
-		IncludeNavigation:    *includeNavigation,
-		IncludeRoles:         *includeRoles,
-		IncludePageCommands:  *includePageCommands,
-		IncludePagesAnalysis: *includePagesAnalysis,
+		IncludeEntities:               *includeEntities,
+		IncludeAttributes:             *includeAttributes,
+		IncludeMicroflows:             *includeMicroflows,
+		IncludeWidgets:                *includeWidgets,
+		IncludeNavigation:             *includeNavigation,
+		IncludeRoles:                  *includeRoles,
+		IncludePageCommands:           *includePageCommands,
+		IncludePagesCommandsHierarchy: *includePagesCommandsHierarchy,
 	}
 
 	// Check if batch mode (source-dir) or single file mode
@@ -675,7 +675,7 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	if options.IncludePageCommands {
 		totalPhases++
 	}
-	if options.IncludePagesAnalysis {
+	if options.IncludePagesCommandsHierarchy {
 		totalPhases++ // Phase for pages analysis
 	}
 	totalPhases++ // Final report generation
@@ -762,7 +762,7 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	}
 
 	// ==== SECTION 7: Pages Analysis (Detailed with Recursive Hierarchy) ====
-	if options.IncludePagesAnalysis {
+	if options.IncludePagesCommandsHierarchy {
 		currentPhase++
 		fmt.Printf("\n[Phase %d/%d] 🔍 Analyzing pages/panels with recursive microflow hierarchy...\n", currentPhase, totalPhases)
 		pagesAnalysis, err := collectPagesWithMicroflows(db, contentsDir)
@@ -5749,7 +5749,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	}
 
 	// Section 7: Pages/Panels Commands Hierarchy (if enabled)
-	if options.IncludePagesAnalysis && len(report.PagesAnalysis) > 0 {
+	if options.IncludePagesCommandsHierarchy && len(report.PagesAnalysis) > 0 {
 		// Calculate section number based on enabled sections
 		sectionNum := 5
 		if options.IncludePageCommands {
@@ -5789,6 +5789,38 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 
 		fmt.Fprintf(file, "```\n\n")
 		fmt.Fprintf(file, "---\n\n")
+	}
+
+	// Section 8: Pages/Panels Commands (simplified view - if enabled)
+	if options.IncludePagesCommandsHierarchy && len(report.PagesAnalysis) > 0 {
+		// Calculate section number based on enabled sections
+		sectionNum := 5
+		if options.IncludePageCommands {
+			sectionNum++
+		}
+		if options.IncludeRoles {
+			sectionNum++
+		}
+		sectionNum++ // Increment for the previous Pages/Panels Commands Hierarchy section
+
+		fmt.Fprintf(file, "## %d. Pages/Panels Commands\n\n", sectionNum)
+		fmt.Fprintf(file, "Simplified view showing only the target commands for each page/panel.\n\n")
+
+		// Create a table with columns: Page/Panel, Module, Target Commands
+		fmt.Fprintf(file, "| Page/Panel | Module | Target Commands |\n")
+		fmt.Fprintf(file, "|------------|--------|------------------|\n")
+
+		for _, page := range report.PagesAnalysis {
+			commandsStr := ""
+			if len(page.TargetCommands) > 0 {
+				commandsStr = strings.Join(page.TargetCommands, "<br>")
+			} else {
+				commandsStr = "-"
+			}
+			fmt.Fprintf(file, "| %s | %s | %s |\n", page.Name, page.Module, commandsStr)
+		}
+
+		fmt.Fprintf(file, "\n---\n\n")
 	}
 
 	// Footer
@@ -5880,6 +5912,20 @@ func generateJSONReport(report *ManifestReport, outputPath string, options *Repo
 	} else {
 		filteredReport.SystemRoles = []SystemRole{}
 		filteredReport.PageAccess = []PageAccessInfo{}
+	}
+
+	// Include page commands if enabled
+	if options.IncludePageCommands {
+		filteredReport.PageCommands = report.PageCommands
+	} else {
+		filteredReport.PageCommands = []PageCommandInfo{}
+	}
+
+	// Include pages analysis if enabled
+	if options.IncludePagesCommandsHierarchy {
+		filteredReport.PagesAnalysis = report.PagesAnalysis
+	} else {
+		filteredReport.PagesAnalysis = []PageAnalysisInfo{}
 	}
 
 	// Marshal with pretty-print (2 spaces indentation)
