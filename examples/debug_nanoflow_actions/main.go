@@ -40,7 +40,7 @@ func main() {
 
 	// Find ACT_UpdateUoMFactor_2
 	fmt.Println("\nSearching for ACT_UpdateUoMFactor_2...")
-	
+
 	rows, err := db.Query(`
 		SELECT d.id, d.type, d.data
 		FROM document d
@@ -74,7 +74,7 @@ func main() {
 		// Get Unit reference
 		if unitRef, ok := doc["Unit"].(string); ok {
 			fmt.Printf("Unit Reference: %s\n", unitRef)
-			
+
 			// Load the unit file
 			unitDoc := loadUnitFile(contentsDir, unitRef)
 			if unitDoc != nil {
@@ -89,11 +89,11 @@ func loadUnitFile(contentsDir, unitID string) bson.M {
 	if len(unitID) < 4 {
 		return nil
 	}
-	
+
 	subdir1 := unitID[:2]
 	subdir2 := unitID[2:4]
 	filePath := filepath.Join(contentsDir, subdir1, subdir2, unitID+".mxunit")
-	
+
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil
@@ -109,7 +109,7 @@ func loadUnitFile(contentsDir, unitID string) bson.M {
 
 func analyzeActions(doc bson.M, flowName string) {
 	fmt.Println("\n--- Actions Analysis ---")
-	
+
 	// Look for Objects array (contains all actions)
 	objects, ok := doc["Objects"].(primitive.A)
 	if !ok {
@@ -125,16 +125,16 @@ func analyzeActions(doc bson.M, flowName string) {
 		}
 
 		typeName, _ := objMap["$Type"].(string)
-		
+
 		// Check for all types of action calls
-		if strings.Contains(typeName, "MicroflowCall") || 
-		   strings.Contains(typeName, "CallExternalAction") ||
-		   strings.Contains(typeName, "JavaActionCall") ||
-		   strings.Contains(typeName, "ExternalAction") {
-			
+		if strings.Contains(typeName, "MicroflowCall") ||
+			strings.Contains(typeName, "CallExternalAction") ||
+			strings.Contains(typeName, "JavaActionCall") ||
+			strings.Contains(typeName, "ExternalAction") {
+
 			actionCount++
 			fmt.Printf("\n[Action #%d] Type: %s\n", actionCount, typeName)
-			
+
 			// Extract microflow/action reference
 			if mfCall, ok := objMap["MicroflowCall"].(string); ok {
 				fmt.Printf("  MicroflowCall: %s\n", mfCall)
@@ -145,7 +145,7 @@ func analyzeActions(doc bson.M, flowName string) {
 			if javaAction, ok := objMap["JavaActionCall"].(string); ok {
 				fmt.Printf("  JavaActionCall: %s\n", javaAction)
 			}
-			
+
 			// Check for parameter mappings
 			if params, ok := objMap["ParameterMappings"].(primitive.A); ok {
 				fmt.Println("  Parameters:")
@@ -163,18 +163,18 @@ func analyzeActions(doc bson.M, flowName string) {
 					}
 				}
 			}
-			
+
 			// Print all other fields for debugging
 			fmt.Println("  All fields:")
 			for k, v := range objMap {
-				if k != "$Type" && k != "MicroflowCall" && k != "ExternalAction" && 
-				   k != "JavaActionCall" && k != "ParameterMappings" {
+				if k != "$Type" && k != "MicroflowCall" && k != "ExternalAction" &&
+					k != "JavaActionCall" && k != "ParameterMappings" {
 					fmt.Printf("    %s: %v\n", k, v)
 				}
 			}
 		}
 	}
-	
+
 	if actionCount == 0 {
 		fmt.Println("No action calls found")
 	} else {
@@ -197,7 +197,7 @@ func extractMPR(mprPath, destDir string) {
 	// Use PowerShell to extract
 	cmd := fmt.Sprintf("Expand-Archive -Path '%s' -DestinationPath '%s' -Force", mprPath, destDir)
 	os.Chdir(filepath.Dir(mprPath))
-	
+
 	psCmd := fmt.Sprintf("powershell.exe -Command \"%s\"", cmd)
 	if err := runCommand(psCmd); err != nil {
 		log.Fatal(err)

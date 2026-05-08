@@ -5012,7 +5012,7 @@ func extractMicroflowCallsFromMicroflow(microflowDoc map[string]interface{}) []s
 					} else if microflow, ok := val["Microflow"].(string); ok && microflow != "" {
 						mfCallName = microflow
 					}
-					
+
 					if mfCallName != "" && !seen[mfCallName] {
 						microflows = append(microflows, mfCallName)
 						seen[mfCallName] = true
@@ -5205,7 +5205,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 					} else if microflow, ok := val["Microflow"].(string); ok && microflow != "" {
 						microflowName = microflow
 					}
-					
+
 					// If calling CallCommand_MF or CallCommandAction, treat as command call
 					if strings.Contains(microflowName, "CallCommand") {
 						// Extract command name from parameters if available
