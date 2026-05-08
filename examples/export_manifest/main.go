@@ -89,15 +89,24 @@ type PageAccessInfo struct {
 type PageCommandButton struct {
 	ButtonName    string `json:"ButtonName"`
 	Caption       string `json:"Caption"`
-	ActionType    string `json:"ActionType"`    // Type of action (e.g., "CallNanoflowClientAction", "CallMicroflowClientAction")
-	ActionName    string `json:"ActionName"`    // Nanoflow/Microflow name
+	ActionType    string `json:"-"`    // Type of action (e.g., "CallNanoflowClientAction", "CallMicroflowClientAction")
+	ActionName    string `json:"-"`    // Nanoflow/Microflow name
 	TargetPage    string `json:"TargetPage"`    // Resolved page from ShowPage action (if any)
-	TargetCommand string `json:"TargetCommand"` // Command extracted from Save button in TargetPage
+	TargetCommand string `json:"TargetCommandName"` // Command extracted from Save button in TargetPage
+	TargetAppName string `json:"TargetAppName"` // App name extracted from TargetCommand
 }
 
 type PageCommandInfo struct {
 	PageName string              `json:"PageName"` // Qualified page name (Module.PageName)
 	Commands []PageCommandButton `json:"Commands"`
+}
+
+// PageCommandSummary stores simplified page command information
+type PageCommandSummary struct {
+	PageName         string   `json:"PageName"`
+	Module           string   `json:"Module"`
+	TargetAppNames   []string `json:"TargetAppNames"`
+	TargetCommands   []string `json:"TargetCommands"`
 }
 
 type ManifestReport struct {
@@ -107,12 +116,13 @@ type ManifestReport struct {
 	GeneratedAt     string                  `json:"GeneratedAt"`
 	Entities        map[string][]EntityInfo `json:"Entities"`        // by module
 	MicroflowCalls  []MicroflowCallInfo     `json:"MicroflowCalls"`  // all calls
-	Widgets         []WidgetInfo            `json:"Widgets"`         // signal manager widgets
-	NavigationItems []NavigationItem        `json:"NavigationItems"` // navigation menu items
-	SystemRoles     []SystemRole            `json:"SystemRoles"`     // system roles
-	PageAccess      []PageAccessInfo        `json:"-"`               // page accessibility - excluded from export
-	PageCommands    []PageCommandInfo       `json:"PageCommands"`    // command bar actions from navigation pages
-	PagesAnalysis   []PageAnalysisInfo      `json:"PagesAnalysis"`   // detailed pages/panels analysis with recursive hierarchy
+	Widgets         []WidgetInfo            `json:"SignalManagerSubscriptions"`         // signal manager widgets
+	NavigationItems     []NavigationItem     `json:"NavigationItems"`     // navigation menu items
+	SystemRoles         []SystemRole         `json:"SystemRoles"`         // system roles
+	PageAccess          []PageAccessInfo     `json:"-"`                   // page accessibility - excluded from export
+	NavigationCommands  []PageCommandInfo    `json:"NavigationPageCommands"`  // command bar actions from navigation pages
+	PagesAnalysis       []PageAnalysisInfo   `json:"PageCommandsHierarchy"` // detailed pages/panels analysis with recursive hierarchy
+	PageCommands        []PageCommandSummary `json:"PageCommands"`        // simplified view of all page/panel commands
 }
 
 type ReportOptions struct {
@@ -756,9 +766,9 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 			fmt.Printf("Error collecting page commands: %v\n", err)
 			os.Exit(1)
 		}
-		report.PageCommands = pageCommands
+		report.NavigationCommands = pageCommands
 		fmt.Printf("  ✅ Completed: Page commands collected\n")
-		fmt.Printf("  📊 Result: %d page(s) with commands\n", len(report.PageCommands))
+		fmt.Printf("  📊 Result: %d page(s) with commands\n", len(report.NavigationCommands))
 	}
 
 	// ==== SECTION 7: Pages Analysis (Detailed with Recursive Hierarchy) ====
@@ -773,6 +783,27 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 		report.PagesAnalysis = pagesAnalysis
 		fmt.Printf("  ✅ Completed: Pages analysis with recursive hierarchy\n")
 		fmt.Printf("  📊 Result: %d page(s)/panel(s) analyzed\n", len(report.PagesAnalysis))
+
+		// Populate PageCommands (simplified view) from PagesAnalysis
+		for _, page := range report.PagesAnalysis {
+			appNames := make([]string, 0)
+			cmdNames := make([]string, 0)
+			for _, cmd := range page.TargetCommands {
+				if idx := strings.LastIndex(cmd, "."); idx >= 0 {
+					appNames = append(appNames, cmd[:idx])
+					cmdNames = append(cmdNames, cmd[idx+1:])
+				} else {
+					appNames = append(appNames, "-")
+					cmdNames = append(cmdNames, cmd)
+				}
+			}
+			report.PageCommands = append(report.PageCommands, PageCommandSummary{
+				PageName:       page.Name,
+				Module:         page.Module,
+				TargetAppNames: appNames,
+				TargetCommands: cmdNames,
+			})
+		}
 	}
 
 	// Generate reports based on format
@@ -3801,15 +3832,36 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 				// Strategy 1: If button opens a target page (PANEL_*), find command in that page
 				if buttons[i].TargetPage != "" && buttons[i].TargetPage != "-" {
 					buttons[i].TargetCommand = findSaveButtonCommand(db, contentsDir, buttons[i].TargetPage, allMicroflowCalls)
+					// Extract AppName and CommandName from TargetCommand (format: "AppName.CommandName")
+					if buttons[i].TargetCommand != "" {
+						if idx := strings.LastIndex(buttons[i].TargetCommand, "."); idx >= 0 {
+							buttons[i].TargetAppName = buttons[i].TargetCommand[:idx]
+							buttons[i].TargetCommand = buttons[i].TargetCommand[idx+1:] // Keep only CommandName
+						}
+					}
 				} else if buttons[i].ActionName != "" {
 					// Strategy 2: If button calls a nanoflow/microflow directly, try to find command in that flow
 					if strings.Contains(buttons[i].ActionType, "CallNanoflowClientAction") ||
 						strings.Contains(buttons[i].ActionType, "CallMicroflowClientAction") {
 						buttons[i].TargetCommand = extractCommandFromFlow(db, contentsDir, buttons[i].ActionName)
+						// Extract AppName and CommandName from TargetCommand
+						if buttons[i].TargetCommand != "" {
+							if idx := strings.LastIndex(buttons[i].TargetCommand, "."); idx >= 0 {
+								buttons[i].TargetAppName = buttons[i].TargetCommand[:idx]
+								buttons[i].TargetCommand = buttons[i].TargetCommand[idx+1:] // Keep only CommandName
+							}
+						}
 
 						// Strategy 3: If no command found in flow, use heuristic based on button caption + page entity
 						if buttons[i].TargetCommand == "" {
 							buttons[i].TargetCommand = findCommandByButtonHeuristic(pageName, buttons[i].Caption, allMicroflowCalls)
+							// Extract AppName and CommandName from TargetCommand
+							if buttons[i].TargetCommand != "" {
+								if idx := strings.LastIndex(buttons[i].TargetCommand, "."); idx >= 0 {
+									buttons[i].TargetAppName = buttons[i].TargetCommand[:idx]
+									buttons[i].TargetCommand = buttons[i].TargetCommand[idx+1:] // Keep only CommandName
+								}
+							}
 						}
 					}
 				}
@@ -5468,7 +5520,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	if options.IncludePageCommands {
 		totalCommands := 0
 		validatedCommands := 0
-		for _, pageInfo := range report.PageCommands {
+		for _, pageInfo := range report.NavigationCommands {
 			for _, button := range pageInfo.Commands {
 				totalCommands++
 				if button.TargetCommand != "" && button.TargetCommand != "-" {
@@ -5476,7 +5528,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 				}
 			}
 		}
-		fmt.Fprintf(file, "- **Pages with Commands:** %d page(s) analyzed\n", len(report.PageCommands))
+		fmt.Fprintf(file, "- **Pages with Commands:** %d page(s) analyzed\n", len(report.NavigationCommands))
 		if totalCommands > 0 {
 			fmt.Fprintf(file, "- **Command Buttons:** %d total, %d with extracted commands\n", totalCommands, validatedCommands)
 		}
@@ -5675,24 +5727,24 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "---\n\n")
 	}
 
-	// Section 5: Page Commands
+	// Section 5: Navigation Page Commands (from navigation pages)
 	if options.IncludePageCommands {
 		sectionNum := 5
 		if options.IncludeRoles {
 			sectionNum = 6
 		}
-		fmt.Fprintf(file, "## %d. Page Commands\n\n", sectionNum)
+		fmt.Fprintf(file, "## %d. Navigation Page Commands\n\n", sectionNum)
 		fmt.Fprintf(file, "Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.\n\n")
 
-		if len(report.PageCommands) == 0 {
+		if len(report.NavigationCommands) == 0 {
 			fmt.Fprintf(file, "_No page commands found._\n\n")
 		} else {
-			fmt.Fprintf(file, "Found commands in %d page(s):\n\n", len(report.PageCommands))
+			fmt.Fprintf(file, "Found commands in %d page(s):\n\n", len(report.NavigationCommands))
 
-			for _, pageInfo := range report.PageCommands {
+			for _, pageInfo := range report.NavigationCommands {
 				fmt.Fprintf(file, "### %s\n\n", pageInfo.PageName)
-				fmt.Fprintf(file, "| Caption | Target Page | Target Command |\n")
-				fmt.Fprintf(file, "|---------|-------------|----------------|\n")
+				fmt.Fprintf(file, "| Caption | Target Page | Target AppName | Target CommandName |\n")
+				fmt.Fprintf(file, "|---------|-------------|----------------|--------------------|\n")
 
 				for _, cmd := range pageInfo.Commands {
 					caption := cmd.Caption
@@ -5705,15 +5757,21 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 						targetPage = "-"
 					}
 
-					targetCommand := cmd.TargetCommand
-					if targetCommand == "" {
-						targetCommand = "-"
-					} else if idx := strings.LastIndex(targetCommand, "."); idx >= 0 {
-						// Extract only the command name after the dot (e.g., "CreateStateMachine" from "Reference.CreateStateMachine")
-						targetCommand = targetCommand[idx+1:]
+					targetAppName := "-"
+					targetCommandName := "-"
+					
+					if cmd.TargetCommand != "" {
+						if idx := strings.LastIndex(cmd.TargetCommand, "."); idx >= 0 {
+							// Extract AppName before the dot and CommandName after the dot
+							targetAppName = cmd.TargetCommand[:idx]
+							targetCommandName = cmd.TargetCommand[idx+1:]
+						} else {
+							// No dot found, use the whole string as command name
+							targetCommandName = cmd.TargetCommand
+						}
 					}
 
-					fmt.Fprintf(file, "| %s | %s | %s |\n", caption, targetPage, targetCommand)
+					fmt.Fprintf(file, "| %s | %s | %s | %s |\n", caption, targetPage, targetAppName, targetCommandName)
 				}
 				fmt.Fprintf(file, "\n")
 			}
@@ -5760,7 +5818,6 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		}
 		fmt.Fprintf(file, "## %d. Pages/Panels Commands Hierarchy\n\n", sectionNum)
 		fmt.Fprintf(file, "Microflows and nanoflows called by each page/panel, showing recursive call hierarchy up to 5 levels (in YAML structure). Microflows called transitively are loaded on-the-fly from the database when needed.\n\n")
-		fmt.Fprintf(file, "**Limitation:** Inline nanoflows (nanoflows embedded directly in pages, not stored as separate Units) are not currently traced.\n\n")
 		fmt.Fprintf(file, "```yaml\n")
 		fmt.Fprintf(file, "pages:\n")
 
@@ -5791,7 +5848,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "---\n\n")
 	}
 
-	// Section 8: Pages/Panels Commands (simplified view - if enabled)
+	// Section 8: PageCommands (simplified view - if enabled)
 	if options.IncludePagesCommandsHierarchy && len(report.PagesAnalysis) > 0 {
 		// Calculate section number based on enabled sections
 		sectionNum := 5
@@ -5803,30 +5860,50 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		}
 		sectionNum++ // Increment for the previous Pages/Panels Commands Hierarchy section
 
-		fmt.Fprintf(file, "## %d. Pages/Panels Commands\n\n", sectionNum)
+		fmt.Fprintf(file, "## %d. PageCommands\n\n", sectionNum)
 		fmt.Fprintf(file, "Simplified view showing only the target commands for each page/panel.\n\n")
 
-		// Create a table with columns: Page/Panel, Module, Target Commands
-		fmt.Fprintf(file, "| Page/Panel | Module | Target Commands |\n")
-		fmt.Fprintf(file, "|------------|--------|------------------|\n")
+	// Create a table with columns: Page/Panel, Module, Target AppName, Target CommandName
+	fmt.Fprintf(file, "| Page/Panel | Module | Target AppName | Target CommandName |\n")
+	fmt.Fprintf(file, "|------------|--------|----------------|--------------------|\n")
 
-		for _, page := range report.PagesAnalysis {
-			commandsStr := ""
-			if len(page.TargetCommands) > 0 {
-				commandsStr = strings.Join(page.TargetCommands, "<br>")
-			} else {
-				commandsStr = "-"
+	for _, page := range report.PagesAnalysis {
+		appNamesStr := ""
+		commandsStr := ""
+		
+		if len(page.TargetCommands) > 0 {
+			appNames := make([]string, 0, len(page.TargetCommands))
+			commandNames := make([]string, 0, len(page.TargetCommands))
+			
+			for _, cmd := range page.TargetCommands {
+				if idx := strings.LastIndex(cmd, "."); idx >= 0 {
+					// Extract AppName before the dot and CommandName after the dot
+					appNames = append(appNames, cmd[:idx])
+					commandNames = append(commandNames, cmd[idx+1:])
+				} else {
+					// No dot found, use "-" for app name and whole string as command name
+					appNames = append(appNames, "-")
+					commandNames = append(commandNames, cmd)
+				}
 			}
-			fmt.Fprintf(file, "| %s | %s | %s |\n", page.Name, page.Module, commandsStr)
+			
+			appNamesStr = strings.Join(appNames, "<br>")
+			commandsStr = strings.Join(commandNames, "<br>")
+		} else {
+			appNamesStr = "-"
+			commandsStr = "-"
 		}
-
-		fmt.Fprintf(file, "\n---\n\n")
+		
+		fmt.Fprintf(file, "| %s | %s | %s | %s |\n", page.Name, page.Module, appNamesStr, commandsStr)
 	}
 
-	// Footer
-	fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
+	fmt.Fprintf(file, "\n---\n\n")
+}
 
-	return nil
+// Footer
+fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
+
+return nil
 }
 
 // writeHierarchy recursively writes microflow call hierarchy in YAML format
@@ -5916,16 +5993,18 @@ func generateJSONReport(report *ManifestReport, outputPath string, options *Repo
 
 	// Include page commands if enabled
 	if options.IncludePageCommands {
-		filteredReport.PageCommands = report.PageCommands
+		filteredReport.NavigationCommands = report.NavigationCommands
 	} else {
-		filteredReport.PageCommands = []PageCommandInfo{}
+		filteredReport.NavigationCommands = []PageCommandInfo{}
 	}
 
 	// Include pages analysis if enabled
 	if options.IncludePagesCommandsHierarchy {
 		filteredReport.PagesAnalysis = report.PagesAnalysis
+		filteredReport.PageCommands = report.PageCommands // Simplified view
 	} else {
 		filteredReport.PagesAnalysis = []PageAnalysisInfo{}
+		filteredReport.PageCommands = []PageCommandSummary{}
 	}
 
 	// Marshal with pretty-print (2 spaces indentation)

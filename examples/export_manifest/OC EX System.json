@@ -2,7 +2,7 @@
   "ProjectName": "OC EX System",
   "MendixVersion": "11.10.0",
   "MPRPath": "C:\\Workspaces\\Mendix\\MDUI\\System_Mendix_CLI\\OC EX System.mpr",
-  "GeneratedAt": "2026-05-08 17:08:20",
+  "GeneratedAt": "2026-05-08 18:21:36",
   "Entities": {
     "EXFN_AuditTrailViewer": [
       {
@@ -1260,7 +1260,7 @@
       "CommandName": "\u003cJavaCommandName\u003e"
     }
   ],
-  "Widgets": [
+  "SignalManagerSubscriptions": [
     {
       "DocumentName": "StateMachine_Details",
       "DocumentType": "Page",
@@ -1435,73 +1435,65 @@
     }
   ],
   "SystemRoles": [],
-  "PageCommands": [
+  "NavigationCommands": [
     {
-      "PageName": "OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection",
+      "PageName": "OpcenterEXFN_ReferenceData.StateMachine_Master",
       "Commands": [
         {
-          "ButtonName": "actionButton2",
+          "ButtonName": "actionButton1",
           "Caption": "Create",
-          "ActionType": "Forms$CreateObjectClientAction",
-          "ActionName": "Create Object",
-          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension",
-          "TargetCommand": "Reference.CreateUoMDimension"
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine",
+          "TargetCommandName": "CreateStateMachine",
+          "TargetAppName": "Reference"
         },
         {
-          "ButtonName": "actionButton11",
+          "ButtonName": "actionButton2",
           "Caption": "Details",
-          "ActionType": "Forms$FormAction",
-          "ActionName": "",
-          "TargetPage": "OpcenterEXFN_ReferenceData.UoMDimension_Details",
-          "TargetCommand": ""
+          "TargetPage": "OpcenterEXFN_ReferenceData.StateMachine_Details",
+          "TargetCommandName": "",
+          "TargetAppName": ""
         },
         {
-          "ButtonName": "actionButton12",
+          "ButtonName": "actionButton4",
           "Caption": "Edit",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension_ShowPanel_SingleSelection",
-          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension",
-          "TargetCommand": "Reference.UpdateUoMDimension"
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine",
+          "TargetCommandName": "UpdateStateMachine",
+          "TargetAppName": "Reference"
         },
         {
-          "ButtonName": "actionButton13",
-          "Caption": "Unhide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnhideUoMDimesnion",
-          "TargetPage": "",
-          "TargetCommand": "Reference.UnhideUoMDimension"
-        },
-        {
-          "ButtonName": "actionButton14",
+          "ButtonName": "actionButton5",
           "Caption": "Hide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_HideUoMDimension",
           "TargetPage": "",
-          "TargetCommand": "Reference.HideUoMDimension"
+          "TargetCommandName": "HideStateMachine",
+          "TargetAppName": "Reference"
         },
         {
-          "ButtonName": "actionButton15",
+          "ButtonName": "actionButton7",
+          "Caption": "Unhide",
+          "TargetPage": "",
+          "TargetCommandName": "UnhideStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton8",
           "Caption": "Freeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_FreezeUoMDimension",
           "TargetPage": "",
-          "TargetCommand": "Reference.FreezeUoMDimension"
+          "TargetCommandName": "FreezeStateMachine",
+          "TargetAppName": "Reference"
         },
         {
-          "ButtonName": "actionButton16",
+          "ButtonName": "actionButton9",
           "Caption": "Unfreeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnfreezeUoMDimension",
           "TargetPage": "",
-          "TargetCommand": "Reference.UnfreezeUoMDimension"
+          "TargetCommandName": "UnfreezeStateMachine",
+          "TargetAppName": "Reference"
         },
         {
-          "ButtonName": "actionButton17",
+          "ButtonName": "actionButton3",
           "Caption": "Delete",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_DeleteUoMDimension_SingleSelection",
           "TargetPage": "",
-          "TargetCommand": "Reference.DeleteUoMDimension"
+          "TargetCommandName": "DeleteStateMachine",
+          "TargetAppName": "Reference"
         }
       ]
     },
@@ -1511,42 +1503,37 @@
         {
           "ButtonName": "actionButton1",
           "Caption": "Create",
-          "ActionType": "Forms$CreateObjectClientAction",
-          "ActionName": "Create Object",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatus",
-          "TargetCommand": "Reference.CreateStatus"
+          "TargetCommandName": "CreateStatus",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton2",
           "Caption": "Details",
-          "ActionType": "Forms$NoAction",
-          "ActionName": "",
           "TargetPage": "",
-          "TargetCommand": ""
+          "TargetCommandName": "",
+          "TargetAppName": ""
         },
         {
           "ButtonName": "actionButton4",
           "Caption": "Edit",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStatus",
-          "TargetCommand": "Reference.UpdateStatus"
+          "TargetCommandName": "UpdateStatus",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton10",
           "Caption": "Initial",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_SetStatusInitial",
           "TargetPage": "",
-          "TargetCommand": "Reference.SetStatusAsInitial"
+          "TargetCommandName": "SetStatusAsInitial",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton5",
           "Caption": "Delete",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_DeleteStatus",
           "TargetPage": "",
-          "TargetCommand": "Reference.DeleteStatus"
+          "TargetCommandName": "DeleteStatus",
+          "TargetAppName": "Reference"
         }
       ]
     },
@@ -1556,103 +1543,30 @@
         {
           "ButtonName": "actionButton1",
           "Caption": "Create",
-          "ActionType": "Forms$CreateObjectClientAction",
-          "ActionName": "Create Object",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition",
-          "TargetCommand": "Reference.CreateStatusBehaviorDefinition"
+          "TargetCommandName": "CreateStatusBehaviorDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton2",
           "Caption": "Details",
-          "ActionType": "Forms$FormAction",
-          "ActionName": "",
           "TargetPage": "OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details",
-          "TargetCommand": ""
+          "TargetCommandName": "",
+          "TargetAppName": ""
         },
         {
           "ButtonName": "actionButton4",
           "Caption": "Edit",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UpdateStatusBehaviorDefinition_ShowPanel",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition",
-          "TargetCommand": "Reference.UpdateStatusBehaviorDefinition"
+          "TargetCommandName": "UpdateStatusBehaviorDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton3",
           "Caption": "Delete",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusBehaviorDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.DeleteStatusBehaviorDefinition"
-        }
-      ]
-    },
-    {
-      "PageName": "OpcenterEXFN_ReferenceData.StateMachine_Master",
-      "Commands": [
-        {
-          "ButtonName": "actionButton1",
-          "Caption": "Create",
-          "ActionType": "Forms$CreateObjectClientAction",
-          "ActionName": "Create Object",
-          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine",
-          "TargetCommand": "Reference.CreateStateMachine"
-        },
-        {
-          "ButtonName": "actionButton2",
-          "Caption": "Details",
-          "ActionType": "Forms$FormAction",
-          "ActionName": "",
-          "TargetPage": "OpcenterEXFN_ReferenceData.StateMachine_Details",
-          "TargetCommand": ""
-        },
-        {
-          "ButtonName": "actionButton4",
-          "Caption": "Edit",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine_ShowPanel",
-          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine",
-          "TargetCommand": "Reference.UpdateStateMachine"
-        },
-        {
-          "ButtonName": "actionButton5",
-          "Caption": "Hide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_HideStateMachine",
-          "TargetPage": "",
-          "TargetCommand": "Reference.HideStateMachine"
-        },
-        {
-          "ButtonName": "actionButton7",
-          "Caption": "Unhide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine",
-          "TargetPage": "",
-          "TargetCommand": "Reference.UnhideStateMachine"
-        },
-        {
-          "ButtonName": "actionButton8",
-          "Caption": "Freeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine",
-          "TargetPage": "",
-          "TargetCommand": "Reference.FreezeStateMachine"
-        },
-        {
-          "ButtonName": "actionButton9",
-          "Caption": "Unfreeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine",
-          "TargetPage": "",
-          "TargetCommand": "Reference.UnfreezeStateMachine"
-        },
-        {
-          "ButtonName": "actionButton3",
-          "Caption": "Delete",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_DeleteStateMachine",
-          "TargetPage": "",
-          "TargetCommand": "Reference.DeleteStateMachine"
+          "TargetCommandName": "DeleteStatusBehaviorDefinition",
+          "TargetAppName": "Reference"
         }
       ]
     },
@@ -1662,58 +1576,51 @@
         {
           "ButtonName": "actionButton1",
           "Caption": "Create",
-          "ActionType": "Forms$CreateObjectClientAction",
-          "ActionName": "Create Object",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatusDefinition",
-          "TargetCommand": "Reference.CreateStatusDefinition"
+          "TargetCommandName": "CreateStatusDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton2",
           "Caption": "Edit",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UpdateStatusDefinition_ShowPanel",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStatusDefinition",
-          "TargetCommand": "Reference.UpdateStatusDefinition"
+          "TargetCommandName": "UpdateStatusDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton4",
           "Caption": "Hide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_HideStatusDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.HideStatusDefinition"
+          "TargetCommandName": "HideStatusDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton5",
           "Caption": "Unhide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnhideStatusDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.UnhideStatusDefinition"
+          "TargetCommandName": "UnhideStatusDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton6",
           "Caption": "Freeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_FreezeStatusDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.FreezeStatusDefinition"
+          "TargetCommandName": "FreezeStatusDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton7",
           "Caption": "Unfreeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.UnfreezeStatusDefinition"
+          "TargetCommandName": "UnfreezeStatusDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton3",
           "Caption": "Delete",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.DeleteStatusDefinition"
+          "TargetCommandName": "DeleteStatusDefinition",
+          "TargetAppName": "Reference"
         }
       ]
     },
@@ -1723,55 +1630,110 @@
         {
           "ButtonName": "actionButton1",
           "Caption": "Create",
-          "ActionType": "Forms$CreateObjectClientAction",
-          "ActionName": "Create Object",
           "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition",
-          "TargetCommand": "Reference.CreateStatusTransitionDefinition"
+          "TargetCommandName": "CreateStatusTransitionDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton4",
           "Caption": "Hide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_HideStatusTransitionDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.HideStatusTransitionDefinition"
+          "TargetCommandName": "HideStatusTransitionDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton5",
           "Caption": "Unhide",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnhideStatusTransitionDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.UnhideStatusTransitionDefinition"
+          "TargetCommandName": "UnhideStatusTransitionDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton6",
           "Caption": "Freeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_FreezeStatusTransitionDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.FreezeStatusTransitionDefinition"
+          "TargetCommandName": "FreezeStatusTransitionDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton7",
           "Caption": "Unfreeze",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusTransitionDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.UnfreezeStatusTransitionDefinition"
+          "TargetCommandName": "UnfreezeStatusTransitionDefinition",
+          "TargetAppName": "Reference"
         },
         {
           "ButtonName": "actionButton3",
           "Caption": "Delete",
-          "ActionType": "Forms$CallNanoflowClientAction",
-          "ActionName": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransitionDefinition",
           "TargetPage": "",
-          "TargetCommand": "Reference.DeleteStatusTransitionDefinition"
+          "TargetCommandName": "DeleteStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        }
+      ]
+    },
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection",
+      "Commands": [
+        {
+          "ButtonName": "actionButton2",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension",
+          "TargetCommandName": "CreateUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton11",
+          "Caption": "Details",
+          "TargetPage": "OpcenterEXFN_ReferenceData.UoMDimension_Details",
+          "TargetCommandName": "",
+          "TargetAppName": ""
+        },
+        {
+          "ButtonName": "actionButton12",
+          "Caption": "Edit",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension",
+          "TargetCommandName": "UpdateUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton13",
+          "Caption": "Unhide",
+          "TargetPage": "",
+          "TargetCommandName": "UnhideUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton14",
+          "Caption": "Hide",
+          "TargetPage": "",
+          "TargetCommandName": "HideUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton15",
+          "Caption": "Freeze",
+          "TargetPage": "",
+          "TargetCommandName": "FreezeUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton16",
+          "Caption": "Unfreeze",
+          "TargetPage": "",
+          "TargetCommandName": "UnfreezeUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton17",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteUoMDimension",
+          "TargetAppName": "Reference"
         }
       ]
     }
   ],
-  "PagesAnalysis": [
+  "PageCommandsHierarchy": [
     {
       "Name": "PANEL_UpdateUoMDimension",
       "Module": "OpcenterEXFN_ReferenceData",
@@ -2194,10 +2156,10 @@
         "OpcenterEXFN_ReferenceData.ACT_HideUoMSubmultiple",
         "OpcenterEXFN_ReferenceData.ACT_DeleteUoMSubmultiple",
         "OpcenterEXFN_ReferenceData.DS_UoMFactor_ListForUoM",
-        "OpcenterEXFN_ReferenceData.DS_UoMFactor_Refresh",
         "OpcenterEXFN_ReferenceData.ACT_CreateUoMFactor_ShowPanel",
         "OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_ShowPanel",
         "OpcenterEXFN_ReferenceData.ACT_DeleteUoMFactor",
+        "OpcenterEXFN_ReferenceData.DS_UoMFactor_Refresh",
         "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_SingleSelection"
       ],
       "CallHierarchy": [
@@ -2323,9 +2285,9 @@
       "Name": "PANEL_CreateNumberingPattern",
       "Module": "OpcenterEXFN_ReferenceData",
       "MicroflowCalls": [
-        "OpcenterEXFN_ReferenceData.ACT_CreateNumberingPattern",
         "OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityName",
-        "OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityProperty"
+        "OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityProperty",
+        "OpcenterEXFN_ReferenceData.ACT_CreateNumberingPattern"
       ],
       "CallHierarchy": [
         {
@@ -2925,8 +2887,8 @@
       "Name": "Status_Details",
       "Module": "OpcenterEXFN_ReferenceData",
       "MicroflowCalls": [
-        "OpcenterEXFN_ReferenceData.DS_StatusBehavior",
         "OpcenterEXFN_ReferenceData.ACT_DisassociateStatusBehaviorDefinitionsFromStatus",
+        "OpcenterEXFN_ReferenceData.DS_StatusBehavior",
         "OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel",
         "OpcenterEXFN_ReferenceData.ACT_SetStatusInitial"
       ],
@@ -3359,6 +3321,586 @@
         "Reference.FreezeStatusTransitionDefinition",
         "Reference.UnfreezeStatusTransitionDefinition",
         "Reference.DeleteStatusTransitionDefinition"
+      ]
+    }
+  ],
+  "PageCommands": [
+    {
+      "PageName": "PANEL_UpdateUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateUoMDimension"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateBaseUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateUoMDimension"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateBaseUoM_UoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateBaseUoM"
+      ]
+    },
+    {
+      "PageName": "PANEL_UoMDimensionUpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateUoM"
+      ]
+    },
+    {
+      "PageName": "UoMDimension_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UnhideUoM",
+        "HideUoM",
+        "DeleteUoM"
+      ]
+    },
+    {
+      "PageName": "UoMDimension_Master_SingleSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UnhideUoMDimension",
+        "HideUoMDimension",
+        "FreezeUoMDimension",
+        "UnfreezeUoMDimension",
+        "DeleteUoMDimension"
+      ]
+    },
+    {
+      "PageName": "UoMDimension_Master_MultiSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "DeleteUoM"
+      ]
+    },
+    {
+      "PageName": "UoM_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UnhideUoM",
+        "HideUoM",
+        "DeleteUoM"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateBaseUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateBaseUoM"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateUoM"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateMultipleOrSubmultipleUoM"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateMultipleOrSubmultipleUoM"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateUoMFactor"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "APPNAME",
+        "EXFN_ServiceLayer"
+      ],
+      "TargetCommands": [
+        "UpdateUoMFactor",
+        "COMMANDNAME",
+        "CallCommandAction"
+      ]
+    },
+    {
+      "PageName": "UoM_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UnhideUoM",
+        "HideUoM",
+        "DeleteUoM",
+        "DeleteUoMFactor"
+      ]
+    },
+    {
+      "PageName": "NumberingPattern_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "FreezeNumberingPattern",
+        "UnfreezeNumberingPattern",
+        "DeleteNumberingPattern"
+      ]
+    },
+    {
+      "PageName": "PANEL_PreviewNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [],
+      "TargetCommands": []
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateNumberingPattern"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateNumberingPattern"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPatternPart_ValidatePart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateNumberingPatternPart"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateNumberingPatternPart"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPatternForNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateNumberingPattern"
+      ]
+    },
+    {
+      "PageName": "NumberingPattern_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "MoveNumberingPatternPart",
+        "DeleteNumberingPatternPart",
+        "FreezeNumberingPattern",
+        "UnfreezeNumberingPattern"
+      ]
+    },
+    {
+      "PageName": "Counter_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "AppName"
+      ],
+      "TargetCommands": [
+        "HideCounter",
+        "UnhideCounter",
+        "FreezeCounter",
+        "UnfreezeCounter",
+        "ResetCounter",
+        "DeleteCounter",
+        "CommandName"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateCounter",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateCounter"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateCounter",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateCounter"
+      ]
+    },
+    {
+      "PageName": "Counter_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "HideCounter",
+        "UnhideCounter",
+        "FreezeCounter",
+        "UnfreezeCounter",
+        "ResetCounter"
+      ]
+    },
+    {
+      "PageName": "StatusDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "HideStatusDefinition",
+        "UnhideStatusDefinition",
+        "FreezeStatusDefinition",
+        "UnfreezeStatusDefinition",
+        "DeleteStatusDefinition"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStatusDefinition"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateStatusDefinition"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStatusBehaviorDefinition"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateStatusBehaviorDefinition"
+      ]
+    },
+    {
+      "PageName": "StatusBehaviorDefinition_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [],
+      "TargetCommands": []
+    },
+    {
+      "PageName": "StatusBehaviorDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "DeleteStatusBehaviorDefinition"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateStatus"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStatus"
+      ]
+    },
+    {
+      "PageName": "PANEL_AssociateStatusBehaviorDefinitionsWithStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "AssociateStatusBehaviorDefinitionsWithStatus"
+      ]
+    },
+    {
+      "PageName": "Status_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "DisassociateStatusBehaviorDefinitionsFromStatus",
+        "SetStatusAsInitial"
+      ]
+    },
+    {
+      "PageName": "Status_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "SetStatusAsInitial",
+        "DeleteStatus"
+      ]
+    },
+    {
+      "PageName": "StateMachine_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "HideStateMachine",
+        "UnhideStateMachine",
+        "FreezeStateMachine",
+        "UnfreezeStateMachine",
+        "DeleteStateMachine"
+      ]
+    },
+    {
+      "PageName": "StateMachine_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "SetStatusAsInitial",
+        "DeleteStatus",
+        "DeleteStatusTransition",
+        "HideStateMachine",
+        "UnhideStateMachine",
+        "FreezeStateMachine",
+        "UnfreezeStateMachine"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateStatus"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateStatusTransition"
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "UpdateStateMachine"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStatus"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStateMachine"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStatusTransition"
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference"
+      ],
+      "TargetCommands": [
+        "CreateStatusTransitionDefinition"
+      ]
+    },
+    {
+      "PageName": "StatusTransitionDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "TargetAppNames": [
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference",
+        "Reference"
+      ],
+      "TargetCommands": [
+        "HideStatusTransitionDefinition",
+        "UnhideStatusTransitionDefinition",
+        "FreezeStatusTransitionDefinition",
+        "UnfreezeStatusTransitionDefinition",
+        "DeleteStatusTransitionDefinition"
       ]
     }
   ]
