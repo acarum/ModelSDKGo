@@ -2,7 +2,7 @@
   "ProjectName": "OC EX System",
   "MendixVersion": "11.10.0",
   "MPRPath": "C:\\Workspaces\\Mendix\\MDUI\\System_Mendix_CLI\\OC EX System.mpr",
-  "GeneratedAt": "2026-05-06 15:44:42",
+  "GeneratedAt": "2026-05-07 18:38:13",
   "Entities": {
     "EXFN_AuditTrailViewer": [
       {
@@ -38,6 +38,27 @@
           "AssociatedRows (String)"
         ],
         "PublishedFrom": "AuditTrailViewer",
+        "EntityTypeName": ""
+      }
+    ],
+    "MyModule": [
+      {
+        "Name": "Feature",
+        "Module": "MyModule",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "IsOption (Boolean)"
+        ],
+        "PublishedFrom": "BoFService",
         "EntityTypeName": ""
       }
     ],
@@ -1394,5 +1415,417 @@
     }
   ],
   "SystemRoles": [],
-  "PageCommands": null
+  "PageCommands": [],
+  "PagesAnalysis": [
+    {
+      "Name": "StatusTransitionDefinition_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateStatusTransition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Account_Edit",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateUoMFactor",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "SN_NavbarProfile",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ClientConfiguration_NewEdit",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Counter_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "RuntimeUIApplicationsByPlant",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStatusTransitionDefinition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "UoMDimension_Master_SingleSelection",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Counter_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStatusStateMachine",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Status_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateBaseUoM_UoMDimension",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateStatusDefinition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateStatusStateMachine",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "DataArchivingManager",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "RuntimeInstances",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateUoMSubmultiple",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "StatusBehaviorDefinition_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "UserAvatar",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Account_New",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "BottomBarInverse_Template",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Snippet_Configuration",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateCounter",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStatusDefinition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPattern",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "AuditTrailRecord_View",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "SessionManager",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Status_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Buffer_Overview",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateStateMachine",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateBaseUoMDimension",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateUoMDimension",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "NumberingPattern_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "FeedbackWidget_Template",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateNumberingPattern",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStateMachine",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_PreviewNumberingPattern",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "FeedbackWidget",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ReadMe",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ScheduledEvents",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "UoM_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateUoMFactor",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPatternForNumberingPatternPart",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_AssociateStatusBehaviorDefinitionsWithStatus",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "AuditTrail",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "UoM_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateBaseUoM",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "MobileFeatures",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPatternPart",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPatternPart_ValidatePart",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateStatus",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UoMDimensionUpdateUoM",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateUoM",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ClientConfiguration_Overview",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "UoMDimension_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStatusTransition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ActiveSessions",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "MySnippet",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateBuffer",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStatus",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "AuditTrailViewer",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateStatusBehaviorDefinition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ChangePasswordForm",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "MyAccount",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "StatusDefinition_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "SNIPPET_VerticalCommandBar_Button",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "LanguageSelectorWidget",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "SN_Native_NavbarProfile",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "ChangeMyPasswordForm",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "NumberingPattern_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "StateMachine_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "UoMDimension_Master_MultiSelection",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "StatusBehaviorDefinition_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Account_Overview",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "StateMachine_Details",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "Buffer_Master",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateUoMSubmultiple",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateCounter",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_CreateStatusBehaviorDefinition",
+      "Module": "",
+      "TargetCommands": null
+    },
+    {
+      "Name": "OC_EX_HomePage",
+      "Module": "",
+      "TargetCommands": null
+    }
+  ]
 }

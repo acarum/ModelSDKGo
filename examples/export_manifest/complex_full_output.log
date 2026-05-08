@@ -48,16 +48,32 @@
   Γ£à Completed: Navigation structure extracted
   ≡ƒôè Result: 3 navigation item(s) found
 
-[Phase 6/7] ≡ƒôä Analyzing pages/panels...
-  DEBUG: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateChangePackage -> AppName=''AppU4DM'
-' (len=10), CommandName=''CreateChangePackage'
-' (len=22)
-  DEBUG: After trim -> AppName='AppU4DM'
-', CommandName='CreateChangePackage'
-', commandKey='AppU4DM'
-.CreateChangePackage'
-'
-  ≡ƒöì Built microflow->command map with 81 entries
-  ≡ƒöä Processed 100 microflows...
-  ≡ƒöä Processed 200 microflows...
-  ≡ƒöä Processed 300 microflows...
+[Phase 6/7] ≡ƒôä Analyzing pages/panels with commands...
+  ≡ƒöì Phase 1: Building microflowΓåÆcommand lookup map...
+  Γ£à Built 81 microflowΓåÆcommand mappings
+  ≡ƒöì Phase 2: Querying all units from database...
+  Γ£à Loaded 2806 units from database
+  ≡ƒöì Phase 3: Building module cache for all units...
+  Γ£à Module cache built (0 entries)
+  ≡ƒöì Phase 4: Filtering pages/snippets by BSON type...
+  Γ£à Found 181 page(s)/snippet(s) from 2806 units
+  ≡ƒöì Phase 5: Analyzing pages with direct command mapping...
+  Γ£à Analyzed 154 page(s)/panel(s)
+  Γä╣∩╕Å Pages with commands: 3
+  Γ£à Completed: Pages/panels analysis collected
+  ≡ƒôè Result: 154 page(s)/panel(s) analyzed
+
+[Phase 7/7] ≡ƒô¥ Generating Markdown report...
+  ≡ƒôä Output file: Opcenter EX DS Complex Manufacturing-manifest.md
+
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+Γ£à Report generated successfully!
+
+≡ƒôè Summary:
+  ΓÇó External Entities: 87 (in 6 modules)
+  ΓÇó Microflow Calls: 82
+  ΓÇó Signal Manager Subscriptions: 64
+  ΓÇó Navigation Items: 3
+
+≡ƒôü Report saved to: Opcenter EX DS Complex Manufacturing-manifest.md

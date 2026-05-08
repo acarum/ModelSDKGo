@@ -1,0 +1,80 @@
+≡ƒöì Opening MPR: C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr
+≡ƒôª Project: OC EX System
+≡ƒôî Mendix Version: 11.10.0
+
+
+≡ƒôï Analysis plan: 7 phase(s) to complete
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+[Phase 1/7] ≡ƒöÄ Scanning for external entities...
+  ≡ƒöì Loading domain models...
+  ≡ƒôª Found 17 domain model(s) to analyze
+  Γ£ô Module 'MyModule': found 1 external entities
+  Γ£ô Module 'EXFN_AuditTrailViewer': found 1 external entities
+  Γ£ô Module 'OpcenterEXFN_ReferenceData': found 20 external entities
+
+  Γ£à Completed: Analyzed 17 modules
+  ≡ƒôè Result: 22 external entities in 3 modules
+
+[Phase 2/7] ≡ƒöÄ Scanning for microflow/action calls...
+  ≡ƒöì Loading microflows...
+  ≡ƒôª Found 253 microflow(s) to analyze
+
+  Γ£à Completed: Analyzed 253 microflows
+  ≡ƒôè Result: 78 microflow/action calls found
+
+[Phase 3/7] ≡ƒöÄ Scanning for Signal Manager widgets...
+  ≡ƒöì Pre-filtering documents with Signal Manager widgets...
+  ≡ƒôè Found 2 documents to scan (filtered from 121 total, 98.3% reduction)
+  ≡ƒôä Scanning 1 filtered page(s)...
+  ≡ƒôä Scanning 1 filtered snippet(s)...
+
+  Γ£à Completed: Analyzed 1 filtered pages and 1 filtered snippets
+  ≡ƒôè Result: 3 signal subscription(s) found (2 in pages, 1 in snippets)
+
+[Phase 4/7] ≡ƒöÄ Scanning for system roles and page accessibility...
+  ≡ƒöì Loading security configuration...
+
+  Γ£à Completed: Security configuration analyzed
+  ≡ƒôè Result: 2 system role(s) and 82 page(s)/snippet(s) with access rules
+
+[Phase 5/7] ≡ƒöÄ Scanning for navigation items...
+  ≡ƒöì Looking for NavigationDocument...
+  ≡ƒôï Extracting navigation hierarchy...
+
+  Γ£à Completed: Navigation structure extracted
+  ≡ƒôè Result: 13 navigation item(s) found
+
+[Phase 6/7] ≡ƒôä Analyzing pages/panels with commands...
+  ≡ƒöì Phase 1: Building microflowΓåÆcommand lookup map...
+  Γ£à Built 71 microflowΓåÆcommand mappings
+  ≡ƒöì Phase 2: Querying all units from database...
+  Γ£à Loaded 1090 units from database
+  ≡ƒöì Phase 3: Building module cache for all units...
+  Γ£à Module cache built (0 entries)
+  ≡ƒöì Phase 4: Filtering pages/snippets by BSON type...
+  Γ£à Found 82 page(s)/snippet(s) from 1090 units
+  ≡ƒöì Phase 5: Collecting microflow calls from pages...
+  Γ£à Found 120 unique microflow(s) called by pages
+  ≡ƒöì Building microflow cache for 120 microflow(s)...
+  Γ£à Cached 119 microflow(s)
+  ≡ƒöì Phase 6: Analyzing pages with command mapping and hierarchy...
+  Γ£à Analyzed 57 page(s)/panel(s)
+  Γä╣∩╕Å Pages with commands: 44
+  Γ£à Completed: Pages/panels analysis collected
+  ≡ƒôè Result: 57 page(s)/panel(s) analyzed
+
+[Phase 7/7] ≡ƒô¥ Generating Markdown report...
+  ≡ƒôä Output file: OC EX System-manifest.md
+
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+Γ£à Report generated successfully!
+
+≡ƒôè Summary:
+  ΓÇó External Entities: 22 (in 3 modules)
+  ΓÇó Microflow Calls: 78
+  ΓÇó Signal Manager Subscriptions: 3
+  ΓÇó Navigation Items: 13
+
+≡ƒôü Report saved to: OC EX System-manifest.md

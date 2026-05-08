@@ -49,15 +49,4 @@
   ≡ƒôè Result: 3 navigation item(s) found
 
 [Phase 6/7] ≡ƒôä Analyzing pages/panels...
-  DEBUG: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateChangePackage -> AppName=''AppU4DM'
-' (len=10), CommandName=''CreateChangePackage'
-' (len=22)
-  DEBUG: After trim -> AppName='AppU4DM'
-', CommandName='CreateChangePackage'
-', commandKey='AppU4DM'
-.CreateChangePackage'
-'
   ≡ƒöì Built microflow->command map with 81 entries
-  ≡ƒöä Processed 100 microflows...
-  ≡ƒöä Processed 200 microflows...
-  ≡ƒöä Processed 300 microflows...

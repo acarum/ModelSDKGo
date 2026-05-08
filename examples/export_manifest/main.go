@@ -112,16 +112,34 @@ type ManifestReport struct {
 	SystemRoles     []SystemRole            `json:"SystemRoles"`     // system roles
 	PageAccess      []PageAccessInfo        `json:"-"`               // page accessibility - excluded from export
 	PageCommands    []PageCommandInfo       `json:"PageCommands"`    // command bar actions from navigation pages
+	PagesAnalysis   []PageAnalysisInfo      `json:"PagesAnalysis"`   // detailed pages/panels analysis with recursive hierarchy
 }
 
 type ReportOptions struct {
-	IncludeEntities     bool
-	IncludeAttributes   bool
-	IncludeMicroflows   bool
-	IncludeWidgets      bool
-	IncludeNavigation   bool
-	IncludeRoles        bool
-	IncludePageCommands bool
+	IncludeEntities      bool
+	IncludeAttributes    bool
+	IncludeMicroflows    bool
+	IncludeWidgets       bool
+	IncludeNavigation    bool
+	IncludeRoles         bool
+	IncludePageCommands  bool
+	IncludePagesAnalysis bool
+}
+
+// MicroflowCallHierarchy represents a recursive call tree
+type MicroflowCallHierarchy struct {
+	Name  string
+	Level int
+	Calls []MicroflowCallHierarchy
+}
+
+// PageAnalysisInfo stores detailed analysis of pages/panels
+type PageAnalysisInfo struct {
+	Name           string
+	Module         string
+	MicroflowCalls []string
+	CallHierarchy  []MicroflowCallHierarchy
+	TargetCommands []string
 }
 
 // ReportEntry represents a report generation result
@@ -267,6 +285,7 @@ func main() {
 	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
 	includePageCommands := flag.Bool("include-page-commands", false, "Include command bar actions from navigation pages in the report")
+	includePagesAnalysis := flag.Bool("include-pages-analysis", false, "Include detailed pages/panels analysis with recursive microflow hierarchy (up to 5 levels)")
 	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
 	sourceDir := flag.String("source-dir", "", "Source directory to scan for MPR files recursively (batch mode)")
 	outputFormat := flag.String("output-format", "md", "Output format: 'md' (Markdown), 'json' (JSON), or 'both' (Markdown + JSON)")
@@ -301,13 +320,14 @@ func main() {
 
 	// Create report options
 	options := ReportOptions{
-		IncludeEntities:     *includeEntities,
-		IncludeAttributes:   *includeAttributes,
-		IncludeMicroflows:   *includeMicroflows,
-		IncludeWidgets:      *includeWidgets,
-		IncludeNavigation:   *includeNavigation,
-		IncludeRoles:        *includeRoles,
-		IncludePageCommands: *includePageCommands,
+		IncludeEntities:      *includeEntities,
+		IncludeAttributes:    *includeAttributes,
+		IncludeMicroflows:    *includeMicroflows,
+		IncludeWidgets:       *includeWidgets,
+		IncludeNavigation:    *includeNavigation,
+		IncludeRoles:         *includeRoles,
+		IncludePageCommands:  *includePageCommands,
+		IncludePagesAnalysis: *includePagesAnalysis,
 	}
 
 	// Check if batch mode (source-dir) or single file mode
@@ -655,6 +675,9 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	if options.IncludePageCommands {
 		totalPhases++
 	}
+	if options.IncludePagesAnalysis {
+		totalPhases++ // Phase for pages analysis
+	}
 	totalPhases++ // Final report generation
 
 	fmt.Printf("\n📋 Analysis plan: %d phase(s) to complete\n", totalPhases)
@@ -736,6 +759,20 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 		report.PageCommands = pageCommands
 		fmt.Printf("  ✅ Completed: Page commands collected\n")
 		fmt.Printf("  📊 Result: %d page(s) with commands\n", len(report.PageCommands))
+	}
+
+	// ==== SECTION 7: Pages Analysis (Detailed with Recursive Hierarchy) ====
+	if options.IncludePagesAnalysis {
+		currentPhase++
+		fmt.Printf("\n[Phase %d/%d] 🔍 Analyzing pages/panels with recursive microflow hierarchy...\n", currentPhase, totalPhases)
+		pagesAnalysis, err := collectPagesWithMicroflows(db, contentsDir)
+		if err != nil {
+			fmt.Printf("Error analyzing pages: %v\n", err)
+			os.Exit(1)
+		}
+		report.PagesAnalysis = pagesAnalysis
+		fmt.Printf("  ✅ Completed: Pages analysis with recursive hierarchy\n")
+		fmt.Printf("  📊 Result: %d page(s)/panel(s) analyzed\n", len(report.PagesAnalysis))
 	}
 
 	// Generate reports based on format
@@ -4714,6 +4751,418 @@ func extractPageAccess(content map[string]interface{}, pageName string, moduleNa
 	return pageAccess
 }
 
+// ==== Pages Analysis with Recursive Hierarchy (Section 6) ====
+
+// collectPagesWithMicroflows collects all pages/panels and analyzes their microflow/nanoflow calls with recursive hierarchy
+func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisInfo, error) {
+	// Query all Units
+	query := `SELECT UnitID, ContainerID FROM Unit`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query units: %w", err)
+	}
+	defer rows.Close()
+
+	var pagesAnalysis []PageAnalysisInfo
+	microflowCache := make(map[string]map[string]interface{}) // Cache: microflowName -> content
+	hierarchyCache := make(map[string][]MicroflowCallHierarchy) // Cache: microflowName -> hierarchy
+	
+	processedCount := 0
+	cacheHits := 0
+	scannedCount := 0
+	pagesFoundCount := 0
+	fileReadErrors := 0
+	bsonParseErrors := 0
+
+	for rows.Next() {
+		scannedCount++
+		var unitIDBlob, containerIDBlob []byte
+		if err := rows.Scan(&unitIDBlob, &containerIDBlob); err != nil {
+			continue
+		}
+
+		unitID := blobToUUID(unitIDBlob)
+		if unitID == "" {
+			continue
+		}
+		
+		// Remove dashes for file path
+		cleanID := strings.ReplaceAll(unitID, "-", "")
+		filePath := filepath.Join(contentsDir, cleanID[:2], cleanID[2:4], unitID+".mxunit")
+
+		// Read BSON
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			fileReadErrors++
+			continue
+		}
+
+		var doc map[string]interface{}
+		err = bson.Unmarshal(data, &doc)
+		if err != nil {
+			bsonParseErrors++
+			continue
+		}
+
+		// Only process Forms$Page (pages and panels)
+		typeField, ok := doc["$Type"].(string)
+		if !ok || typeField != "Forms$Page" {
+			continue
+		}
+		
+		pagesFoundCount++
+
+		// Get page name and module
+		pageName, ok := doc["Name"].(string)
+		if !ok || pageName == "" {
+			continue
+		}
+
+		// Get module name from ContainerID
+		containerID := blobToUUID(containerIDBlob)
+		moduleName := getModuleNameFromContainerID(db, contentsDir, containerID)
+
+		// Extract microflow/nanoflow calls from page
+		microflowCalls := extractMicroflowCallsFromPage(doc)
+
+		// Build call hierarchy for each microflow (up to 5 levels deep)
+		var callHierarchy []MicroflowCallHierarchy
+		for _, mfName := range microflowCalls {
+			// Check cache first
+			if cachedHierarchy, found := hierarchyCache[mfName]; found {
+				callHierarchy = append(callHierarchy, MicroflowCallHierarchy{
+					Name:  mfName,
+					Level: 0,
+					Calls: cachedHierarchy,
+				})
+				cacheHits++
+			} else {
+				// Build hierarchy and cache it
+				hierarchy := buildMicroflowCallHierarchy(mfName, 0, 5, db, contentsDir, microflowCache, make(map[string]bool))
+				hierarchyCache[mfName] = hierarchy.Calls
+				callHierarchy = append(callHierarchy, hierarchy)
+			}
+		}
+
+		// Extract target commands from hierarchy
+		targetCommands := extractCommandsFromHierarchy(callHierarchy, db, contentsDir, microflowCache)
+
+		pagesAnalysis = append(pagesAnalysis, PageAnalysisInfo{
+			Name:           pageName,
+			Module:         moduleName,
+			MicroflowCalls: microflowCalls,
+			CallHierarchy:  callHierarchy,
+			TargetCommands: targetCommands,
+		})
+
+		processedCount++
+	}
+
+	fmt.Printf("  📦 Scanned %d units, %d file read errors, %d BSON parse errors\n", scannedCount, fileReadErrors, bsonParseErrors)
+	fmt.Printf("  📦 Found %d Forms$Page documents, processed %d pages\n", pagesFoundCount, processedCount)
+	fmt.Printf("  📦 Built call hierarchies: %d microflows cached, %d hierarchies reused\n", len(microflowCache), cacheHits)
+	return pagesAnalysis, nil
+}
+
+// buildMicroflowCallHierarchy builds a recursive call tree for a microflow/nanoflow
+func buildMicroflowCallHierarchy(name string, currentLevel int, maxDepth int, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}, visited map[string]bool) MicroflowCallHierarchy {
+	hierarchy := MicroflowCallHierarchy{
+		Name:  name,
+		Level: currentLevel,
+		Calls: []MicroflowCallHierarchy{},
+	}
+
+	// Stop recursion if max depth reached or already visited (cycle detection)
+	if currentLevel >= maxDepth || visited[name] {
+		return hierarchy
+	}
+
+	// Mark as visited
+	visited[name] = true
+
+	// Load microflow content (check cache first)
+	var content map[string]interface{}
+	var ok bool
+	if content, ok = cache[name]; !ok {
+		// Not in cache - load from database on-the-fly
+		content = loadMicroflowByName(db, contentsDir, name)
+		if content != nil {
+			cache[name] = content
+		} else {
+			// Microflow not found
+			delete(visited, name)
+			return hierarchy
+		}
+	}
+
+	// Extract called microflows/nanoflows
+	calledFlows := extractMicroflowCallsFromMicroflow(content)
+
+	// Recursively build hierarchy for each called flow
+	for _, calledFlow := range calledFlows {
+		childHierarchy := buildMicroflowCallHierarchy(calledFlow, currentLevel+1, maxDepth, db, contentsDir, cache, visited)
+		hierarchy.Calls = append(hierarchy.Calls, childHierarchy)
+	}
+
+	// Unmark visited for this path (allow other branches)
+	delete(visited, name)
+
+	return hierarchy
+}
+
+// extractMicroflowCallsFromPage extracts microflow/nanoflow names from a page document
+func extractMicroflowCallsFromPage(pageDoc map[string]interface{}) []string {
+	var microflows []string
+	seen := make(map[string]bool)
+
+	var traverse func(interface{})
+	traverse = func(v interface{}) {
+		switch val := v.(type) {
+		case map[string]interface{}:
+			// Check for Nanoflow field (direct reference)
+			if nanoflowField, ok := val["Nanoflow"].(string); ok && nanoflowField != "" {
+				if !seen[nanoflowField] {
+					microflows = append(microflows, nanoflowField)
+					seen[nanoflowField] = true
+				}
+			}
+			// Check for Microflow field (direct reference)
+			if microflowField, ok := val["Microflow"].(string); ok && microflowField != "" {
+				if !seen[microflowField] {
+					microflows = append(microflows, microflowField)
+					seen[microflowField] = true
+				}
+			}
+			// Check for MicroflowCall field
+			if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
+				if !seen[mfCall] {
+					microflows = append(microflows, mfCall)
+					seen[mfCall] = true
+				}
+			}
+			// Traverse nested objects
+			for _, v2 := range val {
+				traverse(v2)
+			}
+		case []interface{}:
+			for _, item := range val {
+				traverse(item)
+			}
+		case primitive.A:
+			for _, item := range val {
+				traverse(item)
+			}
+		}
+	}
+
+	traverse(pageDoc)
+	return microflows
+}
+
+// extractMicroflowCallsFromMicroflow extracts microflow/nanoflow calls from a microflow document
+func extractMicroflowCallsFromMicroflow(microflowDoc map[string]interface{}) []string {
+	var microflows []string
+	seen := make(map[string]bool)
+
+	var traverse func(interface{})
+	traverse = func(v interface{}) {
+		switch val := v.(type) {
+		case map[string]interface{}:
+			// Check for $Type = "Microflows$MicroflowCall" or "Microflows$NanoflowCall"
+			if typeField, ok := val["$Type"].(string); ok {
+				if typeField == "Microflows$MicroflowCall" || typeField == "Microflows$NanoflowCall" {
+					// Extract MicroflowCall field
+					if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
+						if !seen[mfCall] {
+							microflows = append(microflows, mfCall)
+							seen[mfCall] = true
+						}
+					}
+				}
+			}
+			// Check for direct Nanoflow field reference
+			if nanoflowField, ok := val["Nanoflow"].(string); ok && nanoflowField != "" {
+				if !seen[nanoflowField] {
+					microflows = append(microflows, nanoflowField)
+					seen[nanoflowField] = true
+				}
+			}
+			// Check for direct Microflow field reference
+			if microflowField, ok := val["Microflow"].(string); ok && microflowField != "" {
+				if !seen[microflowField] {
+					microflows = append(microflows, microflowField)
+					seen[microflowField] = true
+				}
+			}
+			// Traverse nested objects
+			for _, v2 := range val {
+				traverse(v2)
+			}
+		case []interface{}:
+			for _, item := range val {
+				traverse(item)
+			}
+		case primitive.A:
+			for _, item := range val {
+				traverse(item)
+			}
+		}
+	}
+
+	traverse(microflowDoc)
+	return microflows
+}
+
+// loadMicroflowByName loads a microflow/nanoflow by name from the database
+func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string]interface{} {
+	// Query all Units (brute force scan)
+	query := `SELECT UnitID FROM Unit`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var unitIDBlob []byte
+		if err := rows.Scan(&unitIDBlob); err != nil {
+			continue
+		}
+
+		unitID := hex.EncodeToString(unitIDBlob)
+		filePath := filepath.Join(contentsDir, unitID[:2], unitID[2:4], unitID+".mxunit")
+
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			continue
+		}
+
+		var doc map[string]interface{}
+		err = bson.Unmarshal(data, &doc)
+		if err != nil {
+			continue
+		}
+
+		// Check if this is a Microflow or Nanoflow with matching name
+		typeField, ok := doc["$Type"].(string)
+		if !ok {
+			continue
+		}
+		if typeField != "Microflows$Microflow" && typeField != "Microflows$Nanoflow" {
+			continue
+		}
+
+		nameField, ok := doc["Name"].(string)
+		if ok && nameField == name {
+			return doc
+		}
+	}
+
+	return nil
+}
+
+// extractCommandsFromHierarchy extracts all external action commands from a call hierarchy
+func extractCommandsFromHierarchy(hierarchy []MicroflowCallHierarchy, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}) []string {
+	var commands []string
+	seen := make(map[string]bool)
+
+	var traverse func([]MicroflowCallHierarchy)
+	traverse = func(nodes []MicroflowCallHierarchy) {
+		for _, node := range nodes {
+			// Load microflow content
+			var content map[string]interface{}
+			var ok bool
+			if content, ok = cache[node.Name]; !ok {
+				// Not in cache - load on-the-fly
+				content = loadMicroflowByName(db, contentsDir, node.Name)
+				if content != nil {
+					cache[node.Name] = content
+				}
+			}
+
+			if content != nil {
+				// Extract commands from this microflow
+				nodeCommands := extractExternalActionsFromContent(content)
+				for _, cmd := range nodeCommands {
+					if !seen[cmd] {
+						commands = append(commands, cmd)
+						seen[cmd] = true
+					}
+				}
+			}
+
+			// Traverse children
+			if len(node.Calls) > 0 {
+				traverse(node.Calls)
+			}
+		}
+	}
+
+	traverse(hierarchy)
+	return commands
+}
+
+// extractExternalActionsFromContent extracts ExternalAction and CallExternalAction commands from microflow content
+func extractExternalActionsFromContent(content map[string]interface{}) []string {
+	var commands []string
+	seen := make(map[string]bool)
+
+	var traverse func(interface{})
+	traverse = func(v interface{}) {
+		switch val := v.(type) {
+		case map[string]interface{}:
+			// Check for $Type
+			if typeField, ok := val["$Type"].(string); ok {
+				// Pattern 1: Microflows$ExternalAction (legacy)
+				if typeField == "Microflows$ExternalAction" {
+					appName, _ := val["AppName"].(string)
+					commandName, _ := val["CommandName"].(string)
+					if appName != "" && commandName != "" {
+						cmd := appName + "." + commandName
+						if !seen[cmd] {
+							commands = append(commands, cmd)
+							seen[cmd] = true
+						}
+					}
+				}
+				// Pattern 2: Microflows$CallExternalAction (OData Services)
+				if typeField == "Microflows$CallExternalAction" {
+					consumedService, _ := val["ConsumedODataService"].(string)
+					actionName, _ := val["Name"].(string)
+					if consumedService != "" && actionName != "" {
+						// Parse service name (format: "Module.ServiceName")
+						parts := strings.Split(consumedService, ".")
+						serviceName := consumedService
+						if len(parts) > 1 {
+							serviceName = parts[len(parts)-1]
+						}
+						cmd := serviceName + "." + actionName
+						if !seen[cmd] {
+							commands = append(commands, cmd)
+							seen[cmd] = true
+						}
+					}
+				}
+			}
+			// Traverse nested objects
+			for _, v2 := range val {
+				traverse(v2)
+			}
+		case []interface{}:
+			for _, item := range val {
+				traverse(item)
+			}
+		case primitive.A:
+			for _, item := range val {
+				traverse(item)
+			}
+		}
+	}
+
+	traverse(content)
+	return commands
+}
+
 // ==== Markdown Report Generation ====
 
 func generateMarkdownReport(report *ManifestReport, outputPath string, options *ReportOptions) error {
@@ -5032,10 +5481,70 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "---\n\n")
 	}
 
+	// Section 7: Pages/Panels Commands Hierarchy (if enabled)
+	if options.IncludePagesAnalysis && len(report.PagesAnalysis) > 0 {
+		// Calculate section number based on enabled sections
+		sectionNum := 5
+		if options.IncludePageCommands {
+			sectionNum++
+		}
+		if options.IncludeRoles {
+			sectionNum++
+		}
+		fmt.Fprintf(file, "## %d. Pages/Panels Commands Hierarchy\n\n", sectionNum)
+		fmt.Fprintf(file, "Microflows and nanoflows called by each page/panel, showing recursive call hierarchy up to 5 levels (in YAML structure). Microflows called transitively are loaded on-the-fly from the database when needed.\n\n")
+		fmt.Fprintf(file, "**Limitation:** Inline nanoflows (nanoflows embedded directly in pages, not stored as separate Units) are not currently traced.\n\n")
+		fmt.Fprintf(file, "```yaml\n")
+		fmt.Fprintf(file, "pages:\n")
+		
+		for _, page := range report.PagesAnalysis {
+			fmt.Fprintf(file, "  - name: %s\n", page.Name)
+			fmt.Fprintf(file, "    module: %s\n", page.Module)
+			fmt.Fprintf(file, "    flows:\n")
+			
+			// Write hierarchy using recursive helper
+			if len(page.CallHierarchy) > 0 {
+				writeHierarchy(file, page.CallHierarchy, "      ")
+			} else {
+				fmt.Fprintf(file, "      []\n")
+			}
+			
+			fmt.Fprintf(file, "    target_commands:\n")
+			if len(page.TargetCommands) > 0 {
+				for _, cmd := range page.TargetCommands {
+					fmt.Fprintf(file, "      - %s\n", cmd)
+				}
+			} else {
+				fmt.Fprintf(file, "      []\n")
+			}
+			fmt.Fprintf(file, "\n")
+		}
+		
+		fmt.Fprintf(file, "```\n\n")
+		fmt.Fprintf(file, "---\n\n")
+	}
+
 	// Footer
 	fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
 
 	return nil
+}
+
+// writeHierarchy recursively writes microflow call hierarchy in YAML format
+func writeHierarchy(file *os.File, hierarchy []MicroflowCallHierarchy, indent string) {
+	for i, node := range hierarchy {
+		if i == 0 && len(hierarchy) == 1 && len(node.Calls) == 0 {
+			// Single leaf node - inline format
+			fmt.Fprintf(file, "%s- %s\n", indent, node.Name)
+		} else {
+			// Multi-node or has children - structured format
+			fmt.Fprintf(file, "%s- name: %s\n", indent, node.Name)
+			if len(node.Calls) > 0 {
+				fmt.Fprintf(file, "%s  calls:\n", indent)
+				writeHierarchy(file, node.Calls, indent+"    ")
+			}
+		}
+	}
 }
 
 // generateJSONReport generates a JSON report file respecting the provided options

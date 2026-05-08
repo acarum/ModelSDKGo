@@ -2,20 +2,16 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-06 15:33:15  
+**Generated:** 2026-05-08 12:27:23  
 
 ---
 
 ## Summary
 
-- **External Entities:** 21 (across 2 modules)
+- **External Entities:** 22 (across 3 modules)
 - **Microflow/Action Calls:** 78
 - **Signal Manager Subscriptions:** 3 subscription(s)
 - **Navigation Items:** 13
-- **Pages with Commands:** 6 page(s) analyzed
-- **Command Buttons:** 38 total, 34 with extracted commands
-- **System Roles:** 2
-- **Pages/Snippets:** 79
 
 ---
 
@@ -58,6 +54,26 @@ External OData entities used in the project, grouped by module.
 | Ordering | String |
 | TransactionId | String |
 | AssociatedRows | String |
+
+### Module: MyModule
+
+#### Entity: Feature
+
+**Published From:** BoFService
+
+| Attribute | Type |
+|-----------|------|
+| _Id | String |
+| IsFrozen | Boolean |
+| CreatedOn | DateTime |
+| LastUpdatedOn | DateTime |
+| EntityType | String |
+| IsLocked | Boolean |
+| ToBeCleaned | String |
+| NId | String |
+| Name | String |
+| Description | String |
+| IsOption | Boolean |
 
 ### Module: OpcenterEXFN_ReferenceData
 
@@ -561,92 +577,565 @@ Found 3 subscription(s):
 
 ---
 
-## 6. Page Commands
+## 5. Pages/Panels Commands Hierarchy
 
-Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.
+Microflows and nanoflows called by each page/panel, showing recursive call hierarchy up to 5 levels (in YAML structure). Microflows called transitively are loaded on-the-fly from the database when needed.
 
-Found commands in 6 page(s):
+**Limitation:** Inline nanoflows (nanoflows embedded directly in pages, not stored as separate Units) are not currently traced.
 
-### OpcenterEXFN_ReferenceData.Status_Master
+```yaml
+pages:
+  - name: MyAccount
+    module: Administration
+    flows:
+      - Administration.ShowMyPasswordForm
+    target_commands:
+      []
 
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatus | CreateStatus |
-| Details | - | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatus | UpdateStatus |
-| Initial | - | SetStatusAsInitial |
-| Delete | - | DeleteStatus |
+  - name: ChangeMyPasswordForm
+    module: Administration
+    flows:
+      - Administration.ChangeMyPassword
+    target_commands:
+      []
 
-### OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master
+  - name: Account_Edit
+    module: Administration
+    flows:
+      - Administration.ShowPasswordForm
+    target_commands:
+      []
 
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition | CreateStatusBehaviorDefinition |
-| Details | OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition | UpdateStatusBehaviorDefinition |
-| Delete | - | DeleteStatusBehaviorDefinition |
+  - name: Account_New
+    module: Administration
+    flows:
+      - Administration.SaveNewAccount
+    target_commands:
+      []
 
-### OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master
+  - name: ChangePasswordForm
+    module: Administration
+    flows:
+      - Administration.ChangePassword
+    target_commands:
+      []
 
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition | CreateStatusTransitionDefinition |
-| Hide | - | HideStatusTransitionDefinition |
-| Unhide | - | UnhideStatusTransitionDefinition |
-| Freeze | - | FreezeStatusTransitionDefinition |
-| Unfreeze | - | UnfreezeStatusTransitionDefinition |
-| Delete | - | DeleteStatusTransitionDefinition |
+  - name: Account_Overview
+    module: Administration
+    flows:
+      - name: Administration.NewAccount
+      - name: Administration.NewWebServiceAccount
+    target_commands:
+      []
 
-### OpcenterEXFN_ReferenceData.StateMachine_Master
+  - name: RuntimeInstances
+    module: Administration
+    flows:
+      []
+    target_commands:
+      []
 
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine | CreateStateMachine |
-| Details | OpcenterEXFN_ReferenceData.StateMachine_Details | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine | UpdateStateMachine |
-| Hide | - | HideStateMachine |
-| Unhide | - | UnhideStateMachine |
-| Freeze | - | FreezeStateMachine |
-| Unfreeze | - | UnfreezeStateMachine |
-| Delete | - | DeleteStateMachine |
+  - name: ScheduledEvents
+    module: Administration
+    flows:
+      []
+    target_commands:
+      []
 
-### OpcenterEXFN_ReferenceData.StatusDefinition_Master
+  - name: ActiveSessions
+    module: Administration
+    flows:
+      []
+    target_commands:
+      []
 
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateStatusDefinition | CreateStatusDefinition |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateStatusDefinition | UpdateStatusDefinition |
-| Hide | - | HideStatusDefinition |
-| Unhide | - | UnhideStatusDefinition |
-| Freeze | - | FreezeStatusDefinition |
-| Unfreeze | - | UnfreezeStatusDefinition |
-| Delete | - | DeleteStatusDefinition |
+  - name: ClientConfiguration_NewEdit
+    module: OpcenterEXFN_DISW_DesignSystem
+    flows:
+      - name: EXFN_Authentication.SUB_GetDefaultClientConfiguration
+      - name: OpcenterEXFN_DISW_DesignSystem.ACT_ClientConfiguration_NewEdit
+    target_commands:
+      []
 
-### OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection
+  - name: ClientConfiguration_Overview
+    module: OpcenterEXFN_DISW_DesignSystem
+    flows:
+      []
+    target_commands:
+      []
 
-| Caption | Target Page | Target Command |
-|---------|-------------|----------------|
-| Create | OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension | CreateUoMDimension |
-| Details | OpcenterEXFN_ReferenceData.UoMDimension_Details | - |
-| Edit | OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension | UpdateUoMDimension |
-| Unhide | - | UnhideUoMDimension |
-| Hide | - | HideUoMDimension |
-| Freeze | - | FreezeUoMDimension |
-| Unfreeze | - | UnfreezeUoMDimension |
-| Delete | - | DeleteUoMDimension |
+  - name: RuntimeUIApplicationsByPlant
+    module: OpcenterEXFN_DISW_DesignSystem
+    flows:
+      - name: EXFN_ServiceLayer.DS_AvailableRuntimeUIApplications
+      - name: OpcenterEXFN_DISW_DesignSystem.DS_UIApplications
+    target_commands:
+      []
 
----
+  - name: OC_EX_HomePage
+    module: OpcenterEXFN_DISW_DesignSystem
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.DS_GetOrCreate_SearchTextBox_Criteria
+      - name: OpcenterEXFN_DISW_DesignSystem.OCH_SearchTextBox
+    target_commands:
+      []
 
-## 7. System Roles
+  - name: AuditTrailRecord_View
+    module: EXFN_AuditTrailViewer
+    flows:
+      - EXFN_AuditTrailViewer.ACT_ClosePage
+    target_commands:
+      []
 
-### 7.1 System Roles
+  - name: AuditTrail
+    module: EXFN_AuditTrailViewer
+    flows:
+      - EXFN_AuditTrailViewer.DS_AuditTrailContext
+    target_commands:
+      []
 
-Found 2 system role(s):
+  - name: PANEL_UpdateUoMDimension
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension
+    target_commands:
+      []
 
-| Role Name | Module |
-|-----------|--------|
-| Administrator | System |
-| User | System |
+  - name: PANEL_CreateBaseUoMDimension
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateBaseUoMDimension
+    target_commands:
+      []
+
+  - name: PANEL_CreateBaseUoM_UoMDimension
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateBaseUoM_UoMDimension
+    target_commands:
+      []
+
+  - name: PANEL_UoMDimensionUpdateUoM
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateUoM_UoMDimension
+    target_commands:
+      []
+
+  - name: UoMDimension_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoM_UoMDimension_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideUoM
+      - name: OpcenterEXFN_ReferenceData.ACT_HideUoM
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection
+      - name: EXFN_AuditTrailViewer.DS_AuditTrailContext
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension_ShowPanel_SingleSelection
+    target_commands:
+      []
+
+  - name: UoMDimension_Master_SingleSelection
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension_ShowPanel_SingleSelection
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideUoMDimesnion
+      - name: OpcenterEXFN_ReferenceData.ACT_HideUoMDimension
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeUoMDimension
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeUoMDimension
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoMDimension_SingleSelection
+    target_commands:
+      []
+
+  - name: UoMDimension_Master_MultiSelection
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_MultiSelection
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoM_MultiSelection
+      - name: OpcenterEXFN_ReferenceData.DS_UoM_GetCommandBarContext
+    target_commands:
+      []
+
+  - name: UoM_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_SingleSelection
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideUoM
+      - name: OpcenterEXFN_ReferenceData.ACT_HideUoM
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection
+    target_commands:
+      []
+
+  - name: PANEL_CreateBaseUoM
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateBaseUoM
+    target_commands:
+      []
+
+  - name: PANEL_UpdateUoM
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateUoM
+    target_commands:
+      []
+
+  - name: PANEL_UpdateUoMSubmultiple
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateUoMSubmultiple
+    target_commands:
+      []
+
+  - name: PANEL_CreateUoMSubmultiple
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateUoMSubmultiple
+    target_commands:
+      []
+
+  - name: PANEL_CreateUoMFactor
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.DS_UoMFactor_GetTargetUoMList
+      - name: OpcenterEXFN_ReferenceData.ACT_CreateUoMFactor
+    target_commands:
+      []
+
+  - name: PANEL_UpdateUoMFactor
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_1
+    target_commands:
+      []
+
+  - name: UoM_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.DS_UoMSubmultiple_GetUoMFactorForUoM
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMSubmultiple_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideUoMSubmultiple
+      - name: OpcenterEXFN_ReferenceData.ACT_HideUoMSubmultiple
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoMSubmultiple
+      - name: OpcenterEXFN_ReferenceData.DS_UoMFactor_ListForUoM
+      - name: OpcenterEXFN_ReferenceData.DS_UoMFactor_Refresh
+      - name: OpcenterEXFN_ReferenceData.ACT_CreateUoMFactor_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteUoMFactor
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_SingleSelection
+    target_commands:
+      []
+
+  - name: NumberingPattern_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeNumberingPattern
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeNumberingPattern
+      - name: OpcenterEXFN_ReferenceData.ACT_PreviewNumberingPattern_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPattern
+    target_commands:
+      []
+
+  - name: PANEL_PreviewNumberingPattern
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_UpdateNumberingPattern
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern
+    target_commands:
+      []
+
+  - name: PANEL_CreateNumberingPattern
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityName
+      - name: OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityProperty
+      - name: OpcenterEXFN_ReferenceData.ACT_CreateNumberingPattern
+    target_commands:
+      []
+
+  - name: PANEL_UpdateNumberingPatternPart_ValidatePart
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.EVT_OnChangeValidatePart
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart
+    target_commands:
+      []
+
+  - name: PANEL_UpdateNumberingPatternPart
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart
+      - name: OpcenterEXFN_ReferenceData.EVT_OnSelectionChangeForPrefilledRegularExpression_NumberingPatternPart
+    target_commands:
+      []
+
+  - name: PANEL_UpdateNumberingPatternForNumberingPatternPart
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternForNumberingPatternPart
+      - name: OpcenterEXFN_ReferenceData.EVT_OnSelectionChangeForPrefilledRegularExpression
+    target_commands:
+      []
+
+  - name: NumberingPattern_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.DS_NumberingPatternDetails
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternForNumberingPatternPart_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartUp
+      - name: OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartDown
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart_ValidatePart
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPatternPart
+      - name: EXFN_AuditTrailViewer.DS_AuditTrailContext
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeNumberingPattern
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeNumberingPattern
+      - name: OpcenterEXFN_ReferenceData.ACT_PreviewNumberingPattern_ShowPanel
+    target_commands:
+      []
+
+  - name: Counter_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateCounter_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_HideCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_ResetCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteCounter
+    target_commands:
+      []
+
+  - name: PANEL_UpdateCounter
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateCounter
+    target_commands:
+      []
+
+  - name: PANEL_CreateCounter
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateCounter
+    target_commands:
+      []
+
+  - name: Counter_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: EXFN_AuditTrailViewer.DS_AuditTrailContext
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateCounter_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_HideCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeCounter
+      - name: OpcenterEXFN_ReferenceData.ACT_ResetCounter
+    target_commands:
+      []
+
+  - name: StatusDefinition_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatusDefinition_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_HideStatusDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideStatusDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeStatusDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStatusDefinition
+    target_commands:
+      []
+
+  - name: PANEL_CreateStatusDefinition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStatusDefinition
+    target_commands:
+      []
+
+  - name: PANEL_UpdateStatusDefinition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateStatusDefinition
+    target_commands:
+      []
+
+  - name: PANEL_CreateStatusBehaviorDefinition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStatusBehaviorDefinition
+    target_commands:
+      []
+
+  - name: PANEL_UpdateStatusBehaviorDefinition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateStatusBehaviorDefinition
+    target_commands:
+      []
+
+  - name: StatusBehaviorDefinition_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: StatusBehaviorDefinition_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatusBehaviorDefinition_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStatusBehaviorDefinition
+    target_commands:
+      []
+
+  - name: PANEL_UpdateStatus
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateStatus
+    target_commands:
+      []
+
+  - name: PANEL_CreateStatus
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStatus
+    target_commands:
+      []
+
+  - name: PANEL_AssociateStatusBehaviorDefinitionsWithStatus
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_AssociateStatusBehaviorDefinitionsWithStatus
+    target_commands:
+      []
+
+  - name: Status_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_ReferenceData.ACT_DisassociateStatusBehaviorDefinitionsFromStatus
+      - name: OpcenterEXFN_ReferenceData.DS_StatusBehavior
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_SetStatusInitial
+    target_commands:
+      []
+
+  - name: Status_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_SetStatusInitial
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStatus
+    target_commands:
+      []
+
+  - name: StateMachine_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_HideStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStateMachine
+    target_commands:
+      []
+
+  - name: StateMachine_Details
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: EXFN_Authentication.Signal_Access_Token
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatusStateMachine_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_SetStatusAsInitial
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStatusStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStatusTransitionShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransition
+      - name: EXFN_AuditTrailViewer.DS_AuditTrailContext
+      - name: OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine_ShowPanel
+      - name: OpcenterEXFN_ReferenceData.ACT_HideStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine
+    target_commands:
+      []
+
+  - name: PANEL_UpdateStatusStateMachine
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateStatusStateMachine
+    target_commands:
+      []
+
+  - name: PANEL_UpdateStatusTransition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateStatusTransition
+    target_commands:
+      []
+
+  - name: PANEL_UpdateStateMachine
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine
+    target_commands:
+      []
+
+  - name: PANEL_CreateStatusStateMachine
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStatusStateMachine
+    target_commands:
+      []
+
+  - name: PANEL_CreateStateMachine
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStateMachine
+    target_commands:
+      []
+
+  - name: PANEL_CreateStatusTransition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStatusTransition
+    target_commands:
+      []
+
+  - name: PANEL_CreateStatusTransitionDefinition
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - OpcenterEXFN_ReferenceData.ACT_CreateStatusTransitionDefinition
+    target_commands:
+      []
+
+  - name: StatusTransitionDefinition_Master
+    module: OpcenterEXFN_ReferenceData
+    flows:
+      - name: OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen
+      - name: OpcenterEXFN_ReferenceData.ACT_HideStatusTransitionDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_UnhideStatusTransitionDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_FreezeStatusTransitionDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusTransitionDefinition
+      - name: OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransitionDefinition
+    target_commands:
+      []
+
+```
 
 ---
 
