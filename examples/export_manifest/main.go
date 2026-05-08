@@ -89,11 +89,11 @@ type PageAccessInfo struct {
 type PageCommandButton struct {
 	ButtonName    string `json:"ButtonName"`
 	Caption       string `json:"Caption"`
-	ActionType    string `json:"-"`    // Type of action (e.g., "CallNanoflowClientAction", "CallMicroflowClientAction")
-	ActionName    string `json:"-"`    // Nanoflow/Microflow name
-	TargetPage    string `json:"TargetPage"`    // Resolved page from ShowPage action (if any)
+	ActionType    string `json:"-"`                 // Type of action (e.g., "CallNanoflowClientAction", "CallMicroflowClientAction")
+	ActionName    string `json:"-"`                 // Nanoflow/Microflow name
+	TargetPage    string `json:"TargetPage"`        // Resolved page from ShowPage action (if any)
 	TargetCommand string `json:"TargetCommandName"` // Command extracted from Save button in TargetPage
-	TargetAppName string `json:"TargetAppName"` // App name extracted from TargetCommand
+	TargetAppName string `json:"TargetAppName"`     // App name extracted from TargetCommand
 }
 
 type PageCommandInfo struct {
@@ -103,26 +103,26 @@ type PageCommandInfo struct {
 
 // PageCommandSummary stores simplified page command information
 type PageCommandSummary struct {
-	PageName         string   `json:"PageName"`
-	Module           string   `json:"Module"`
-	TargetAppNames   []string `json:"TargetAppNames"`
-	TargetCommands   []string `json:"TargetCommands"`
+	PageName       string   `json:"PageName"`
+	Module         string   `json:"Module"`
+	TargetAppNames []string `json:"TargetAppNames"`
+	TargetCommands []string `json:"TargetCommands"`
 }
 
 type ManifestReport struct {
-	ProjectName     string                  `json:"ProjectName"`
-	MendixVersion   string                  `json:"MendixVersion"`
-	MPRPath         string                  `json:"MPRPath"`
-	GeneratedAt     string                  `json:"GeneratedAt"`
-	Entities        map[string][]EntityInfo `json:"Entities"`        // by module
-	MicroflowCalls  []MicroflowCallInfo     `json:"MicroflowCalls"`  // all calls
-	Widgets         []WidgetInfo            `json:"SignalManagerSubscriptions"`         // signal manager widgets
-	NavigationItems     []NavigationItem     `json:"NavigationItems"`     // navigation menu items
-	SystemRoles         []SystemRole         `json:"SystemRoles"`         // system roles
-	PageAccess          []PageAccessInfo     `json:"-"`                   // page accessibility - excluded from export
-	NavigationCommands  []PageCommandInfo    `json:"NavigationPageCommands"`  // command bar actions from navigation pages
-	PagesAnalysis       []PageAnalysisInfo   `json:"PageCommandsHierarchy"` // detailed pages/panels analysis with recursive hierarchy
-	PageCommands        []PageCommandSummary `json:"PageCommands"`        // simplified view of all page/panel commands
+	ProjectName        string                  `json:"ProjectName"`
+	MendixVersion      string                  `json:"MendixVersion"`
+	MPRPath            string                  `json:"MPRPath"`
+	GeneratedAt        string                  `json:"GeneratedAt"`
+	Entities           map[string][]EntityInfo `json:"Entities"`                   // by module
+	MicroflowCalls     []MicroflowCallInfo     `json:"MicroflowCalls"`             // all calls
+	Widgets            []WidgetInfo            `json:"SignalManagerSubscriptions"` // signal manager widgets
+	NavigationItems    []NavigationItem        `json:"NavigationItems"`            // navigation menu items
+	SystemRoles        []SystemRole            `json:"SystemRoles"`                // system roles
+	PageAccess         []PageAccessInfo        `json:"-"`                          // page accessibility - excluded from export
+	NavigationCommands []PageCommandInfo       `json:"NavigationPageCommands"`     // command bar actions from navigation pages
+	PagesAnalysis      []PageAnalysisInfo      `json:"PageCommandsHierarchy"`      // detailed pages/panels analysis with recursive hierarchy
+	PageCommands       []PageCommandSummary    `json:"PageCommands"`               // simplified view of all page/panel commands
 }
 
 type ReportOptions struct {
@@ -5759,7 +5759,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 
 					targetAppName := "-"
 					targetCommandName := "-"
-					
+
 					if cmd.TargetCommand != "" {
 						if idx := strings.LastIndex(cmd.TargetCommand, "."); idx >= 0 {
 							// Extract AppName before the dot and CommandName after the dot
@@ -5863,47 +5863,47 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "## %d. PageCommands\n\n", sectionNum)
 		fmt.Fprintf(file, "Simplified view showing only the target commands for each page/panel.\n\n")
 
-	// Create a table with columns: Page/Panel, Module, Target AppName, Target CommandName
-	fmt.Fprintf(file, "| Page/Panel | Module | Target AppName | Target CommandName |\n")
-	fmt.Fprintf(file, "|------------|--------|----------------|--------------------|\n")
+		// Create a table with columns: Page/Panel, Module, Target AppName, Target CommandName
+		fmt.Fprintf(file, "| Page/Panel | Module | Target AppName | Target CommandName |\n")
+		fmt.Fprintf(file, "|------------|--------|----------------|--------------------|\n")
 
-	for _, page := range report.PagesAnalysis {
-		appNamesStr := ""
-		commandsStr := ""
-		
-		if len(page.TargetCommands) > 0 {
-			appNames := make([]string, 0, len(page.TargetCommands))
-			commandNames := make([]string, 0, len(page.TargetCommands))
-			
-			for _, cmd := range page.TargetCommands {
-				if idx := strings.LastIndex(cmd, "."); idx >= 0 {
-					// Extract AppName before the dot and CommandName after the dot
-					appNames = append(appNames, cmd[:idx])
-					commandNames = append(commandNames, cmd[idx+1:])
-				} else {
-					// No dot found, use "-" for app name and whole string as command name
-					appNames = append(appNames, "-")
-					commandNames = append(commandNames, cmd)
+		for _, page := range report.PagesAnalysis {
+			appNamesStr := ""
+			commandsStr := ""
+
+			if len(page.TargetCommands) > 0 {
+				appNames := make([]string, 0, len(page.TargetCommands))
+				commandNames := make([]string, 0, len(page.TargetCommands))
+
+				for _, cmd := range page.TargetCommands {
+					if idx := strings.LastIndex(cmd, "."); idx >= 0 {
+						// Extract AppName before the dot and CommandName after the dot
+						appNames = append(appNames, cmd[:idx])
+						commandNames = append(commandNames, cmd[idx+1:])
+					} else {
+						// No dot found, use "-" for app name and whole string as command name
+						appNames = append(appNames, "-")
+						commandNames = append(commandNames, cmd)
+					}
 				}
+
+				appNamesStr = strings.Join(appNames, "<br>")
+				commandsStr = strings.Join(commandNames, "<br>")
+			} else {
+				appNamesStr = "-"
+				commandsStr = "-"
 			}
-			
-			appNamesStr = strings.Join(appNames, "<br>")
-			commandsStr = strings.Join(commandNames, "<br>")
-		} else {
-			appNamesStr = "-"
-			commandsStr = "-"
+
+			fmt.Fprintf(file, "| %s | %s | %s | %s |\n", page.Name, page.Module, appNamesStr, commandsStr)
 		}
-		
-		fmt.Fprintf(file, "| %s | %s | %s | %s |\n", page.Name, page.Module, appNamesStr, commandsStr)
+
+		fmt.Fprintf(file, "\n---\n\n")
 	}
 
-	fmt.Fprintf(file, "\n---\n\n")
-}
+	// Footer
+	fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
 
-// Footer
-fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
-
-return nil
+	return nil
 }
 
 // writeHierarchy recursively writes microflow call hierarchy in YAML format
