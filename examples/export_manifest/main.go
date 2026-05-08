@@ -5170,11 +5170,11 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 				if typeField == "Microflows$ExternalAction" {
 					appName, _ := val["AppName"].(string)
 					commandName, _ := val["CommandName"].(string)
-					
+
 					// Clean values (remove quotes and whitespace)
 					appName = strings.Trim(strings.TrimSpace(appName), "'\"")
 					commandName = strings.Trim(strings.TrimSpace(commandName), "'\"")
-					
+
 					if appName != "" && commandName != "" {
 						cmd := appName + "." + commandName
 						if !seen[cmd] {
@@ -5201,7 +5201,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 						}
 					}
 				}
-				// Pattern 3: Microflows$MicroflowCall calling CallCommand_MF pattern  
+				// Pattern 3: Microflows$MicroflowCall calling CallCommand_MF pattern
 				if typeField == "Microflows$MicroflowCall" {
 					// Check if calling a CallCommand_MF or similar pattern
 					var microflowName string
@@ -5216,12 +5216,12 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 						// Try to extract AppName and CommandName from ParameterMappings
 						appName := ""
 						commandName := ""
-						
+
 						if paramMappings, ok := val["ParameterMappings"].(primitive.A); ok {
 							for _, pm := range paramMappings {
 								if pmMap, ok := pm.(map[string]interface{}); ok {
 									paramName, _ := pmMap["Parameter"].(string)
-									
+
 									// Extract argument - can be in "Argument" or "Value.Argument"
 									argument := ""
 									if arg, ok := pmMap["Argument"].(string); ok {
@@ -5231,13 +5231,13 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 											argument = arg
 										}
 									}
-									
+
 									// Extract parameter name (last part after dot)
 									if strings.Contains(paramName, ".") {
 										parts := strings.Split(paramName, ".")
 										paramName = parts[len(parts)-1]
 									}
-									
+
 									// Clean argument thoroughly
 									argument = strings.TrimSpace(argument)
 									argument = strings.TrimPrefix(argument, "$")
@@ -5246,7 +5246,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 									argument = strings.ReplaceAll(argument, "\r", "")
 									argument = strings.ReplaceAll(argument, "\\n", "")
 									argument = strings.TrimSpace(argument)
-									
+
 									if argument != "" {
 										if strings.Contains(strings.ToLower(paramName), "appname") {
 											appName = argument
@@ -5257,7 +5257,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 								}
 							}
 						}
-						
+
 						// Build command identifier
 						var cmd string
 						if appName != "" && commandName != "" {
@@ -5269,7 +5269,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 						} else {
 							cmd = "DynamicCommand"
 						}
-						
+
 						if !seen[cmd] {
 							commands = append(commands, cmd)
 							seen[cmd] = true
