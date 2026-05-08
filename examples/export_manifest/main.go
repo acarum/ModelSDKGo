@@ -1269,7 +1269,7 @@ func collectMicroflowCalls(db *sql.DB, contentsDir string, report *ManifestRepor
 			continue
 		}
 
-		calls := findMicroflowCalls(mf, targetMicroflow, targetJavaAction)
+		calls := findMicroflowCalls(mf, targetMicroflow, targetJavaAction, db, contentsDir)
 
 		for _, call := range calls {
 			report.MicroflowCalls = append(report.MicroflowCalls, MicroflowCallInfo{
@@ -1403,7 +1403,7 @@ type TempMicroflowCall struct {
 	CommandName  string
 }
 
-func findMicroflowCalls(mf MicroflowInfo, targetMicroflow string, targetJavaAction string) []TempMicroflowCall {
+func findMicroflowCalls(mf MicroflowInfo, targetMicroflow string, targetJavaAction string, db *sql.DB, contentsDir string) []TempMicroflowCall {
 	var calls []TempMicroflowCall
 
 	// Convert content to searchable format
@@ -1419,7 +1419,7 @@ func findMicroflowCalls(mf MicroflowInfo, targetMicroflow string, targetJavaActi
 
 	// Search for ActionActivity with MicroflowCall, JavaAction, or ExternalAction
 	// Pass the original BSON content for parameter detection
-	searchActivities(contentMap, targetMicroflow, targetJavaAction, &calls, mf.Content)
+	searchActivities(contentMap, targetMicroflow, targetJavaAction, &calls, mf.Content, mf.Name, db, contentsDir)
 
 	return calls
 }
@@ -1507,7 +1507,7 @@ func findVariableAssignment(obj interface{}, varName string, result *string) {
 	}
 }
 
-func searchActivities(obj interface{}, targetMicroflow string, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}) {
+func searchActivities(obj interface{}, targetMicroflow string, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}, microflowName string, db *sql.DB, contentsDir string) {
 	switch v := obj.(type) {
 	case map[string]interface{}:
 		// Check if this is an ActionActivity
@@ -1515,19 +1515,19 @@ func searchActivities(obj interface{}, targetMicroflow string, targetJavaAction 
 			if typeStr == "Microflows$ActionActivity" {
 				// Check for all three call types
 				checkMicroflowCall(v, targetMicroflow, calls, contentMap)
-				checkJavaAction(v, targetJavaAction, calls, contentMap)
+				checkJavaAction(v, targetJavaAction, calls, contentMap, microflowName, db, contentsDir)
 				checkExternalAction(v, calls, contentMap)
 			}
 		}
 
 		// Recursively search all fields
 		for _, value := range v {
-			searchActivities(value, targetMicroflow, targetJavaAction, calls, contentMap)
+			searchActivities(value, targetMicroflow, targetJavaAction, calls, contentMap, microflowName, db, contentsDir)
 		}
 
 	case []interface{}:
 		for _, item := range v {
-			searchActivities(item, targetMicroflow, targetJavaAction, calls, contentMap)
+			searchActivities(item, targetMicroflow, targetJavaAction, calls, contentMap, microflowName, db, contentsDir)
 		}
 	}
 }
@@ -1613,7 +1613,7 @@ func checkMicroflowCall(activity map[string]interface{}, targetMicroflow string,
 	})
 }
 
-func checkJavaAction(activity map[string]interface{}, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}) {
+func checkJavaAction(activity map[string]interface{}, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}, microflowName string, db *sql.DB, contentsDir string) {
 	action, ok := activity["Action"].(map[string]interface{})
 	if !ok {
 		return
@@ -1658,6 +1658,7 @@ func checkJavaAction(activity map[string]interface{}, targetJavaAction string, c
 	// Extract AppName and CommandName from ParameterMappings
 	appName := ""
 	commandName := ""
+	
 	if paramMappings, ok := action["ParameterMappings"].([]interface{}); ok {
 		for _, mapping := range paramMappings {
 			if mappingMap, ok := mapping.(map[string]interface{}); ok {
@@ -1692,6 +1693,14 @@ func checkJavaAction(activity map[string]interface{}, targetJavaAction string, c
 				}
 			}
 		}
+	}
+
+	// If AppName or CommandName are empty, "empty", or placeholders, use specific placeholders for JavaAction
+	if appName == "" || strings.ToLower(appName) == "empty" || appName == "'AppName'" || appName == "<parameter>" {
+		appName = "<JavaAppName>"
+	}
+	if commandName == "" || strings.ToLower(commandName) == "empty" || commandName == "'CommandName'" || commandName == "<parameter>" {
+		commandName = "<JavaCommandName>"
 	}
 
 	*calls = append(*calls, TempMicroflowCall{
@@ -5247,7 +5256,8 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 									argument = strings.ReplaceAll(argument, "\\n", "")
 									argument = strings.TrimSpace(argument)
 
-									if argument != "" {
+									// Skip invalid values
+									if argument != "" && strings.ToLower(argument) != "empty" {
 										if strings.Contains(strings.ToLower(paramName), "appname") {
 											appName = argument
 										} else if strings.Contains(strings.ToLower(paramName), "commandname") {
@@ -5278,11 +5288,72 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 				}
 				// Pattern 4: Microflows$JavaActionCallAction
 				if typeField == "Microflows$JavaActionCallAction" {
-					// Java actions might call commands
-					cmdMarker := "JavaActionCommand"
-					if !seen[cmdMarker] {
-						commands = append(commands, cmdMarker)
-						seen[cmdMarker] = true
+					// Try to extract AppName and CommandName from ParameterMappings
+					appName := ""
+					commandName := ""
+					
+					if paramMappings, ok := val["ParameterMappings"].(primitive.A); ok {
+						for _, pm := range paramMappings {
+							if pmMap, ok := pm.(map[string]interface{}); ok {
+								paramName, _ := pmMap["Parameter"].(string)
+								
+								// Extract argument - can be in "Argument" or "Value.Argument"
+								argument := ""
+								if arg, ok := pmMap["Argument"].(string); ok {
+									argument = arg
+								} else if valueObj, ok := pmMap["Value"].(map[string]interface{}); ok {
+									if arg, ok := valueObj["Argument"].(string); ok {
+										argument = arg
+									}
+								}
+								
+								// Extract parameter name (last part after dot)
+								if strings.Contains(paramName, ".") {
+									parts := strings.Split(paramName, ".")
+									paramName = parts[len(parts)-1]
+								}
+								
+								// Clean argument thoroughly
+								argument = strings.TrimSpace(argument)
+								argument = strings.TrimPrefix(argument, "$")
+								argument = strings.Trim(argument, "'\"")
+								argument = strings.ReplaceAll(argument, "\n", "")
+								argument = strings.ReplaceAll(argument, "\r", "")
+								argument = strings.ReplaceAll(argument, "\\n", "")
+								argument = strings.TrimSpace(argument)
+								
+								// Skip invalid values
+								if argument != "" && strings.ToLower(argument) != "empty" {
+									if strings.Contains(strings.ToLower(paramName), "appname") {
+										appName = argument
+									} else if strings.Contains(strings.ToLower(paramName), "commandname") {
+										commandName = argument
+									}
+								}
+							}
+						}
+					}
+					
+					// Build command identifier
+					var cmd string
+					if appName != "" && commandName != "" {
+						cmd = appName + "." + commandName
+					} else if commandName != "" {
+						cmd = commandName
+					} else if appName != "" {
+						cmd = appName
+					} else {
+						// If no parameters, use JavaAction name
+						if javaActionName, ok := val["JavaAction"].(string); ok && javaActionName != "" {
+							cmd = javaActionName
+						} else {
+							cmd = "JavaActionCommand"
+						}
+					}
+					
+					if !seen[cmd] {
+						commands = append(commands, cmd)
+						seen[cmd] = true
 					}
 				}
 			}

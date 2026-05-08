@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-08 15:18:46  
+**Generated:** 2026-05-08 16:23:05  
 
 ---
 
@@ -465,7 +465,7 @@ Found 80 call(s):
 | SUB_SetStatusAsInitial | OpcenterEXFN_ReferenceData | ExternalAction | Reference | SetStatusAsInitial |
 | SUB_DeleteCommand_StartArrayWithTwoParameter | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
-| SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | JavaAction | 'AppName' | 'CommandName' |
+| SUB_HideAndUnhideCommand | OpcenterEXFN_ReferenceData_Connector | JavaAction | <JavaAppName> | <JavaCommandName> |
 | SUB_DeleteCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_FreezeAndUnfreezeCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
 | SUB_CallCommand | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | <parameter> | <parameter> |
@@ -543,7 +543,7 @@ Found 80 call(s):
 | UpdateUoMFactor_MF | OpcenterEXFN_ReferenceData_Connector | MicroflowCall | 'APPNAME'
  | 'COMMANDNAME'
  |
-| UpdateUoMFactor_MF_JAVA | OpcenterEXFN_ReferenceData_Connector | JavaAction | empty | empty |
+| UpdateUoMFactor_MF_JAVA | OpcenterEXFN_ReferenceData_Connector | JavaAction | <JavaAppName> | <JavaCommandName> |
 
 ---
 
@@ -751,7 +751,7 @@ pages:
     target_commands:
       - Reference.UpdateUoMFactor
       - APPNAME.COMMANDNAME
-      - JavaActionCommand
+      - EXFN_ServiceLayer.CallCommandAction
 
   - name: UoM_Details
     module: OpcenterEXFN_ReferenceData
