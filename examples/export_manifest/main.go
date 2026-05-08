@@ -5215,7 +5215,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 func nodeHasCommands(nodeName string, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}) bool {
 	var content map[string]interface{}
 	var ok bool
-	
+
 	// Try to get from cache first
 	if content, ok = cache[nodeName]; !ok {
 		// Not in cache - load on-the-fly
@@ -5224,11 +5224,11 @@ func nodeHasCommands(nodeName string, db *sql.DB, contentsDir string, cache map[
 			cache[nodeName] = content
 		}
 	}
-	
+
 	if content == nil {
 		return false
 	}
-	
+
 	// Check if this microflow has any external actions
 	commands := extractExternalActionsFromContent(content)
 	return len(commands) > 0
@@ -5237,20 +5237,20 @@ func nodeHasCommands(nodeName string, db *sql.DB, contentsDir string, cache map[
 // filterHierarchyByCommands filters the hierarchy to keep only nodes with commands (or descendants with commands)
 func filterHierarchyByCommands(hierarchy []MicroflowCallHierarchy, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}) []MicroflowCallHierarchy {
 	var filtered []MicroflowCallHierarchy
-	
+
 	for _, node := range hierarchy {
 		// Recursively filter children first
 		filteredCalls := []MicroflowCallHierarchy{}
 		if len(node.Calls) > 0 {
 			filteredCalls = filterHierarchyByCommands(node.Calls, db, contentsDir, cache)
 		}
-		
+
 		// Keep this node if:
 		// 1. It has commands directly, OR
 		// 2. It has children that have commands (after filtering)
 		hasCommands := nodeHasCommands(node.Name, db, contentsDir, cache)
 		hasValidChildren := len(filteredCalls) > 0
-		
+
 		if hasCommands || hasValidChildren {
 			// Keep this node
 			newNode := MicroflowCallHierarchy{
@@ -5261,7 +5261,7 @@ func filterHierarchyByCommands(hierarchy []MicroflowCallHierarchy, db *sql.DB, c
 		}
 		// Otherwise, skip this node (it has no commands and no valid children)
 	}
-	
+
 	return filtered
 }
 
