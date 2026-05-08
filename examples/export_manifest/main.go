@@ -5170,6 +5170,11 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 				if typeField == "Microflows$ExternalAction" {
 					appName, _ := val["AppName"].(string)
 					commandName, _ := val["CommandName"].(string)
+					
+					// Clean values (remove quotes and whitespace)
+					appName = strings.Trim(strings.TrimSpace(appName), "'\"")
+					commandName = strings.Trim(strings.TrimSpace(commandName), "'\"")
+					
 					if appName != "" && commandName != "" {
 						cmd := appName + "." + commandName
 						if !seen[cmd] {
@@ -5196,7 +5201,7 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 						}
 					}
 				}
-				// Pattern 3: Microflows$MicroflowCall calling CallCommand_MF pattern
+				// Pattern 3: Microflows$MicroflowCall calling CallCommand_MF pattern  
 				if typeField == "Microflows$MicroflowCall" {
 					// Check if calling a CallCommand_MF or similar pattern
 					var microflowName string
@@ -5206,13 +5211,68 @@ func extractExternalActionsFromContent(content map[string]interface{}) []string 
 						microflowName = microflow
 					}
 
-					// If calling CallCommand_MF or CallCommandAction, treat as command call
+					// If calling CallCommand_MF or CallCommandAction, extract AppName and CommandName
 					if strings.Contains(microflowName, "CallCommand") {
-						// Extract command name from parameters if available
-						cmdMarker := "GenericCommandCall"
-						if !seen[cmdMarker] {
-							commands = append(commands, cmdMarker)
-							seen[cmdMarker] = true
+						// Try to extract AppName and CommandName from ParameterMappings
+						appName := ""
+						commandName := ""
+						
+						if paramMappings, ok := val["ParameterMappings"].(primitive.A); ok {
+							for _, pm := range paramMappings {
+								if pmMap, ok := pm.(map[string]interface{}); ok {
+									paramName, _ := pmMap["Parameter"].(string)
+									
+									// Extract argument - can be in "Argument" or "Value.Argument"
+									argument := ""
+									if arg, ok := pmMap["Argument"].(string); ok {
+										argument = arg
+									} else if valueObj, ok := pmMap["Value"].(map[string]interface{}); ok {
+										if arg, ok := valueObj["Argument"].(string); ok {
+											argument = arg
+										}
+									}
+									
+									// Extract parameter name (last part after dot)
+									if strings.Contains(paramName, ".") {
+										parts := strings.Split(paramName, ".")
+										paramName = parts[len(parts)-1]
+									}
+									
+									// Clean argument thoroughly
+									argument = strings.TrimSpace(argument)
+									argument = strings.TrimPrefix(argument, "$")
+									argument = strings.Trim(argument, "'\"")
+									argument = strings.ReplaceAll(argument, "\n", "")
+									argument = strings.ReplaceAll(argument, "\r", "")
+									argument = strings.ReplaceAll(argument, "\\n", "")
+									argument = strings.TrimSpace(argument)
+									
+									if argument != "" {
+										if strings.Contains(strings.ToLower(paramName), "appname") {
+											appName = argument
+										} else if strings.Contains(strings.ToLower(paramName), "commandname") {
+											commandName = argument
+										}
+									}
+								}
+							}
+						}
+						
+						// Build command identifier
+						var cmd string
+						if appName != "" && commandName != "" {
+							cmd = appName + "." + commandName
+						} else if commandName != "" {
+							cmd = commandName
+						} else if appName != "" {
+							cmd = appName
+						} else {
+							cmd = "DynamicCommand"
+						}
+						
+						if !seen[cmd] {
+							commands = append(commands, cmd)
+							seen[cmd] = true
 						}
 					}
 				}

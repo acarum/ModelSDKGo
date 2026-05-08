@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.10.0  
 **MPR File:** C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr  
-**Generated:** 2026-05-08 14:56:08  
+**Generated:** 2026-05-08 15:18:46  
 
 ---
 
@@ -750,7 +750,7 @@ pages:
             - name: OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_MF_JAVA
     target_commands:
       - Reference.UpdateUoMFactor
-      - GenericCommandCall
+      - APPNAME.COMMANDNAME
       - JavaActionCommand
 
   - name: UoM_Details
@@ -897,7 +897,7 @@ pages:
       - Reference.UnfreezeCounter
       - Reference.ResetCounter
       - Reference.DeleteCounter
-      - GenericCommandCall
+      - AppName.CommandName
 
   - name: PANEL_UpdateCounter
     module: OpcenterEXFN_ReferenceData
