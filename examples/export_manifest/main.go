@@ -4760,22 +4760,22 @@ func shouldExcludeModule(moduleName string) bool {
 	if moduleName == "Administration" || moduleName == "System" {
 		return true
 	}
-	
+
 	// Marketplace modules (typically start with EXFN_)
 	if strings.HasPrefix(moduleName, "EXFN_") {
 		return true
 	}
-	
+
 	// UI framework modules (contain _DISW_ or DesignSystem)
 	if strings.Contains(moduleName, "_DISW_") || strings.Contains(moduleName, "DesignSystem") {
 		return true
 	}
-	
+
 	// Atlas UI modules
 	if strings.HasPrefix(moduleName, "Atlas_") {
 		return true
 	}
-	
+
 	return false
 }
 
