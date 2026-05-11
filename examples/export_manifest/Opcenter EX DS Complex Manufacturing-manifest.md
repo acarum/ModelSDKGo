@@ -2,7 +2,7 @@
 
 **Mendix Version:** 11.6.4  
 **MPR File:** C:\Workspaces\Mendix\Complex\main\Opcenter EX DS Complex Manufacturing.mpr  
-**Generated:** 2026-05-08 09:05:56  
+**Generated:** 2026-05-08 18:49:11  
 
 ---
 
@@ -12,7 +12,8 @@
 - **Microflow/Action Calls:** 82
 - **Signal Manager Subscriptions:** 64 subscription(s)
 - **Navigation Items:** 3
-- **Pages/Panels:** 154 analyzed, 3 with commands
+- **Pages with Commands:** 1 page(s) analyzed
+- **Command Buttons:** 13 total, 0 with extracted commands
 
 ---
 
@@ -2148,48 +2149,48 @@ Found 64 subscription(s):
 |--------|---------------|----------|-------------|----------|---------------------|
 | OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCStartTransferEvent | AppU4DM | Yes |
 | OpcenterEXDS_PartProgram | Page | PartProgramDetailsPopUp | DNCCompleteTransferEvent | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSkipWOOperation | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSetHoldWorkOrder | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSentenceNonConformanceV3_1 | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICompleted | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | StatusChanged | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | WorkOrderSerialNumbersScrapped | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationFullQty | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationFullQty | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationSerialized | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnPauseWorkOrderOperation | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnReopenWorkOrderOperation | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationSerialized | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | SnagAndNoteNotificationSgn | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnChangeFlexibleWOOpStatusToComplete | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCreateNonConformanceV3_1 | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteReworkOrder | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICompleted | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationSerialized | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | SnagAndNoteNotificationSgn | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | WorkOrderSerialNumbersScrapped | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnFAICandidateDeclared | AppU4DM | No |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | StatusChanged | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkOrderSerialNumbersScrapped | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSkipWOOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationFullQty | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnCompleteWorkOrderOperationSerialized | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSetHoldWorkOrder | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnStartWorkOrderOperationFullQty | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnPauseWorkOrderOperation | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnSentenceNonConformanceV3_1 | AppU4DM | No |
+| OpcenterEXDS_OperatorLanding | Page | OperatorLanding | OnReopenWorkOrderOperation | AppU4DM | No |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnPauseWorkOrderOperation | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | SnagAndNoteNotificationSgn | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnUsedToolSignal | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSetHoldWorkOrder | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkInstructionStatusChangedSignal | WorkInstruction | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnReopenWorkOrderOperation | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICompleted | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSetHoldWorkOrder | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCreateNonConformanceV3_1 | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICandidateDeclared | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationSerialized | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteReworkOrder | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAIRemoved | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSkipWOOperation | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationFullQty | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepSerialized | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepSerialized | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSentenceNonConformanceV3_1 | AppU4DM | Yes |
-| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnAssemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepFullQty | AppU4DM | Yes |
 | OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnDisassemblyWorkOrderOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnUsedToolSignal | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | WorkOrderSerialNumbersScrapped | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCreateNonConformanceV3_1 | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAIRemoved | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICandidateDeclared | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderStepSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderStepFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnFAICompleted | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSkipWOOperation | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationSerialized | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnSentenceNonConformanceV3_1 | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | SnagAndNoteNotificationSgn | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | StatusChanged | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteReworkOrder | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnStartWorkOrderOperationFullQty | AppU4DM | Yes |
+| OpcenterEXDS_OperatorLanding | Page | OperatorTerminal | OnCompleteWorkOrderOperationFullQty | AppU4DM | Yes |
 | OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionSectionCompletedSignal | WorkInstruction | Yes |
 | OpcenterEXDS_EXFN_WorkInstruction | Snippet | SNP_WorkInstruction_VerticalView | WorkInstructionStepCompletedSignal | WorkInstruction | Yes |
 | OpcenterEXDS_OperatorLanding | Snippet | WorkInstructions | OnLinkWIOnDemandToSerialNumber | AppU4DM | Yes |
@@ -2223,1879 +2224,648 @@ Found 64 subscription(s):
 
 ---
 
-## 5. Pages/Panels
+## 5. Navigation Page Commands
 
-All pages and panels with their referenced commands (excluding marketplace and UI modules).
+Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.
 
-**Note:** Commands are found by recursively following microflow call chains (Page→Microflow→...→Command). The analysis traces MicroflowCall, JavaAction, and ExternalAction types.
+Found commands in 1 page(s):
 
-**Limitation:** Inline nanoflows (nanoflows embedded directly in pages, not stored as separate Units) are not currently traced. Only standalone microflows stored in the Unit table can be analyzed recursively.
+### OpcenterEXDS_OperatorLanding.OperatorLanding
 
-Found 154 page(s)/panel(s):
-
-| Name | Module | Target Commands |
-|------|--------|----------------|
-| ScrapMaterialConsumptionQuantity | OpcenterEXDS_OperatorLanding | - |
-| HeaderBar | OpcenterEXDS_OperatorLanding | - |
-| WorkInstructions | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsGridCustomPart | OpcenterEXDS_OperatorLanding | - |
-| DocumentViewer_ForDocSetLinkedEntity | EXFN_DocumentViewer | - |
-| PANEL_VerticalCommandBarMore | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsGrid | OpcenterEXDS_OperatorLanding | - |
-| SNP_WorkInstruction_VerticalView | OpcenterEXDS_EXFN_WorkInstruction | - |
-| NonConformanceMaterialTrackingUnits_MaterialTrackingUnitContext | OpcenterEXDS_OperatorLanding | - |
-| SelectedToolBadge_ToolContext | OpcenterEXDS_OperatorLanding | - |
-| DocumentViewerSnippet | OpcenterEXDS_EXFN_DocumentViewer | - |
-| Home_Web | OpcenterEXDS_OperatorLanding | - |
-| ScrapMaterialConsumptionPopup | OpcenterEXDS_OperatorLanding | - |
-| NonConformance_ToolContext | OpcenterEXDS_OperatorLanding | - |
-| LazyLoader | OpcenterEXDS_OperatorLanding | - |
-| PANEL_WorkInstructionsToWOStep_Add | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorDetailsCompleteStep | OpcenterEXDS_OperatorLanding | - |
-| Datatime | EXFN_WorkInstruction | - |
-| AddDocumentsMaterialTrackingUnits | OpcenterEXDS_OperatorLanding | - |
-| PANEL_VerticalCommandBarNC_Details | OpcenterEXDS_OperatorLanding | - |
-| PANEL_SetPoint | OpcenterEXDS_OperatorLanding | - |
-| SelectedMaterialTrackingUnitBadge_WorkOrderOperationContext | OpcenterEXDS_OperatorLanding | - |
-| SNP_WorkInstruction_Classic | EXFN_WorkInstruction | - |
-| PANEL_VerticalCommandBarMore_Details | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsDisassemble | OpcenterEXDS_OperatorLanding | - |
-| WorkInstructionDefinitions_Overview_Example | EXFN_WorkInstruction | - |
-| VerticalCommandBar_More | OpcenterEXDS_OperatorLanding | AppU4DM
-.TriggerPrintingOnWorkOrderOperation
- |
-| DocumentViewerSnippet_DNC | OpcenterEXDS_PartProgram | - |
-| VerticalCommandBar | OpcenterEXDS_OperatorLanding | - |
-| PANEL_ActiveUserList | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsGridDisassemble | OpcenterEXDS_OperatorLanding | - |
-| AddDocumentsSummary | OpcenterEXDS_OperatorLanding | - |
-| PANEL_Start_ValidateUser_FromDetails | OpcenterEXDS_OperatorLanding | - |
-| FailureContextualMenu | EXFN_Quality | - |
-| FailureBrowser | OpcenterEXDS_OperatorLanding | - |
-| ToBeUsedTools_Backup | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsSelectedFit | OpcenterEXDS_OperatorLanding | - |
-| PANEL_SelectToBeConsumedMTU | OpcenterEXDS_OperatorLanding | - |
-| PANEL_LinkExistingDocument | EXFN_DocumentViewer | - |
-| Integer | EXFN_WorkInstruction | - |
-| WorkInstructionDefinitions_Overview | EXFN_WorkInstruction | - |
-| Routing | OpcenterEXDS_OperatorLanding | - |
-| PANEL_SkipWOOperation | OpcenterEXDS_OperatorLanding | - |
-| SPCChart_VisualAndAttributive | EXFN_Quality | - |
-| SNP_WorkInstruction_VerticalView | EXFN_WorkInstruction | - |
-| ToBeConsumedMaterialCustomProduced | OpcenterEXDS_OperatorLanding | - |
-| SelectedMaterialTrackingUnitBadge_MaterialTrackingUnitContext | OpcenterEXDS_OperatorLanding | - |
-| SNP_QualityInspection_Attributive | EXFN_Quality | - |
-| AddDocumentsNavigationWizard | OpcenterEXDS_OperatorLanding | - |
-| SNP_QualityInspection_Visual | EXFN_Quality | - |
-| ToBeConsumedMaterialsGridRangePartsAsRequired | OpcenterEXDS_OperatorLanding | - |
-| PANEL_ImportDocument | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorLandingStart | OpcenterEXDS_OperatorLanding | - |
-| WorkInstruction_View | EXFN_WorkInstruction | - |
-| ToBeCoByProducedMaterials | OpcenterEXDS_OperatorLanding | - |
-| PANEL_WOOP_NonConformance | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorLandingGoToDetailsSN | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorLandingHold | OpcenterEXDS_OperatorLanding | - |
-| QualityInspectionVisual_FullscreenPopup | EXFN_Quality | - |
-| PANEL_Notes | OpcenterEXDS_OperatorLanding | - |
-| AddDocumentsPopup | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsAlternative | OpcenterEXDS_OperatorLanding | - |
-| WorkInstruction_View_Vertical | EXFN_WorkInstruction | - |
-| Dropdown | EXFN_WorkInstruction | - |
-| PANEL_CloseFlexibleWorkOrder | OpcenterEXDS_OperatorLanding | AppU4DM.UADMAbruptlyCloseFlexibleWorkOrder |
-| PANEL_CompleteAssignedNonProductiveActivities | OpcenterEXDS_OperatorLanding | - |
-| ScrapFailureBrowser | OpcenterEXDS_OperatorLanding | - |
-| Decimal | EXFN_WorkInstruction | - |
-| NonConformanceMaterialTrackingUnits_WorkOrderOperationContext | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorLandingComplete | OpcenterEXDS_OperatorLanding | - |
-| Document_Overview | EXFN_DocumentViewer | - |
-| ToBeConsumedMaterialsGridNormalPart | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsGridSelectedFit | OpcenterEXDS_OperatorLanding | - |
-| SNP_QualityInspection | EXFN_Quality | - |
-| OperationContainer | OpcenterEXDS_OperatorLanding | - |
-| AddDocumentsSelectedMaterialTrackingUnitBadge | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialCoByProduced | OpcenterEXDS_OperatorLanding | - |
-| PartProgramHistoryPopUp | OpcenterEXDS_PartProgram | - |
-| NonConformancesSummary | OpcenterEXDS_OperatorLanding | - |
-| OperatorLanding | OpcenterEXDS_OperatorLanding | - |
-| PartProgram | OpcenterEXDS_OperatorLanding | - |
-| PANEL_Complete_ValidateUser | OpcenterEXDS_OperatorLanding | - |
-| NonConformancesInfo | OpcenterEXDS_OperatorLanding | - |
-| PANEL_SelectEquipmentAcquireWI | OpcenterEXDS_EXFN_WorkInstruction | - |
-| ToBeConsumedMaterialGridCoByProduced | OpcenterEXDS_OperatorLanding | - |
-| ScenarioInstanceView | EXFN_ElectronicSignature | - |
-| AddDocumentsSelectedDocumentBadge | OpcenterEXDS_OperatorLanding | - |
-| SelectedFailureBadge | OpcenterEXDS_OperatorLanding | - |
-| RoutingNode | OpcenterEXDS_OperatorLanding | - |
-| NonConformanceEquipment_EquipmentContext | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsCustomPart | OpcenterEXDS_OperatorLanding | - |
-| Failure_Overview | EXFN_Quality | - |
-| PANEL_SetPointHistory | OpcenterEXDS_OperatorLanding | - |
-| PANEL_LinkExistingDocumentSet | EXFN_DocumentViewer | - |
-| DataCollector | EXFN_WorkInstruction | - |
-| PANEL_AssignAndStartNonProductiveActivities | OpcenterEXDS_OperatorLanding | - |
-| PANEL_ChangePackage | OpcenterEXDS_OperatorLanding | - |
-| AddDocuments | OpcenterEXDS_OperatorLanding | - |
-| NonConformancePopup | OpcenterEXDS_OperatorLanding | - |
-| SPCChart_Variable | EXFN_Quality | - |
-| PANEL_CreateLinkDocument | EXFN_DocumentViewer | - |
-| ToBeConsumedMaterialsNormalPart | OpcenterEXDS_OperatorLanding | - |
-| ToBeProducedMaterial | OpcenterEXDS_OperatorLanding | - |
-| ToBeUsedTools | OpcenterEXDS_OperatorLanding | - |
-| VerticalCommandBarPartProgram | OpcenterEXDS_PartProgram | - |
-| QualityInspections | OpcenterEXDS_OperatorLanding | - |
-| WorkInstruction_Overview | EXFN_WorkInstruction | - |
-| DocumentViewerSnippet | EXFN_DocumentViewer | - |
-| ToBeConsumedMaterialsReference | OpcenterEXDS_OperatorLanding | - |
-| PANEL_SelectTool | OpcenterEXDS_OperatorLanding | - |
-| ScrapMaterialTrackingUnits | OpcenterEXDS_OperatorLanding | - |
-| ES_Button | EXFN_ElectronicSignature | - |
-| SPCResponseMessages | EXFN_Quality | - |
-| PANEL_DisassembleMaterialTrackingUnit | OpcenterEXDS_OperatorLanding | - |
-| SelectedDocumentBadge | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorDetailsStartStep | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsGridReference | OpcenterEXDS_OperatorLanding | - |
-| PANEL_Start_ValidateUser | OpcenterEXDS_OperatorLanding | - |
-| MultipleChoice | EXFN_WorkInstruction | - |
-| WorkInstruction_New_Step2 | EXFN_WorkInstruction | - |
-| PANEL_VerticalCommandBarNC | OpcenterEXDS_OperatorLanding | - |
-| PartProgramDetailsPopUp | OpcenterEXDS_PartProgram | - |
-| DocumentSelection_View | EXFN_DocumentViewer | - |
-| ToBeConsumedMaterialGridAlternative | OpcenterEXDS_OperatorLanding | - |
-| VerticalCommandBar_NC | OpcenterEXDS_OperatorLanding | - |
-| PANEL_OperatorLandingPause | OpcenterEXDS_OperatorLanding | - |
-| ToBeConsumedMaterialsPrekit | OpcenterEXDS_OperatorLanding | - |
-| OperationContainerHeaderBar | OpcenterEXDS_OperatorLanding | - |
-| WorkInstruction_VerticalView_Example | EXFN_WorkInstruction | - |
-| PANEL_LinkDocuments | OpcenterEXDS_OperatorLanding | - |
-| OperatorTerminal | OpcenterEXDS_OperatorLanding | - |
-| ReadMe | EXFN_Quality | - |
-| PANEL_ScrewingDetails | OpcenterEXDS_OperatorLanding | - |
-| PANEL_ChangeSN | OpcenterEXDS_OperatorLanding | AppU4DM.UpdateSerialNumberList |
-| DocumentViewer_ForLinkedEntity | EXFN_DocumentViewer | - |
-| ToBeConsumedMaterialsRangePartsAndAsRequired | OpcenterEXDS_OperatorLanding | - |
-| PANEL_AddDocumentsImportDocument | OpcenterEXDS_OperatorLanding | - |
-| PANEL_WorkInstructionsToWOOperation_Add | OpcenterEXDS_OperatorLanding | - |
-| PANEL_SelectDestinationContainer | OpcenterEXDS_OperatorLanding | - |
-| PANEL_Pause_ValidateUser | OpcenterEXDS_OperatorLanding | - |
-| ScrapProducedMaterialPopup | OpcenterEXDS_OperatorLanding | - |
-| NonConformanceDocuments | OpcenterEXDS_OperatorLanding | - |
-| Routing_Popup | OpcenterEXDS_OperatorLanding | - |
-| SNP_QualityInspectionContainer | EXFN_Quality | - |
-| SNP_QualityInspection_Variable | EXFN_Quality | - |
-| NonConformancesNavigationWizard | OpcenterEXDS_OperatorLanding | - |
-| Checkbox | EXFN_WorkInstruction | - |
-| WorkInstruction_Overview_Example | EXFN_WorkInstruction | - |
-| OperationList | OpcenterEXDS_OperatorLanding | - |
-| SelectedEquipmentBadge_EquipmentContext | OpcenterEXDS_OperatorLanding | - |
-| WorkInstruction_New_Step1 | EXFN_WorkInstruction | - |
-| Text | EXFN_WorkInstruction | - |
-| WorkInstruction_Preview | EXFN_WorkInstruction | - |
-| Multiline | EXFN_WorkInstruction | - |
+| Caption | Target Page | Target AppName | Target CommandName |
+|---------|-------------|----------------|--------------------|
+| Open
+ | OpcenterEXDS_OperatorLanding.OperatorTerminal, OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingGoToDetailsSN | - | - |
+| Start
+ | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingStart, OpcenterEXDS_OperatorLanding.OperatorTerminal, OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingGoToDetailsSN, OpcenterEXDS_OperatorLanding.PANEL_Start_ValidateUser, OpcenterEXDS_OperatorLanding.PANEL_Start_ValidateUser_FromDetails | - | - |
+| Pause
+ | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingPause, OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingPause, OpcenterEXDS_OperatorLanding.PANEL_Pause_ValidateUser | - | - |
+| Hold
+ | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingHold | - | - |
+| Skip | OpcenterEXDS_OperatorLanding.PANEL_SkipWOOperation | - | - |
+| Complete | OpcenterEXDS_OperatorLanding.PANEL_OperatorLandingComplete, OpcenterEXDS_OperatorLanding.PANEL_Complete_ValidateUser | - | - |
+| Documents
+ | - | - | - |
+| NC | OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarNC, OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarNC_Details | - | - |
+| Change Package | OpcenterEXDS_OperatorLanding.PANEL_ChangePackage | - | - |
+| Add Documents | OpcenterEXDS_OperatorLanding.AddDocumentsPopup | - | - |
+| Notes
+ | OpcenterEXDS_OperatorLanding.PANEL_Notes | - | - |
+| Scrap | OpcenterEXDS_OperatorLanding.ScrapProducedMaterialPopup | - | - |
+| More
+ | OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarMore, OpcenterEXDS_OperatorLanding.PANEL_VerticalCommandBarMore_Details | - | - |
 
 ---
 
 ## 6. Pages/Panels Commands Hierarchy
 
-Microflows and nanoflows called by each page/panel (in YAML structure).
+Microflows and nanoflows called by each page/panel, showing recursive call hierarchy up to 5 levels (in YAML structure). Microflows called transitively are loaded on-the-fly from the database when needed.
 
 ```yaml
 pages:
-  - name: ScrapMaterialConsumptionQuantity
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SearchToBeConsumedMTU
-      - OpcenterEXDS_OperatorLanding.ACT_ShowSelectToBeConsumedMTUPanel
-      - OpcenterEXDS_OperatorLanding.ACT_ChangeScrappedQuantity
-      - OpcenterEXDS_OperatorLanding.ACT_IncreaseScrapAssembledQuantity
-      - OpcenterEXDS_OperatorLanding.ACT_DescreaseScrapAssembledQuantity
-      - OpcenterEXDS_OperatorLanding.ACT_SearchDestinationContainer
-      - OpcenterEXDS_OperatorLanding.ACT_ShowSelectDestinationContainerPanel
-    target_commands:
-      []
-
-  - name: HeaderBar
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_TimerRefreshRemainingTime
-      - OpcenterEXDS_OperatorLanding.DS_CreateTimerContext
-      - OpcenterEXDS_OperatorLanding.ACT_Show_SelectSerialNumber_Panel
-      - OpcenterEXDS_OperatorLanding.ACT_HeaderBar_EquipmentList_Click
-    target_commands:
-      []
-
-  - name: WorkInstructions
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_LinkWIOnDemandToSerialNumber
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.DS_GetWorkInstructionView
-      - OpcenterEXDS_EXFN_WorkInstruction.DS_GetWorkInstructionContextHelper
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateWorkInstructionContext
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGridCustomPart
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_CustomPart
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage_Grid
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial_Grid
-    target_commands:
-      []
-
-  - name: DocumentViewer_ForDocSetLinkedEntity
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.ACT_UnlinkDocumentSetList
-      - EXFN_DocumentViewer.DS_GetDocumentsByDocumentSetsLinkedToEntity
-    target_commands:
-      []
-
-  - name: PANEL_VerticalCommandBarMore
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGrid
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ToBeConsumedMaterialHistory
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumedMaterial_GridMode
-      - OpcenterEXDS_OperatorLanding.SetVisibilitySnippet_GridMode
-    target_commands:
-      []
-
-  - name: SNP_WorkInstruction_VerticalView
-    module: OpcenterEXDS_EXFN_WorkInstruction
-    microflows:
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_WISectionRefresh
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_EXFN_WorkInstruction.EVT_WorkInstructionSectionCompleted_Details
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_EXFN_WorkInstruction.DS_CreateWISignalConfiguration
-      - EXFN_WorkInstruction.SUB_GetCalculateWorkInstructionFormulaValues_BySection
-      - OpcenterEXDS_EXFN_WorkInstruction.EVT_WorkInstructionStepCompleted_Details
-      - EXFN_WorkInstruction.SUB_GetCalculateWorkInstructionFormulaValues_ByStep
-      - OpcenterEXDS_EXFN_WorkInstruction.DS_Get_WI_Step_Instructions
-      - OpcenterEXDS_OperatorLanding.DS_SetAutoGenerateId
-      - EXFN_WorkInstruction.DS_WI_SortedItemViewList
-      - EXFN_WorkInstruction.DS_ScenarioConfiguration
-      - EXFN_WorkInstruction.DS_ScenarioInstanceView
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_WIStep_Confirm
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_WIStep_Acknowledge
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_WIStep_Acquire
-      - OpcenterEXDS_EXFN_WorkInstruction.EVT_WIStep_ES_Acquired
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_WIStep_ReEdit
-    target_commands:
-      []
-
-  - name: NonConformanceMaterialTrackingUnits_MaterialTrackingUnitContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformanceMaterialTrackingUnits_ShowOnlyRelatedButtonClick
-      - OpcenterEXDS_OperatorLanding.DS_GetMaterialTrackingUnitsRelatedToTheSelectedWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.ACT_SelectNonConformanceMaterialTrackingUnit_MaterialTrackingUnitContext
-      - OpcenterEXDS_OperatorLanding.ACT_SelectNonConformanceMaterialTrackingUnit_ByView_MaterialTrackingUnitContext
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-    target_commands:
-      []
-
-  - name: SelectedToolBadge_ToolContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectTool
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedTools_Vertical
-    target_commands:
-      []
-
-  - name: DocumentViewerSnippet
-    module: OpcenterEXDS_EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.ACT_SetPMIVisibility
-      - EXFN_DocumentViewer.ACT_FitToView
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_EXDSOpenDocument
-      - EXFN_DocumentViewer.ACT_ChangeDetailsView
-      - EXFN_DocumentViewer.DS_GetFile
-      - EXFN_ServiceLayer.DS_GetApplicationURL
-      - EXFN_DocumentViewer.ACT_CloseJTFullScreen
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_AddGenerateMarkupToOperation
-      - EXFN_DocumentViewer.ToggleMarkup
-      - EXFN_DocumentViewer.ACT_ToggleToolbox
-      - EXFN_DocumentViewer.ACT_SetMarkupColor
-      - OpcenterEXDS_EXFN_DocumentViewer.EVT_OnSelectedObject
-      - EXFN_DocumentViewer.ACT_ChangeModel3D
-      - EXFN_DocumentViewer.DS_GetCategories
-      - EXFN_DocumentViewer.DS_GetDocumentByCategory
-      - EXFN_DocumentViewer.ACT_Carousel
-      - EXFN_DocumentViewer.ACT_ChangeDocumentSelection
-      - EXFN_DocumentViewer.ACT_ButtonDownload
-      - EXFN_DocumentViewer.DS_GetDocumentSetList
-    target_commands:
-      []
-
-  - name: Home_Web
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: ScrapMaterialConsumptionPopup
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_ScrapMaterialConsumedPage_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedFailuresForScrap
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectScrapFailure
-      - OpcenterEXDS_OperatorLanding.ACT_ScrapConsumedMaterial
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-    target_commands:
-      []
-
-  - name: NonConformance_ToolContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectNonConformanceTool
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-    target_commands:
-      []
-
-  - name: LazyLoader
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: PANEL_WorkInstructionsToWOStep_Add
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_LinkWorkInstructionsToWOStep
-    target_commands:
-      []
-
-  - name: PANEL_OperatorDetailsCompleteStep
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Complete_Panel_Step
-      - OpcenterEXDS_OperatorLanding.ACT_Select_CompleteStepPanel_Equipment
-    target_commands:
-      []
-
-  - name: Datatime
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_ItemView_Datatime
-      - EXFN_WorkInstruction.ACT_Date_change
-      - EXFN_WorkInstruction.ACT_dateTime_null_Set
-      - EXFN_WorkInstruction.ACT_Time_Change
-      - EXFN_WorkInstruction.ACT_DateTime_New
-      - EXFN_WorkInstruction.ACT_CalculateWorkInstructionFormulaValues_Datetime
-    target_commands:
-      []
-
-  - name: AddDocumentsMaterialTrackingUnits
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetActiveMaterialTrackingUnitsRelatedToTheSelectedWorkOrderOperationOrStep
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsSelectMaterialTrackingUnit
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-    target_commands:
-      []
-
-  - name: PANEL_VerticalCommandBarNC_Details
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore
-    target_commands:
-      []
-
-  - name: PANEL_SetPoint
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_OpenSetPointHistoryPanel
-      - OpcenterEXDS_OperatorLanding.DS_SetPointVariables
-      - OpcenterEXDS_OperatorLanding.ACT_TransmitEquipmentSetPointToAutomationNodeParameters
-      - OpcenterEXDS_OperatorLanding.ACT_TransmitAllEquipmentSetPointToAutomationNodeParameters
-    target_commands:
-      []
-
-  - name: SelectedMaterialTrackingUnitBadge_WorkOrderOperationContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectMaterialTrackingUnit_MaterialTrackingUnitContext
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedMaterialTrackingUnits_Vertical_WorkOrderOperationContext
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectMaterialTrackingUnit_WorkOrderOperationContext
-    target_commands:
-      []
-
-  - name: SNP_WorkInstruction_Classic
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.SUB_GetCalculateWorkInstructionFormulaValues_BySection
-      - EXFN_WorkInstruction.SUB_GetCalculateWorkInstructionFormulaValues_ByStep
-      - EXFN_WorkInstruction.DS_WI_SortedItemViewList
-      - EXFN_WorkInstruction.DS_ScenarioInstanceView
-      - EXFN_WorkInstruction.DS_ScenarioConfiguration
-      - EXFN_WorkInstruction.ACT_WIStep_Confirm
-      - EXFN_WorkInstruction.ACT_WIStep_Acknowledge
-      - EXFN_WorkInstruction.EVT_WIStep_ES_Acquired
-      - EXFN_WorkInstruction.ACT_WIStep_ReEdit
-      - EXFN_WorkInstruction.DS_StepView
-      - EXFN_WorkInstruction.ACT_StepNavigation_First
-      - EXFN_WorkInstruction.ACT_StepNavigation_Previous
-      - EXFN_WorkInstruction.DS_Step_Sequence
-      - EXFN_WorkInstruction.ACT_StepNavigation_Set
-      - EXFN_WorkInstruction.ACT_StepNavigation_Next
-      - EXFN_WorkInstruction.ACT_StepNavigation_Last
-    target_commands:
-      []
-
-  - name: PANEL_VerticalCommandBarMore_Details
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsDisassemble
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_Disassemble
-      - OpcenterEXDS_OperatorLanding.DS_GetHistoryDisassembledMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterialSpecificationType
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-    target_commands:
-      []
-
-  - name: WorkInstructionDefinitions_Overview_Example
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.NAV_WorkInstructionPreview_Example
-    target_commands:
-      []
-
-  - name: VerticalCommandBar_More
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_History
-      - OpcenterEXDS_OperatorLanding.ACT_Open_Genealogy
-      - OpcenterEXDS_OperatorLanding.ACT_Open_AsBuilt
-      - OpcenterEXDS_OperatorLanding.ACT_GoTo_ChangePackage
-      - OpcenterEXDS_OperatorLanding.ACT_Open_NonProductiveActivities
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ExternalIntegration
-      - OpcenterEXDS_OperatorLanding.ACT_SetTargetQuantityOnFlexibleWorkOrder
-      - OpcenterEXDS_OperatorLanding.ACT_OpenCloseFlexiblePanel
-      - OpcenterEXDS_OperatorLanding.ACT_TriggerPrintingOnWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.ACT_OpenChangeSNPanel
-      - OpcenterEXDS_OperatorLanding.ACT_OpenSetPointPanel
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateVerticalCommandBarContext
-    target_commands:
-      - AppU4DM
-.TriggerPrintingOnWorkOrderOperation
-
-
-  - name: DocumentViewerSnippet_DNC
-    module: OpcenterEXDS_PartProgram
-    microflows:
-      - OpcenterEXDS_PartProgram.DS_Tree_Context
-      - OpcenterEXDS_PartProgram.ACT_SetHeight
-      - OpcenterEXDS_PartProgram.ACT_Search
-      - OpcenterEXDS_PartProgram.ACT_GetTree
-      - OpcenterEXDS_PartProgram.ACT_SetSelected
-      - OpcenterEXDS_PartProgram.ACT_ShowWorkOrderTree_Toogle
-    target_commands:
-      []
-
-  - name: VerticalCommandBar
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateVerticalCommandBarContext
-      - OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click
-      - OpcenterEXDS_OperatorLanding.ACT_Start
-      - OpcenterEXDS_OperatorLanding.ACT_Pause_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_Hold_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_OpenOperationSkip
-      - OpcenterEXDS_OperatorLanding.ACT_Complete
-      - OpcenterEXDS_OperatorLanding.ACT_ShowDocuments
-      - OpcenterEXDS_OperatorLanding.ACT_Open_NC_Popup
-      - OpcenterEXDS_OperatorLanding.ACT_OpenChangePackage
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocuments_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_Open_Notes
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapProducedMaterialPage
-      - OpcenterEXDS_OperatorLanding.ACT_More
-      - OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore
-    target_commands:
-      []
-
-  - name: PANEL_ActiveUserList
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGridDisassemble
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_Disassemble
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterialSpecificationType
-    target_commands:
-      []
-
-  - name: AddDocumentsSummary
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: PANEL_Start_ValidateUser_FromDetails
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Start_ValidateUser_FromDetails
-      - OpcenterEXDS_OperatorLanding.DS_Create_ESContext
-    target_commands:
-      []
-
-  - name: FailureContextualMenu
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.DS_QualityInspectionVisual_ContextualMenu_GetLimitedFailureList_WithOthersOption
-      - EXFN_Quality.ACT_QualityInspectionVisual_ContextualMenu_SelectionChanged
-      - EXFN_Quality.ACT_ContextualMenu_OnMouseLeave
-    target_commands:
-      []
-
-  - name: FailureBrowser
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetSortedBreadcrumb
-      - OpcenterEXDS_OperatorLanding.ACT_Navigate_breadcrumb
-      - OpcenterEXDS_OperatorLanding.ACT_FailureList
-      - OpcenterEXDS_OperatorLanding.ACT_SelectFailure
-      - OpcenterEXDS_OperatorLanding.NAV_FailureChildren_Overview
-    target_commands:
-      []
-
-  - name: ToBeUsedTools_Backup
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_CreateToBeUsedToolContext
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateSignalEnvelope_UseTool
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_OnUsedToolSignal
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.ACT_ToolHistory_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_ToolInput_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.OCH_ToolNId
-      - OpcenterEXDS_OperatorLanding.ACT_ShowSelectToolPanel
-      - OpcenterEXDS_OperatorLanding.ACT_UseTool
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireTool
-      - OpcenterEXDS_OperatorLanding.DS_GetToolEntity
-      - OpcenterEXDS_OperatorLanding.ACT_ToBeUsedToolHistory
-      - OpcenterEXDS_OperatorLanding.DS_GetTobeUsedToolHistory
-      - OpcenterEXDS_OperatorLanding.ACT_ShowToolPanelForGrid
-      - OpcenterEXDS_OperatorLanding.ACT_Grid_AcquireTool
-      - OpcenterEXDS_OperatorLanding.ACT_Grid_UseTool
-      - OpcenterEXDS_OperatorLanding.ACT_UseAllTools
-      - OpcenterEXDS_OperatorLanding.ACT_Grid_UseAllTools
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsSelectedFit
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_SelectedFit
-      - OpcenterEXDS_OperatorLanding.ACT_ActualMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-    target_commands:
-      []
-
-  - name: PANEL_SelectToBeConsumedMTU
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Cancel_SelectToBeConsumedPanel
-      - OpcenterEXDS_OperatorLanding.ACT_Save_SelectToBeConsumedPanel
-      - OpcenterEXDS_OperatorLanding.ACT_SelectToBeConsumedMTU
-    target_commands:
-      []
-
-  - name: PANEL_LinkExistingDocument
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.ACT_LinkDocument
-      - EXFN_DocumentViewer.ACT_LinkDocument_ChangeUseCurrentDocumentRevision
-    target_commands:
-      []
-
-  - name: Integer
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_ItemView_Integer
-      - EXFN_WorkInstruction.ACT_ItemView_Integer_OnChange
-      - EXFN_WorkInstruction.ACT_CalculateWorkInstructionFormulaValues_Integer
-    target_commands:
-      []
-
-  - name: WorkInstructionDefinitions_Overview
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.NAV_WorkInstruction_Preview
-    target_commands:
-      []
-
-  - name: Routing
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_NavigateToOperation
-      - OpcenterEXDS_OperatorLanding.DependencyGraphContext_SetHeight
-      - OpcenterEXDS_OperatorLanding.ACT_OnClick_RoutingNode
-      - OpcenterEXDS_OperatorLanding.DS_GetBreadcrumb
-    target_commands:
-      []
-
-  - name: PANEL_SkipWOOperation
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectSkipSerialNumber
-      - OpcenterEXDS_OperatorLanding.ACT_SelectSkipReason
-      - OpcenterEXDS_OperatorLanding.ACT_CallSkipOperation
-    target_commands:
-      []
-
-  - name: SPCChart_VisualAndAttributive
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.SUB_RetrieveFirstMessage
-    target_commands:
-      []
-
-  - name: SNP_WorkInstruction_VerticalView
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.SUB_GetCalculateWorkInstructionFormulaValues_BySection
-      - EXFN_WorkInstruction.SUB_GetCalculateWorkInstructionFormulaValues_ByStep
-      - EXFN_WorkInstruction.DS_WI_SortedItemViewList
-      - EXFN_WorkInstruction.DS_ScenarioInstanceView
-      - EXFN_WorkInstruction.ACT_WIStep_Acquire
-      - EXFN_WorkInstruction.ACT_WIStep_Confirm
-      - EXFN_WorkInstruction.ACT_WIStep_Acknowledge
-      - EXFN_WorkInstruction.EVT_WIStep_ES_Acquired
-      - EXFN_WorkInstruction.ACT_WIStep_ReEdit
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialCustomProduced
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeCustomProductMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_ActualProducedMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_CoProduceMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-    target_commands:
-      []
-
-  - name: SelectedMaterialTrackingUnitBadge_MaterialTrackingUnitContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectMaterialTrackingUnit_MaterialTrackingUnitContext
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedMaterialTrackingUnits_Vertical_MaterialTrackingUnitContext
-    target_commands:
-      []
-
-  - name: SNP_QualityInspection_Attributive
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.ACT_SetOkValue
-      - EXFN_Quality.ACT_SetNOkValue
-      - EXFN_Quality.ACT_Attributive_OnChange
-      - EXFN_Quality.ACT_ShowPmiByCharName
-      - EXFN_Quality.ACT_DeselectAttributeValueToUpdate
-      - EXFN_Quality.ACT_GetAttributiveViewForHistory
-      - EXFN_Quality.ACT_Attributive_DisassociateFailure
-      - EXFN_Quality.ACT_SelectAttributiveValueToUpdate
-      - EXFN_Quality.ACT_SetInspectionValueAndOpenFailure
-      - EXFN_Quality.DS_ScenarioInstanceView
-      - EXFN_Quality.ACT_ConfirmSample_Attributive
-      - EXFN_Quality.ACT_NewSample_Attributive
-      - EXFN_Quality.SUB_RetrieveCalcualatedJson
-    target_commands:
-      []
-
-  - name: AddDocumentsNavigationWizard
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsNavigationWizard_Documents_Click
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutVerticalMode
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsNavigationWizard_MaterialTrackingUnits_Click
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsNavigationWizard_Submit_Click
-    target_commands:
-      []
-
-  - name: SNP_QualityInspection_Visual
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.ACT_ImageGrid_OnClick
-      - EXFN_Quality.DS_Failure_Retrieve_ListGallery
-      - EXFN_Quality.ACT_CurrentFailure_Change
-      - EXFN_Quality.ACT_QualityInspectionVisual_Fullscreen
-      - EXFN_Quality.ACT_NewSample_Visual
-      - EXFN_Quality.ACT_ConfirmSample_Visual
-      - EXFN_Quality.ACT_OpenFailureSelectionPanel
-      - EXFN_Quality.DS_ScenarioInstanceView
-      - EXFN_Quality.SUB_RetrieveCalcualatedJson
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGridRangePartsAsRequired
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_RangeParts
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage_Grid
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial_Grid
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_AsRequired
-    target_commands:
-      []
-
-  - name: PANEL_ImportDocument
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformancesInfo_OnOperationDetailsChange
-      - OpcenterEXDS_OperatorLanding.ACT_CreateAndLinkDocument
-    target_commands:
-      []
-
-  - name: PANEL_OperatorLandingStart
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_StartPanel_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_StartAllSNButton
-      - OpcenterEXDS_OperatorLanding.DS_SerialNumber_GetNotAlreadyAssociated
-      - OpcenterEXDS_OperatorLanding.ACT_AssociateNewSerialNumber
-      - OpcenterEXDS_OperatorLanding.OCH_SerialNumber_CheckIfExists
-      - OpcenterEXDS_OperatorLanding.OCH_FlexSerialized_Quantity
-      - OpcenterEXDS_OperatorLanding.ACT_AddNewSerialNumbersFromNId
-      - OpcenterEXDS_OperatorLanding.ACT_AddNewSerialNumbersFromNumber
-      - OpcenterEXDS_OperatorLanding.DS_StartCompletePanel_GetSN
-      - OpcenterEXDS_OperatorLanding.ACT_SelectedSerialNumberInStartCompletePanel
-      - OpcenterEXDS_OperatorLanding.DS_StartCompletePanel_GetEquipments
-      - OpcenterEXDS_OperatorLanding.ACT_Select_Equipment_Operation
-    target_commands:
-      []
-
-  - name: WorkInstruction_View
-    module: EXFN_WorkInstruction
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: ToBeCoByProducedMaterials
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateSignalEnvelope_ToBeCoByProduct
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_OnCoProductProduced
-      - OpcenterEXDS_OperatorLanding.EVT_OnByProductProduced
-      - OpcenterEXDS_OperatorLanding.EVT_OnOutputMaterialProduced
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.ACT_ToBeConsumedMaterialHistory
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeCoProducedMaterial_Grid
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_CoProduceMaterial
-      - OpcenterEXDS_OperatorLanding.DS_ChangeAssembleAllVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_CoProduceMaterialsAll
-      - OpcenterEXDS_OperatorLanding.DS_CreateCoByProductContext
-    target_commands:
-      []
-
-  - name: PANEL_WOOP_NonConformance
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Open_NonConformance_PC
-      - OpcenterEXDS_OperatorLanding.ACT_CreateNC_From_Panel
-    target_commands:
-      []
-
-  - name: PANEL_OperatorLandingGoToDetailsSN
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectedSerialNumberInPanel
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedSerialNumberContext
-      - OpcenterEXDS_OperatorLanding.ACT_Select_GoToDetails_SerialNumber
-      - OpcenterEXDS_OperatorLanding.ACT_Select_SerialNumber
-    target_commands:
-      []
-
-  - name: PANEL_OperatorLandingHold
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Select_HoldReason
-      - OpcenterEXDS_OperatorLanding.ACT_Hold_Panel_Operation
-    target_commands:
-      []
-
-  - name: QualityInspectionVisual_FullscreenPopup
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.DS_GetOrCreateFullscreenFailureContextualMenuContext
-      - EXFN_Quality.ACT_QualityInspectionVisual_FullscreenPopup_Close
-    target_commands:
-      []
-
-  - name: PANEL_Notes
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Create_Panel_Note
-      - OpcenterEXDS_OperatorLanding.ACT_Create_NoteToBeCreated_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_Acknowledge_Note
-      - OpcenterEXDS_OperatorLanding.ACT_Create_NoteToBeCreated_WorkOrder
-    target_commands:
-      []
-
-  - name: AddDocumentsPopup
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_AddDocumentsPage_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-      - OpcenterEXDS_OperatorLanding.ACT_Submit_AddDocuments
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsAlternative
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_Alternative
-      - OpcenterEXDS_OperatorLanding.ACT_ActualMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-    target_commands:
-      []
-
-  - name: WorkInstruction_View_Vertical
-    module: EXFN_WorkInstruction
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: Dropdown
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_ItemView_Dropdown
-      - EXFN_WorkInstruction.ACT_ItemView_Dropdown_OnChange
-      - EXFN_WorkInstruction.DS_DropdownItemList
-    target_commands:
-      []
-
-  - name: PANEL_CloseFlexibleWorkOrder
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_UADMAbruptlyCloseFlexibleWorkOrder
-      - OpcenterEXDS_OperatorLanding.ACT_GenerateWONId
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateCloseFlexibleContext
-    target_commands:
-      - AppU4DM.UADMAbruptlyCloseFlexibleWorkOrder
-
-  - name: PANEL_CompleteAssignedNonProductiveActivities
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectAssignedNonProductiveActivities
-      - OpcenterEXDS_OperatorLanding.ACT_CompleteNonProductiveActivites
-    target_commands:
-      []
-
-  - name: ScrapFailureBrowser
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetScrapFailureSortedBreadcrumb
-      - OpcenterEXDS_OperatorLanding.ACT_Navigate_ScrapFailureBreadcrumb
-      - OpcenterEXDS_OperatorLanding.ACT_ScrapFailureList
-      - OpcenterEXDS_OperatorLanding.NAV_ScrapFailureChildren_Overview
-      - OpcenterEXDS_OperatorLanding.ACT_SelectScrapFailure
-    target_commands:
-      []
-
-  - name: Decimal
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_ItemView_Decimal
-      - EXFN_WorkInstruction.ACT_ItemView_Decimal_OnChange
-      - EXFN_WorkInstruction.ACT_CalculateWorkInstructionFormulaValues_Decimal
-    target_commands:
-      []
-
-  - name: NonConformanceMaterialTrackingUnits_WorkOrderOperationContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetMaterialTrackingUnitsRelatedToTheSelectedWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.ACT_SelectNonConformanceMaterialTrackingUnit_WorkOrderOperationContext
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-    target_commands:
-      []
-
-  - name: PANEL_OperatorLandingComplete
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectedSerialNumberInStartCompletePanel
-      - OpcenterEXDS_OperatorLanding.DS_StartCompletePanel_GetEquipments
-      - OpcenterEXDS_OperatorLanding.ACT_Select_CompleteOperationPanel_Equipment
-      - OpcenterEXDS_OperatorLanding.ACT_Complete_Panel_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_CompleteAllSnButton
-    target_commands:
-      []
-
-  - name: Document_Overview
-    module: EXFN_DocumentViewer
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGridNormalPart
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_NormalPart
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage_Grid
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial_Grid
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGridSelectedFit
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_SelectedFit
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage_Grid
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial_Grid
-    target_commands:
-      []
-
-  - name: SNP_QualityInspection
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.DS_GetOrCreateFailureContextualMenuContext
-    target_commands:
-      []
-
-  - name: OperationContainer
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetBuyOffStatus
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_SendBuyOffNotification
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_Complete
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_Item_Click
-    target_commands:
-      []
-
-  - name: AddDocumentsSelectedMaterialTrackingUnitBadge
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsDeselectMaterialTrackingUnit
-      - OpcenterEXDS_OperatorLanding.DS_GetAddDocumentsSelectedMaterialTrackingUnits_Vertical
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialCoByProduced
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeCoProductMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_ActualProducedMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_CoProduceMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-    target_commands:
-      []
-
   - name: PartProgramHistoryPopUp
     module: OpcenterEXDS_PartProgram
-    microflows:
-      - OpcenterEXDS_PartProgram.DS_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-    target_commands:
+    flows:
       []
-
-  - name: NonConformancesSummary
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: OperatorLanding
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_CreateSignalConfiguration
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationStartedSerialized
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationStartedFullQty
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationCompletedFullQty
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationCompletedSerialized
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationPaused
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationHold
-      - OpcenterEXDS_OperatorLanding.EVT_OnSentenceNonConformance
-      - OpcenterEXDS_OperatorLanding.EVT_CreateOrAcknowledgeNote
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationActivedCP
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderSerialNumbersScrapped
-      - OpcenterEXDS_OperatorLanding.EVT_OnReopenWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.SUB_RefreshOperatorLanding
-      - OpcenterEXDS_OperatorLanding.EVT_CreateNonConformance
-      - OpcenterEXDS_OperatorLanding.EVT_OnCompleteReworkOrder
-      - OpcenterEXDS_OperatorLanding.EVT_OnFAICompleted
-      - OpcenterEXDS_OperatorLanding.EVT_OnFAICandidateDeclared
-      - OpcenterEXDS_OperatorLanding.EVT_OnSkipWOOperation
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.ACT_Set_FilterCriteria_OnChanged
-      - OpcenterEXDS_OperatorLanding.ACT_SearchBy_Product
-      - OpcenterEXDS_OperatorLanding.ACT_SearchBy_Machine
-      - OpcenterEXDS_OperatorLanding.ACT_SearchCommandBar_ClearAll_Click
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreate_WorkOrderOperationHelper
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-      - OpcenterEXDS_OperatorLanding.ACT_WorkOrderOperation_Tile_GoToDetails_Click
-      - OpcenterEXDS_OperatorLanding.ACT_WorkOrderOperation_Selected
-      - OpcenterEXDS_OperatorLanding.DS_GetBreadcrumb
-      - OpcenterEXDS_OperatorLanding.DS_CreateDependencyGraphContext
-      - OpcenterEXDS_OperatorLanding.ACT_Routing_ShowPopup
-    target_commands:
-      []
-
-  - name: PartProgram
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_PartProgram.SUB_SetPartProgramContext
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_PartProgram.EVT_DNCStartTransfer
-      - OpcenterEXDS_PartProgram.EVT_DNCCompleteTransfer
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateSignalEnvelope_PartProgram
-      - OpcenterEXDS_PartProgram.ACT_CommandTransferDefault
-      - OpcenterEXDS_PartProgram.NAV_ProgramPartDetails
-      - OpcenterEXDS_PartProgram.NAV_ProgramPartHistory
-      - OpcenterEXDS_PartProgram.SUB_WorkOrderOperationOrStepContext_SetDncItemId
-    target_commands:
-      []
-
-  - name: PANEL_Complete_ValidateUser
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_Create_ESContext
-      - OpcenterEXDS_OperatorLanding.ACT_Complete_ValidateUser
-      - OpcenterEXDS_OperatorLanding.ACT_Complete_ValidateUser_FromDetails
-    target_commands:
-      []
-
-  - name: NonConformancesInfo
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Select_WorkOrderOperation_Context
-      - OpcenterEXDS_OperatorLanding.ACT_Select_MaterialTrackingUnit_Context
-      - OpcenterEXDS_OperatorLanding.ACT_Select_Equipment
-      - OpcenterEXDS_OperatorLanding.ACT_Select_Tool_Context
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformancesInfo_OnOperationDetailsChange
-      - OpcenterEXDS_OperatorLanding.DS_Get_Severity
-    target_commands:
-      []
-
-  - name: PANEL_SelectEquipmentAcquireWI
-    module: OpcenterEXDS_EXFN_WorkInstruction
-    microflows:
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_Select_AcquireWIPanel_Equipment
-      - OpcenterEXDS_EXFN_WorkInstruction.ACT_EquipmentSelectionPanel_AcquireDC
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialGridCoByProduced
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeCoProductMaterial_GridMode
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_CoProduceMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-    target_commands:
-      []
-
-  - name: ScenarioInstanceView
-    module: EXFN_ElectronicSignature
-    microflows:
-      - EXFN_ElectronicSignature.ACT_ScnInstanceView_AccordionOpen
-      - EXFN_ElectronicSignature.ACT_ScnInstanceView_AccordionCollapsed
-      - EXFN_ElectronicSignature.ACT_SignatureAction_Set
-      - EXFN_ElectronicSignature.SWAC_OnReady
-      - EXFN_ElectronicSignature.SWAC_OnFailure
-      - EXFN_ElectronicSignature.EVT_AccordionStatusChanged
-    target_commands:
-      []
-
-  - name: AddDocumentsSelectedDocumentBadge
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsDeselectDocument
-    target_commands:
-      []
-
-  - name: SelectedFailureBadge
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectFailure
-    target_commands:
-      []
-
-  - name: RoutingNode
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: NonConformanceEquipment_EquipmentContext
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectNonConformanceEquipment_EquipmentContext
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsCustomPart
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_CustomPart
-      - OpcenterEXDS_OperatorLanding.ACT_ActualMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-    target_commands:
-      []
-
-  - name: Failure_Overview
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.ACT_Failure_Cancel
-      - EXFN_Quality.ACT_Failure_Select_And_Close
-      - EXFN_Quality.NAV_FirstLevelFailure_Overview
-      - EXFN_Quality.NAV_FailureChildren_Overview
-      - EXFN_Quality.NAV_FailureParent_Overview
-      - EXFN_Quality.DS_FailureList_Retrive
-      - EXFN_Quality.ACT_FailureGalleryItemSelection
-      - EXFN_Quality.ACT_PotentialFailure_Retrieve
-    target_commands:
-      []
-
-  - name: PANEL_SetPointHistory
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: PANEL_LinkExistingDocumentSet
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.OCH_LinkDocumentSet_ChangeUseCurrentDocumentSetRevision
-      - EXFN_DocumentViewer.ACT_LinkDocumentSet
-    target_commands:
-      []
-
-  - name: DataCollector
-    module: EXFN_WorkInstruction
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: PANEL_AssignAndStartNonProductiveActivities
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_StartNonProductiveActivites
-      - OpcenterEXDS_OperatorLanding.ACT_Close_CreateAndStartNonProductiveActivities
-      - OpcenterEXDS_OperatorLanding.ACT_SelectNonProductiveActivities
-      - OpcenterEXDS_OperatorLanding.ACT_SetContextInfo
-      - OpcenterEXDS_OperatorLanding.ACT_SelectWorkOrder
-      - OpcenterEXDS_OperatorLanding.ACT_SelectWorkOrderOperation
-    target_commands:
-      []
-
-  - name: PANEL_ChangePackage
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Submit_ChangePackage
-    target_commands:
-      []
-
-  - name: AddDocuments
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SearchBy_Product
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentDropdownDocType
-      - OpcenterEXDS_OperatorLanding.ACT_Show_AddDocumentsImportPanel
-      - OpcenterEXDS_OperatorLanding.DS_CreateFile
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreate_DocSearchCommandBar_Context
-      - OpcenterEXDS_OperatorLanding.DS_GetDocument
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsSelectAndLinkDocument
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_OpenDocument
-      - OpcenterEXDS_OperatorLanding.DS_CreateDocumentViewer
-      - OpcenterEXDS_OperatorLanding.DS_PreviewDocumentSelection
-    target_commands:
-      []
-
-  - name: NonConformancePopup
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_NonConformancePage_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode
-      - OpcenterEXDS_OperatorLanding.ACT_Submit_NonConformance
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-    target_commands:
-      []
-
-  - name: SPCChart_Variable
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.SUB_RetrieveFirstMessage
-    target_commands:
-      []
-
-  - name: PANEL_CreateLinkDocument
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.ACT_CreateLinkDocument
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsNormalPart
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding_Connector.DS_GetMTUWithContainer
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_NormalPart
-      - OpcenterEXDS_OperatorLanding.ACT_ActualMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-    target_commands:
-      []
-
-  - name: ToBeProducedMaterial
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_CreateMatConsContext
-      - OpcenterEXDS_OperatorLanding.ACT_Set_AutoConsume_BatchMaterials
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateSignalEnvelope_ConsumeMaterial
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_OnAssemblyWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.EVT_OnDisassemblyWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.EVT_ScrapMaterials_Details
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterialsAll
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-      - OpcenterEXDS_OperatorLanding.DS_ChangeAssembleAllVisibility
-      - OpcenterEXDS_OperatorLanding_Connector.DS_CreateContainerDTO
-    target_commands:
-      []
-
-  - name: ToBeUsedTools
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateSignalEnvelope_UseTool
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_OnUsedToolSignal
-      - OpcenterEXDS_OperatorLanding.EVT_OnScrewingDeactivation
-      - OpcenterEXDS_OperatorLanding.EVT_OnScrewingActivation
-      - OpcenterEXDS_OperatorLanding.EVT_OnScrewingExecuted
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.ACT_ToolHistory_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_ToolInput_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.OCH_ToolNId
-      - OpcenterEXDS_OperatorLanding.ACT_ShowSelectToolPanel
-      - OpcenterEXDS_OperatorLanding.ACT_UseTool
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireTool
-      - OpcenterEXDS_OperatorLanding.DS_GetToolEntity
-      - OpcenterEXDS_OperatorLanding.DS_CreateScrewingToolUsage
-      - OpcenterEXDS_OperatorLanding.ACT_ToggleIsActiveMaterialTrackingUnit
-      - OpcenterEXDS_OperatorLanding.DS_GetScrewingToolEntity
-      - OpcenterEXDS_OperatorLanding.ACT_ToBeUsedToolHistory
-      - OpcenterEXDS_OperatorLanding.DS_GetTobeUsedToolHistory
-      - OpcenterEXDS_OperatorLanding.ACT_ShowToolPanelForGrid
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateDurationToolInGridMode
-      - OpcenterEXDS_OperatorLanding.ACT_Grid_AcquireTool
-      - OpcenterEXDS_OperatorLanding.ACT_Grid_UseTool
-      - OpcenterEXDS_OperatorLanding.ACT_UseAllTools
-      - OpcenterEXDS_OperatorLanding.ACT_Grid_UseAllTools
-      - OpcenterEXDS_OperatorLanding.DS_CreateToBeUsedToolContext
-    target_commands:
-      []
-
-  - name: VerticalCommandBarPartProgram
-    module: OpcenterEXDS_PartProgram
-    microflows:
-      - OpcenterEXDS_PartProgram.ACT_CommandTransfer
-      - OpcenterEXDS_PartProgram.ACT_CommandDownloadAndManualTransfer
-      - OpcenterEXDS_PartProgram.ACT_CommandPreview_NEW
-      - OpcenterEXDS_PartProgram.ACT_Close
-    target_commands:
-      []
-
-  - name: QualityInspections
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ParameterView_Create
-    target_commands:
-      []
-
-  - name: WorkInstruction_Overview
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_WorkInstructionView_List
-      - EXFN_WorkInstruction.NAV_WorkInstruction_View
-      - EXFN_WorkInstruction.NAV_WorkInstruction_View_Vertical
-      - EXFN_WorkInstruction.ACT_WorkInstruction_Delete
-    target_commands:
-      []
-
-  - name: DocumentViewerSnippet
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.ACT_GetDocumentSelection
-      - EXFN_DocumentViewer.ACT_SetPMIVisibility
-      - EXFN_DocumentViewer.ACT_FitToView
-      - EXFN_DocumentViewer.ACT_OpenDocument
-      - EXFN_DocumentViewer.ACT_ChangeDetailsView
-      - EXFN_DocumentViewer.DS_GetFile
-      - EXFN_ServiceLayer.DS_GetApplicationURL
-      - EXFN_DocumentViewer.ACT_ChangeModel3D
-      - EXFN_DocumentViewer.ACT_CloseJTFullScreen
-      - EXFN_DocumentViewer.ACT_GenerateMarkupSnapshot
-      - EXFN_DocumentViewer.ToggleMarkup
-      - EXFN_DocumentViewer.ACT_ToggleToolbox
-      - EXFN_DocumentViewer.ACT_SetMarkupColor
-      - EXFN_DocumentViewer.EVT_OnSelectedObject
-      - EXFN_DocumentViewer.EVT_LoadJT
-      - EXFN_DocumentViewer.DS_GetCategories
-      - EXFN_DocumentViewer.DS_GetDocumentByCategory
-      - EXFN_DocumentViewer.ACT_Carousel
-      - EXFN_DocumentViewer.ACT_ChangeDocumentSelection
-      - EXFN_DocumentViewer.ACT_ButtonDownload
-      - EXFN_DocumentViewer.DS_GetDocumentSetList
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsReference
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_Reference
-    target_commands:
-      []
-
-  - name: PANEL_SelectTool
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ToggleToolSelection
-      - OpcenterEXDS_OperatorLanding.ACT_SelectTool
-    target_commands:
-      []
-
-  - name: ScrapMaterialTrackingUnits
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetMaterialTrackingUnitsActive
-      - OpcenterEXDS_OperatorLanding.ACT_SelectScrapMTU
-    target_commands:
-      []
-
-  - name: ES_Button
-    module: EXFN_ElectronicSignature
-    microflows:
-      - EXFN_ElectronicSignature.ACT_Show_ScenarioInstanceView
-    target_commands:
-      []
-
-  - name: SPCResponseMessages
-    module: EXFN_Quality
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: PANEL_DisassembleMaterialTrackingUnit
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterialWithNotes
-    target_commands:
-      []
-
-  - name: SelectedDocumentBadge
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectDocument
-    target_commands:
-      []
-
-  - name: PANEL_OperatorDetailsStartStep
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Select_Equipment_Step
-      - OpcenterEXDS_OperatorLanding.ACT_StartPanel_Step
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsGridReference
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_Reference
-    target_commands:
-      []
-
-  - name: PANEL_Start_ValidateUser
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Start_ValidateUser
-      - OpcenterEXDS_OperatorLanding.DS_Create_ESContext
-    target_commands:
-      []
-
-  - name: MultipleChoice
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.ACT_ItemView_MultipleChoice_OnChange
-      - EXFN_WorkInstruction.DS_MultipleChoiceItem
-      - EXFN_WorkInstruction.DS_ItemView_MultipleChoice
-    target_commands:
-      []
-
-  - name: WorkInstruction_New_Step2
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.ACT_WorkInstruction_Create
-      - EXFN_WorkInstruction.ACT_WorkInstructionView_New_MF
-    target_commands:
-      []
-
-  - name: PANEL_VerticalCommandBarNC
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore
     target_commands:
       []
 
   - name: PartProgramDetailsPopUp
     module: OpcenterEXDS_PartProgram
-    microflows:
-      - OpcenterEXDS_PartProgram.DS_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-      - OpcenterEXDS_PartProgram.DS_CreateSignalConfiguration
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_PartProgram.EVT_DNCStartTransfer
-      - OpcenterEXDS_PartProgram.EVT_DNCCompleteTransfer
-      - EXFN_Authentication.HandleUnauthorizedBehavior
+    flows:
+      - name: OpcenterEXDS_PartProgram.EVT_DNCCompleteTransfer
+        calls:
+          - name: OpcenterEXDS_PartProgram.ACT_CreateMTUProperty
     target_commands:
-      []
+      - Material.CreateMaterialTrackingUnitProperties
+      - Material.UpdateMaterialTrackingUnitProperties
 
-  - name: DocumentSelection_View
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.DS_GetFile
+  - name: PANEL_SelectEquipmentAcquireWI
+    module: OpcenterEXDS_EXFN_WorkInstruction
+    flows:
+      - name: OpcenterEXDS_EXFN_WorkInstruction.ACT_EquipmentSelectionPanel_AcquireDC
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.SUB_AcquireDCItemValueFromAutomationNodeInstanceParameter_MF
+          - name: OpcenterEXDS_EXFN_WorkInstruction.SUB_UpdateStepItemValue
+            - name: OpcenterEXDS_EXFN_WorkInstruction.SUB_WorkInstruction_GetById
+              - name: OpcenterEXDS_EXFN_WorkInstruction.SUB_WorkInstruction_Details_Load
+                - name: EXFN_WorkInstruction.ACT_WorkInstructionStatus_InEditing
+                  - name: EXFN_WorkInstruction.SUB_WorkInstructionStatus_InEditing
     target_commands:
-      []
+      - AppU4DM.AcquireDCItemValueFromAutomationNodeInstanceParameter
+      - @EXFN_WorkInstruction.AppName.InEditingWorkInstruction
 
-  - name: ToBeConsumedMaterialGridAlternative
+  - name: ScrapMaterialConsumptionPopup
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_GridMode_Alternative
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage_Grid
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial_Grid
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_ScrapConsumedMaterial
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.ScrapConsumedMaterial
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_ScrapConsumedMaterial_MF
     target_commands:
-      []
+      - AppU4DM.ScrapConsumedMaterial
 
-  - name: VerticalCommandBar_NC
+  - name: AddDocumentsPopup
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformance_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_OpenNonConformanceList
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreateVerticalCommandBarContext
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Submit_AddDocuments
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateToBeUsedDocuments
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateToBeUsedDocuments_MF
     target_commands:
-      []
+      - AppU4DM.CreateToBeUsedDocuments
 
-  - name: PANEL_OperatorLandingPause
+  - name: OperatorLanding
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Pause_Panel_Operation
-      - OpcenterEXDS_OperatorLanding.ACT_Select_PauseReason
-      - OpcenterEXDS_OperatorLanding.ACT_Select_PausePanel_Equipment
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_WorkOrderOperation_Tile_GoToDetails_Click
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click
+            - name: OpcenterEXDS_OperatorLanding_Connector.UADMCheckCertificationMultiMachineOnOpenWOOperation
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCheckCertificationMultiMachineOnOpenWOOperation_MF
     target_commands:
-      []
+      - AppU4DM.UADMCheckCertificationMultiMachineOnOpenWOOperation
 
-  - name: ToBeConsumedMaterialsPrekit
+  - name: NonConformancePopup
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_Prekit
-      - OpcenterEXDS_OperatorLanding.DS_TogglePrekitEdit
-      - OpcenterEXDS_OperatorLanding.ACT_ValidatePrekitCode
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial_Prekitted
-      - OpcenterEXDS_OperatorLanding.ACT_EditPrekit
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Submit_NonConformance
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateNonConformanceV3_1
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateNonConformanceV3_1_MF
     target_commands:
-      []
-
-  - name: OperationContainerHeaderBar
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.SUB_SetSkillsByWorkOrderOperationOrStep
-      - OpcenterEXDS_OperatorLanding.DS_ChangeWorkOrderOpOrStepContext_WIOnDemand
-      - OpcenterEXDS_OperatorLanding.ACT_LinkWorkInstructionsToWOOperation_ShowPanel
-      - OpcenterEXDS_OperatorLanding.ACT_LinkWorkInstructionsToWOStep_ShowPanel
-      - OpcenterEXDS_OperatorLanding.DS_GetBuyOffStatus
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_SendBuyOffNotification
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_Fullscreen
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_ExitFullscreen
-      - OpcenterEXDS_OperatorLanding.DS_SetAllowedRuntimeActionProperties_ToWorkOrderOperationOrStepContext
-      - OpcenterEXDS_OperatorLanding.ACT_OperationContainer_Start
-      - OpcenterEXDS_OperatorLanding.ACT_QuickStart
-    target_commands:
-      []
-
-  - name: WorkInstruction_VerticalView_Example
-    module: EXFN_WorkInstruction
-    microflows:
-      []
-    target_commands:
-      []
-
-  - name: PANEL_LinkDocuments
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SearchBy_Product
-      - OpcenterEXDS_OperatorLanding.ACT_DropdownDocType
-      - OpcenterEXDS_OperatorLanding.DS_GetOrCreate_DocSearchCommandBar_Context
-      - OpcenterEXDS_OperatorLanding.ACT_LinkDocument
-      - OpcenterEXDS_OperatorLanding.DS_GetDocument
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_OpenDocument
-      - OpcenterEXDS_OperatorLanding.DS_CreateDocumentViewer
-      - OpcenterEXDS_OperatorLanding.DS_PreviewDocumentSelection
-      - OpcenterEXDS_OperatorLanding.ACT_MultiSelection_onLinkDocPanel
-    target_commands:
-      []
+      - AppU4DM.UADMCreateNonConformanceV3_1
 
   - name: OperatorTerminal
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_Get_WOOId_First
-      - EXFN_Authentication.Signal_Access_Token
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationStartedSerialized_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationStartedFullQty_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationCompletedFullQty_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationCompletedSerialized_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationPaused_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderStepStartedSerialized_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderStepStartedFullQty_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderStepCompletedSerialized_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderStepCompletedFullQty_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationHold_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnSentenceNonConformance_Details
-      - OpcenterEXDS_OperatorLanding.EVT_CreateOrAcknowledgeNote_Details
-      - OpcenterEXDS_OperatorLanding.EVT_RefreshActivityIndicatorOnAssemblyWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.EVT_RefreshActivityIndicatorOnDisassemblyWorkOrderOperation
-      - OpcenterEXDS_OperatorLanding.EVT_RefreshActivityIndicatorOnUsedTool
-      - OpcenterEXDS_OperatorLanding.EVT_RefreshActivityIndicatorOnWIStatusChangedSignal
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderOperationActivedCP_Details
-      - OpcenterEXDS_OperatorLanding.EVT_WorkOrderSerialNumbersScrapped_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnReopenWorkOrderOperation_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnCreateNonConformance_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnCompleteReworkOrder_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnFAIRemoved_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnFAICompleted_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnFAICandidateDeclared_Details
-      - OpcenterEXDS_OperatorLanding.EVT_OnSkipWOOperation_Details
-      - EXFN_Authentication.HandleUnauthorizedBehavior
-      - OpcenterEXDS_OperatorLanding.DS_CreateSignalConfiguration
-      - OpcenterEXDS_OperatorLanding.DS_FAIWoBadgeVisibility
-      - OpcenterEXDS_OperatorLanding.DS_Gallery_OperationContainer_GetWorkOrderOperationContextList
-      - OpcenterEXDS_OperatorLanding.DS_GetAssociatedDocuments_MF
-      - OpcenterEXDS_OperatorLanding.NAV_Back
+    flows:
+      []
     target_commands:
       []
 
-  - name: ReadMe
-    module: EXFN_Quality
-    microflows:
+  - name: ScrapProducedMaterialPopup
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_ScrapWorkOrderSerialNumbers
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.ScrapWorkOrderSerialNumbers
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_ScrapWorkOrderSerialNumbers_MF
+    target_commands:
+      - AppU4DM.ScrapWorkOrderSerialNumbers
+
+  - name: PANEL_DisassembleMaterialTrackingUnit
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterialWithNotes
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.DisassembleMaterialItem
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_DisassembleMaterialItem_MF
+    target_commands:
+      - AppU4DM.DisassembleMaterialItem
+
+  - name: PANEL_ImportDocument
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_CreateAndLinkDocument
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateDocument
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateDocument_MF
+          - name: OpcenterEXDS_OperatorLanding_Connector.SUB_PropagateSegregationTagsToDocument_MF
+    target_commands:
+      - AppU4DM.UADMCreateDocument
+      - AppU4DM.PropagateSegregationTagsToDocument
+
+  - name: PANEL_LinkDocuments
+    module: OpcenterEXDS_OperatorLanding
+    flows:
       []
     target_commands:
       []
+
+  - name: PANEL_SelectToBeConsumedMTU
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_SelectDestinationContainer
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_AddDocumentsImportDocument
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_AddDocumentsCreateAndLinkDocument
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateDocument
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateDocument_MF
+          - name: OpcenterEXDS_OperatorLanding_Connector.SUB_PropagateSegregationTagsToDocument_MF
+    target_commands:
+      - AppU4DM.UADMCreateDocument
+      - AppU4DM.PropagateSegregationTagsToDocument
+
+  - name: PANEL_ChangePackage
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Submit_ChangePackage
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateChangePackage
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateChangePackage
+    target_commands:
+      - AppU4DM.CreateChangePackage
+
+  - name: PANEL_SkipWOOperation
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_CallSkipOperation
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.ACT_CallSkipFullQty
+          - name: OpcenterEXDS_OperatorLanding.ACT_CallSkipWOOperationSerialized
+    target_commands:
+      - AppU4DM.UADMSkipWOOperationFullQty
+      - AppU4DM.UADMSkipWOOperationSerialized
+
+  - name: PANEL_Notes
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Create_Panel_Note
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateSnagAndNoteList
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCreateSnagAndNoteList_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_Acknowledge_Note
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMConfirmSnagAndNoteList
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMConfirmSnagAndNoteList_MF
+    target_commands:
+      - AppU4DM.UADMCreateSnagAndNoteList
+      - AppU4DM.UADMConfirmSnagAndNoteList
+
+  - name: PANEL_VerticalCommandBarMore
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_OperatorDetailsCompleteStep
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Complete_Panel_Step
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Call_Complete_Step
+            - name: OpcenterEXDS_OperatorLanding_Connector.CompleteWOStepSerialized
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_CompleteWOStepSerialized_MF
+            - name: OpcenterEXDS_OperatorLanding_Connector.CompleteWOStepFullQty
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_CompleteWOStepFullQty_MF
+    target_commands:
+      - AppU4DM.CompleteWOStepSerialized
+      - AppU4DM.CompleteWOStepFullQty
+
+  - name: PANEL_SetPoint
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_TransmitEquipmentSetPointToAutomationNodeParameters
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.TransmitEquipmentSetPointToAutomationNodeParameters
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_TransmitEquipmentSetPointToAutomationNodeParameters
+      - name: OpcenterEXDS_OperatorLanding.ACT_TransmitAllEquipmentSetPointToAutomationNodeParameters
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.TransmitEquipmentSetPointToAutomationNodeParameters
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_TransmitEquipmentSetPointToAutomationNodeParameters
+    target_commands:
+      - AppU4DM.TransmitEquipmentSetPointToAutomationNodeParameters
+
+  - name: PANEL_VerticalCommandBarMore_Details
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_ActiveUserList
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_OperatorLandingStart
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_StartPanel_Operation
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Start_Operation
+            - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartWOOperationSerializedList
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMStartWOOperationSerializedList_MF
+            - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation_MF
+          - name: OpcenterEXDS_OperatorLanding.SUB_GoToDetails_If_AutomaticRedirect_Is_True
+            - name: OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMCheckCertificationMultiMachineOnOpenWOOperation
+                - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCheckCertificationMultiMachineOnOpenWOOperation_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_StartAllSNButton
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.ACT_StartPanel_Operation
+            - name: OpcenterEXDS_OperatorLanding.SUB_Start_Operation
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartWOOperationSerializedList
+                - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMStartWOOperationSerializedList_MF
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation_MF
+            - name: OpcenterEXDS_OperatorLanding.SUB_GoToDetails_If_AutomaticRedirect_Is_True
+              - name: OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCheckCertificationMultiMachineOnOpenWOOperation
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCheckCertificationMultiMachineOnOpenWOOperation_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_AssociateNewSerialNumber
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.AssignProducedMaterialItems_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_AddNewSerialNumbersFromNId
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.CreateAndAssignProducedMaterialItems_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_AddNewSerialNumbersFromNumber
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCreateAndAssignProducedMaterialItems_MF
+    target_commands:
+      - AppU4DM.UADMStartWOOperationSerializedList
+      - AppU4DM.UADMStartOperation
+      - AppU4DM.UADMCheckCertificationMultiMachineOnOpenWOOperation
+      - AppU4DM.AssignProducedMaterialItems
+      - AppU4DM.CreateAndAssignProducedMaterialItems
+      - AppU4DM.UADMCreateAndAssignProducedMaterialItems
+
+  - name: PANEL_OperatorLandingGoToDetailsSN
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_OperatorLandingHold
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Hold_Panel_Operation
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMHoldOperation
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMHoldOperation_MF
+    target_commands:
+      - AppU4DM.UADMSetWorkOrderHoldList
+
+  - name: PANEL_CloseFlexibleWorkOrder
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_UADMAbruptlyCloseFlexibleWorkOrder
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMAbruptlyCloseFlexibleWorkOrder
+      - name: OpcenterEXDS_OperatorLanding.ACT_GenerateWONId
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.ACT_AutoGenerateWorkOrderNId
+            - name: OpcenterEXDS_OperatorLanding_Connector.AutoGenerateWorkOrderNId
+    target_commands:
+      - AppU4DM.UADMAbruptlyCloseFlexibleWorkOrder
+      - AppU4DM.AutoGenerateWorkOrderNId
+
+  - name: PANEL_OperatorLandingComplete
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Complete_Panel_Operation
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Call_Complete_Operation
+            - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationSerializedList
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationSerializedList_MF
+            - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationFullQtyMultiMachineList
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationFullQtyMultiMachineList_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_CompleteAllSnButton
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.ACT_Complete_Panel_Operation
+            - name: OpcenterEXDS_OperatorLanding.SUB_Call_Complete_Operation
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationSerializedList
+                - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationSerializedList_MF
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationFullQtyMultiMachineList
+                - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationFullQtyMultiMachineList_MF
+    target_commands:
+      - AppU4DM.UADMCompleteWOOperationSerializedList
+      - AppU4DM.UADMCompleteWOOperationFullQtyMultiMachineList
+
+  - name: PANEL_SetPointHistory
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_OperatorDetailsStartStep
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_StartPanel_Step
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Start_Step
+            - name: OpcenterEXDS_OperatorLanding_Connector.StartWOStepSerialized
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_StartWOStepSerialized_MF
+            - name: OpcenterEXDS_OperatorLanding_Connector.StartWOStepFullQty
+              - name: OpcenterEXDS_OperatorLanding_Connector.SUB_StartWOStepFullQty_MF
+    target_commands:
+      - AppU4DM.StartWOStepSerialized
+      - AppU4DM.StartWOStepFullQty
+
+  - name: PANEL_OperatorLandingPause
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Pause_Panel_Operation
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMPauseWorkOrderOperationMultiMachineList
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMPauseWorkOrderOperationMultiMachineList_MF
+    target_commands:
+      - AppU4DM.UADMPauseWorkOrderOperationMultiMachineList
 
   - name: PANEL_ScrewingDetails
     module: OpcenterEXDS_OperatorLanding
-    microflows:
+    flows:
       []
     target_commands:
       []
 
   - name: PANEL_ChangeSN
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_UpdateSerialNumberList
-      - OpcenterEXDS_OperatorLanding.ACT_GenerateNewSerialNumber
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_UpdateSerialNumberList
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UpdateSerialNumberList
+      - name: OpcenterEXDS_OperatorLanding.ACT_GenerateNewSerialNumber
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.ACT_AutoGenerateMTUCode
+            - name: OpcenterEXDS_OperatorLanding_Connector.AutoGenerateMTUCode
     target_commands:
       - AppU4DM.UpdateSerialNumberList
+      - AppU4DM.AutoGenerateMTUCode
 
-  - name: DocumentViewer_ForLinkedEntity
-    module: EXFN_DocumentViewer
-    microflows:
-      - EXFN_DocumentViewer.DS_GetDocumentsLinkedToEntity
-      - EXFN_DocumentViewer.ACT_UnlinkDocument
-    target_commands:
-      []
-
-  - name: ToBeConsumedMaterialsRangePartsAndAsRequired
+  - name: PANEL_Start_ValidateUser_FromDetails
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetToBeConsumeMaterial_RangePartsAndAsRequired
-      - OpcenterEXDS_OperatorLanding.ACT_ActualMaterials_ToggleVisibility
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_DisassembleMaterial
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_ShowAllPartson3dViewer
-      - OpcenterEXDS_OperatorLanding.ACT_ValidateMaterialConsumption
-      - OpcenterEXDS_OperatorLanding.ACT_AcquireMTUList
-      - OpcenterEXDS_OperatorLanding.ACT_Open_ScrapMaterialToBeConsumedPage
-      - OpcenterEXDS_OperatorLanding.ACT_ConsumeMaterial
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Start_ValidateUser_FromDetails
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Start_Operation_AnyCase
+            - name: OpcenterEXDS_OperatorLanding.SUB_Start_Operation
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartWOOperationSerializedList
+                - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMStartWOOperationSerializedList_MF
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation_MF
+            - name: OpcenterEXDS_OperatorLanding.SUB_GoToDetails_If_AutomaticRedirect_Is_True
+              - name: OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCheckCertificationMultiMachineOnOpenWOOperation
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCheckCertificationMultiMachineOnOpenWOOperation_MF
     target_commands:
-      []
+      - AppU4DM.UADMStartWOOperationSerializedList
+      - AppU4DM.UADMStartOperation
+      - AppU4DM.UADMCheckCertificationMultiMachineOnOpenWOOperation
 
-  - name: PANEL_AddDocumentsImportDocument
+  - name: PANEL_Start_ValidateUser
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_CancelImportDocument
-      - OpcenterEXDS_OperatorLanding.ACT_AddDocumentsCreateAndLinkDocument
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Start_ValidateUser
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Start_Operation_AnyCase
+            - name: OpcenterEXDS_OperatorLanding.SUB_Start_Operation
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartWOOperationSerializedList
+                - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMStartWOOperationSerializedList_MF
+              - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartOperation_MF
+            - name: OpcenterEXDS_OperatorLanding.SUB_GoToDetails_If_AutomaticRedirect_Is_True
+              - name: OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCheckCertificationMultiMachineOnOpenWOOperation
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCheckCertificationMultiMachineOnOpenWOOperation_MF
     target_commands:
-      []
-
-  - name: PANEL_WorkInstructionsToWOOperation_Add
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_LinkWorkInstructionsToWOOperation
-    target_commands:
-      []
-
-  - name: PANEL_SelectDestinationContainer
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_SelectDestinationContainer
-      - OpcenterEXDS_OperatorLanding.ACT_Cancel_SelectDestinationContainerPanel
-      - OpcenterEXDS_OperatorLanding.ACT_Save_SelectDestinationContainerPanel
-    target_commands:
-      []
+      - AppU4DM.UADMStartWOOperationSerializedList
+      - AppU4DM.UADMStartOperation
+      - AppU4DM.UADMCheckCertificationMultiMachineOnOpenWOOperation
 
   - name: PANEL_Pause_ValidateUser
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Pause_ValidateUser
-      - OpcenterEXDS_OperatorLanding.DS_Create_ESContext
+    flows:
+      []
     target_commands:
       []
 
-  - name: ScrapProducedMaterialPopup
+  - name: PANEL_Complete_ValidateUser
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_ScrapPage_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.ACT_ScrapWorkOrderSerialNumbers
-      - OpcenterEXDS_OperatorLanding.NAV_Back
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedMaterialTrackingUnitsForScrap
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectScrapMTU
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedFailuresForScrap
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectScrapFailure
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_Complete_ValidateUser
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_OperatorLanding_Complete
+            - name: OpcenterEXDS_OperatorLanding.SUB_Complete_Operation
+              - name: OpcenterEXDS_OperatorLanding.SUB_Call_Complete_Operation
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationSerializedList
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationSerializedList_MF
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationFullQtyMultiMachineList
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationFullQtyMultiMachineList_MF
+      - name: OpcenterEXDS_OperatorLanding.ACT_Complete_ValidateUser_FromDetails
+        calls:
+          - name: OpcenterEXDS_OperatorLanding.SUB_Details_Complete
+            - name: OpcenterEXDS_OperatorLanding.SUB_Complete_Operation
+              - name: OpcenterEXDS_OperatorLanding.SUB_Call_Complete_Operation
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationSerializedList
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationSerializedList_MF
+                - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteWOOperationFullQtyMultiMachineList
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteWOOperationFullQtyMultiMachineList_MF
+            - name: OpcenterEXDS_OperatorLanding.ACT_Complete_Step
+              - name: OpcenterEXDS_OperatorLanding.SUB_Call_Complete_Step
+                - name: OpcenterEXDS_OperatorLanding_Connector.CompleteWOStepSerialized
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_CompleteWOStepSerialized_MF
+                - name: OpcenterEXDS_OperatorLanding_Connector.CompleteWOStepFullQty
+                  - name: OpcenterEXDS_OperatorLanding_Connector.SUB_CompleteWOStepFullQty_MF
     target_commands:
-      []
-
-  - name: NonConformanceDocuments
-    module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.DS_GetDocumentList
-      - OpcenterEXDS_OperatorLanding.DS_CreateDocumentSelection
-      - OpcenterEXDS_OperatorLanding.DS_CreateDocumentViewer
-      - OpcenterEXDS_OperatorLanding.ACT_SelectDocument
-      - OpcenterEXDS_EXFN_DocumentViewer.ACT_OpenDocument
-      - OpcenterEXDS_OperatorLanding.DS_GetDocument
-      - OpcenterEXDS_OperatorLanding.ACT_ShowDocumentsPanel
-      - OpcenterEXDS_OperatorLanding.ACT_Show_ImportPanel
-    target_commands:
-      []
+      - AppU4DM.UADMCompleteWOOperationSerializedList
+      - AppU4DM.UADMCompleteWOOperationFullQtyMultiMachineList
+      - AppU4DM.CompleteWOStepSerialized
+      - AppU4DM.CompleteWOStepFullQty
 
   - name: Routing_Popup
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.SUB_DependencyGraphContext_RegisterClosePageAction
-      - OpcenterEXDS_OperatorLanding.DS_GetBreadcrumb
-      - OpcenterEXDS_OperatorLanding.NAV_Back
+    flows:
+      []
     target_commands:
       []
 
-  - name: SNP_QualityInspectionContainer
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.ACT_CreateSignalConfiguration
-      - EXFN_Quality.ACT_RuntimeInspectionDefinition_Create
-      - EXFN_Authentication.Signal_Access_Token
-      - EXFN_Quality.EVT_TerminalDelayedExecution
-      - EXFN_Quality.EVT_TerminalInspectionExecutionChrReprRuntimeNumberChanged
-      - EXFN_Quality.EVT_CompletedInspectionSampleSignIn
-      - EXFN_Quality.EVT_InspectionSampleConfirmed
-      - EXFN_Quality.SUB_InspectionEngine_Retrieve
-    target_commands:
-      []
-
-  - name: SNP_QualityInspection_Variable
-    module: EXFN_Quality
-    microflows:
-      - EXFN_Quality.ACT_DrawBar
-      - EXFN_Quality.ACT_Variable_OnChange
-      - EXFN_Quality.ACT_RefreshVariableView
-      - EXFN_Quality.ACT_ShowPmiByCharName
-      - EXFN_Quality.ACT_DeselectValueToUpdate
-      - EXFN_Quality.ACT_Variable_DisassociateFailure
-      - EXFN_Quality.ACT_SelectValueToUpdate
-      - EXFN_Quality.ACT_SetInspectionValueAndOpenFailure
-      - EXFN_Quality.DS_ScenarioInstanceView
-      - EXFN_Quality.ACT_ConfirmSample_Variable
-      - EXFN_Quality.ACT_NewSample_Variable
-      - EXFN_Quality.SUB_RetrieveCalcualatedJson
-    target_commands:
-      []
-
-  - name: NonConformancesNavigationWizard
+  - name: PANEL_WorkInstructionsToWOStep_Add
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformancesNavigationWizard_Details_Click
-      - OpcenterEXDS_OperatorLanding.DS_GetLayoutVerticalMode
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformancesNavigationWizard_Failure_Click
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformancesNavigationWizard_Documents_Click
-      - OpcenterEXDS_OperatorLanding.ACT_NonConformancesNavigationWizard_Submit_Click
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_LinkWorkInstructionsToWOStep
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.SUB_LinkWorkInstructionsToWOStep_MF
     target_commands:
-      []
+      - AppU4DM.LinkWorkInstructionsToWOStep
 
-  - name: Checkbox
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.ACT_ItemView_Checkbox_OnChange_Visibility
-      - EXFN_WorkInstruction.ACT_ItemView_Checkbox_OnChange_Value
-      - EXFN_WorkInstruction.ACT_CalculateWorkInstructionFormulaValues_Checkbox
-      - EXFN_WorkInstruction.DS_ItemView_Checkbox
-    target_commands:
-      []
-
-  - name: WorkInstruction_Overview_Example
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_WorkInstructionView_List
-      - EXFN_WorkInstruction.NAV_WorkInstruction_VerticalView_Example
-    target_commands:
-      []
-
-  - name: OperationList
+  - name: PANEL_WorkInstructionsToWOOperation_Add
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_Collapse_OperationList
-      - OpcenterEXDS_OperatorLanding.ACT_Expand_OperationList
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedWorkOrderOperationsAndSteps
-      - OpcenterEXDS_OperatorLanding.ACT_ShowSteps_OperationList
-      - OpcenterEXDS_OperatorLanding.ACT_HideSteps_OperationList
-      - OpcenterEXDS_OperatorLanding.ACT_OperationList_Icon_Click
-      - OpcenterEXDS_OperatorLanding.ACT_ShowRouting
-      - OpcenterEXDS_OperatorLanding.ACT_Switch_ShowCompletedOperation
-      - OpcenterEXDS_OperatorLanding.ACT_Switch_HideCompletedOperation
-      - OpcenterEXDS_OperatorLanding.ACT_OperationList_Item_Click
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_LinkWorkInstructionsToWOOperation
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.SUB_LinkWorkInstructionsToWOOperation_MF
     target_commands:
-      []
+      - AppU4DM.LinkWorkInstructionsToWOOperation
 
-  - name: SelectedEquipmentBadge_EquipmentContext
+  - name: Routing
     module: OpcenterEXDS_OperatorLanding
-    microflows:
-      - OpcenterEXDS_OperatorLanding.ACT_DeselectEquipment_EquipmentContext
-      - OpcenterEXDS_OperatorLanding.DS_GetSelectedEquipments_Vertical_EquipmentContext
-    target_commands:
-      []
-
-  - name: WorkInstruction_New_Step1
-    module: EXFN_WorkInstruction
-    microflows:
+    flows:
       []
     target_commands:
       []
 
-  - name: Text
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_ItemView_Text
-      - EXFN_WorkInstruction.ACT_ItemView_Text_OnChange
-      - EXFN_WorkInstruction.ACT_CalculateWorkInstructionFormulaValues_Text
+  - name: PANEL_SelectTool
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
     target_commands:
       []
 
-  - name: WorkInstruction_Preview
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_WI_SortedItemViewList
-      - EXFN_WorkInstruction.DS_StepView
-      - EXFN_WorkInstruction.ACT_StepNavigation_First
-      - EXFN_WorkInstruction.ACT_StepNavigation_Previous
-      - EXFN_WorkInstruction.DS_Step_Sequence
-      - EXFN_WorkInstruction.ACT_StepNavigation_Set
-      - EXFN_WorkInstruction.ACT_StepNavigation_Next
-      - EXFN_WorkInstruction.ACT_StepNavigation_Last
+  - name: PANEL_CompleteAssignedNonProductiveActivities
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_CompleteNonProductiveActivites
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMCompleteNonProductiveActivityList
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMCompleteNonProductiveActivityList_MF
+    target_commands:
+      - AppU4DM.UADMCompleteNonProductiveActivityList
+
+  - name: PANEL_AssignAndStartNonProductiveActivities
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      - name: OpcenterEXDS_OperatorLanding.ACT_StartNonProductiveActivites
+        calls:
+          - name: OpcenterEXDS_OperatorLanding_Connector.UADMStartNonProductiveActivityList
+            - name: OpcenterEXDS_OperatorLanding_Connector.SUB_UADMStartNonProductiveActivityList_MF
+    target_commands:
+      - AppU4DM.UADMStartNonProductiveActivityList
+
+  - name: Home_Web
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
     target_commands:
       []
 
-  - name: Multiline
-    module: EXFN_WorkInstruction
-    microflows:
-      - EXFN_WorkInstruction.DS_ItemView_Multiline
-      - EXFN_WorkInstruction.ACT_ItemView_Multiline_OnChange
-      - EXFN_WorkInstruction.ACT_CalculateWorkInstructionFormulaValues_Multiline
+  - name: PANEL_WOOP_NonConformance
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_VerticalCommandBarNC
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
+    target_commands:
+      []
+
+  - name: PANEL_VerticalCommandBarNC_Details
+    module: OpcenterEXDS_OperatorLanding
+    flows:
+      []
     target_commands:
       []
 
 ```
+
+---
+
+## 7. PageCommands
+
+Simplified view showing only the target commands for each page/panel.
+
+| Page/Panel | Module | Target AppName | Target CommandName |
+|------------|--------|----------------|--------------------|
+| PartProgramHistoryPopUp | OpcenterEXDS_PartProgram | - | - |
+| PartProgramDetailsPopUp | OpcenterEXDS_PartProgram | Material<br>Material | CreateMaterialTrackingUnitProperties<br>UpdateMaterialTrackingUnitProperties |
+| PANEL_SelectEquipmentAcquireWI | OpcenterEXDS_EXFN_WorkInstruction | AppU4DM<br>@EXFN_WorkInstruction.AppName | AcquireDCItemValueFromAutomationNodeInstanceParameter<br>InEditingWorkInstruction |
+| ScrapMaterialConsumptionPopup | OpcenterEXDS_OperatorLanding | AppU4DM | ScrapConsumedMaterial |
+| AddDocumentsPopup | OpcenterEXDS_OperatorLanding | AppU4DM | CreateToBeUsedDocuments |
+| OperatorLanding | OpcenterEXDS_OperatorLanding | AppU4DM | UADMCheckCertificationMultiMachineOnOpenWOOperation |
+| NonConformancePopup | OpcenterEXDS_OperatorLanding | AppU4DM | UADMCreateNonConformanceV3_1 |
+| OperatorTerminal | OpcenterEXDS_OperatorLanding | - | - |
+| ScrapProducedMaterialPopup | OpcenterEXDS_OperatorLanding | AppU4DM | ScrapWorkOrderSerialNumbers |
+| PANEL_DisassembleMaterialTrackingUnit | OpcenterEXDS_OperatorLanding | AppU4DM | DisassembleMaterialItem |
+| PANEL_ImportDocument | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UADMCreateDocument<br>PropagateSegregationTagsToDocument |
+| PANEL_LinkDocuments | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_SelectToBeConsumedMTU | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_SelectDestinationContainer | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_AddDocumentsImportDocument | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UADMCreateDocument<br>PropagateSegregationTagsToDocument |
+| PANEL_ChangePackage | OpcenterEXDS_OperatorLanding | AppU4DM | CreateChangePackage |
+| PANEL_SkipWOOperation | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UADMSkipWOOperationFullQty<br>UADMSkipWOOperationSerialized |
+| PANEL_Notes | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UADMCreateSnagAndNoteList<br>UADMConfirmSnagAndNoteList |
+| PANEL_VerticalCommandBarMore | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_OperatorDetailsCompleteStep | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | CompleteWOStepSerialized<br>CompleteWOStepFullQty |
+| PANEL_SetPoint | OpcenterEXDS_OperatorLanding | AppU4DM | TransmitEquipmentSetPointToAutomationNodeParameters |
+| PANEL_VerticalCommandBarMore_Details | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_ActiveUserList | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_OperatorLandingStart | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM<br>AppU4DM<br>AppU4DM<br>AppU4DM<br>AppU4DM | UADMStartWOOperationSerializedList<br>UADMStartOperation<br>UADMCheckCertificationMultiMachineOnOpenWOOperation<br>AssignProducedMaterialItems<br>CreateAndAssignProducedMaterialItems<br>UADMCreateAndAssignProducedMaterialItems |
+| PANEL_OperatorLandingGoToDetailsSN | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_OperatorLandingHold | OpcenterEXDS_OperatorLanding | AppU4DM | UADMSetWorkOrderHoldList |
+| PANEL_CloseFlexibleWorkOrder | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UADMAbruptlyCloseFlexibleWorkOrder<br>AutoGenerateWorkOrderNId |
+| PANEL_OperatorLandingComplete | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UADMCompleteWOOperationSerializedList<br>UADMCompleteWOOperationFullQtyMultiMachineList |
+| PANEL_SetPointHistory | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_OperatorDetailsStartStep | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | StartWOStepSerialized<br>StartWOStepFullQty |
+| PANEL_OperatorLandingPause | OpcenterEXDS_OperatorLanding | AppU4DM | UADMPauseWorkOrderOperationMultiMachineList |
+| PANEL_ScrewingDetails | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_ChangeSN | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM | UpdateSerialNumberList<br>AutoGenerateMTUCode |
+| PANEL_Start_ValidateUser_FromDetails | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM<br>AppU4DM | UADMStartWOOperationSerializedList<br>UADMStartOperation<br>UADMCheckCertificationMultiMachineOnOpenWOOperation |
+| PANEL_Start_ValidateUser | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM<br>AppU4DM | UADMStartWOOperationSerializedList<br>UADMStartOperation<br>UADMCheckCertificationMultiMachineOnOpenWOOperation |
+| PANEL_Pause_ValidateUser | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_Complete_ValidateUser | OpcenterEXDS_OperatorLanding | AppU4DM<br>AppU4DM<br>AppU4DM<br>AppU4DM | UADMCompleteWOOperationSerializedList<br>UADMCompleteWOOperationFullQtyMultiMachineList<br>CompleteWOStepSerialized<br>CompleteWOStepFullQty |
+| Routing_Popup | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_WorkInstructionsToWOStep_Add | OpcenterEXDS_OperatorLanding | AppU4DM | LinkWorkInstructionsToWOStep |
+| PANEL_WorkInstructionsToWOOperation_Add | OpcenterEXDS_OperatorLanding | AppU4DM | LinkWorkInstructionsToWOOperation |
+| Routing | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_SelectTool | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_CompleteAssignedNonProductiveActivities | OpcenterEXDS_OperatorLanding | AppU4DM | UADMCompleteNonProductiveActivityList |
+| PANEL_AssignAndStartNonProductiveActivities | OpcenterEXDS_OperatorLanding | AppU4DM | UADMStartNonProductiveActivityList |
+| Home_Web | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_WOOP_NonConformance | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_VerticalCommandBarNC | OpcenterEXDS_OperatorLanding | - | - |
+| PANEL_VerticalCommandBarNC_Details | OpcenterEXDS_OperatorLanding | - | - |
 
 ---
 
