@@ -1,0 +1,4 @@
+≡ƒöì Opening MPR: C:\Workspaces\Mendix\MDUI\System_Mendix_CLI\OC EX System.mpr
+
+≡ƒöì Searching for DS_AuditTrailContext in module EXFN_AuditTrailViewer...
+2026/05/08 10:13:43 Γ¥î Microflow not found: EXFN_AuditTrailViewer.DS_AuditTrailContext

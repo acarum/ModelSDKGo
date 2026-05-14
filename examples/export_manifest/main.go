@@ -63,11 +63,11 @@ type WidgetInfo struct {
 type NavigationItem struct {
 	ItemName     string   `json:"ItemName"`
 	Caption      string   `json:"Caption"`
-	Target       string   `json:"Target"`     // Page or microflow name
+	Target       string   `json:"-"`          // Page or microflow name - excluded from JSON export
 	TargetPage   string   `json:"TargetPage"` // Resolved page qualified name(s) - qualified name (Module.PageName) for Page items, or page(s) opened by Microflow/Nanoflow
 	Module       string   `json:"Module"`
-	MenuDocument string   `json:"MenuDocument"` // Name of the menu document (e.g., "System", "System Counters")
-	ItemType     string   `json:"ItemType"`     // "Page", "Microflow", "Nanoflow"
+	MenuDocument string   `json:"-"`            // Name of the menu document - excluded from JSON export
+	ItemType     string   `json:"-"`            // "Page", "Microflow", "Nanoflow" - excluded from JSON
 	ParentItem   string   `json:"ParentItem"`   // For hierarchical structure
 	Level        int      `json:"Level"`        // Indentation level
 	AllowedRoles []string `json:"AllowedRoles"` // User roles that can access this item
@@ -89,10 +89,11 @@ type PageAccessInfo struct {
 type PageCommandButton struct {
 	ButtonName    string `json:"ButtonName"`
 	Caption       string `json:"Caption"`
-	ActionType    string `json:"ActionType"`    // Type of action (e.g., "CallNanoflowClientAction", "CallMicroflowClientAction")
-	ActionName    string `json:"ActionName"`    // Nanoflow/Microflow name
-	TargetPage    string `json:"TargetPage"`    // Resolved page from ShowPage action (if any)
-	TargetCommand string `json:"TargetCommand"` // Command extracted from Save button in TargetPage
+	ActionType    string `json:"-"`                 // Type of action (e.g., "CallNanoflowClientAction", "CallMicroflowClientAction")
+	ActionName    string `json:"-"`                 // Nanoflow/Microflow name
+	TargetPage    string `json:"TargetPage"`        // Resolved page from ShowPage action (if any)
+	TargetCommand string `json:"TargetCommandName"` // Command extracted from Save button in TargetPage
+	TargetAppName string `json:"TargetAppName"`     // App name extracted from TargetCommand
 }
 
 type PageCommandInfo struct {
@@ -100,28 +101,60 @@ type PageCommandInfo struct {
 	Commands []PageCommandButton `json:"Commands"`
 }
 
+// TargetInfo represents a single target with app name and command name
+type TargetInfo struct {
+	AppName     string `json:"AppName"`
+	CommandName string `json:"CommandName"`
+}
+
+// PageCommandSummary stores simplified page command information
+type PageCommandSummary struct {
+	PageName string       `json:"PageName"`
+	Module   string       `json:"Module"`
+	Targets  []TargetInfo `json:"Targets"`
+}
+
 type ManifestReport struct {
-	ProjectName     string                  `json:"ProjectName"`
-	MendixVersion   string                  `json:"MendixVersion"`
-	MPRPath         string                  `json:"MPRPath"`
-	GeneratedAt     string                  `json:"GeneratedAt"`
-	Entities        map[string][]EntityInfo `json:"Entities"`        // by module
-	MicroflowCalls  []MicroflowCallInfo     `json:"MicroflowCalls"`  // all calls
-	Widgets         []WidgetInfo            `json:"Widgets"`         // signal manager widgets
-	NavigationItems []NavigationItem        `json:"NavigationItems"` // navigation menu items
-	SystemRoles     []SystemRole            `json:"SystemRoles"`     // system roles
-	PageAccess      []PageAccessInfo        `json:"PageAccess"`      // page accessibility
-	PageCommands    []PageCommandInfo       `json:"PageCommands"`    // command bar actions from navigation pages
+	ProjectName        string                  `json:"ProjectName"`
+	MendixVersion      string                  `json:"MendixVersion"`
+	MPRPath            string                  `json:"MPRPath"`
+	GeneratedAt        string                  `json:"GeneratedAt"`
+	Entities           map[string][]EntityInfo `json:"Entities"`                   // by module
+	MicroflowCalls     []MicroflowCallInfo     `json:"MicroflowCalls"`             // all calls
+	Widgets            []WidgetInfo            `json:"SignalManagerSubscriptions"` // signal manager widgets
+	NavigationItems    []NavigationItem        `json:"NavigationItems"`            // navigation menu items
+	SystemRoles        []SystemRole            `json:"SystemRoles"`                // system roles
+	PageAccess         []PageAccessInfo        `json:"-"`                          // page accessibility - excluded from export
+	NavigationCommands []PageCommandInfo       `json:"NavigationPageCommands"`     // command bar actions from navigation pages
+	PagesAnalysis      []PageAnalysisInfo      `json:"PageCommandsHierarchy"`      // detailed pages/panels analysis with recursive hierarchy
+	PageCommands       []PageCommandSummary    `json:"PageCommands"`               // simplified view of all page/panel commands
 }
 
 type ReportOptions struct {
-	IncludeEntities     bool
-	IncludeAttributes   bool
-	IncludeMicroflows   bool
-	IncludeWidgets      bool
-	IncludeNavigation   bool
-	IncludeRoles        bool
-	IncludePageCommands bool
+	IncludeEntities               bool
+	IncludeAttributes             bool
+	IncludeMicroflows             bool
+	IncludeWidgets                bool
+	IncludeNavigation             bool
+	IncludeRoles                  bool
+	IncludePageCommands           bool
+	IncludePagesCommandsHierarchy bool
+}
+
+// MicroflowCallHierarchy represents a recursive call tree
+type MicroflowCallHierarchy struct {
+	Name  string
+	Level int `json:"-"`
+	Calls []MicroflowCallHierarchy
+}
+
+// PageAnalysisInfo stores detailed analysis of pages/panels
+type PageAnalysisInfo struct {
+	Name           string
+	Module         string
+	MicroflowCalls []string
+	CallHierarchy  []MicroflowCallHierarchy
+	TargetCommands []string
 }
 
 // ReportEntry represents a report generation result
@@ -266,7 +299,8 @@ func main() {
 	includeWidgets := flag.Bool("include-widgets", true, "Include Signal Manager widgets in the report")
 	includeNavigation := flag.Bool("include-navigation", true, "Include navigation items in the report")
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
-	includePageCommands := flag.Bool("include-page-commands", false, "Include command bar actions from navigation pages in the report")
+	includePageCommands := flag.Bool("include-page-commands", true, "Include command bar actions from navigation pages in the report")
+	includePagesCommandsHierarchy := flag.Bool("include-pages-commands-hierarchy", true, "Include detailed pages/panels analysis with recursive microflow hierarchy (up to 5 levels)")
 	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
 	sourceDir := flag.String("source-dir", "", "Source directory to scan for MPR files recursively (batch mode)")
 	outputFormat := flag.String("output-format", "md", "Output format: 'md' (Markdown), 'json' (JSON), or 'both' (Markdown + JSON)")
@@ -301,13 +335,14 @@ func main() {
 
 	// Create report options
 	options := ReportOptions{
-		IncludeEntities:     *includeEntities,
-		IncludeAttributes:   *includeAttributes,
-		IncludeMicroflows:   *includeMicroflows,
-		IncludeWidgets:      *includeWidgets,
-		IncludeNavigation:   *includeNavigation,
-		IncludeRoles:        *includeRoles,
-		IncludePageCommands: *includePageCommands,
+		IncludeEntities:               *includeEntities,
+		IncludeAttributes:             *includeAttributes,
+		IncludeMicroflows:             *includeMicroflows,
+		IncludeWidgets:                *includeWidgets,
+		IncludeNavigation:             *includeNavigation,
+		IncludeRoles:                  *includeRoles,
+		IncludePageCommands:           *includePageCommands,
+		IncludePagesCommandsHierarchy: *includePagesCommandsHierarchy,
 	}
 
 	// Check if batch mode (source-dir) or single file mode
@@ -655,6 +690,9 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	if options.IncludePageCommands {
 		totalPhases++
 	}
+	if options.IncludePagesCommandsHierarchy {
+		totalPhases++ // Phase for pages analysis
+	}
 	totalPhases++ // Final report generation
 
 	fmt.Printf("\n📋 Analysis plan: %d phase(s) to complete\n", totalPhases)
@@ -728,14 +766,51 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	if options.IncludePageCommands {
 		currentPhase++
 		fmt.Printf("\n[Phase %d/%d] 🖋️ Scanning for page commands...\n", currentPhase, totalPhases)
-		pageCommands, err := collectPageCommands(db, contentsDir, report.NavigationItems, report.MicroflowCalls)
+		pageCommands, err := collectPageCommands(db, contentsDir, mprPath, report.NavigationItems, report.MicroflowCalls)
 		if err != nil {
 			fmt.Printf("Error collecting page commands: %v\n", err)
 			os.Exit(1)
 		}
-		report.PageCommands = pageCommands
+		report.NavigationCommands = pageCommands
 		fmt.Printf("  ✅ Completed: Page commands collected\n")
-		fmt.Printf("  📊 Result: %d page(s) with commands\n", len(report.PageCommands))
+		fmt.Printf("  📊 Result: %d page(s) with commands\n", len(report.NavigationCommands))
+	}
+
+	// ==== SECTION 7: Pages Analysis (Detailed with Recursive Hierarchy) ====
+	if options.IncludePagesCommandsHierarchy {
+		currentPhase++
+		fmt.Printf("\n[Phase %d/%d] 🔍 Analyzing pages/panels with recursive microflow hierarchy...\n", currentPhase, totalPhases)
+		pagesAnalysis, err := collectPagesWithMicroflows(db, contentsDir)
+		if err != nil {
+			fmt.Printf("Error analyzing pages: %v\n", err)
+			os.Exit(1)
+		}
+		report.PagesAnalysis = pagesAnalysis
+		fmt.Printf("  ✅ Completed: Pages analysis with recursive hierarchy\n")
+		fmt.Printf("  📊 Result: %d page(s)/panel(s) analyzed\n", len(report.PagesAnalysis))
+
+		// Populate PageCommands (simplified view) from PagesAnalysis
+		for _, page := range report.PagesAnalysis {
+			targets := make([]TargetInfo, 0)
+			for _, cmd := range page.TargetCommands {
+				if idx := strings.LastIndex(cmd, "."); idx >= 0 {
+					targets = append(targets, TargetInfo{
+						AppName:     cmd[:idx],
+						CommandName: cmd[idx+1:],
+					})
+				} else {
+					targets = append(targets, TargetInfo{
+						AppName:     "-",
+						CommandName: cmd,
+					})
+				}
+			}
+			report.PageCommands = append(report.PageCommands, PageCommandSummary{
+				PageName: page.Name,
+				Module:   page.Module,
+				Targets:  targets,
+			})
+		}
 	}
 
 	// Generate reports based on format
@@ -1232,7 +1307,7 @@ func collectMicroflowCalls(db *sql.DB, contentsDir string, report *ManifestRepor
 			continue
 		}
 
-		calls := findMicroflowCalls(mf, targetMicroflow, targetJavaAction)
+		calls := findMicroflowCalls(mf, targetMicroflow, targetJavaAction, db, contentsDir)
 
 		for _, call := range calls {
 			report.MicroflowCalls = append(report.MicroflowCalls, MicroflowCallInfo{
@@ -1366,7 +1441,7 @@ type TempMicroflowCall struct {
 	CommandName  string
 }
 
-func findMicroflowCalls(mf MicroflowInfo, targetMicroflow string, targetJavaAction string) []TempMicroflowCall {
+func findMicroflowCalls(mf MicroflowInfo, targetMicroflow string, targetJavaAction string, db *sql.DB, contentsDir string) []TempMicroflowCall {
 	var calls []TempMicroflowCall
 
 	// Convert content to searchable format
@@ -1382,7 +1457,7 @@ func findMicroflowCalls(mf MicroflowInfo, targetMicroflow string, targetJavaActi
 
 	// Search for ActionActivity with MicroflowCall, JavaAction, or ExternalAction
 	// Pass the original BSON content for parameter detection
-	searchActivities(contentMap, targetMicroflow, targetJavaAction, &calls, mf.Content)
+	searchActivities(contentMap, targetMicroflow, targetJavaAction, &calls, mf.Content, mf.Name, db, contentsDir)
 
 	return calls
 }
@@ -1470,7 +1545,7 @@ func findVariableAssignment(obj interface{}, varName string, result *string) {
 	}
 }
 
-func searchActivities(obj interface{}, targetMicroflow string, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}) {
+func searchActivities(obj interface{}, targetMicroflow string, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}, microflowName string, db *sql.DB, contentsDir string) {
 	switch v := obj.(type) {
 	case map[string]interface{}:
 		// Check if this is an ActionActivity
@@ -1478,19 +1553,19 @@ func searchActivities(obj interface{}, targetMicroflow string, targetJavaAction 
 			if typeStr == "Microflows$ActionActivity" {
 				// Check for all three call types
 				checkMicroflowCall(v, targetMicroflow, calls, contentMap)
-				checkJavaAction(v, targetJavaAction, calls, contentMap)
+				checkJavaAction(v, targetJavaAction, calls, contentMap, microflowName, db, contentsDir)
 				checkExternalAction(v, calls, contentMap)
 			}
 		}
 
 		// Recursively search all fields
 		for _, value := range v {
-			searchActivities(value, targetMicroflow, targetJavaAction, calls, contentMap)
+			searchActivities(value, targetMicroflow, targetJavaAction, calls, contentMap, microflowName, db, contentsDir)
 		}
 
 	case []interface{}:
 		for _, item := range v {
-			searchActivities(item, targetMicroflow, targetJavaAction, calls, contentMap)
+			searchActivities(item, targetMicroflow, targetJavaAction, calls, contentMap, microflowName, db, contentsDir)
 		}
 	}
 }
@@ -1576,7 +1651,7 @@ func checkMicroflowCall(activity map[string]interface{}, targetMicroflow string,
 	})
 }
 
-func checkJavaAction(activity map[string]interface{}, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}) {
+func checkJavaAction(activity map[string]interface{}, targetJavaAction string, calls *[]TempMicroflowCall, contentMap map[string]interface{}, microflowName string, db *sql.DB, contentsDir string) {
 	action, ok := activity["Action"].(map[string]interface{})
 	if !ok {
 		return
@@ -1621,6 +1696,7 @@ func checkJavaAction(activity map[string]interface{}, targetJavaAction string, c
 	// Extract AppName and CommandName from ParameterMappings
 	appName := ""
 	commandName := ""
+
 	if paramMappings, ok := action["ParameterMappings"].([]interface{}); ok {
 		for _, mapping := range paramMappings {
 			if mappingMap, ok := mapping.(map[string]interface{}); ok {
@@ -1655,6 +1731,14 @@ func checkJavaAction(activity map[string]interface{}, targetJavaAction string, c
 				}
 			}
 		}
+	}
+
+	// If AppName or CommandName are empty, "empty", or placeholders, use specific placeholders for JavaAction
+	if appName == "" || strings.ToLower(appName) == "empty" || appName == "'AppName'" || appName == "<parameter>" {
+		appName = "<JavaAppName>"
+	}
+	if commandName == "" || strings.ToLower(commandName) == "empty" || commandName == "'CommandName'" || commandName == "<parameter>" {
+		commandName = "<JavaCommandName>"
 	}
 
 	*calls = append(*calls, TempMicroflowCall{
@@ -2698,15 +2782,177 @@ func findRightPlaceholder(pageData map[string]interface{}) interface{} {
 	return nil
 }
 
-// findFirstCommandBarContainer recursively searches for the first DivContainer with "vertical-command-bar" class
+// loadSnippetContent loads snippet BSON from mprcontents folder
+func loadSnippetContent(contentsDir, snippetID string) (map[string]interface{}, error) {
+	// Remove dashes from UUID for directory structure
+	cleanID := strings.ReplaceAll(snippetID, "-", "")
+	if len(cleanID) < 4 {
+		return nil, fmt.Errorf("invalid snippet ID: %s", snippetID)
+	}
+
+	// Build path: mprcontents/{first2}/{next2}/{uuid}.mxunit
+	dir1 := cleanID[0:2]
+	dir2 := cleanID[2:4]
+	filePath := filepath.Join(contentsDir, dir1, dir2, snippetID+".mxunit")
+
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read snippet file %s: %w", filePath, err)
+	}
+
+	// Parse BSON
+	var snippetData map[string]interface{}
+	if err := bson.Unmarshal(data, &snippetData); err != nil {
+		return nil, fmt.Errorf("failed to parse snippet BSON: %w", err)
+	}
+
+	return snippetData, nil
+}
+
+// findSnippetInWidgets searches for snippet widget in widgets array and returns snippet ID
+// Searches recursively through nested widgets
+func findSnippetInWidgets(widgets interface{}) string {
+	switch v := widgets.(type) {
+	case map[string]interface{}:
+		// Check if THIS is a snippet widget
+		if typeStr, ok := v["$Type"].(string); ok {
+			if strings.Contains(typeStr, "Snippet") {
+				// Extract snippet reference - different locations depending on type
+				if snippetRef, ok := v["Snippet"].(string); ok && snippetRef != "" {
+					return snippetRef
+				}
+				// Forms$SnippetCall has Form field directly
+				if form, ok := v["Form"].(string); ok && form != "" {
+					return form
+				}
+				// Forms$SnippetCallWidget has SnippetCall sub-object with Form
+				if snippetCall, ok := v["SnippetCall"].(map[string]interface{}); ok {
+					if form, ok := snippetCall["Form"].(string); ok && form != "" {
+						return form
+					}
+				}
+			}
+		}
+		// Recursively search nested fields
+		for key, val := range v {
+			if key == "$ID" || key == "$Type" {
+				continue
+			}
+			if result := findSnippetInWidgets(val); result != "" {
+				return result
+			}
+		}
+	case primitive.A:
+		for i, item := range v {
+			if i == 0 {
+				continue // Skip count
+			}
+			if result := findSnippetInWidgets(item); result != "" {
+				return result
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if result := findSnippetInWidgets(item); result != "" {
+				return result
+			}
+		}
+	}
+	return ""
+}
+
+func getKeys(m map[string]interface{}) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+// resolveRightPlaceholderWidgets checks if Right placeholder contains a snippet and loads it
+// Returns (widgets, snippetLoaded) where snippetLoaded indicates if a snippet was successfully resolved
+func resolveRightPlaceholderWidgets(rightWidgets interface{}, contentsDir string, db *sql.DB, mprPath string) (interface{}, bool) {
+	if rightWidgets == nil {
+		return nil, false
+	}
+
+	// Check if there's a snippet in the widgets
+	snippetQName := findSnippetInWidgets(rightWidgets)
+	if snippetQName == "" {
+		// No snippet found, return original widgets
+		return rightWidgets, false
+	}
+
+	// Convert qualified name to UUID using reader
+	snippetUUID, err := getSnippetUUIDByQualifiedName(mprPath, snippetQName)
+	if err != nil {
+		return rightWidgets, false
+	}
+
+	// Load snippet content
+	snippetData, err := loadSnippetContent(contentsDir, snippetUUID)
+	if err != nil {
+		return rightWidgets, false
+	}
+
+	// Extract widgets from snippet - they should be in the Widget or Widgets field
+	if widgets, ok := snippetData["Widget"]; ok {
+		return widgets, true
+	}
+	if widgets, ok := snippetData["Widgets"]; ok {
+		return widgets, true
+	}
+
+	// Snippet loaded but no widgets found, return original
+	return rightWidgets, false
+}
+
+// getSnippetUUIDByQualifiedName retrieves the UUID of a snippet by its qualified name using reader
+func getSnippetUUIDByQualifiedName(mprPath, qualifiedName string) (string, error) {
+	// Open reader to get snippets
+	reader, err := modelsdk.Open(mprPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open MPR: %w", err)
+	}
+	defer reader.Close()
+
+	// List all snippets
+	snippets, err := reader.ListSnippets()
+	if err != nil {
+		return "", fmt.Errorf("failed to list snippets: %w", err)
+	}
+
+	// Extract just the snippet name from qualified name (Module.SnippetName -> SnippetName)
+	parts := strings.Split(qualifiedName, ".")
+	snippetName := qualifiedName
+	if len(parts) == 2 {
+		snippetName = parts[1]
+	}
+
+	// Find snippet by name
+	for _, snippet := range snippets {
+		if snippet.Name == snippetName {
+			return string(snippet.ID), nil
+		}
+	}
+
+	return "", fmt.Errorf("snippet not found: %s (tried name: %s)", qualifiedName, snippetName)
+}
+
+// findFirstCommandBarContainer recursively searches for the first DivContainer with command bar class
+// Supports various class name patterns: vertical-command-bar, verticalCommandBar, command-bar, commandBar, etc.
 func findFirstCommandBarContainer(data interface{}) map[string]interface{} {
 	switch v := data.(type) {
 	case map[string]interface{}:
-		// Check if this is a DivContainer with vertical-command-bar class
+		// Check if this is a DivContainer with command bar class
 		if typeStr, ok := v["$Type"].(string); ok && typeStr == "Forms$DivContainer" {
 			if appearance, ok := v["Appearance"].(map[string]interface{}); ok {
 				if class, ok := appearance["Class"].(string); ok {
-					if strings.Contains(class, "vertical-command-bar") {
+					classLower := strings.ToLower(class)
+					// Match various command bar class patterns
+					if strings.Contains(classLower, "vertical-command-bar") ||
+						strings.Contains(classLower, "verticalcommandbar") ||
+						(strings.Contains(classLower, "vertical") && strings.Contains(classLower, "command")) {
 						return v // Found it!
 					}
 				}
@@ -2809,8 +3055,9 @@ func extractButtonCaption(button map[string]interface{}) string {
 func extractActionButtons(container map[string]interface{}, db *sql.DB, contentsDir string) []PageCommandButton {
 	var buttons []PageCommandButton
 
-	var search func(data interface{}, parentAction map[string]interface{})
-	search = func(data interface{}, parentAction map[string]interface{}) {
+	// Recursive search that only follows Widgets field, not all fields
+	var searchWidgets func(data interface{}, parentAction map[string]interface{})
+	searchWidgets = func(data interface{}, parentAction map[string]interface{}) {
 		switch v := data.(type) {
 		case map[string]interface{}:
 			typeStr, _ := v["$Type"].(string)
@@ -2842,59 +3089,49 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 					}
 
 					// If we found both, extract button with caption from DynamicText
-					if actionButton != nil {
+					if actionButton != nil && currentAction != nil {
 						button := PageCommandButton{
 							ButtonName: extractNameFromContents(actionButton),
-							Caption:    extractCaptionFromDynamicText(dynamicText), // Get from DynamicText
-						}
-
-						// Use inherited or own OnClickAction
-						actionToUse := currentAction
-						if onClickAction, ok := actionButton["OnClickAction"].(map[string]interface{}); ok {
-							actionToUse = onClickAction
+							Caption:    extractCaptionFromDynamicText(dynamicText),
 						}
 
 						// Extract action information
-						if actionToUse != nil {
-							if actionType, ok := actionToUse["$Type"].(string); ok {
-								button.ActionType = actionType
+						if actionType, ok := currentAction["$Type"].(string); ok {
+							button.ActionType = actionType
 
-								if strings.Contains(actionType, "CallNanoflowClientAction") {
-									if nanoflow, ok := actionToUse["Nanoflow"].(string); ok {
-										button.ActionName = nanoflow
-										nanoflowPages := loadNanoflowShowPages(db, contentsDir, nanoflow)
-										if len(nanoflowPages) > 0 {
-											button.TargetPage = strings.Join(nanoflowPages, ", ")
-										}
+							if strings.Contains(actionType, "CallNanoflowClientAction") {
+								if nanoflow, ok := currentAction["Nanoflow"].(string); ok {
+									button.ActionName = nanoflow
+									nanoflowPages := loadNanoflowShowPages(db, contentsDir, nanoflow)
+									if len(nanoflowPages) > 0 {
+										button.TargetPage = strings.Join(nanoflowPages, ", ")
 									}
-								} else if strings.Contains(actionType, "CallMicroflowClientAction") {
-									if microflow, ok := actionToUse["Microflow"].(string); ok {
-										button.ActionName = microflow
-										microflowPages := loadMicroflowShowPages(db, contentsDir, microflow)
-										if len(microflowPages) > 0 {
-											button.TargetPage = strings.Join(microflowPages, ", ")
-										}
+								}
+							} else if strings.Contains(actionType, "CallMicroflowClientAction") {
+								if microflow, ok := currentAction["Microflow"].(string); ok {
+									button.ActionName = microflow
+									microflowPages := loadMicroflowShowPages(db, contentsDir, microflow)
+									if len(microflowPages) > 0 {
+										button.TargetPage = strings.Join(microflowPages, ", ")
 									}
-								} else if strings.Contains(actionType, "ShowPage") {
-									if pageSettings, ok := actionToUse["PageSettings"].(map[string]interface{}); ok {
-										if page, ok := pageSettings["Page"].(string); ok {
-											button.TargetPage = page
-										}
+								}
+							} else if strings.Contains(actionType, "ShowPage") {
+								if pageSettings, ok := currentAction["PageSettings"].(map[string]interface{}); ok {
+									if page, ok := pageSettings["Page"].(string); ok {
+										button.TargetPage = page
 									}
-								} else if strings.Contains(actionType, "CreateObjectClientAction") {
-									button.ActionName = "Create Object"
-									// Extract target page from PageSettings.Form
-									if pageSettings, ok := actionToUse["PageSettings"].(map[string]interface{}); ok {
-										if form, ok := pageSettings["Form"].(string); ok {
-											button.TargetPage = form
-										}
+								}
+							} else if strings.Contains(actionType, "CreateObjectClientAction") {
+								button.ActionName = "Create Object"
+								if pageSettings, ok := currentAction["PageSettings"].(map[string]interface{}); ok {
+									if form, ok := pageSettings["Form"].(string); ok {
+										button.TargetPage = form
 									}
-								} else if strings.Contains(actionType, "FormAction") {
-									// Extract target page from FormSettings.Form
-									if formSettings, ok := actionToUse["FormSettings"].(map[string]interface{}); ok {
-										if form, ok := formSettings["Form"].(string); ok {
-											button.TargetPage = form
-										}
+								}
+							} else if strings.Contains(actionType, "FormAction") {
+								if formSettings, ok := currentAction["FormSettings"].(map[string]interface{}); ok {
+									if form, ok := formSettings["Form"].(string); ok {
+										button.TargetPage = form
 									}
 								}
 							}
@@ -2902,12 +3139,25 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 
 						buttons = append(buttons, button)
 					}
-				}
-			}
 
-			// Recursively search all fields with current action context
-			for _, val := range v {
-				search(val, currentAction)
+					// Continue recursively searching in widgets
+					for i, widget := range widgets {
+						if i == 0 {
+							continue
+						}
+						searchWidgets(widget, currentAction)
+					}
+				}
+			} else if typeStr == "Forms$DataView" {
+				// DataView can contain nested DivContainers, search in its Widgets
+				if widgets, ok := v["Widgets"].(primitive.A); ok {
+					for i, widget := range widgets {
+						if i == 0 {
+							continue
+						}
+						searchWidgets(widget, parentAction)
+					}
+				}
 			}
 
 		case primitive.A:
@@ -2915,17 +3165,12 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 				if i == 0 {
 					continue
 				}
-				search(item, parentAction)
-			}
-
-		case []interface{}:
-			for _, item := range v {
-				search(item, parentAction)
+				searchWidgets(item, parentAction)
 			}
 		}
 	}
 
-	search(container, nil)
+	searchWidgets(container, nil)
 	return buttons
 }
 
@@ -3545,7 +3790,7 @@ func loadMicroflowShowPages(db *sql.DB, contentsDir string, microflowName string
 }
 
 // collectPageCommands extracts command bar actions from pages listed in navigation items
-func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []NavigationItem, allMicroflowCalls []MicroflowCallInfo) ([]PageCommandInfo, error) {
+func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigationItems []NavigationItem, allMicroflowCalls []MicroflowCallInfo) ([]PageCommandInfo, error) {
 	// Get unique list of target pages from navigation items (filter out "-" and empty strings)
 	uniquePages := make(map[string]bool)
 	for _, item := range navigationItems {
@@ -3572,15 +3817,16 @@ func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []Navig
 		// Find Right placeholder
 		rightWidgets := findRightPlaceholder(pageData)
 		if rightWidgets == nil {
-			// No Right placeholder, skip
 			skipped++
 			continue
 		}
 
+		// Resolve snippet if present in Right placeholder
+		resolvedWidgets, _ := resolveRightPlaceholderWidgets(rightWidgets, contentsDir, db, mprPath)
+
 		// Find first command bar container
-		commandBarContainer := findFirstCommandBarContainer(rightWidgets)
+		commandBarContainer := findFirstCommandBarContainer(resolvedWidgets)
 		if commandBarContainer == nil {
-			// No command bar found, skip
 			skipped++
 			continue
 		}
@@ -3593,15 +3839,36 @@ func collectPageCommands(db *sql.DB, contentsDir string, navigationItems []Navig
 				// Strategy 1: If button opens a target page (PANEL_*), find command in that page
 				if buttons[i].TargetPage != "" && buttons[i].TargetPage != "-" {
 					buttons[i].TargetCommand = findSaveButtonCommand(db, contentsDir, buttons[i].TargetPage, allMicroflowCalls)
+					// Extract AppName and CommandName from TargetCommand (format: "AppName.CommandName")
+					if buttons[i].TargetCommand != "" {
+						if idx := strings.LastIndex(buttons[i].TargetCommand, "."); idx >= 0 {
+							buttons[i].TargetAppName = buttons[i].TargetCommand[:idx]
+							buttons[i].TargetCommand = buttons[i].TargetCommand[idx+1:] // Keep only CommandName
+						}
+					}
 				} else if buttons[i].ActionName != "" {
 					// Strategy 2: If button calls a nanoflow/microflow directly, try to find command in that flow
 					if strings.Contains(buttons[i].ActionType, "CallNanoflowClientAction") ||
 						strings.Contains(buttons[i].ActionType, "CallMicroflowClientAction") {
 						buttons[i].TargetCommand = extractCommandFromFlow(db, contentsDir, buttons[i].ActionName)
+						// Extract AppName and CommandName from TargetCommand
+						if buttons[i].TargetCommand != "" {
+							if idx := strings.LastIndex(buttons[i].TargetCommand, "."); idx >= 0 {
+								buttons[i].TargetAppName = buttons[i].TargetCommand[:idx]
+								buttons[i].TargetCommand = buttons[i].TargetCommand[idx+1:] // Keep only CommandName
+							}
+						}
 
 						// Strategy 3: If no command found in flow, use heuristic based on button caption + page entity
 						if buttons[i].TargetCommand == "" {
 							buttons[i].TargetCommand = findCommandByButtonHeuristic(pageName, buttons[i].Caption, allMicroflowCalls)
+							// Extract AppName and CommandName from TargetCommand
+							if buttons[i].TargetCommand != "" {
+								if idx := strings.LastIndex(buttons[i].TargetCommand, "."); idx >= 0 {
+									buttons[i].TargetAppName = buttons[i].TargetCommand[:idx]
+									buttons[i].TargetCommand = buttons[i].TargetCommand[idx+1:] // Keep only CommandName
+								}
+							}
 						}
 					}
 				}
@@ -4552,6 +4819,676 @@ func extractPageAccess(content map[string]interface{}, pageName string, moduleNa
 	return pageAccess
 }
 
+// ==== Pages Analysis with Recursive Hierarchy (Section 6) ====
+
+// shouldExcludeModule checks if a module should be excluded from pages analysis
+// Excludes marketplace modules and UI framework modules
+func shouldExcludeModule(moduleName string) bool {
+	// Standard Mendix modules
+	if moduleName == "Administration" || moduleName == "System" {
+		return true
+	}
+
+	// Marketplace modules (typically start with EXFN_)
+	if strings.HasPrefix(moduleName, "EXFN_") {
+		return true
+	}
+
+	// UI framework modules (contain _DISW_ or DesignSystem)
+	if strings.Contains(moduleName, "_DISW_") || strings.Contains(moduleName, "DesignSystem") {
+		return true
+	}
+
+	// Atlas UI modules
+	if strings.HasPrefix(moduleName, "Atlas_") {
+		return true
+	}
+
+	return false
+}
+
+// collectPagesWithMicroflows collects all pages/panels and analyzes their microflow/nanoflow calls with recursive hierarchy
+func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisInfo, error) {
+	// Query all Units
+	query := `SELECT UnitID, ContainerID FROM Unit`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query units: %w", err)
+	}
+	defer rows.Close()
+
+	var pagesAnalysis []PageAnalysisInfo
+	microflowCache := make(map[string]map[string]interface{})   // Cache: microflowName -> content
+	hierarchyCache := make(map[string][]MicroflowCallHierarchy) // Cache: microflowName -> hierarchy
+
+	processedCount := 0
+	cacheHits := 0
+	scannedCount := 0
+	pagesFoundCount := 0
+	fileReadErrors := 0
+	bsonParseErrors := 0
+
+	for rows.Next() {
+		scannedCount++
+		var unitIDBlob, containerIDBlob []byte
+		if err := rows.Scan(&unitIDBlob, &containerIDBlob); err != nil {
+			continue
+		}
+
+		unitID := blobToUUID(unitIDBlob)
+		if unitID == "" {
+			continue
+		}
+
+		// Remove dashes for file path
+		cleanID := strings.ReplaceAll(unitID, "-", "")
+		filePath := filepath.Join(contentsDir, cleanID[:2], cleanID[2:4], unitID+".mxunit")
+
+		// Read BSON
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			fileReadErrors++
+			continue
+		}
+
+		var doc map[string]interface{}
+		err = bson.Unmarshal(data, &doc)
+		if err != nil {
+			bsonParseErrors++
+			continue
+		}
+
+		// Only process Forms$Page (pages and panels)
+		typeField, ok := doc["$Type"].(string)
+		if !ok || typeField != "Forms$Page" {
+			continue
+		}
+
+		pagesFoundCount++
+
+		// Get page name and module
+		pageName, ok := doc["Name"].(string)
+		if !ok || pageName == "" {
+			continue
+		}
+
+		// Get module name from ContainerID
+		containerID := blobToUUID(containerIDBlob)
+		moduleName := getModuleNameFromContainerID(db, contentsDir, containerID)
+
+		// Filter out marketplace and UI modules
+		if shouldExcludeModule(moduleName) {
+			continue
+		}
+
+		// Extract microflow/nanoflow calls from page
+		microflowCalls := extractMicroflowCallsFromPage(doc)
+
+		// Build call hierarchy for each microflow (up to 5 levels deep)
+		var callHierarchy []MicroflowCallHierarchy
+		for _, mfName := range microflowCalls {
+			// Check cache first
+			if cachedHierarchy, found := hierarchyCache[mfName]; found {
+				callHierarchy = append(callHierarchy, MicroflowCallHierarchy{
+					Name:  mfName,
+					Level: 0,
+					Calls: cachedHierarchy,
+				})
+				cacheHits++
+			} else {
+				// Build hierarchy and cache it
+				hierarchy := buildMicroflowCallHierarchy(mfName, 0, 5, db, contentsDir, microflowCache, make(map[string]bool))
+				hierarchyCache[mfName] = hierarchy.Calls
+				callHierarchy = append(callHierarchy, hierarchy)
+			}
+		}
+
+		// Filter hierarchy to keep only nodes with commands
+		filteredHierarchy := filterHierarchyByCommands(callHierarchy, db, contentsDir, microflowCache)
+
+		// Extract target commands from filtered hierarchy
+		targetCommands := extractCommandsFromHierarchy(filteredHierarchy, db, contentsDir, microflowCache)
+
+		pagesAnalysis = append(pagesAnalysis, PageAnalysisInfo{
+			Name:           pageName,
+			Module:         moduleName,
+			MicroflowCalls: microflowCalls,
+			CallHierarchy:  filteredHierarchy,
+			TargetCommands: targetCommands,
+		})
+
+		processedCount++
+	}
+
+	fmt.Printf("  📦 Scanned %d units, %d file read errors, %d BSON parse errors\n", scannedCount, fileReadErrors, bsonParseErrors)
+	fmt.Printf("  📦 Found %d Forms$Page documents, processed %d pages\n", pagesFoundCount, processedCount)
+	fmt.Printf("  📦 Built call hierarchies: %d microflows cached, %d hierarchies reused\n", len(microflowCache), cacheHits)
+	return pagesAnalysis, nil
+}
+
+// buildMicroflowCallHierarchy builds a recursive call tree for a microflow/nanoflow
+func buildMicroflowCallHierarchy(name string, currentLevel int, maxDepth int, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}, visited map[string]bool) MicroflowCallHierarchy {
+	hierarchy := MicroflowCallHierarchy{
+		Name:  name,
+		Level: currentLevel,
+		Calls: []MicroflowCallHierarchy{},
+	}
+
+	// Stop recursion if max depth reached or already visited (cycle detection)
+	if currentLevel >= maxDepth || visited[name] {
+		return hierarchy
+	}
+
+	// Mark as visited
+	visited[name] = true
+
+	// Load microflow content (check cache first)
+	var content map[string]interface{}
+	var ok bool
+	if content, ok = cache[name]; !ok {
+		// Not in cache - load from database on-the-fly
+		content = loadMicroflowByName(db, contentsDir, name)
+		if content != nil {
+			cache[name] = content
+		} else {
+			// Microflow not found
+			delete(visited, name)
+			return hierarchy
+		}
+	}
+
+	// Extract called microflows/nanoflows
+	calledFlows := extractMicroflowCallsFromMicroflow(content)
+
+	// Recursively build hierarchy for each called flow
+	for _, calledFlow := range calledFlows {
+		childHierarchy := buildMicroflowCallHierarchy(calledFlow, currentLevel+1, maxDepth, db, contentsDir, cache, visited)
+		hierarchy.Calls = append(hierarchy.Calls, childHierarchy)
+	}
+
+	// Unmark visited for this path (allow other branches)
+	delete(visited, name)
+
+	return hierarchy
+}
+
+// extractMicroflowCallsFromPage extracts microflow/nanoflow names from a page document
+func extractMicroflowCallsFromPage(pageDoc map[string]interface{}) []string {
+	var microflows []string
+	seen := make(map[string]bool)
+
+	var traverse func(interface{})
+	traverse = func(v interface{}) {
+		switch val := v.(type) {
+		case map[string]interface{}:
+			// Check for Nanoflow field (direct reference)
+			if nanoflowField, ok := val["Nanoflow"].(string); ok && nanoflowField != "" {
+				if !seen[nanoflowField] {
+					microflows = append(microflows, nanoflowField)
+					seen[nanoflowField] = true
+				}
+			}
+			// Check for Microflow field (direct reference)
+			if microflowField, ok := val["Microflow"].(string); ok && microflowField != "" {
+				if !seen[microflowField] {
+					microflows = append(microflows, microflowField)
+					seen[microflowField] = true
+				}
+			}
+			// Check for MicroflowCall field
+			if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
+				if !seen[mfCall] {
+					microflows = append(microflows, mfCall)
+					seen[mfCall] = true
+				}
+			}
+			// Traverse nested objects
+			for _, v2 := range val {
+				traverse(v2)
+			}
+		case []interface{}:
+			for _, item := range val {
+				traverse(item)
+			}
+		case primitive.A:
+			for _, item := range val {
+				traverse(item)
+			}
+		}
+	}
+
+	traverse(pageDoc)
+	return microflows
+}
+
+// extractMicroflowCallsFromMicroflow extracts microflow/nanoflow calls from a microflow document
+func extractMicroflowCallsFromMicroflow(microflowDoc map[string]interface{}) []string {
+	var microflows []string
+	seen := make(map[string]bool)
+
+	var traverse func(interface{})
+	traverse = func(v interface{}) {
+		switch val := v.(type) {
+		case map[string]interface{}:
+			// Check for $Type = "Microflows$MicroflowCall" or "Microflows$NanoflowCall"
+			if typeField, ok := val["$Type"].(string); ok {
+				if typeField == "Microflows$MicroflowCall" || typeField == "Microflows$NanoflowCall" {
+					// Extract MicroflowCall field (can be "MicroflowCall" or "Microflow")
+					mfCallName := ""
+					if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
+						mfCallName = mfCall
+					} else if microflow, ok := val["Microflow"].(string); ok && microflow != "" {
+						mfCallName = microflow
+					}
+
+					if mfCallName != "" && !seen[mfCallName] {
+						microflows = append(microflows, mfCallName)
+						seen[mfCallName] = true
+					}
+				}
+			}
+			// Check for direct Nanoflow field reference
+			if nanoflowField, ok := val["Nanoflow"].(string); ok && nanoflowField != "" {
+				if !seen[nanoflowField] {
+					microflows = append(microflows, nanoflowField)
+					seen[nanoflowField] = true
+				}
+			}
+			// Check for direct Microflow field reference
+			if microflowField, ok := val["Microflow"].(string); ok && microflowField != "" {
+				if !seen[microflowField] {
+					microflows = append(microflows, microflowField)
+					seen[microflowField] = true
+				}
+			}
+			// Traverse nested objects
+			for _, v2 := range val {
+				traverse(v2)
+			}
+		case []interface{}:
+			for _, item := range val {
+				traverse(item)
+			}
+		case primitive.A:
+			for _, item := range val {
+				traverse(item)
+			}
+		}
+	}
+
+	traverse(microflowDoc)
+	return microflows
+}
+
+// loadMicroflowByName loads a microflow/nanoflow by name from the database
+func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string]interface{} {
+	// Extract simple name from qualified name (Module.Name -> Name)
+	simpleName := name
+	if idx := strings.LastIndex(name, "."); idx >= 0 {
+		simpleName = name[idx+1:]
+	}
+
+	// Query all Units (brute force scan)
+	query := `SELECT UnitID FROM Unit`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var unitIDBlob []byte
+		if err := rows.Scan(&unitIDBlob); err != nil {
+			continue
+		}
+
+		// Use blobToUUID instead of hex.EncodeToString
+		unitID := blobToUUID(unitIDBlob)
+		if unitID == "" {
+			continue
+		}
+
+		// Remove dashes for file path
+		cleanID := strings.ReplaceAll(unitID, "-", "")
+		filePath := filepath.Join(contentsDir, cleanID[:2], cleanID[2:4], unitID+".mxunit")
+
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			continue
+		}
+
+		var doc map[string]interface{}
+		err = bson.Unmarshal(data, &doc)
+		if err != nil {
+			continue
+		}
+
+		// Check if this is a Microflow or Nanoflow with matching name
+		typeField, ok := doc["$Type"].(string)
+		if !ok {
+			continue
+		}
+		if typeField != "Microflows$Microflow" && typeField != "Microflows$Nanoflow" {
+			continue
+		}
+
+		nameField, ok := doc["Name"].(string)
+		// Match both simple name and qualified name
+		if ok && (nameField == name || nameField == simpleName) {
+			return doc
+		}
+	}
+
+	return nil
+}
+
+// extractCommandsFromHierarchy extracts all external action commands from a call hierarchy
+func extractCommandsFromHierarchy(hierarchy []MicroflowCallHierarchy, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}) []string {
+	var commands []string
+	seen := make(map[string]bool)
+
+	var traverse func([]MicroflowCallHierarchy)
+	traverse = func(nodes []MicroflowCallHierarchy) {
+		for _, node := range nodes {
+			// Load microflow content
+			var content map[string]interface{}
+			var ok bool
+			if content, ok = cache[node.Name]; !ok {
+				// Not in cache - load on-the-fly
+				content = loadMicroflowByName(db, contentsDir, node.Name)
+				if content != nil {
+					cache[node.Name] = content
+				}
+			}
+
+			if content != nil {
+				// Extract commands from this microflow
+				nodeCommands := extractExternalActionsFromContent(content)
+				for _, cmd := range nodeCommands {
+					if !seen[cmd] {
+						commands = append(commands, cmd)
+						seen[cmd] = true
+					}
+				}
+			}
+
+			// Traverse children
+			if len(node.Calls) > 0 {
+				traverse(node.Calls)
+			}
+		}
+	}
+
+	traverse(hierarchy)
+	return commands
+}
+
+// extractExternalActionsFromContent extracts ExternalAction and CallExternalAction commands from microflow content
+func extractExternalActionsFromContent(content map[string]interface{}) []string {
+	var commands []string
+	seen := make(map[string]bool)
+
+	var traverse func(interface{})
+	traverse = func(v interface{}) {
+		switch val := v.(type) {
+		case map[string]interface{}:
+			// Check for $Type
+			if typeField, ok := val["$Type"].(string); ok {
+				// Pattern 1: Microflows$ExternalAction (legacy)
+				if typeField == "Microflows$ExternalAction" {
+					appName, _ := val["AppName"].(string)
+					commandName, _ := val["CommandName"].(string)
+
+					// Clean values (remove quotes and whitespace)
+					appName = strings.Trim(strings.TrimSpace(appName), "'\"")
+					commandName = strings.Trim(strings.TrimSpace(commandName), "'\"")
+
+					if appName != "" && commandName != "" {
+						cmd := appName + "." + commandName
+						if !seen[cmd] {
+							commands = append(commands, cmd)
+							seen[cmd] = true
+						}
+					}
+				}
+				// Pattern 2: Microflows$CallExternalAction (OData Services)
+				if typeField == "Microflows$CallExternalAction" {
+					consumedService, _ := val["ConsumedODataService"].(string)
+					actionName, _ := val["Name"].(string)
+					if consumedService != "" && actionName != "" {
+						// Parse service name (format: "Module.ServiceName")
+						parts := strings.Split(consumedService, ".")
+						serviceName := consumedService
+						if len(parts) > 1 {
+							serviceName = parts[len(parts)-1]
+						}
+						cmd := serviceName + "." + actionName
+						if !seen[cmd] {
+							commands = append(commands, cmd)
+							seen[cmd] = true
+						}
+					}
+				}
+				// Pattern 3: Microflows$MicroflowCall calling CallCommand_MF pattern
+				if typeField == "Microflows$MicroflowCall" {
+					// Check if calling a CallCommand_MF or similar pattern
+					var microflowName string
+					if mfCall, ok := val["MicroflowCall"].(string); ok && mfCall != "" {
+						microflowName = mfCall
+					} else if microflow, ok := val["Microflow"].(string); ok && microflow != "" {
+						microflowName = microflow
+					}
+
+					// If calling CallCommand_MF or CallCommandAction, extract AppName and CommandName
+					if strings.Contains(microflowName, "CallCommand") {
+						// Try to extract AppName and CommandName from ParameterMappings
+						appName := ""
+						commandName := ""
+
+						if paramMappings, ok := val["ParameterMappings"].(primitive.A); ok {
+							for _, pm := range paramMappings {
+								if pmMap, ok := pm.(map[string]interface{}); ok {
+									paramName, _ := pmMap["Parameter"].(string)
+
+									// Extract argument - can be in "Argument" or "Value.Argument"
+									argument := ""
+									if arg, ok := pmMap["Argument"].(string); ok {
+										argument = arg
+									} else if valueObj, ok := pmMap["Value"].(map[string]interface{}); ok {
+										if arg, ok := valueObj["Argument"].(string); ok {
+											argument = arg
+										}
+									}
+
+									// Extract parameter name (last part after dot)
+									if strings.Contains(paramName, ".") {
+										parts := strings.Split(paramName, ".")
+										paramName = parts[len(parts)-1]
+									}
+
+									// Clean argument thoroughly
+									argument = strings.TrimSpace(argument)
+									argument = strings.TrimPrefix(argument, "$")
+									argument = strings.Trim(argument, "'\"")
+									argument = strings.ReplaceAll(argument, "\n", "")
+									argument = strings.ReplaceAll(argument, "\r", "")
+									argument = strings.ReplaceAll(argument, "\\n", "")
+									argument = strings.TrimSpace(argument)
+
+									// Skip invalid values
+									if argument != "" && strings.ToLower(argument) != "empty" {
+										if strings.Contains(strings.ToLower(paramName), "appname") {
+											appName = argument
+										} else if strings.Contains(strings.ToLower(paramName), "commandname") {
+											commandName = argument
+										}
+									}
+								}
+							}
+						}
+
+						// Build command identifier
+						var cmd string
+						if appName != "" && commandName != "" {
+							cmd = appName + "." + commandName
+						} else if commandName != "" {
+							cmd = commandName
+						} else if appName != "" {
+							cmd = appName
+						} else {
+							cmd = "DynamicCommand"
+						}
+
+						if !seen[cmd] {
+							commands = append(commands, cmd)
+							seen[cmd] = true
+						}
+					}
+				}
+				// Pattern 4: Microflows$JavaActionCallAction
+				if typeField == "Microflows$JavaActionCallAction" {
+					// Try to extract AppName and CommandName from ParameterMappings
+					appName := ""
+					commandName := ""
+
+					if paramMappings, ok := val["ParameterMappings"].(primitive.A); ok {
+						for _, pm := range paramMappings {
+							if pmMap, ok := pm.(map[string]interface{}); ok {
+								paramName, _ := pmMap["Parameter"].(string)
+
+								// Extract argument - can be in "Argument" or "Value.Argument"
+								argument := ""
+								if arg, ok := pmMap["Argument"].(string); ok {
+									argument = arg
+								} else if valueObj, ok := pmMap["Value"].(map[string]interface{}); ok {
+									if arg, ok := valueObj["Argument"].(string); ok {
+										argument = arg
+									}
+								}
+
+								// Extract parameter name (last part after dot)
+								if strings.Contains(paramName, ".") {
+									parts := strings.Split(paramName, ".")
+									paramName = parts[len(parts)-1]
+								}
+
+								// Clean argument thoroughly
+								argument = strings.TrimSpace(argument)
+								argument = strings.TrimPrefix(argument, "$")
+								argument = strings.Trim(argument, "'\"")
+								argument = strings.ReplaceAll(argument, "\n", "")
+								argument = strings.ReplaceAll(argument, "\r", "")
+								argument = strings.ReplaceAll(argument, "\\n", "")
+								argument = strings.TrimSpace(argument)
+
+								// Skip invalid values
+								if argument != "" && strings.ToLower(argument) != "empty" {
+									if strings.Contains(strings.ToLower(paramName), "appname") {
+										appName = argument
+									} else if strings.Contains(strings.ToLower(paramName), "commandname") {
+										commandName = argument
+									}
+								}
+							}
+						}
+					}
+
+					// Build command identifier
+					var cmd string
+					if appName != "" && commandName != "" {
+						cmd = appName + "." + commandName
+					} else if commandName != "" {
+						cmd = commandName
+					} else if appName != "" {
+						cmd = appName
+					} else {
+						// If no parameters, use JavaAction name
+						if javaActionName, ok := val["JavaAction"].(string); ok && javaActionName != "" {
+							cmd = javaActionName
+						} else {
+							cmd = "JavaActionCommand"
+						}
+					}
+
+					if !seen[cmd] {
+						commands = append(commands, cmd)
+						seen[cmd] = true
+					}
+				}
+			}
+			// Traverse nested objects
+			for _, v2 := range val {
+				traverse(v2)
+			}
+		case []interface{}:
+			for _, item := range val {
+				traverse(item)
+			}
+		case primitive.A:
+			for _, item := range val {
+				traverse(item)
+			}
+		}
+	}
+
+	traverse(content)
+	return commands
+}
+
+// nodeHasCommands checks if a microflow node contains external action commands
+func nodeHasCommands(nodeName string, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}) bool {
+	var content map[string]interface{}
+	var ok bool
+
+	// Try to get from cache first
+	if content, ok = cache[nodeName]; !ok {
+		// Not in cache - load on-the-fly
+		content = loadMicroflowByName(db, contentsDir, nodeName)
+		if content != nil {
+			cache[nodeName] = content
+		}
+	}
+
+	if content == nil {
+		return false
+	}
+
+	// Check if this microflow has any external actions
+	commands := extractExternalActionsFromContent(content)
+	return len(commands) > 0
+}
+
+// filterHierarchyByCommands filters the hierarchy to keep only nodes with commands (or descendants with commands)
+func filterHierarchyByCommands(hierarchy []MicroflowCallHierarchy, db *sql.DB, contentsDir string, cache map[string]map[string]interface{}) []MicroflowCallHierarchy {
+	var filtered []MicroflowCallHierarchy
+
+	for _, node := range hierarchy {
+		// Recursively filter children first
+		filteredCalls := []MicroflowCallHierarchy{}
+		if len(node.Calls) > 0 {
+			filteredCalls = filterHierarchyByCommands(node.Calls, db, contentsDir, cache)
+		}
+
+		// Keep this node if:
+		// 1. It has commands directly, OR
+		// 2. It has children that have commands (after filtering)
+		hasCommands := nodeHasCommands(node.Name, db, contentsDir, cache)
+		hasValidChildren := len(filteredCalls) > 0
+
+		if hasCommands || hasValidChildren {
+			// Keep this node
+			newNode := MicroflowCallHierarchy{
+				Name:  node.Name,
+				Calls: filteredCalls,
+			}
+			filtered = append(filtered, newNode)
+		}
+		// Otherwise, skip this node (it has no commands and no valid children)
+	}
+
+	return filtered
+}
+
 // ==== Markdown Report Generation ====
 
 func generateMarkdownReport(report *ManifestReport, outputPath string, options *ReportOptions) error {
@@ -4590,7 +5527,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 	if options.IncludePageCommands {
 		totalCommands := 0
 		validatedCommands := 0
-		for _, pageInfo := range report.PageCommands {
+		for _, pageInfo := range report.NavigationCommands {
 			for _, button := range pageInfo.Commands {
 				totalCommands++
 				if button.TargetCommand != "" && button.TargetCommand != "-" {
@@ -4598,7 +5535,7 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 				}
 			}
 		}
-		fmt.Fprintf(file, "- **Pages with Commands:** %d page(s) analyzed\n", len(report.PageCommands))
+		fmt.Fprintf(file, "- **Pages with Commands:** %d page(s) analyzed\n", len(report.NavigationCommands))
 		if totalCommands > 0 {
 			fmt.Fprintf(file, "- **Command Buttons:** %d total, %d with extracted commands\n", totalCommands, validatedCommands)
 		}
@@ -4797,24 +5734,24 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "---\n\n")
 	}
 
-	// Section 5: Page Commands
+	// Section 5: Navigation Page Commands (from navigation pages)
 	if options.IncludePageCommands {
 		sectionNum := 5
 		if options.IncludeRoles {
 			sectionNum = 6
 		}
-		fmt.Fprintf(file, "## %d. Page Commands\n\n", sectionNum)
+		fmt.Fprintf(file, "## %d. Navigation Page Commands\n\n", sectionNum)
 		fmt.Fprintf(file, "Command bar actions extracted from navigation pages. Shows buttons in the vertical command bar of the Right placeholder.\n\n")
 
-		if len(report.PageCommands) == 0 {
+		if len(report.NavigationCommands) == 0 {
 			fmt.Fprintf(file, "_No page commands found._\n\n")
 		} else {
-			fmt.Fprintf(file, "Found commands in %d page(s):\n\n", len(report.PageCommands))
+			fmt.Fprintf(file, "Found commands in %d page(s):\n\n", len(report.NavigationCommands))
 
-			for _, pageInfo := range report.PageCommands {
+			for _, pageInfo := range report.NavigationCommands {
 				fmt.Fprintf(file, "### %s\n\n", pageInfo.PageName)
-				fmt.Fprintf(file, "| Caption | Target Page | Target Command |\n")
-				fmt.Fprintf(file, "|---------|-------------|----------------|\n")
+				fmt.Fprintf(file, "| Caption | Target Page | Target AppName | Target CommandName |\n")
+				fmt.Fprintf(file, "|---------|-------------|----------------|--------------------|\n")
 
 				for _, cmd := range pageInfo.Commands {
 					caption := cmd.Caption
@@ -4827,15 +5764,21 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 						targetPage = "-"
 					}
 
-					targetCommand := cmd.TargetCommand
-					if targetCommand == "" {
-						targetCommand = "-"
-					} else if idx := strings.LastIndex(targetCommand, "."); idx >= 0 {
-						// Extract only the command name after the dot (e.g., "CreateStateMachine" from "Reference.CreateStateMachine")
-						targetCommand = targetCommand[idx+1:]
+					targetAppName := "-"
+					targetCommandName := "-"
+
+					if cmd.TargetCommand != "" {
+						if idx := strings.LastIndex(cmd.TargetCommand, "."); idx >= 0 {
+							// Extract AppName before the dot and CommandName after the dot
+							targetAppName = cmd.TargetCommand[:idx]
+							targetCommandName = cmd.TargetCommand[idx+1:]
+						} else {
+							// No dot found, use the whole string as command name
+							targetCommandName = cmd.TargetCommand
+						}
 					}
 
-					fmt.Fprintf(file, "| %s | %s | %s |\n", caption, targetPage, targetCommand)
+					fmt.Fprintf(file, "| %s | %s | %s | %s |\n", caption, targetPage, targetAppName, targetCommandName)
 				}
 				fmt.Fprintf(file, "\n")
 			}
@@ -4850,10 +5793,10 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		if options.IncludePageCommands {
 			sectionNum = 7
 		}
-		fmt.Fprintf(file, "## %d. System Roles & Page Accessibility\n\n", sectionNum)
+		fmt.Fprintf(file, "## %d. System Roles\n\n", sectionNum)
 
 		// Part 1: System Roles List
-		fmt.Fprintf(file, "### 5.1 System Roles\n\n")
+		fmt.Fprintf(file, "### %d.1 System Roles\n\n", sectionNum)
 		if len(report.SystemRoles) == 0 {
 			fmt.Fprintf(file, "_No system roles found._\n\n")
 		} else {
@@ -4867,76 +5810,126 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 			fmt.Fprintf(file, "\n")
 		}
 
-		// Part 2: Page Accessibility - Group by Role
-		fmt.Fprintf(file, "### 5.2 Page Accessibility by Role\n\n")
-
-		// Create a map: SystemRole -> []Pages
-		roleToPages := make(map[string][]string)
-		for _, pageAccess := range report.PageAccess {
-			if pageAccess.IsPublic {
-				// Public pages accessible by all roles
-				roleToPages["Public (No Restrictions)"] = append(roleToPages["Public (No Restrictions)"], fmt.Sprintf("%s (%s)", pageAccess.PageName, pageAccess.Module))
-			} else {
-				for _, roleName := range pageAccess.AllowedRoles {
-					roleToPages[roleName] = append(roleToPages[roleName], fmt.Sprintf("%s (%s)", pageAccess.PageName, pageAccess.Module))
-				}
-			}
-		}
-
-		if len(roleToPages) == 0 {
-			fmt.Fprintf(file, "_No page access information found._\n\n")
-		} else {
-			fmt.Fprintf(file, "| System Role | Accessible Pages Count | Pages |\n")
-			fmt.Fprintf(file, "|-------------|------------------------|-------|\n")
-
-			for roleName, pages := range roleToPages {
-				pagesStr := strings.Join(pages, ", ")
-				if len(pagesStr) > 100 {
-					pagesStr = pagesStr[:100] + "..."
-				}
-				fmt.Fprintf(file, "| %s | %d | %s |\n", roleName, len(pages), pagesStr)
-			}
-			fmt.Fprintf(file, "\n")
-		}
-
-		// Part 3: Page Accessibility - View by Page
-		fmt.Fprintf(file, "### 5.3 Page Accessibility by Page\n\n")
-
-		if len(report.PageAccess) == 0 {
-			fmt.Fprintf(file, "_No pages found._\n\n")
-		} else {
-			fmt.Fprintf(file, "Found %d page(s)/snippet(s):\n\n", len(report.PageAccess))
-			fmt.Fprintf(file, "| Page Name | Module | Type | Allowed Roles | Access |\n")
-			fmt.Fprintf(file, "|-----------|--------|------|---------------|--------|\n")
-
-			for _, pageAccess := range report.PageAccess {
-				rolesStr := strings.Join(pageAccess.AllowedRoles, ", ")
-				if rolesStr == "" {
-					rolesStr = "-"
-				}
-				accessType := "Restricted"
-				if pageAccess.IsPublic {
-					accessType = "**Public**"
-				}
-
-				fmt.Fprintf(file, "| %s | %s | %s | %s | %s |\n",
-					pageAccess.PageName,
-					pageAccess.Module,
-					pageAccess.DocumentType,
-					rolesStr,
-					accessType,
-				)
-			}
-			fmt.Fprintf(file, "\n")
-		}
-
 		fmt.Fprintf(file, "---\n\n")
+	}
+
+	// Section 7: Pages/Panels Commands Hierarchy (if enabled)
+	if options.IncludePagesCommandsHierarchy && len(report.PagesAnalysis) > 0 {
+		// Calculate section number based on enabled sections
+		sectionNum := 5
+		if options.IncludePageCommands {
+			sectionNum++
+		}
+		if options.IncludeRoles {
+			sectionNum++
+		}
+		fmt.Fprintf(file, "## %d. Pages/Panels Commands Hierarchy\n\n", sectionNum)
+		fmt.Fprintf(file, "Microflows and nanoflows called by each page/panel, showing recursive call hierarchy up to 5 levels (in YAML structure). Microflows called transitively are loaded on-the-fly from the database when needed.\n\n")
+		fmt.Fprintf(file, "```yaml\n")
+		fmt.Fprintf(file, "pages:\n")
+
+		for _, page := range report.PagesAnalysis {
+			fmt.Fprintf(file, "  - name: %s\n", page.Name)
+			fmt.Fprintf(file, "    module: %s\n", page.Module)
+			fmt.Fprintf(file, "    flows:\n")
+
+			// Write hierarchy using recursive helper
+			if len(page.CallHierarchy) > 0 {
+				writeHierarchy(file, page.CallHierarchy, "      ", false)
+			} else {
+				fmt.Fprintf(file, "      []\n")
+			}
+
+			fmt.Fprintf(file, "    target_commands:\n")
+			if len(page.TargetCommands) > 0 {
+				for _, cmd := range page.TargetCommands {
+					fmt.Fprintf(file, "      - %s\n", cmd)
+				}
+			} else {
+				fmt.Fprintf(file, "      []\n")
+			}
+			fmt.Fprintf(file, "\n")
+		}
+
+		fmt.Fprintf(file, "```\n\n")
+		fmt.Fprintf(file, "---\n\n")
+	}
+
+	// Section 8: PageCommands (simplified view - if enabled)
+	if options.IncludePagesCommandsHierarchy && len(report.PagesAnalysis) > 0 {
+		// Calculate section number based on enabled sections
+		sectionNum := 5
+		if options.IncludePageCommands {
+			sectionNum++
+		}
+		if options.IncludeRoles {
+			sectionNum++
+		}
+		sectionNum++ // Increment for the previous Pages/Panels Commands Hierarchy section
+
+		fmt.Fprintf(file, "## %d. PageCommands\n\n", sectionNum)
+		fmt.Fprintf(file, "Simplified view showing only the target commands for each page/panel.\n\n")
+
+		// Create a table with columns: Page/Panel, Module, Target AppName, Target CommandName
+		fmt.Fprintf(file, "| Page/Panel | Module | Target AppName | Target CommandName |\n")
+		fmt.Fprintf(file, "|------------|--------|----------------|--------------------|\n")
+
+		for _, page := range report.PagesAnalysis {
+			appNamesStr := ""
+			commandsStr := ""
+
+			if len(page.TargetCommands) > 0 {
+				appNames := make([]string, 0, len(page.TargetCommands))
+				commandNames := make([]string, 0, len(page.TargetCommands))
+
+				for _, cmd := range page.TargetCommands {
+					if idx := strings.LastIndex(cmd, "."); idx >= 0 {
+						// Extract AppName before the dot and CommandName after the dot
+						appNames = append(appNames, cmd[:idx])
+						commandNames = append(commandNames, cmd[idx+1:])
+					} else {
+						// No dot found, use "-" for app name and whole string as command name
+						appNames = append(appNames, "-")
+						commandNames = append(commandNames, cmd)
+					}
+				}
+
+				appNamesStr = strings.Join(appNames, "<br>")
+				commandsStr = strings.Join(commandNames, "<br>")
+			} else {
+				appNamesStr = "-"
+				commandsStr = "-"
+			}
+
+			fmt.Fprintf(file, "| %s | %s | %s | %s |\n", page.Name, page.Module, appNamesStr, commandsStr)
+		}
+
+		fmt.Fprintf(file, "\n---\n\n")
 	}
 
 	// Footer
 	fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
 
 	return nil
+}
+
+// writeHierarchy recursively writes microflow call hierarchy in YAML format
+// insideCalls indicates if we're already inside a "calls:" section (to avoid repeating it)
+func writeHierarchy(file *os.File, hierarchy []MicroflowCallHierarchy, indent string, insideCalls bool) {
+	for _, node := range hierarchy {
+		// Always write "name:" for all nodes
+		fmt.Fprintf(file, "%s- name: %s\n", indent, node.Name)
+		if len(node.Calls) > 0 {
+			if !insideCalls {
+				// First level: write "calls:"
+				fmt.Fprintf(file, "%s  calls:\n", indent)
+				writeHierarchy(file, node.Calls, indent+"    ", true)
+			} else {
+				// Nested levels: just indent, no "calls:" keyword
+				writeHierarchy(file, node.Calls, indent+"  ", true)
+			}
+		}
+	}
 }
 
 // generateJSONReport generates a JSON report file respecting the provided options
@@ -5003,6 +5996,22 @@ func generateJSONReport(report *ManifestReport, outputPath string, options *Repo
 	} else {
 		filteredReport.SystemRoles = []SystemRole{}
 		filteredReport.PageAccess = []PageAccessInfo{}
+	}
+
+	// Include page commands if enabled
+	if options.IncludePageCommands {
+		filteredReport.NavigationCommands = report.NavigationCommands
+	} else {
+		filteredReport.NavigationCommands = []PageCommandInfo{}
+	}
+
+	// Include pages analysis if enabled
+	if options.IncludePagesCommandsHierarchy {
+		filteredReport.PagesAnalysis = report.PagesAnalysis
+		filteredReport.PageCommands = report.PageCommands // Simplified view
+	} else {
+		filteredReport.PagesAnalysis = []PageAnalysisInfo{}
+		filteredReport.PageCommands = []PageCommandSummary{}
 	}
 
 	// Marshal with pretty-print (2 spaces indentation)

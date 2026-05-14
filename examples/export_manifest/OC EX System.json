@@ -1,0 +1,4001 @@
+{
+  "ProjectName": "OC EX System",
+  "MendixVersion": "11.10.0",
+  "MPRPath": "C:\\Workspaces\\Mendix\\MDUI\\System_Mendix_CLI\\OC EX System.mpr",
+  "GeneratedAt": "2026-05-08 18:44:32",
+  "Entities": {
+    "EXFN_AuditTrailViewer": [
+      {
+        "Name": "AuditTrailRecord",
+        "Module": "EXFN_AuditTrailViewer",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "RootEntityId (String)",
+          "RootEntityName (String)",
+          "RootEntityType (String)",
+          "ChangedEntityId (String)",
+          "ChangedEntityName (String)",
+          "ChangedEntityType (String)",
+          "RootCommand (String)",
+          "Action (String)",
+          "UserName (String)",
+          "UpdatedOn (DateTime)",
+          "Environment (String)",
+          "ComputerName (String)",
+          "ChangedEntity (String)",
+          "ChangedLargeProperties (String)",
+          "CorrelationId (String)",
+          "ElectronicSignatureId (String)",
+          "Domain (Boolean)",
+          "Ordering (String)",
+          "TransactionId (String)",
+          "AssociatedRows (String)"
+        ],
+        "PublishedFrom": "AuditTrailViewer",
+        "EntityTypeName": ""
+      }
+    ],
+    "MyModule": [
+      {
+        "Name": "Feature",
+        "Module": "MyModule",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "IsOption (Boolean)"
+        ],
+        "PublishedFrom": "BoFService",
+        "EntityTypeName": ""
+      }
+    ],
+    "OpcenterEXFN_ReferenceData": [
+      {
+        "Name": "UoM",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)",
+          "UoMDimension_Id (String)",
+          "UoMBase_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "UoMFactor",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "K0Multiplier (Decimal)",
+          "Addend (Decimal)",
+          "K1Multiplier (Decimal)",
+          "Exponent (Decimal)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)",
+          "TargetUoM_Id (String)",
+          "SourceUoM_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "UoMDimension",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPatternFacet",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NumberingPattern_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "CustomPart",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "EntityName (String)",
+          "AppName (String)",
+          "Field (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPatternPartFacet",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NumberingPatternPart_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPatternPart",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "Constant (String)",
+          "Timestamp (DateTime)",
+          "ParameterNId (String)",
+          "RegularExpression (String)",
+          "CustomPart (String)",
+          "Sequence (Integer)",
+          "NumberingPattern_Id (String)",
+          "Counter_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "Counter",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "Seed (Integer)",
+          "Increment (Integer)",
+          "MaxValue (Integer/Decimal)",
+          "LeadingZeros (String)",
+          "TimeBasedReset (DateTime)",
+          "IsTransactional (Boolean)",
+          "IsHidden (Boolean)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "CounterFacet",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "Counter_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPatternEntityInfo",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "AppName (String)",
+          "EntityName (String)",
+          "EntityProperty (String)",
+          "NumberingPatternEntityNId_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPatternEntity",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPatternParameter",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "NumberingPatternEntity_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "PrefilledRegularExpression",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "TextualExpression (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "NumberingPattern",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "EntityTypeNId (String)",
+          "DestinationProperty (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "Status",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "Name (String)",
+          "Description (String)",
+          "Color (String)",
+          "NId (String)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)",
+          "IsInitial (Boolean)",
+          "Outcome (String)",
+          "StateMachine_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "StatusTransition",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "Verb (String)",
+          "DoRaiseEvent (Boolean)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)",
+          "TargetStatus_Id (String)",
+          "SourceStatus_Id (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "StatusDefinition",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "Color (String)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)",
+          "Outcome (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "StatusBehaviorDefinition",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "Name (String)",
+          "Description (String)",
+          "NId (String)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "StatusTransitionDefinition",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "Verb (String)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      },
+      {
+        "Name": "StateMachine",
+        "Module": "OpcenterEXFN_ReferenceData",
+        "Attributes": [
+          "_Id (String)",
+          "IsFrozen (Boolean)",
+          "CreatedOn (DateTime)",
+          "LastUpdatedOn (DateTime)",
+          "EntityType (String)",
+          "IsLocked (Boolean)",
+          "ToBeCleaned (String)",
+          "NId (String)",
+          "Name (String)",
+          "Description (String)",
+          "IsHidden (Boolean)",
+          "IsSystemDefined (Boolean)"
+        ],
+        "PublishedFrom": "Reference",
+        "EntityTypeName": ""
+      }
+    ]
+  },
+  "MicroflowCalls": [
+    {
+      "MicroflowName": "Microflow",
+      "Module": "Documents",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "ResetDataSource",
+      "AppName": "TripPinServiceRW",
+      "CommandName": "ResetDataSource"
+    },
+    {
+      "MicroflowName": "UpdateStatus",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateStatus",
+      "AppName": "Reference",
+      "CommandName": "UpdateStatus"
+    },
+    {
+      "MicroflowName": "SUB_SetStatusAsInitial",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "SetStatusAsInitial",
+      "AppName": "Reference",
+      "CommandName": "SetStatusAsInitial"
+    },
+    {
+      "MicroflowName": "SUB_DeleteCommand_StartArrayWithTwoParameter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "\u003cparameter\u003e",
+      "CommandName": "\u003cparameter\u003e"
+    },
+    {
+      "MicroflowName": "SUB_HideAndUnhideCommand",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "\u003cparameter\u003e",
+      "CommandName": "\u003cparameter\u003e"
+    },
+    {
+      "MicroflowName": "SUB_HideAndUnhideCommand",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "JavaAction",
+      "TargetName": "EXFN_ServiceLayer.CallCommandAction",
+      "AppName": "\u003cJavaAppName\u003e",
+      "CommandName": "\u003cJavaCommandName\u003e"
+    },
+    {
+      "MicroflowName": "SUB_DeleteCommand",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "\u003cparameter\u003e",
+      "CommandName": "\u003cparameter\u003e"
+    },
+    {
+      "MicroflowName": "SUB_FreezeAndUnfreezeCommand",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "\u003cparameter\u003e",
+      "CommandName": "\u003cparameter\u003e"
+    },
+    {
+      "MicroflowName": "SUB_CallCommand",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "\u003cparameter\u003e",
+      "CommandName": "\u003cparameter\u003e"
+    },
+    {
+      "MicroflowName": "HideStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "HideStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "HideStatusDefinition"
+    },
+    {
+      "MicroflowName": "UnfreezeStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnfreezeStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "UnfreezeStatusDefinition"
+    },
+    {
+      "MicroflowName": "FreezeStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "FreezeStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "FreezeStatusDefinition"
+    },
+    {
+      "MicroflowName": "UnhideStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnhideStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "UnhideStatusDefinition"
+    },
+    {
+      "MicroflowName": "DeleteStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "DeleteStatusDefinition"
+    },
+    {
+      "MicroflowName": "CreateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "CreateStatusDefinition"
+    },
+    {
+      "MicroflowName": "UpdateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateStatusDefinition",
+      "AppName": "Reference",
+      "CommandName": "UpdateStatusDefinition"
+    },
+    {
+      "MicroflowName": "FreezeStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "FreezeStatusTransitionDefinition",
+      "AppName": "Reference",
+      "CommandName": "FreezeStatusTransitionDefinition"
+    },
+    {
+      "MicroflowName": "UnfreezeStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnfreezeStatusTransitionDefinition",
+      "AppName": "Reference",
+      "CommandName": "UnfreezeStatusTransitionDefinition"
+    },
+    {
+      "MicroflowName": "CreateStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStatusTransitionDefinition",
+      "AppName": "Reference",
+      "CommandName": "CreateStatusTransitionDefinition"
+    },
+    {
+      "MicroflowName": "HideStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "HideStatusTransitionDefinition",
+      "AppName": "Reference",
+      "CommandName": "HideStatusTransitionDefinition"
+    },
+    {
+      "MicroflowName": "UnhideStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnhideStatusTransitionDefinition",
+      "AppName": "Reference",
+      "CommandName": "UnhideStatusTransitionDefinition"
+    },
+    {
+      "MicroflowName": "DeleteStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteStatusTransitionDefinition",
+      "AppName": "Reference",
+      "CommandName": "DeleteStatusTransitionDefinition"
+    },
+    {
+      "MicroflowName": "CreateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStatusBehaviorDefinition",
+      "AppName": "Reference",
+      "CommandName": "CreateStatusBehaviorDefinition"
+    },
+    {
+      "MicroflowName": "UpdateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateStatusBehaviorDefinition",
+      "AppName": "Reference",
+      "CommandName": "UpdateStatusBehaviorDefinition"
+    },
+    {
+      "MicroflowName": "DeleteStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteStatusBehaviorDefinition",
+      "AppName": "Reference",
+      "CommandName": "DeleteStatusBehaviorDefinition"
+    },
+    {
+      "MicroflowName": "FreezeStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "FreezeStateMachine",
+      "AppName": "Reference",
+      "CommandName": "FreezeStateMachine"
+    },
+    {
+      "MicroflowName": "UpdateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateStatusTransition",
+      "AppName": "Reference",
+      "CommandName": "UpdateStatusTransition"
+    },
+    {
+      "MicroflowName": "CreateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStatus",
+      "AppName": "Reference",
+      "CommandName": "CreateStatus"
+    },
+    {
+      "MicroflowName": "DeleteStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteStateMachine",
+      "AppName": "Reference",
+      "CommandName": "DeleteStateMachine"
+    },
+    {
+      "MicroflowName": "UpdateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateStateMachine",
+      "AppName": "Reference",
+      "CommandName": "UpdateStateMachine"
+    },
+    {
+      "MicroflowName": "HideStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "HideStateMachine",
+      "AppName": "Reference",
+      "CommandName": "HideStateMachine"
+    },
+    {
+      "MicroflowName": "UnfreezeStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnfreezeStateMachine",
+      "AppName": "Reference",
+      "CommandName": "UnfreezeStateMachine"
+    },
+    {
+      "MicroflowName": "CreateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStatusTransition",
+      "AppName": "Reference",
+      "CommandName": "CreateStatusTransition"
+    },
+    {
+      "MicroflowName": "CreateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStateMachine",
+      "AppName": "Reference",
+      "CommandName": "CreateStateMachine"
+    },
+    {
+      "MicroflowName": "UnhideStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnhideStateMachine",
+      "AppName": "Reference",
+      "CommandName": "UnhideStateMachine"
+    },
+    {
+      "MicroflowName": "DeleteStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteStatusTransition",
+      "AppName": "Reference",
+      "CommandName": "DeleteStatusTransition"
+    },
+    {
+      "MicroflowName": "AssociateStatusBehaviorDefinitionsWithStatus",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "AssociateStatusBehaviorDefinitionsWithStatus",
+      "AppName": "Reference",
+      "CommandName": "AssociateStatusBehaviorDefinitionsWithStatus"
+    },
+    {
+      "MicroflowName": "UpdateStatus",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateStatus",
+      "AppName": "Reference",
+      "CommandName": "UpdateStatus"
+    },
+    {
+      "MicroflowName": "CreateStatus",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateStatus",
+      "AppName": "Reference",
+      "CommandName": "CreateStatus"
+    },
+    {
+      "MicroflowName": "DeleteStatus",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteStatus",
+      "AppName": "Reference",
+      "CommandName": "DeleteStatus"
+    },
+    {
+      "MicroflowName": "DisassociateStatusBehaviorDefinitionsFromStatus",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DisassociateStatusBehaviorDefinitionsFromStatus",
+      "AppName": "Reference",
+      "CommandName": "DisassociateStatusBehaviorDefinitionsFromStatus"
+    },
+    {
+      "MicroflowName": "UnfreezeCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnfreezeCounter",
+      "AppName": "Reference",
+      "CommandName": "UnfreezeCounter"
+    },
+    {
+      "MicroflowName": "ResetCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "ResetCounter",
+      "AppName": "Reference",
+      "CommandName": "ResetCounter"
+    },
+    {
+      "MicroflowName": "DeleteCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteCounter",
+      "AppName": "Reference",
+      "CommandName": "DeleteCounter"
+    },
+    {
+      "MicroflowName": "DeleteCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "'AppName'\n",
+      "CommandName": "'CommandName'\n"
+    },
+    {
+      "MicroflowName": "UpdateCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateCounter",
+      "AppName": "Reference",
+      "CommandName": "UpdateCounter"
+    },
+    {
+      "MicroflowName": "HideCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "HideCounter",
+      "AppName": "Reference",
+      "CommandName": "HideCounter"
+    },
+    {
+      "MicroflowName": "CreateCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateCounter",
+      "AppName": "Reference",
+      "CommandName": "CreateCounter"
+    },
+    {
+      "MicroflowName": "FreezeCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "FreezeCounter",
+      "AppName": "Reference",
+      "CommandName": "FreezeCounter"
+    },
+    {
+      "MicroflowName": "UnhideCounter",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnhideCounter",
+      "AppName": "Reference",
+      "CommandName": "UnhideCounter"
+    },
+    {
+      "MicroflowName": "UpdateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateNumberingPattern",
+      "AppName": "Reference",
+      "CommandName": "UpdateNumberingPattern"
+    },
+    {
+      "MicroflowName": "DeleteNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteNumberingPatternPart",
+      "AppName": "Reference",
+      "CommandName": "DeleteNumberingPatternPart"
+    },
+    {
+      "MicroflowName": "DeleteNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteNumberingPattern",
+      "AppName": "Reference",
+      "CommandName": "DeleteNumberingPattern"
+    },
+    {
+      "MicroflowName": "MoveNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "MoveNumberingPatternPart",
+      "AppName": "Reference",
+      "CommandName": "MoveNumberingPatternPart"
+    },
+    {
+      "MicroflowName": "UpdateNumberingPatternForNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateNumberingPattern",
+      "AppName": "Reference",
+      "CommandName": "UpdateNumberingPattern"
+    },
+    {
+      "MicroflowName": "UnfreezeNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnfreezeNumberingPattern",
+      "AppName": "Reference",
+      "CommandName": "UnfreezeNumberingPattern"
+    },
+    {
+      "MicroflowName": "UpdateNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateNumberingPatternPart",
+      "AppName": "Reference",
+      "CommandName": "UpdateNumberingPatternPart"
+    },
+    {
+      "MicroflowName": "FreezeNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "FreezeNumberingPattern",
+      "AppName": "Reference",
+      "CommandName": "FreezeNumberingPattern"
+    },
+    {
+      "MicroflowName": "CreateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateNumberingPattern",
+      "AppName": "Reference",
+      "CommandName": "CreateNumberingPattern"
+    },
+    {
+      "MicroflowName": "HideUoM",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "HideUoM",
+      "AppName": "Reference",
+      "CommandName": "HideUoM"
+    },
+    {
+      "MicroflowName": "UpdateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateMultipleOrSubmultipleUoM",
+      "AppName": "Reference",
+      "CommandName": "UpdateMultipleOrSubmultipleUoM"
+    },
+    {
+      "MicroflowName": "DeleteUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteUoMFactor",
+      "AppName": "Reference",
+      "CommandName": "DeleteUoMFactor"
+    },
+    {
+      "MicroflowName": "UpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateUoM",
+      "AppName": "Reference",
+      "CommandName": "UpdateUoM"
+    },
+    {
+      "MicroflowName": "UpdateUoMFactor_Action",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateUoMFactor",
+      "AppName": "Reference",
+      "CommandName": "UpdateUoMFactor"
+    },
+    {
+      "MicroflowName": "CreateBaseUoM",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateBaseUoM",
+      "AppName": "Reference",
+      "CommandName": "CreateBaseUoM"
+    },
+    {
+      "MicroflowName": "UnhideUoM",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnhideUoM",
+      "AppName": "Reference",
+      "CommandName": "UnhideUoM"
+    },
+    {
+      "MicroflowName": "DeleteUoM",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteUoM",
+      "AppName": "Reference",
+      "CommandName": "DeleteUoM"
+    },
+    {
+      "MicroflowName": "CreateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateUoMFactor",
+      "AppName": "Reference",
+      "CommandName": "CreateUoMFactor"
+    },
+    {
+      "MicroflowName": "CreateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateMultipleOrSubmultipleUoM",
+      "AppName": "Reference",
+      "CommandName": "CreateMultipleOrSubmultipleUoM"
+    },
+    {
+      "MicroflowName": "DeleteUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "DeleteUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "DeleteUoMDimension"
+    },
+    {
+      "MicroflowName": "UpdateUoM_UoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateUoM",
+      "AppName": "Reference",
+      "CommandName": "UpdateUoM"
+    },
+    {
+      "MicroflowName": "CreateBaseUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "CreateUoMDimension"
+    },
+    {
+      "MicroflowName": "UnfreezeUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnfreezeUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "UnfreezeUoMDimension"
+    },
+    {
+      "MicroflowName": "UnhideUoMDImension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UnhideUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "UnhideUoMDimension"
+    },
+    {
+      "MicroflowName": "HideUoMDImension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "HideUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "HideUoMDimension"
+    },
+    {
+      "MicroflowName": "UpdateUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "UpdateUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "UpdateUoMDimension"
+    },
+    {
+      "MicroflowName": "CreateBaseUoM_UoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "CreateBaseUoM",
+      "AppName": "Reference",
+      "CommandName": "CreateBaseUoM"
+    },
+    {
+      "MicroflowName": "FreezeUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "ExternalAction",
+      "TargetName": "FreezeUoMDimension",
+      "AppName": "Reference",
+      "CommandName": "FreezeUoMDimension"
+    },
+    {
+      "MicroflowName": "UpdateUoMFactor_MF",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "MicroflowCall",
+      "TargetName": "EXFN_ServiceLayer.CallCommand_MF",
+      "AppName": "'APPNAME'\n",
+      "CommandName": "'COMMANDNAME'\n"
+    },
+    {
+      "MicroflowName": "UpdateUoMFactor_MF_JAVA",
+      "Module": "OpcenterEXFN_ReferenceData_Connector",
+      "ActivityName": "",
+      "Caption": "Activity",
+      "CallType": "JavaAction",
+      "TargetName": "EXFN_ServiceLayer.CallCommandAction",
+      "AppName": "\u003cJavaAppName\u003e",
+      "CommandName": "\u003cJavaCommandName\u003e"
+    }
+  ],
+  "SignalManagerSubscriptions": [
+    {
+      "DocumentName": "StateMachine_Details",
+      "DocumentType": "Page",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "SignalName": "SN",
+      "AppName": "APPName",
+      "SubscriptionFilter": "filter0"
+    },
+    {
+      "DocumentName": "StateMachine_Details",
+      "DocumentType": "Page",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "SignalName": "SN2",
+      "AppName": "AN2",
+      "SubscriptionFilter": "filter"
+    },
+    {
+      "DocumentName": "MySnippet",
+      "DocumentType": "Snippet",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "SignalName": "SNIPPET_SN",
+      "AppName": "SNIPPET_APPName",
+      "SubscriptionFilter": "SNIPPET_filter0"
+    }
+  ],
+  "NavigationItems": [
+    {
+      "ItemName": "System",
+      "Caption": "System",
+      "TargetPage": "",
+      "Module": "",
+      "ParentItem": "",
+      "Level": 1,
+      "AllowedRoles": []
+    },
+    {
+      "ItemName": "Counters",
+      "Caption": "Counters",
+      "TargetPage": "OpcenterEXFN_ReferenceData.Counter_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Numbering Patterns",
+      "Caption": "Numbering Patterns",
+      "TargetPage": "OpcenterEXFN_ReferenceData.NumberingPattern_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "State Machines",
+      "Caption": "State Machines",
+      "TargetPage": "OpcenterEXFN_ReferenceData.StateMachine_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Statuses",
+      "Caption": "Statuses",
+      "TargetPage": "OpcenterEXFN_ReferenceData.Status_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Status Behavior Definitions",
+      "Caption": "Status Behavior Definitions",
+      "TargetPage": "OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Status Definitions",
+      "Caption": "Status Definitions",
+      "TargetPage": "OpcenterEXFN_ReferenceData.StatusDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Status Transition Definitions",
+      "Caption": "Status Transition Definitions",
+      "TargetPage": "OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Unit of Measures",
+      "Caption": "Unit of Measures",
+      "TargetPage": "OpcenterEXFN_ReferenceData.UoM_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "UoM Dimensions",
+      "Caption": "UoM Dimensions",
+      "TargetPage": "OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "ParentItem": "System",
+      "Level": 2,
+      "AllowedRoles": [
+        "Administrator",
+        "User"
+      ]
+    },
+    {
+      "ItemName": "Accounts",
+      "Caption": "Accounts",
+      "TargetPage": "Administration.Account_Overview",
+      "Module": "Administration",
+      "ParentItem": "",
+      "Level": 1,
+      "AllowedRoles": [
+        "Administrator"
+      ]
+    },
+    {
+      "ItemName": "Cross",
+      "Caption": "Cross",
+      "TargetPage": "",
+      "Module": "",
+      "ParentItem": "",
+      "Level": 1,
+      "AllowedRoles": []
+    },
+    {
+      "ItemName": "Work Orders",
+      "Caption": "Work Orders",
+      "TargetPage": "",
+      "Module": "",
+      "ParentItem": "Cross",
+      "Level": 2,
+      "AllowedRoles": []
+    }
+  ],
+  "SystemRoles": [],
+  "NavigationPageCommands": [
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.Status_Master",
+      "Commands": [
+        {
+          "ButtonName": "actionButton1",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatus",
+          "TargetCommandName": "CreateStatus",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton2",
+          "Caption": "Details",
+          "TargetPage": "",
+          "TargetCommandName": "",
+          "TargetAppName": ""
+        },
+        {
+          "ButtonName": "actionButton4",
+          "Caption": "Edit",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStatus",
+          "TargetCommandName": "UpdateStatus",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton10",
+          "Caption": "Initial",
+          "TargetPage": "",
+          "TargetCommandName": "SetStatusAsInitial",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton5",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteStatus",
+          "TargetAppName": "Reference"
+        }
+      ]
+    },
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Master",
+      "Commands": [
+        {
+          "ButtonName": "actionButton1",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatusBehaviorDefinition",
+          "TargetCommandName": "CreateStatusBehaviorDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton2",
+          "Caption": "Details",
+          "TargetPage": "OpcenterEXFN_ReferenceData.StatusBehaviorDefinition_Details",
+          "TargetCommandName": "",
+          "TargetAppName": ""
+        },
+        {
+          "ButtonName": "actionButton4",
+          "Caption": "Edit",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStatusBehaviorDefinition",
+          "TargetCommandName": "UpdateStatusBehaviorDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton3",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteStatusBehaviorDefinition",
+          "TargetAppName": "Reference"
+        }
+      ]
+    },
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.StatusDefinition_Master",
+      "Commands": [
+        {
+          "ButtonName": "actionButton1",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatusDefinition",
+          "TargetCommandName": "CreateStatusDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton2",
+          "Caption": "Edit",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStatusDefinition",
+          "TargetCommandName": "UpdateStatusDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton4",
+          "Caption": "Hide",
+          "TargetPage": "",
+          "TargetCommandName": "HideStatusDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton5",
+          "Caption": "Unhide",
+          "TargetPage": "",
+          "TargetCommandName": "UnhideStatusDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton6",
+          "Caption": "Freeze",
+          "TargetPage": "",
+          "TargetCommandName": "FreezeStatusDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton7",
+          "Caption": "Unfreeze",
+          "TargetPage": "",
+          "TargetCommandName": "UnfreezeStatusDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton3",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteStatusDefinition",
+          "TargetAppName": "Reference"
+        }
+      ]
+    },
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.StatusTransitionDefinition_Master",
+      "Commands": [
+        {
+          "ButtonName": "actionButton1",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStatusTransitionDefinition",
+          "TargetCommandName": "CreateStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton4",
+          "Caption": "Hide",
+          "TargetPage": "",
+          "TargetCommandName": "HideStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton5",
+          "Caption": "Unhide",
+          "TargetPage": "",
+          "TargetCommandName": "UnhideStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton6",
+          "Caption": "Freeze",
+          "TargetPage": "",
+          "TargetCommandName": "FreezeStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton7",
+          "Caption": "Unfreeze",
+          "TargetPage": "",
+          "TargetCommandName": "UnfreezeStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton3",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteStatusTransitionDefinition",
+          "TargetAppName": "Reference"
+        }
+      ]
+    },
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.UoMDimension_Master_SingleSelection",
+      "Commands": [
+        {
+          "ButtonName": "actionButton2",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateBaseUoMDimension",
+          "TargetCommandName": "CreateUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton11",
+          "Caption": "Details",
+          "TargetPage": "OpcenterEXFN_ReferenceData.UoMDimension_Details",
+          "TargetCommandName": "",
+          "TargetAppName": ""
+        },
+        {
+          "ButtonName": "actionButton12",
+          "Caption": "Edit",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateUoMDimension",
+          "TargetCommandName": "UpdateUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton13",
+          "Caption": "Unhide",
+          "TargetPage": "",
+          "TargetCommandName": "UnhideUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton14",
+          "Caption": "Hide",
+          "TargetPage": "",
+          "TargetCommandName": "HideUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton15",
+          "Caption": "Freeze",
+          "TargetPage": "",
+          "TargetCommandName": "FreezeUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton16",
+          "Caption": "Unfreeze",
+          "TargetPage": "",
+          "TargetCommandName": "UnfreezeUoMDimension",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton17",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteUoMDimension",
+          "TargetAppName": "Reference"
+        }
+      ]
+    },
+    {
+      "PageName": "OpcenterEXFN_ReferenceData.StateMachine_Master",
+      "Commands": [
+        {
+          "ButtonName": "actionButton1",
+          "Caption": "Create",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_CreateStateMachine",
+          "TargetCommandName": "CreateStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton2",
+          "Caption": "Details",
+          "TargetPage": "OpcenterEXFN_ReferenceData.StateMachine_Details",
+          "TargetCommandName": "",
+          "TargetAppName": ""
+        },
+        {
+          "ButtonName": "actionButton4",
+          "Caption": "Edit",
+          "TargetPage": "OpcenterEXFN_ReferenceData.PANEL_UpdateStateMachine",
+          "TargetCommandName": "UpdateStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton5",
+          "Caption": "Hide",
+          "TargetPage": "",
+          "TargetCommandName": "HideStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton7",
+          "Caption": "Unhide",
+          "TargetPage": "",
+          "TargetCommandName": "UnhideStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton8",
+          "Caption": "Freeze",
+          "TargetPage": "",
+          "TargetCommandName": "FreezeStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton9",
+          "Caption": "Unfreeze",
+          "TargetPage": "",
+          "TargetCommandName": "UnfreezeStateMachine",
+          "TargetAppName": "Reference"
+        },
+        {
+          "ButtonName": "actionButton3",
+          "Caption": "Delete",
+          "TargetPage": "",
+          "TargetCommandName": "DeleteStateMachine",
+          "TargetAppName": "Reference"
+        }
+      ]
+    }
+  ],
+  "PageCommandsHierarchy": [
+    {
+      "Name": "PANEL_UpdateUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoMDimension",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateUoMDimension"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateBaseUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateBaseUoMDimension"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateBaseUoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateBaseUoMDimension",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateUoMDimension"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateBaseUoM_UoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateBaseUoM_UoMDimension"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateBaseUoM_UoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateBaseUoM_UoMDimension",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateBaseUoM"
+      ]
+    },
+    {
+      "Name": "PANEL_UoMDimensionUpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_UoMDimension"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_UoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoM_UoMDimension",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateUoM"
+      ]
+    },
+    {
+      "Name": "UoMDimension_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_UoMDimension_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideUoM",
+        "OpcenterEXFN_ReferenceData.ACT_HideUoM",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection",
+        "EXFN_AuditTrailViewer.DS_AuditTrailContext",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension_ShowPanel_SingleSelection"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideUoM",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideUoM",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteUoM",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UnhideUoM",
+        "Reference.HideUoM",
+        "Reference.DeleteUoM"
+      ]
+    },
+    {
+      "Name": "UoMDimension_Master_SingleSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMDimension_ShowPanel_SingleSelection",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideUoMDimesnion",
+        "OpcenterEXFN_ReferenceData.ACT_HideUoMDimension",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeUoMDimension",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeUoMDimension",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteUoMDimension_SingleSelection"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideUoMDimesnion",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideUoMDImension",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideUoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideUoMDImension",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeUoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeUoMDimension",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeUoMDimension",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeUoMDimension",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoMDimension_SingleSelection",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteUoMDimension",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UnhideUoMDimension",
+        "Reference.HideUoMDimension",
+        "Reference.FreezeUoMDimension",
+        "Reference.UnfreezeUoMDimension",
+        "Reference.DeleteUoMDimension"
+      ]
+    },
+    {
+      "Name": "UoMDimension_Master_MultiSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_MultiSelection",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_MultiSelection",
+        "OpcenterEXFN_ReferenceData.DS_UoM_GetCommandBarContext"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_MultiSelection",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection",
+              "Calls": [
+                {
+                  "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteUoM",
+                  "Calls": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.DeleteUoM"
+      ]
+    },
+    {
+      "Name": "UoM_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_SingleSelection",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideUoM",
+        "OpcenterEXFN_ReferenceData.ACT_HideUoM",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideUoM",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideUoM",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoM_SingleSelection",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteUoM",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UnhideUoM",
+        "Reference.HideUoM",
+        "Reference.DeleteUoM"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateBaseUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateBaseUoM"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateBaseUoM",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateBaseUoM",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateBaseUoM"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoM"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateUoM",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoM",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateUoM"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMSubmultiple"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateUoMSubmultiple",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoMSubmultiple",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateMultipleOrSubmultipleUoM"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateUoMSubmultiple"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateUoMSubmultiple",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateUoMSubmultiple",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateMultipleOrSubmultipleUoM"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateUoMFactor",
+        "OpcenterEXFN_ReferenceData.DS_UoMFactor_GetTargetUoMList"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateUoMFactor",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateUoMFactor",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateUoMFactor"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_1"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_1",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_2",
+              "Calls": [
+                {
+                  "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_Action",
+                  "Calls": []
+                },
+                {
+                  "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_MF",
+                  "Calls": null
+                },
+                {
+                  "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateUoMFactor_MF_JAVA",
+                  "Calls": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateUoMFactor",
+        "APPNAME.COMMANDNAME",
+        "EXFN_ServiceLayer.CallCommandAction"
+      ]
+    },
+    {
+      "Name": "UoM_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.DS_UoMSubmultiple_GetUoMFactorForUoM",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMSubmultiple_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideUoMSubmultiple",
+        "OpcenterEXFN_ReferenceData.ACT_HideUoMSubmultiple",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteUoMSubmultiple",
+        "OpcenterEXFN_ReferenceData.DS_UoMFactor_ListForUoM",
+        "OpcenterEXFN_ReferenceData.ACT_CreateUoMFactor_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoMFactor_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteUoMFactor",
+        "OpcenterEXFN_ReferenceData.DS_UoMFactor_Refresh",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateUoM_ShowPanel_SingleSelection"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideUoMSubmultiple",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideUoMSubmultiple",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoMSubmultiple",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteUoM",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteUoMFactor",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteUoMFactor",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UnhideUoM",
+        "Reference.HideUoM",
+        "Reference.DeleteUoM",
+        "Reference.DeleteUoMFactor"
+      ]
+    },
+    {
+      "Name": "NumberingPattern_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeNumberingPattern",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeNumberingPattern",
+        "OpcenterEXFN_ReferenceData.ACT_PreviewNumberingPattern_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPattern"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeNumberingPattern",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeNumberingPattern",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteNumberingPattern",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.FreezeNumberingPattern",
+        "Reference.UnfreezeNumberingPattern",
+        "Reference.DeleteNumberingPattern"
+      ]
+    },
+    {
+      "Name": "PANEL_PreviewNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": null,
+      "CallHierarchy": null,
+      "TargetCommands": null
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateNumberingPattern",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateNumberingPattern"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateNumberingPattern",
+        "OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityName",
+        "OpcenterEXFN_ReferenceData.DS_NumberingPatternInfo_EntityProperty"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateNumberingPattern",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateNumberingPattern"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPatternPart_ValidatePart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.EVT_OnChangeValidatePart",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateNumberingPatternPart",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateNumberingPatternPart"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.EVT_OnSelectionChangeForPrefilledRegularExpression_NumberingPatternPart",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateNumberingPatternPart",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateNumberingPatternPart"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateNumberingPatternForNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.EVT_OnSelectionChangeForPrefilledRegularExpression",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternForNumberingPatternPart"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternForNumberingPatternPart",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateNumberingPatternForNumberingPatternPart",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateNumberingPattern"
+      ]
+    },
+    {
+      "Name": "NumberingPattern_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.DS_NumberingPatternDetails",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternForNumberingPatternPart_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartUp",
+        "OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartDown",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPatternPart_ValidatePart",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPatternPart",
+        "EXFN_AuditTrailViewer.DS_AuditTrailContext",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateNumberingPattern_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeNumberingPattern",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeNumberingPattern",
+        "OpcenterEXFN_ReferenceData.ACT_PreviewNumberingPattern_ShowPanel"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartUp",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPart",
+              "Calls": [
+                {
+                  "Name": "OpcenterEXFN_ReferenceData_Connector.MoveNumberingPatternPart",
+                  "Calls": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPartDown",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.ACT_MoveNumberingPatternPart",
+              "Calls": [
+                {
+                  "Name": "OpcenterEXFN_ReferenceData_Connector.MoveNumberingPatternPart",
+                  "Calls": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteNumberingPatternPart",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteNumberingPatternPart",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeNumberingPattern",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeNumberingPattern",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeNumberingPattern",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.MoveNumberingPatternPart",
+        "Reference.DeleteNumberingPatternPart",
+        "Reference.FreezeNumberingPattern",
+        "Reference.UnfreezeNumberingPattern"
+      ]
+    },
+    {
+      "Name": "Counter_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateCounter_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_HideCounter",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideCounter",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeCounter",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeCounter",
+        "OpcenterEXFN_ReferenceData.ACT_ResetCounter",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteCounter"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_ResetCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.ResetCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteCounter",
+              "Calls": null
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.HideCounter",
+        "Reference.UnhideCounter",
+        "Reference.FreezeCounter",
+        "Reference.UnfreezeCounter",
+        "Reference.ResetCounter",
+        "Reference.DeleteCounter",
+        "AppName.CommandName"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateCounter",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateCounter"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateCounter",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateCounter"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateCounter",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateCounter"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateCounter",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateCounter"
+      ]
+    },
+    {
+      "Name": "Counter_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "EXFN_AuditTrailViewer.DS_AuditTrailContext",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateCounter_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_HideCounter",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideCounter",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeCounter",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeCounter",
+        "OpcenterEXFN_ReferenceData.ACT_ResetCounter"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeCounter",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_ResetCounter",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.ResetCounter",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.HideCounter",
+        "Reference.UnhideCounter",
+        "Reference.FreezeCounter",
+        "Reference.UnfreezeCounter",
+        "Reference.ResetCounter"
+      ]
+    },
+    {
+      "Name": "StatusDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusDefinition_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_HideStatusDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideStatusDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeStatusDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStatusDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideStatusDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideStatusDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeStatusDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeStatusDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStatusDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.HideStatusDefinition",
+        "Reference.UnhideStatusDefinition",
+        "Reference.FreezeStatusDefinition",
+        "Reference.UnfreezeStatusDefinition",
+        "Reference.DeleteStatusDefinition"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStatusDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStatusDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStatusDefinition"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateStatusDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateStatusDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateStatusDefinition"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStatusBehaviorDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStatusBehaviorDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStatusBehaviorDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStatusBehaviorDefinition"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusBehaviorDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateStatusBehaviorDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateStatusBehaviorDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateStatusBehaviorDefinition"
+      ]
+    },
+    {
+      "Name": "StatusBehaviorDefinition_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": null,
+      "CallHierarchy": null,
+      "TargetCommands": null
+    },
+    {
+      "Name": "StatusBehaviorDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusBehaviorDefinition_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStatusBehaviorDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusBehaviorDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStatusBehaviorDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.DeleteStatusBehaviorDefinition"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatus"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateStatus",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateStatus",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateStatus"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStatus"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStatus",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStatus",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStatus"
+      ]
+    },
+    {
+      "Name": "PANEL_AssociateStatusBehaviorDefinitionsWithStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_AssociateStatusBehaviorDefinitionsWithStatus"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_AssociateStatusBehaviorDefinitionsWithStatus",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.AssociateStatusBehaviorDefinitionsWithStatus",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.AssociateStatusBehaviorDefinitionsWithStatus"
+      ]
+    },
+    {
+      "Name": "Status_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_DisassociateStatusBehaviorDefinitionsFromStatus",
+        "OpcenterEXFN_ReferenceData.DS_StatusBehavior",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_SetStatusInitial"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DisassociateStatusBehaviorDefinitionsFromStatus",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DisassociateStatusBehaviorDefinitionsFromStatus",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_SetStatusInitial",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.SUB_SetStatusAsInitial",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.DisassociateStatusBehaviorDefinitionsFromStatus",
+        "Reference.SetStatusAsInitial"
+      ]
+    },
+    {
+      "Name": "Status_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatus_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_SetStatusInitial",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStatus"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_SetStatusInitial",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.SUB_SetStatusAsInitial",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStatus",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStatus",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.SetStatusAsInitial",
+        "Reference.DeleteStatus"
+      ]
+    },
+    {
+      "Name": "StateMachine_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_HideStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStateMachine"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStateMachine",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.HideStateMachine",
+        "Reference.UnhideStateMachine",
+        "Reference.FreezeStateMachine",
+        "Reference.UnfreezeStateMachine",
+        "Reference.DeleteStateMachine"
+      ]
+    },
+    {
+      "Name": "StateMachine_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "EXFN_Authentication.Signal_Access_Token",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusStateMachine_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_SetStatusAsInitial",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStatusStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusTransitionShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransition",
+        "EXFN_AuditTrailViewer.DS_AuditTrailContext",
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine_ShowPanel",
+        "OpcenterEXFN_ReferenceData.ACT_HideStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_SetStatusAsInitial",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.SUB_SetStatusAsInitial",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStatus",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStatusTransition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeStateMachine",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeStateMachine",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.SetStatusAsInitial",
+        "Reference.DeleteStatus",
+        "Reference.DeleteStatusTransition",
+        "Reference.HideStateMachine",
+        "Reference.UnhideStateMachine",
+        "Reference.FreezeStateMachine",
+        "Reference.UnfreezeStateMachine"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusStateMachine"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateStatusStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData.UpdateStatus",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateStatus"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStatusTransition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateStatusTransition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateStatusTransition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateStatusTransition"
+      ]
+    },
+    {
+      "Name": "PANEL_UpdateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UpdateStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UpdateStateMachine",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.UpdateStateMachine"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStatusStateMachine"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStatusStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStatusStateMachine",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStatus"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStateMachine"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStateMachine",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStateMachine",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStateMachine"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStatusTransition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStatusTransition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStatusTransition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStatusTransition"
+      ]
+    },
+    {
+      "Name": "PANEL_CreateStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_ReferenceData.ACT_CreateStatusTransitionDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_CreateStatusTransitionDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.CreateStatusTransitionDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.CreateStatusTransitionDefinition"
+      ]
+    },
+    {
+      "Name": "StatusTransitionDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "MicroflowCalls": [
+        "OpcenterEXFN_DISW_DesignSystem.ExportGridToExcel_MasterScreen",
+        "OpcenterEXFN_ReferenceData.ACT_HideStatusTransitionDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_UnhideStatusTransitionDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_FreezeStatusTransitionDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusTransitionDefinition",
+        "OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransitionDefinition"
+      ],
+      "CallHierarchy": [
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_HideStatusTransitionDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.HideStatusTransitionDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnhideStatusTransitionDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnhideStatusTransitionDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_FreezeStatusTransitionDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.FreezeStatusTransitionDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_UnfreezeStatusTransitionDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.UnfreezeStatusTransitionDefinition",
+              "Calls": []
+            }
+          ]
+        },
+        {
+          "Name": "OpcenterEXFN_ReferenceData.ACT_DeleteStatusTransitionDefinition",
+          "Calls": [
+            {
+              "Name": "OpcenterEXFN_ReferenceData_Connector.DeleteStatusTransitionDefinition",
+              "Calls": []
+            }
+          ]
+        }
+      ],
+      "TargetCommands": [
+        "Reference.HideStatusTransitionDefinition",
+        "Reference.UnhideStatusTransitionDefinition",
+        "Reference.FreezeStatusTransitionDefinition",
+        "Reference.UnfreezeStatusTransitionDefinition",
+        "Reference.DeleteStatusTransitionDefinition"
+      ]
+    }
+  ],
+  "PageCommands": [
+    {
+      "PageName": "PANEL_UpdateUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateUoMDimension"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateBaseUoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateUoMDimension"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateBaseUoM_UoMDimension",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateBaseUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UoMDimensionUpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "UoMDimension_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "HideUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "UoMDimension_Master_SingleSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideUoMDimension"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "HideUoMDimension"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeUoMDimension"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeUoMDimension"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteUoMDimension"
+        }
+      ]
+    },
+    {
+      "PageName": "UoMDimension_Master_MultiSelection",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "UoM_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "HideUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateBaseUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateBaseUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateUoM",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateMultipleOrSubmultipleUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateUoMSubmultiple",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateMultipleOrSubmultipleUoM"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateUoMFactor"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateUoMFactor",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateUoMFactor"
+        },
+        {
+          "AppName": "APPNAME",
+          "CommandName": "COMMANDNAME"
+        },
+        {
+          "AppName": "EXFN_ServiceLayer",
+          "CommandName": "CallCommandAction"
+        }
+      ]
+    },
+    {
+      "PageName": "UoM_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "HideUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteUoM"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteUoMFactor"
+        }
+      ]
+    },
+    {
+      "PageName": "NumberingPattern_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeNumberingPattern"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeNumberingPattern"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteNumberingPattern"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_PreviewNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": []
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateNumberingPattern"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateNumberingPattern",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateNumberingPattern"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPatternPart_ValidatePart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateNumberingPatternPart"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateNumberingPatternPart"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateNumberingPatternForNumberingPatternPart",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateNumberingPattern"
+        }
+      ]
+    },
+    {
+      "PageName": "NumberingPattern_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "MoveNumberingPatternPart"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteNumberingPatternPart"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeNumberingPattern"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeNumberingPattern"
+        }
+      ]
+    },
+    {
+      "PageName": "Counter_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "HideCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "ResetCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteCounter"
+        },
+        {
+          "AppName": "AppName",
+          "CommandName": "CommandName"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateCounter",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateCounter"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateCounter",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateCounter"
+        }
+      ]
+    },
+    {
+      "PageName": "Counter_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "HideCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeCounter"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "ResetCounter"
+        }
+      ]
+    },
+    {
+      "PageName": "StatusDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "HideStatusDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideStatusDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeStatusDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeStatusDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStatusDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStatusDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateStatusDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStatusBehaviorDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusBehaviorDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateStatusBehaviorDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "StatusBehaviorDefinition_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": []
+    },
+    {
+      "PageName": "StatusBehaviorDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStatusBehaviorDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateStatus"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStatus"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_AssociateStatusBehaviorDefinitionsWithStatus",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "AssociateStatusBehaviorDefinitionsWithStatus"
+        }
+      ]
+    },
+    {
+      "PageName": "Status_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "DisassociateStatusBehaviorDefinitionsFromStatus"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "SetStatusAsInitial"
+        }
+      ]
+    },
+    {
+      "PageName": "Status_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "SetStatusAsInitial"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStatus"
+        }
+      ]
+    },
+    {
+      "PageName": "StateMachine_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "HideStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStateMachine"
+        }
+      ]
+    },
+    {
+      "PageName": "StateMachine_Details",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "SetStatusAsInitial"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStatus"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStatusTransition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "HideStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeStateMachine"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeStateMachine"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateStatus"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateStatusTransition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_UpdateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "UpdateStateMachine"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStatus"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStateMachine",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStateMachine"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusTransition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStatusTransition"
+        }
+      ]
+    },
+    {
+      "PageName": "PANEL_CreateStatusTransitionDefinition",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "CreateStatusTransitionDefinition"
+        }
+      ]
+    },
+    {
+      "PageName": "StatusTransitionDefinition_Master",
+      "Module": "OpcenterEXFN_ReferenceData",
+      "Targets": [
+        {
+          "AppName": "Reference",
+          "CommandName": "HideStatusTransitionDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnhideStatusTransitionDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "FreezeStatusTransitionDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "UnfreezeStatusTransitionDefinition"
+        },
+        {
+          "AppName": "Reference",
+          "CommandName": "DeleteStatusTransitionDefinition"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+≡ƒöì Opening MPR: C:\Workspaces\Mendix\Complex\main\Opcenter EX DS Complex Manufacturing.mpr
+≡ƒôª Project: Opcenter EX DS Complex Manufacturing
+≡ƒôî Mendix Version: 11.6.4
+
+
+≡ƒôï Analysis plan: 7 phase(s) to complete
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+[Phase 1/7] ≡ƒöÄ Scanning for external entities...
+  ≡ƒöì Loading domain models...
+  ≡ƒôª Found 22 domain model(s) to analyze
+  Γ£ô Module 'OpcenterEXDS_EXFN_Quality': found 4 external entities
+  Γ£ô Module 'OpcenterEXDS_PartProgram': found 5 external entities
+  Γ£ô Module 'OpcenterEXDS_OperatorLanding': found 62 external entities
+  Γ£ô Module 'EXFN_DocumentViewer': found 7 external entities
+  Γ£ô Module 'EXFN_Quality': found 8 external entities
+  Γ£ô Module 'EXFN_WorkInstruction': found 1 external entities
+
+  Γ£à Completed: Analyzed 22 modules
+  ≡ƒôè Result: 87 external entities in 6 modules
+
+[Phase 2/7] ≡ƒöÄ Scanning for microflow/action calls...
+  ≡ƒöì Loading microflows...

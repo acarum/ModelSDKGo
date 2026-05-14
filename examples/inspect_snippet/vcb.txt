@@ -1,0 +1,399 @@
+Opened: C:\Workspaces\Mendix\Complex\main\Opcenter EX DS Complex Manufacturing.mpr
+Searching for snippet: VerticalCommandBar
+
+=== Snippet Found ===
+Name: VerticalCommandBar
+ID: 7b845f2b-aea9-4bf2-ab4e-1b58229004d6
+Type: Pages$Snippet
+
+=== Snippet Structure (JSON) ===
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "K1+Ee6mu8kurThtYIpAE1g=="
+  },
+  "$Type": "Forms$Snippet",
+  "CanvasHeight": 600,
+  "CanvasWidth": 800,
+  "Documentation": "",
+  "Excluded": false,
+  "ExportLevel": "Hidden",
+  "Name": "VerticalCommandBar",
+  "Parameters": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "zItHU2voslS/s6ubDxw5Pw=="
+      },
+      "$Type": "Forms$SnippetParameter",
+      "Name": "PageContext",
+      "ParameterType": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "jemt+h6/OFOLkbz1DWf2fw=="
+        },
+        "$Type": "DataTypes$ObjectType",
+        "Entity": "OpcenterEXDS_OperatorLanding.PageContext"
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "KF1X6jw1qEi3NidJMTKByA=="
+      },
+      "$Type": "Forms$SnippetParameter",
+      "Name": "SelectedSerialNumberContext",
+      "ParameterType": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "/dj7e+MXwkesXvG5K1VheQ=="
+        },
+        "$Type": "DataTypes$ObjectType",
+        "Entity": "OpcenterEXDS_OperatorLanding.SelectedSerialNumberContext"
+      }
+    }
+  ],
+  "Type": "Web",
+  "Variables": [
+    3
+  ],
+  "Widgets": [
+    2,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "hacxOFTf8Um9xzIRtwmEeg=="
+      },
+      "$Type": "Forms$DivContainer",
+      "Appearance": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "KeavVkRj50iEuQHy/7xuzg=="
+        },
+        "$Type": "Forms$Appearance",
+        "Class": "exds-verticalCommandBar-container",
+        "DesignProperties": [
+          3
+        ],
+        "DynamicClasses": "",
+        "Style": ""
+      },
+      "ConditionalVisibilitySettings": null,
+      "Name": "container2",
+      "NativeAccessibilitySettings": null,
+      "OnClickAction": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "gMB/dQ7tBUSO9dBJog7/Fw=="
+        },
+        "$Type": "Forms$CallNanoflowClientAction",
+        "ConfirmationInfo": null,
+        "DisabledDuringExecution": true,
+        "Nanoflow": "OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore",
+        "OutputMappings": [
+          3
+        ],
+        "ParameterMappings": [
+          2,
+          {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "B9cqowNOC1ekbTGPP9eh5g=="
+            },
+            "$Type": "Forms$NanoflowParameterMapping",
+            "Expression": "",
+            "Parameter": "OpcenterEXDS_OperatorLanding.ACT_ClosePanel_VerticalCommandBarMore.PageContext",
+            "Variable": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "p0phFgqsbleljjkADfTJOg=="
+              },
+              "$Type": "Forms$PageVariable",
+              "LocalVariable": "",
+              "PageParameter": "",
+              "SnippetParameter": "PageContext",
+              "SubKey": "",
+              "UseAllPages": false,
+              "Widget": ""
+            }
+          }
+        ],
+        "ProgressBar": "None",
+        "ProgressMessage": null
+      },
+      "RenderMode": "Div",
+      "ScreenReaderHidden": false,
+      "TabIndex": 0,
+      "Widgets": [
+        2,
+        {
+          "$ID": {
+            "Subtype": 0,
+            "Data": "85nxT5H0zkKUHY+Of1exbA=="
+          },
+          "$Type": "Forms$DataView",
+          "Appearance": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "vy92S8YlWk+sKC2VTG1B6w=="
+            },
+            "$Type": "Forms$Appearance",
+            "Class": "",
+            "DesignProperties": [
+              3
+            ],
+            "DynamicClasses": "",
+            "Style": ""
+          },
+          "ConditionalEditabilitySettings": null,
+          "ConditionalVisibilitySettings": null,
+          "DataSource": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "c4J02OhSeEy3ycabbG2agg=="
+            },
+            "$Type": "Forms$NanoflowSource",
+            "ForceFullObjects": false,
+            "Nanoflow": "OpcenterEXDS_OperatorLanding.DS_GetOrCreateVerticalCommandBarContext",
+            "ParameterMappings": [
+              2,
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "asjz/UcR3lWH36muMvxoNA=="
+                },
+                "$Type": "Forms$NanoflowParameterMapping",
+                "Expression": "",
+                "Parameter": "OpcenterEXDS_OperatorLanding.DS_GetOrCreateVerticalCommandBarContext.PageContext",
+                "Variable": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "sCDsN1meUVuW6IB5QazXXw=="
+                  },
+                  "$Type": "Forms$PageVariable",
+                  "LocalVariable": "",
+                  "PageParameter": "",
+                  "SnippetParameter": "PageContext",
+                  "SubKey": "",
+                  "UseAllPages": false,
+                  "Widget": ""
+                }
+              }
+            ]
+          },
+          "Editability": "Always",
+          "FooterWidgets": [
+            2
+          ],
+          "LabelWidth": 3,
+          "Name": "dataView1",
+          "NoEntityMessage": {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "/6Q6WGIhL0CZIOLIoIydMA=="
+            },
+            "$Type": "Texts$Text",
+            "Items": [
+              3
+            ]
+          },
+          "ReadOnlyStyle": "Control",
+          "ShowFooter": true,
+          "TabIndex": 0,
+          "Widgets": [
+            2,
+            {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "GeFpMC80S0CYakDrpWnBYg=="
+              },
+              "$Type": "Forms$DivContainer",
+              "Appearance": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "R42ymosqIEm9CzcAjT9w2w=="
+                },
+                "$Type": "Forms$Appearance",
+                "Class": "exds-verticalCommandBar-icon-container",
+                "DesignProperties": [
+                  3
+                ],
+                "DynamicClasses": "if $currentObject/IsDetailsButtonEnabled then '' else 'disabled exds-button-disabled'\n",
+                "Style": ""
+              },
+              "ConditionalVisibilitySettings": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "Qy/MMSoCzEqFu9rkdUVsXw=="
+                },
+                "$Type": "Forms$ConditionalVisibilitySettings",
+                "Attribute": "",
+                "Conditions": [
+                  2
+                ],
+                "Expression": "$currentObject/DetailsButtonVisible",
+                "IgnoreSecurity": false,
+                "ModuleRoles": [
+                  1
+                ],
+                "SourceVariable": null
+              },
+              "Name": "container21",
+              "NativeAccessibilitySettings": null,
+              "OnClickAction": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "3caknB0PjU622ZKjizxqMA=="
+                },
+                "$Type": "Forms$CallNanoflowClientAction",
+                "ConfirmationInfo": null,
+                "DisabledDuringExecution": true,
+                "Nanoflow": "OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click",
+                "OutputMappings": [
+                  3
+                ],
+                "ParameterMappings": [
+                  2,
+                  {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "i5pwUID1LVaJHkk6QGezgQ=="
+                    },
+                    "$Type": "Forms$NanoflowParameterMapping",
+                    "Expression": "",
+                    "Parameter": "OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click.PageContext",
+                    "Variable": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "KdAWWBA3eV6dBSQTpRByiw=="
+                      },
+                      "$Type": "Forms$PageVariable",
+                      "LocalVariable": "",
+                      "PageParameter": "",
+                      "SnippetParameter": "PageContext",
+                      "SubKey": "",
+                      "UseAllPages": false,
+                      "Widget": ""
+                    }
+                  },
+                  {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "xf+CJmi82FmTIIx4zCxx3Q=="
+                    },
+                    "$Type": "Forms$NanoflowParameterMapping",
+                    "Expression": "",
+                    "Parameter": "OpcenterEXDS_OperatorLanding.ACT_GoToDetails_Click.SelectedSerialNumberContext",
+                    "Variable": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "r5tB4p16I1aTNM90HFcgjw=="
+                      },
+                      "$Type": "Forms$PageVariable",
+                      "LocalVariable": "",
+                      "PageParameter": "",
+                      "SnippetParameter": "SelectedSerialNumberContext",
+                      "SubKey": "",
+                      "UseAllPages": false,
+                      "Widget": ""
+                    }
+                  }
+                ],
+                "ProgressBar": "None",
+                "ProgressMessage": null
+              },
+              "RenderMode": "Div",
+              "ScreenReaderHidden": false,
+              "TabIndex": 0,
+              "Widgets": [
+                2,
+                {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "zR8OAJhpeEKBUnBaZtAFFQ=="
+                  },
+                  "$Type": "Forms$ActionButton",
+                  "Action": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "oPaiYMGBQ0Gf2CCa3eUaSw=="
+                    },
+                    "$Type": "Forms$NoAction",
+                    "DisabledDuringExecution": true
+                  },
+          
+
+... [truncated, total size: 249229 bytes] ...
+
+=== Widgets Found ===
+Total widgets/elements: 598
+
+Widget types (sorted by frequency):
+  1. Texts$Translation                                  : 292 occurrences
+  2. Texts$Text                                         : 68 occurrences
+  3. Forms$Appearance                                   : 44 occurrences
+  4. Forms$ClientTemplate                               : 27 occurrences
+  5. Forms$NanoflowParameterMapping                     : 18 occurrences
+  6. Forms$PageVariable                                 : 18 occurrences
+  7. Forms$NoAction                                     : 18 occurrences
+  8. Forms$DivContainer                                 : 16 occurrences
+  9. Forms$CallNanoflowClientAction                     : 14 occurrences
+ 10. Forms$ImageIcon                                    : 13 occurrences
+ 11. Forms$DynamicText                                  : 13 occurrences
+ 12. Forms$ActionButton                                 : 13 occurrences
+ 13. Forms$ConditionalVisibilitySettings                : 6 occurrences
+ 14. CustomWidgets$WidgetValueType                      : 6 occurrences
+ 15. CustomWidgets$WidgetPropertyType                   : 6 occurrences
+ 16. CustomWidgets$WidgetValue                          : 3 occurrences
+ 17. CustomWidgets$WidgetProperty                       : 3 occurrences
+ 18. CustomWidgets$WidgetTranslation                    : 2 occurrences
+ 19. DataTypes$ObjectType                               : 2 occurrences
+ 20. Enumerations$Condition                             : 2 occurrences
+ 21. CustomWidgets$WidgetEnumerationValue               : 2 occurrences
+ 22. Forms$SnippetParameter                             : 2 occurrences
+ 23. DomainModels$AttributeRef                          : 1 occurrences
+ 24. Forms$DataView                                     : 1 occurrences
+ 25. Forms$NanoflowSource                               : 1 occurrences
+ 26. Forms$ClientTemplateParameter                      : 1 occurrences
+ 27. CustomWidgets$WidgetObject                         : 1 occurrences
+ 28. Forms$FormattingInfo                               : 1 occurrences
+ 29. CustomWidgets$CustomWidget                         : 1 occurrences
+ 30. CustomWidgets$CustomWidgetType                     : 1 occurrences
+ 31. CustomWidgets$WidgetObjectType                     : 1 occurrences
+ 32. Forms$Snippet                                      : 1 occurrences
+
+=== Custom Widgets (Detailed) ===
+Found 1 custom widget instance(s):
+
+Custom Widget #1:
+  $Type: CustomWidgets$CustomWidget
+  ConditionalVisibilitySettings: {Forms$ConditionalVisibilitySettings}
+  Name: badge1
+  TabIndex: 0
+  Appearance: {Forms$Appearance}
+  ConditionalEditabilitySettings: null
+  Editable: Always
+  LabelTemplate: null
+  Object: {CustomWidgets$WidgetObject}
+  Type: {CustomWidgets$CustomWidgetType}
+    widgetId: com.mendix.widget.custom.badge.Badge
+  $ID: csMsAybFsEu2nV5hbFFVNQ==
+
+  Widget Properties (4):
+    Property #2:
+      TypePointer: DmB+Gg+IUU6swGRhoNBIRQ==
+      Value:
+        PrimitiveValue: badge
+        Objects: [1 items]
+    Property #3:
+      TypePointer: nza1SWO4fEOqT+8YR0O7qQ==
+      Value:
+        Objects: [1 items]
+    Property #4:
+      TypePointer: PGUgjB7aeUyeHZRmIE1jFw==
+      Value:
+        Objects: [1 items]
+
+--------------------------------------------------------------------------------
+

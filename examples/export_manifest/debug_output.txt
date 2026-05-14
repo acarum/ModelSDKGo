@@ -1,0 +1,57 @@
+≡ƒöì Opening MPR: C:\Workspaces\Mendix\Complex\main\Opcenter EX DS Complex Manufacturing.mpr
+≡ƒôª Project: Opcenter EX DS Complex Manufacturing
+≡ƒôî Mendix Version: 11.6.4
+
+
+≡ƒôï Analysis plan: 7 phase(s) to complete
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+[Phase 1/7] ≡ƒöÄ Scanning for external entities...
+  ≡ƒöì Loading domain models...
+  ≡ƒôª Found 22 domain model(s) to analyze
+  Γ£ô Module 'OpcenterEXDS_EXFN_Quality': found 4 external entities
+  Γ£ô Module 'OpcenterEXDS_PartProgram': found 5 external entities
+  Γ£ô Module 'OpcenterEXDS_OperatorLanding': found 62 external entities
+  Γ£ô Module 'EXFN_DocumentViewer': found 7 external entities
+  Γ£ô Module 'EXFN_Quality': found 8 external entities
+  Γ£ô Module 'EXFN_WorkInstruction': found 1 external entities
+
+  Γ£à Completed: Analyzed 22 modules
+  ≡ƒôè Result: 87 external entities in 6 modules
+
+[Phase 2/7] ≡ƒöÄ Scanning for microflow/action calls...
+  ≡ƒöì Loading microflows...
+  ≡ƒôª Found 1344 microflow(s) to analyze
+
+  Γ£à Completed: Analyzed 1344 microflows
+  ≡ƒôè Result: 82 microflow/action calls found
+
+[Phase 3/7] ≡ƒöÄ Scanning for Signal Manager widgets...
+  ≡ƒöì Pre-filtering documents with Signal Manager widgets...
+  ≡ƒôè Found 11 documents to scan (filtered from 220 total, 95.0% reduction)
+  ≡ƒôä Scanning 3 filtered page(s)...
+  ≡ƒôä Scanning 8 filtered snippet(s)...
+
+  Γ£à Completed: Analyzed 3 filtered pages and 8 filtered snippets
+  ≡ƒôè Result: 64 signal subscription(s) found (44 in pages, 20 in snippets)
+
+[Phase 4/7] ≡ƒöÄ Scanning for system roles and page accessibility...
+  ≡ƒöì Loading security configuration...
+
+  Γ£à Completed: Security configuration analyzed
+  ≡ƒôè Result: 2 system role(s) and 181 page(s)/snippet(s) with access rules
+
+[Phase 5/7] ≡ƒöÄ Scanning for navigation items...
+  ≡ƒöì Looking for NavigationDocument...
+  ≡ƒôï Extracting navigation hierarchy...
+
+  Γ£à Completed: Navigation structure extracted
+  ≡ƒôè Result: 3 navigation item(s) found
+
+[Phase 6/7] ≡ƒûï∩╕Å Scanning for page commands...
+  ≡ƒôä Found 2 unique page(s) to analyze
+      [DEBUG] extractActionButtons: container type=Forms$DivContainer, has Widgets=true
+      [DEBUG] Found DivContainer with OnClickAction, class=<nil>
+      [DEBUG] Found DivContainer with OnClickAction, class=<nil>
+      [DEBUG] Found ActionButton: actionButton1
+      [DEBUG] Found DynamicText
