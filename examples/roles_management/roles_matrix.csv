@@ -1,10 +1,11 @@
-Module,Page,Administration.Administrator,Administration.User,CommunityCommons.Administrator,CommunityCommons.User,EXFN_AuditTrailViewer.User,EXFN_Authentication.Administrator,EXFN_Authentication.User,EXFN_CrossNavigation.User,EXFN_ServiceLayer.Administrator,EXFN_ServiceLayer.User,OpcenterEXFN_DISW_DesignSystem.Administrator,OpcenterEXFN_DISW_DesignSystem.User,OpcenterEXFN_ReferenceData.Pippo,OpcenterEXFN_ReferenceData.User,OpcenterEXFN_ReferenceData_Connector.User,System.Administrator,System.User,Viewer3D.Administrator,Viewer3D.User
-OpcenterEXFN_ReferenceData,Counter_Master,No,No,No,No,No,No,No,No,No,No,No,No,Yes,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,NumberingPattern_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,StateMachine_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,StatusBehaviorDefinition_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,StatusDefinition_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,StatusTransitionDefinition_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,Status_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,UoMDimension_Master_SingleSelection,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
-OpcenterEXFN_ReferenceData,UoM_Master,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+Caption,Module,Page,NavType,Administration.Administrator,Administration.User,CommunityCommons.Administrator,CommunityCommons.User,EXFN_AuditTrailViewer.User,EXFN_Authentication.Administrator,EXFN_Authentication.User,EXFN_CrossNavigation.User,EXFN_ServiceLayer.Administrator,EXFN_ServiceLayer.User,OpcenterEXFN_DISW_DesignSystem.Administrator,OpcenterEXFN_DISW_DesignSystem.User,OpcenterEXFN_ReferenceData.User,OpcenterEXFN_ReferenceData_Connector.Manager,System.Administrator,System.User,Viewer3D.Administrator,Viewer3D.User
+Accounts,Administration,Account_Overview,Page,Yes,No,No,No,No,No,No,No,No,No,No,No,No,No,No,No,No,No
+Counters,OpcenterEXFN_ReferenceData,Counter_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,Yes,No,No,No,No
+Numbering Patterns,OpcenterEXFN_ReferenceData,NumberingPattern_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,Yes,No,No,No,No
+State Machines,OpcenterEXFN_ReferenceData,StateMachine_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+Status Behavior Definitions,OpcenterEXFN_ReferenceData,StatusBehaviorDefinition_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+Status Definitions,OpcenterEXFN_ReferenceData,StatusDefinition_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+Status Transition Definitions,OpcenterEXFN_ReferenceData,StatusTransitionDefinition_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+Statuses,OpcenterEXFN_ReferenceData,Status_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+UoM Dimensions,OpcenterEXFN_ReferenceData,UoMDimension_Master_SingleSelection,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No
+Unit of Measures,OpcenterEXFN_ReferenceData,UoM_Master,Page,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,No,No,No

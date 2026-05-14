@@ -91,10 +91,19 @@ func main() {
 
 	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
 
-	// Step 1: collect all page qualified names reachable from navigation
+	// Step 1: collect all navigation items (pages, nanoflows, microflows)
 	fmt.Println("Scanning navigation...")
-	navPages := collectNavPages(db, contentsDir)
-	fmt.Printf("  Navigation pages: %d\n", len(navPages))
+	navItems := collectNavItems(db, contentsDir)
+	navPages := 0
+	navFlows := 0
+	for _, ni := range navItems {
+		if ni.ActionType == "Page" {
+			navPages++
+		} else {
+			navFlows++
+		}
+	}
+	fmt.Printf("  Navigation items: %d (%d pages, %d nanoflow/microflow)\n", len(navItems), navPages, navFlows)
 
 	// Step 2: collect ALL module roles
 	fmt.Println("Collecting module roles...")
@@ -106,7 +115,7 @@ func main() {
 	pageRoles := collectPageRoles(db, contentsDir)
 	fmt.Printf("  Pages scanned: %d\n", len(pageRoles))
 
-	// Step 4: resolve nav pages → PageEntry structs
+	// Step 4: resolve nav items → pageEntry structs
 	// Build lookup: "Module.PageName" → pageRoleInfo using moduleMap
 	pageNameToModule := make(map[string]string) // pageName → moduleName
 	pagesFromSDK, err := reader.ListPages()
@@ -131,86 +140,173 @@ func main() {
 		qnToInfo[qn] = info
 	}
 
-	navList := make([]string, 0, len(navPages))
-	for qn := range navPages {
-		navList = append(navList, qn)
-	}
-	sort.Strings(navList)
-
-	entries := make([]pageEntry, 0, len(navList))
-	for _, qn := range navList {
-		parts := strings.SplitN(qn, ".", 2)
-		modName, pgName := "", qn
-		if len(parts) == 2 {
-			modName, pgName = parts[0], parts[1]
+	// Sort nav items: pages first (alphabetically), then flows (alphabetically)
+	sort.Slice(navItems, func(i, j int) bool {
+		ti, tj := navItems[i].ActionType, navItems[j].ActionType
+		if ti != tj {
+			// "Page" before "Nanoflow"/"Microflow"
+			if ti == "Page" {
+				return true
+			}
+			if tj == "Page" {
+				return false
+			}
 		}
-		info, found := qnToInfo[qn]
-		if !found {
+		return navItems[i].Target < navItems[j].Target
+	})
+
+	entries := make([]pageEntry, 0, len(navItems))
+	for _, ni := range navItems {
+		parts := strings.SplitN(ni.Target, ".", 2)
+		modName, itemName := "", ni.Target
+		if len(parts) == 2 {
+			modName, itemName = parts[0], parts[1]
+		}
+
+		if ni.ActionType == "Page" {
+			info, found := qnToInfo[ni.Target]
+			allowedRoles := map[string]bool{}
+			if found {
+				allowedRoles = info.AllowedRoles
+			}
 			entries = append(entries, pageEntry{
 				ModuleName:   modName,
-				PageName:     pgName,
+				PageName:     itemName,
+				NavType:      "Page",
+				Caption:      ni.Caption,
+				AllowedRoles: allowedRoles,
+			})
+		} else {
+			entries = append(entries, pageEntry{
+				ModuleName:   modName,
+				PageName:     itemName,
+				NavType:      ni.ActionType,
+				Caption:      ni.Caption,
 				AllowedRoles: map[string]bool{},
 			})
-			continue
 		}
-		entries = append(entries, pageEntry{
-			ModuleName:   modName,
-			PageName:     pgName,
-			AllowedRoles: info.AllowedRoles,
-		})
 	}
 
 	// Step 5: write CSV
 	writeCSV(outputPath, entries, allRoles)
 	fmt.Printf("\n✓ CSV written: %s\n", outputPath)
-	fmt.Printf("  %d pages (rows) x %d roles (columns)\n", len(entries), len(allRoles))
+	fmt.Printf("  %d nav items (rows) x %d roles (columns)\n", len(entries), len(allRoles))
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Navigation collection
 // ─────────────────────────────────────────────────────────────────────────────
 
-// collectNavPages scans Navigation$NavigationDocument units and returns
-// a set of all page qualified names ("Module.PageName") reachable from any menu.
-func collectNavPages(db *sql.DB, contentsDir string) map[string]bool {
-	result := make(map[string]bool)
+// navItem represents a single navigation menu item with its action.
+type navItem struct {
+	Caption    string
+	ActionType string // "Page", "Nanoflow", "Microflow", "Unknown"
+	Target     string // qualified name: "Module.PageName" / "Module.NanoflowName" / etc.
+}
+
+// collectNavItems scans Navigation$NavigationDocument units and returns all
+// navigation items (pages, nanoflows, microflows) reachable from any menu profile.
+// Duplicates by (ActionType+Target) are eliminated.
+func collectNavItems(db *sql.DB, contentsDir string) []navItem {
+	seen := make(map[string]bool)
+	var result []navItem
+	found := false
 	scanUnits(db, contentsDir, func(data map[string]interface{}) {
 		if data["$Type"] != "Navigation$NavigationDocument" {
 			return
 		}
-		findFormRefs(data, result)
+		found = true
+		extractNavItems(data, seen, &result)
 	})
+	_ = found
 	return result
 }
 
-// findFormRefs recursively extracts all "Module.PageName" strings from Form /
-// FormSettings.Form fields anywhere in the subtree.
-func findFormRefs(data interface{}, refs map[string]bool) {
+// extractNavItems recursively walks a nav document node and appends found items.
+func extractNavItems(data interface{}, seen map[string]bool, items *[]navItem) {
 	switch v := data.(type) {
+	case primitive.D:
+		extractNavItems(dToMap(v), seen, items)
 	case map[string]interface{}:
-		if form, ok := v["Form"].(string); ok && strings.Contains(form, ".") {
-			refs[form] = true
-		}
-		if fs, ok := v["FormSettings"].(map[string]interface{}); ok {
-			if form, ok := fs["Form"].(string); ok && strings.Contains(form, ".") {
-				refs[form] = true
+		// If this node has an "Action" field it is a menu item.
+		if rawAction, hasAction := v["Action"]; hasAction {
+			item := navItem{Caption: extractNavCaption(v)}
+			if actionMap, ok := toMap(rawAction); ok {
+				actionType, _ := actionMap["$Type"].(string)
+				switch actionType {
+				case "Pages$ShowPageClientAction", "Forms$FormAction":
+					item.ActionType = "Page"
+					// Try FormSettings.Form first, then direct Form field.
+					if fs, ok := toMap(actionMap["FormSettings"]); ok {
+						if form, ok := fs["Form"].(string); ok && strings.Contains(form, ".") {
+							item.Target = form
+						}
+					}
+					if item.Target == "" {
+						if form, ok := actionMap["Form"].(string); ok && strings.Contains(form, ".") {
+							item.Target = form
+						}
+					}
+				case "Pages$CallNanoflowClientAction", "Forms$CallNanoflowClientAction":
+					item.ActionType = "Nanoflow"
+					if nf, ok := actionMap["Nanoflow"].(string); ok {
+						item.Target = nf
+					}
+				case "Pages$CallMicroflowClientAction", "Forms$CallMicroflowClientAction":
+					item.ActionType = "Microflow"
+					if mf, ok := actionMap["Microflow"].(string); ok {
+						item.Target = mf
+					}
+				default:
+					item.ActionType = "Unknown"
+				}
+			}
+			key := item.ActionType + "|" + item.Target
+			if item.Target != "" && !seen[key] {
+				seen[key] = true
+				*items = append(*items, item)
 			}
 		}
 		for _, val := range v {
-			findFormRefs(val, refs)
+			extractNavItems(val, seen, items)
 		}
 	case primitive.A:
 		for i, item := range v {
 			if i == 0 {
-				continue // skip count prefix
+				continue // skip BSON count prefix
 			}
-			findFormRefs(item, refs)
+			extractNavItems(item, seen, items)
 		}
 	case []interface{}:
 		for _, item := range v {
-			findFormRefs(item, refs)
+			extractNavItems(item, seen, items)
 		}
 	}
+}
+
+// extractNavCaption extracts the display text from a navigation item node.
+func extractNavCaption(itemMap map[string]interface{}) string {
+	captionData, ok := itemMap["Caption"]
+	if !ok {
+		return ""
+	}
+	cm, ok := toMap(captionData)
+	if !ok {
+		return ""
+	}
+	if arr, ok := cm["Items"].(primitive.A); ok {
+		for i, capItem := range arr {
+			if i == 0 {
+				continue
+			}
+			if capMap, ok := toMap(capItem); ok {
+				if text, ok := capMap["Text"].(string); ok && text != "" {
+					return text
+				}
+			}
+		}
+	}
+	return ""
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -340,6 +436,8 @@ func collectPageRoles(db *sql.DB, contentsDir string) map[string]pageRoleInfo {
 type pageEntry struct {
 	ModuleName   string
 	PageName     string
+	NavType      string // "Page", "Nanoflow", "Microflow", "Unknown"
+	Caption      string
 	AllowedRoles map[string]bool
 }
 
@@ -353,16 +451,21 @@ func writeCSV(outputPath string, entries []pageEntry, allRoles []string) {
 	w := csv.NewWriter(f)
 	defer w.Flush()
 
-	// Header: Module, Page, <role1>, <role2>, ...
-	header := []string{"Module", "Page"}
+	// Header: Caption, Module, Page, NavType, <role1>, <role2>, ...
+	header := []string{"Caption", "Module", "Page", "NavType"}
 	header = append(header, allRoles...)
 	if err := w.Write(header); err != nil {
 		log.Fatalf("csv write header: %v", err)
 	}
 
 	for _, e := range entries {
-		row := []string{e.ModuleName, e.PageName}
+		row := []string{e.Caption, e.ModuleName, e.PageName, e.NavType}
 		for _, role := range allRoles {
+			if e.NavType != "Page" {
+				// Nanoflow / Microflow items don't have page-level access rules
+				row = append(row, "N/A")
+				continue
+			}
 			switch {
 			case len(e.AllowedRoles) == 0:
 				row = append(row, "PUBLIC")
@@ -740,33 +843,56 @@ func parseImportCSV(csvPath string) (roleColumns []string, rows []importCSVRow) 
 		return
 	}
 	header := records[0]
-	for _, col := range header[2:] {
+
+	// Locate Module and Page columns by name (order-independent)
+	moduleIdx, pageIdx := -1, -1
+	for i, col := range header {
+		switch strings.TrimSpace(col) {
+		case "Module":
+			moduleIdx = i
+		case "Page":
+			pageIdx = i
+		}
+	}
+	if moduleIdx == -1 || pageIdx == -1 {
+		log.Fatalf("parseImportCSV: CSV must have 'Module' and 'Page' columns (got header: %v)", header)
+	}
+
+	// Collect role columns (any column containing ".")
+	roleColIdx := make([]int, 0)
+	for i, col := range header {
 		col = strings.TrimSpace(col)
 		if strings.Contains(col, ".") {
 			roleColumns = append(roleColumns, col)
+			roleColIdx = append(roleColIdx, i)
 		}
 	}
+
 	for _, rec := range records[1:] {
-		if len(rec) < 2 {
+		if len(rec) <= max(moduleIdx, pageIdx) {
 			continue
 		}
 		row := importCSVRow{
-			Module:     strings.TrimSpace(rec[0]),
-			Page:       strings.TrimSpace(rec[1]),
+			Module:     strings.TrimSpace(rec[moduleIdx]),
+			Page:       strings.TrimSpace(rec[pageIdx]),
 			RoleAccess: make(map[string]bool),
 		}
-		for i, col := range header[2:] {
-			col = strings.TrimSpace(col)
-			if !strings.Contains(col, ".") {
-				continue
-			}
-			if i+2 < len(rec) {
-				row.RoleAccess[col] = strings.EqualFold(strings.TrimSpace(rec[i+2]), "yes")
+		for j, col := range roleColumns {
+			idx := roleColIdx[j]
+			if idx < len(rec) {
+				row.RoleAccess[col] = strings.EqualFold(strings.TrimSpace(rec[idx]), "yes")
 			}
 		}
 		rows = append(rows, row)
 	}
 	return
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 // appendModuleRole adds a Security$ModuleRole entry to a ModuleSecurity BSON map.
