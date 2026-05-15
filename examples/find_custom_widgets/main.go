@@ -29,12 +29,12 @@ func main() {
 
 	mprPath := os.Args[1]
 	sourceWidgetID := os.Args[2]
-	
+
 	// Check modes and flags
 	replaceMode := false
 	dumpJSON := false
 	var destWidgetID string
-	
+
 	for i := 3; i < len(os.Args); i++ {
 		if os.Args[i] == "--replace" && i+1 < len(os.Args) {
 			replaceMode = true
@@ -54,7 +54,7 @@ func main() {
 	defer reader.Close()
 
 	fmt.Printf("Opened: %s\n", reader.Path())
-	
+
 	if replaceMode {
 		fmt.Printf("\n=== REPLACE MODE ===\n")
 		fmt.Printf("Searching for widgets with widgetId: %s\n", sourceWidgetID)
@@ -118,7 +118,7 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 					// Extract AppName and Signal Name from Properties
 					printSignalSubscriptions(widget)
 				}
-				
+
 				// Dump JSON if requested
 				if dumpJSON {
 					if err := dumpUnitJSON(snippetData, "Snippet", snippet.Name); err != nil {
@@ -128,7 +128,7 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 						dumpedFiles++
 					}
 				}
-				
+
 				fmt.Println()
 				totalFound += len(widgets)
 			}
@@ -173,7 +173,7 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 					// Extract AppName and Signal Name from Properties
 					printSignalSubscriptions(widget)
 				}
-				
+
 				// Dump JSON if requested
 				if dumpJSON {
 					if err := dumpUnitJSON(pageData, "Page", page.Name); err != nil {
@@ -183,7 +183,7 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 						dumpedFiles++
 					}
 				}
-				
+
 				fmt.Println()
 				totalFound += len(widgets)
 			}
@@ -228,7 +228,7 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 					// Extract AppName and Signal Name from Properties
 					printSignalSubscriptions(widget)
 				}
-				
+
 				// Dump JSON if requested
 				if dumpJSON {
 					if err := dumpUnitJSON(layoutData, "Layout", layout.Name); err != nil {
@@ -238,7 +238,7 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 						dumpedFiles++
 					}
 				}
-				
+
 				fmt.Println()
 				totalFound += len(widgets)
 			}
@@ -390,7 +390,7 @@ func performReplace(reader *modelsdk.Reader, mprPath, sourceWidgetID, destWidget
 
 	for _, unit := range unitsToReplace {
 		fmt.Printf("Processing %s: %s... ", unit.UnitType, unit.UnitName)
-		
+
 		// Load the BSON data as raw bytes
 		bsonData, err := loadUnitBSON(mprPath, unit.UnitID)
 		if err != nil {
@@ -401,7 +401,7 @@ func performReplace(reader *modelsdk.Reader, mprPath, sourceWidgetID, destWidget
 
 		// Perform binary byte replacement
 		replacedCount := replaceBytesInData(bsonData, sourceBytes, destBytes)
-		
+
 		if replacedCount == 0 {
 			fmt.Printf("⚠ No replacements made\n")
 			errorCount++
@@ -478,17 +478,17 @@ func saveUnitBSON(mprPath, unitID string, data []byte) error {
 // dumpUnitJSON saves the unit data as a formatted JSON file
 func dumpUnitJSON(data interface{}, unitType, unitName string) error {
 	filename := fmt.Sprintf("%s_%s.json", strings.ToUpper(unitType), sanitizeFilename(unitName))
-	
+
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal JSON: %w", err)
 	}
-	
+
 	err = os.WriteFile(filename, jsonData, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write file: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -559,11 +559,11 @@ func replaceBytesInData(data []byte, oldPattern, newPattern []byte) int {
 	if len(oldPattern) != len(newPattern) {
 		return 0
 	}
-	
+
 	replacements := 0
 	dataLen := len(data)
 	patternLen := len(oldPattern)
-	
+
 	for i := 0; i <= dataLen-patternLen; i++ {
 		// Check if pattern matches at position i
 		match := true
@@ -573,7 +573,7 @@ func replaceBytesInData(data []byte, oldPattern, newPattern []byte) int {
 				break
 			}
 		}
-		
+
 		if match {
 			// Replace bytes in place
 			for j := 0; j < patternLen; j++ {
@@ -583,7 +583,7 @@ func replaceBytesInData(data []byte, oldPattern, newPattern []byte) int {
 			i += patternLen - 1 // Skip past the replaced pattern
 		}
 	}
-	
+
 	return replacements
 }
 
