@@ -29,6 +29,10 @@
         "/^\\$env:CGO_ENABLED=1 ; \\$env:PATH=\"C:\\\\msys64\\\\mingw64\\\\bin;\\$env:PATH\" ; go build -o export_manifest\\.exe$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^cd \"C:\\\\Workspaces\\\\Mendix\\\\Complex\\\\main\\\\mprcontents\"; \\$files = Get-ChildItem -Recurse -Filter \"\\*\\.mxunit\" \\| Where-Object \\{ \\(Get-Content \\$_\\.FullName -Raw -Encoding UTF8\\) -match \"siemens\\\\\\.DependencyGraph\\\\\\.DependencyGraph\" \\}; \\$files \\| ForEach-Object \\{ Write-Host \"Found in: \\$\\(\\$_\\.FullName\\)\" \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }

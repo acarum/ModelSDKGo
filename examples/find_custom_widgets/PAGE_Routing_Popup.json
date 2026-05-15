@@ -1,0 +1,4156 @@
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "9XdRQnqu1UGEzx+EV0Tgeg=="
+  },
+  "$Type": "Forms$Page",
+  "AllowedModuleRoles": [
+    1,
+    "OpcenterEXDS_OperatorLanding.User"
+  ],
+  "Appearance": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "5LTp8HW+5U6OfYgvxR4mpg=="
+    },
+    "$Type": "Forms$Appearance",
+    "Class": "routing-dialog fullscreen",
+    "DesignProperties": [
+      3
+    ],
+    "DynamicClasses": "",
+    "Style": ""
+  },
+  "Autofocus": "DesktopOnly",
+  "CanvasHeight": 600,
+  "CanvasWidth": 800,
+  "Documentation": "",
+  "Excluded": false,
+  "ExportLevel": "Hidden",
+  "FormCall": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "dPvZvdizp0u5ROM7tc5RvA=="
+    },
+    "$Type": "Forms$LayoutCall",
+    "Arguments": [
+      2,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "ecC/pGdt3E+rAg2oUZIRVw=="
+        },
+        "$Type": "Forms$FormCallArgument",
+        "Parameter": "OpcenterEXFN_DISW_DesignSystem.CanvasContainer.Main",
+        "Widgets": [
+          2,
+          {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "eFSbuqM2FEq4KTWFvja3Zw=="
+            },
+            "$Type": "Forms$DataView",
+            "Appearance": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "C+r7Ch+0TUS1KSV22m6JbQ=="
+              },
+              "$Type": "Forms$Appearance",
+              "Class": "routing-container-data-view",
+              "DesignProperties": [
+                3
+              ],
+              "DynamicClasses": "",
+              "Style": ""
+            },
+            "ConditionalEditabilitySettings": null,
+            "ConditionalVisibilitySettings": null,
+            "DataSource": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "04zrH3NYbkKns8DohS6zUw=="
+              },
+              "$Type": "Forms$DataViewSource",
+              "EntityRef": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "8FvNDoU3D0WUFOHv/Bu1Fw=="
+                },
+                "$Type": "DomainModels$DirectEntityRef",
+                "Entity": "OpcenterEXDS_OperatorLanding.DependencyGraphContext"
+              },
+              "ForceFullObjects": false,
+              "SourceVariable": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "rrbfvkd48Uin15Rc9EhNCA=="
+                },
+                "$Type": "Forms$PageVariable",
+                "LocalVariable": "",
+                "PageParameter": "DependencyGraphContext",
+                "SnippetParameter": "",
+                "SubKey": "",
+                "UseAllPages": false,
+                "Widget": ""
+              }
+            },
+            "Editability": "Always",
+            "FooterWidgets": [
+              2
+            ],
+            "LabelWidth": 3,
+            "Name": "dataView6",
+            "NoEntityMessage": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "UBib1y47V0utPOczHY/9ew=="
+              },
+              "$Type": "Texts$Text",
+              "Items": [
+                3
+              ]
+            },
+            "ReadOnlyStyle": "Control",
+            "ShowFooter": true,
+            "TabIndex": 0,
+            "Widgets": [
+              2,
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "uW1UuUGY9EaZt//xCBUZqg=="
+                },
+                "$Type": "Forms$DataView",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "GljVH3ZuBEyYcnLzqbRXqA=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "ConditionalEditabilitySettings": null,
+                "ConditionalVisibilitySettings": null,
+                "DataSource": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "t0IMFcTrT0iN4eY1dnaQ3g=="
+                  },
+                  "$Type": "Forms$NanoflowSource",
+                  "ForceFullObjects": false,
+                  "Nanoflow": "OpcenterEXDS_OperatorLanding.SUB_DependencyGraphContext_RegisterClosePageAction",
+                  "ParameterMappings": [
+                    2
+                  ]
+                },
+                "Editability": "Always",
+                "FooterWidgets": [
+                  2
+                ],
+                "LabelWidth": 3,
+                "Name": "dataView4",
+                "NoEntityMessage": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "On8lIDI/uEuDnfC6wXbJ0g=="
+                  },
+                  "$Type": "Texts$Text",
+                  "Items": [
+                    3
+                  ]
+                },
+                "ReadOnlyStyle": "Control",
+                "ShowFooter": true,
+                "TabIndex": 0,
+                "Widgets": [
+                  2
+                ]
+              },
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "9r9IV2kezUSl9QF1+pWZ7w=="
+                },
+                "$Type": "Forms$DataView",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "lTJ7qVdn80ulYUtrL+tjVA=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "ConditionalEditabilitySettings": null,
+                "ConditionalVisibilitySettings": null,
+                "DataSource": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "20kJOZF+aUuyvMhl+ov/vw=="
+                  },
+                  "$Type": "Forms$DataViewSource",
+                  "EntityRef": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "/UpLPU5ySUaKu7jAe7N2BQ=="
+                    },
+                    "$Type": "DomainModels$DirectEntityRef",
+                    "Entity": "OpcenterEXDS_OperatorLanding.RM_ComplexManufacturing_WorkOrderOperation"
+                  },
+                  "ForceFullObjects": false,
+                  "SourceVariable": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "bT0fzKvClUG2+N9J8gTAtg=="
+                    },
+                    "$Type": "Forms$PageVariable",
+                    "LocalVariable": "",
+                    "PageParameter": "RM_ComplexManufacturing_WorkOrderOperation",
+                    "SnippetParameter": "",
+                    "SubKey": "",
+                    "UseAllPages": false,
+                    "Widget": ""
+                  }
+                },
+                "Editability": "Always",
+                "FooterWidgets": [
+                  2
+                ],
+                "LabelWidth": 3,
+                "Name": "dataView1",
+                "NoEntityMessage": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "2pdtLJk0eUK439S2dZ+e5w=="
+                  },
+                  "$Type": "Texts$Text",
+                  "Items": [
+                    3
+                  ]
+                },
+                "ReadOnlyStyle": "Control",
+                "ShowFooter": true,
+                "TabIndex": 0,
+                "Widgets": [
+                  2,
+                  {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "lSuGkY7D60apATyDO256RA=="
+                    },
+                    "$Type": "Forms$DivContainer",
+                    "Appearance": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "ceDrAci8T0OksVoHZoSTog=="
+                      },
+                      "$Type": "Forms$Appearance",
+                      "Class": "info-section",
+                      "DesignProperties": [
+                        3
+                      ],
+                      "DynamicClasses": "",
+                      "Style": ""
+                    },
+                    "ConditionalVisibilitySettings": null,
+                    "Name": "NCFailureStep1",
+                    "NativeAccessibilitySettings": null,
+                    "OnClickAction": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "WqFAYaaut0aNPdgK0zUfww=="
+                      },
+                      "$Type": "Forms$NoAction",
+                      "DisabledDuringExecution": true
+                    },
+                    "RenderMode": "Div",
+                    "ScreenReaderHidden": false,
+                    "TabIndex": 0,
+                    "Widgets": [
+                      2,
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "9iKY5N08KkCMk3YxDedA7g=="
+                        },
+                        "$Type": "Forms$DynamicText",
+                        "Appearance": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "bv00Y0bjXUGJdYAV+h8nMg=="
+                          },
+                          "$Type": "Forms$Appearance",
+                          "Class": "",
+                          "DesignProperties": [
+                            3
+                          ],
+                          "DynamicClasses": "",
+                          "Style": ""
+                        },
+                        "ConditionalVisibilitySettings": null,
+                        "Content": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "I+T71B5scUm0hA96grZ1KQ=="
+                          },
+                          "$Type": "Forms$ClientTemplate",
+                          "Fallback": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "myJI1ic5SEKmR5GmmBKKBA=="
+                            },
+                            "$Type": "Texts$Text",
+                            "Items": [
+                              3
+                            ]
+                          },
+                          "Parameters": [
+                            2
+                          ],
+                          "Template": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "wHFKfZEneUm3iYD+uvWYqQ=="
+                            },
+                            "$Type": "Texts$Text",
+                            "Items": [
+                              3,
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "imc7R4nbrkuPC0IRB3J0RA=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "en_US",
+                                "Text": "Work Order:"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "xq1Y+qHs+ECt7Yh44I+N/A=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "it_IT",
+                                "Text": "Ordine di lavoro:"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "mmk/4MGuJkO6OcPYJCH/MA=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "de_DE",
+                                "Text": "Arbeitsauftrag:"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "Cbk+4iVfDk2NZSXXiQMeGg=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "zh_CN",
+                                "Text": "工作订单："
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "Z2Ud28xqEUuEJ/XrO7azUQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "fr_FR",
+                                "Text": "Ordre de travail:"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "/kDDAiBSLUiuQZSMAe5LeQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "ko_KR",
+                                "Text": "작업 지시"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "4o9+vwhoLkGqkjPx/HfPCA=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "es_ES",
+                                "Text": "Orden de trabajo"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "0WVxMfZr1EK9/9FDfN2MZQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "ja_JP",
+                                "Text": "作業オーダ:"
+                              }
+                            ]
+                          }
+                        },
+                        "Name": "text1",
+                        "NativeAccessibilitySettings": null,
+                        "NativeTextStyle": "Text",
+                        "RenderMode": "H5",
+                        "TabIndex": 0
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "Rf2xeeyVtkKUqaNpaxHEaA=="
+                        },
+                        "$Type": "Forms$DynamicText",
+                        "Appearance": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "Je8EiJ7pYESv8kd9Jj7WgA=="
+                          },
+                          "$Type": "Forms$Appearance",
+                          "Class": "",
+                          "DesignProperties": [
+                            3
+                          ],
+                          "DynamicClasses": "",
+                          "Style": ""
+                        },
+                        "ConditionalVisibilitySettings": null,
+                        "Content": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "1exyWM09JkSjV6LBO2dl8A=="
+                          },
+                          "$Type": "Forms$ClientTemplate",
+                          "Fallback": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "zeA7dBp4HUmEFBBEoqJzLw=="
+                            },
+                            "$Type": "Texts$Text",
+                            "Items": [
+                              3
+                            ]
+                          },
+                          "Parameters": [
+                            2,
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "vZ2UUAvDMEO/1a3A+CMR1w=="
+                              },
+                              "$Type": "Forms$ClientTemplateParameter",
+                              "AttributeRef": null,
+                              "Expression": "if (trim($currentObject/WorkOrderName)  != '') \nthen $currentObject/WorkOrderName \nelse $currentObject/WorkOrderNId\n",
+                              "FormattingInfo": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "rgjc70DdRE+zy5FlVHOzUw=="
+                                },
+                                "$Type": "Forms$FormattingInfo",
+                                "CustomDateFormat": "",
+                                "DateFormat": "Date",
+                                "DecimalPrecision": 2,
+                                "EnumFormat": "Text",
+                                "GroupDigits": false
+                              },
+                              "SourceVariable": null
+                            }
+                          ],
+                          "Template": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "RAj4QMIOfkOXQlOtNrDvVQ=="
+                            },
+                            "$Type": "Texts$Text",
+                            "Items": [
+                              3,
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "qTLiJnLWDE6LeoS6gZUFDQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "nl_NL",
+                                "Text": "Tekst"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "FN3UmPT9uke/lsyNVsrZ/Q=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "en_US",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "OIbI9/4IDkyFKLDAAQor4Q=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "it_IT",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "rRc4AZHMkECk79rPWGijPQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "de_DE",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "Go4BC8N/3Uy10Jrz7ry89A=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "zh_CN",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "05GDvA/GsEenPlYktqhpwQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "fr_FR",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "8Mh3j2IrGUebEJ0etMqEHQ=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "ja_JP",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "qeDHtS7sHUe5GIU0GBNhQg=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "ko_KR",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "osAHTnphw0agN3dTdfiIiw=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "es_ES",
+                                "Text": "{1}"
+                              },
+                              {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "qEOXzwTjeEKKh01WtDwKpw=="
+                                },
+                                "$Type": "Texts$Translation",
+                                "LanguageCode": "en_GB",
+                                "Text": "2. Select one or more Failures from the list below"
+                              }
+                            ]
+                          }
+                        },
+                        "Name": "NCFailureStep1_text",
+                        "NativeAccessibilitySettings": null,
+                        "NativeTextStyle": "Text",
+                        "RenderMode": "Text",
+                        "TabIndex": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "UuUdiGG+a0ekVZflUvZ/4A=="
+                },
+                "$Type": "CustomWidgets$CustomWidget",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "P9sDNuGBkU+JEble5FB1Hg=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "exds-graph-container",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "ConditionalEditabilitySettings": null,
+                "ConditionalVisibilitySettings": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "Tqf56eZK/k2EPo6Oe9iSxA=="
+                  },
+                  "$Type": "Forms$ConditionalVisibilitySettings",
+                  "Attribute": "",
+                  "Conditions": [
+                    2
+                  ],
+                  "Expression": "$currentObject != empty and $currentObject/Height != empty\nand \n($currentObject/WorkOrderId != empty or $currentObject/WorkOrderId != '')\n",
+                  "IgnoreSecurity": false,
+                  "ModuleRoles": [
+                    1
+                  ],
+                  "SourceVariable": null
+                },
+                "Editable": "Always",
+                "LabelTemplate": null,
+                "Name": "oPCEXFNGraph1",
+                "Object": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "cvbdkswosEWlYHCa91f2jA=="
+                  },
+                  "$Type": "CustomWidgets$WidgetObject",
+                  "Properties": [
+                    2,
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "nvfua4yXKUuGf68002bCrw=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "wbwQqGEDjEGomlisYapw+g=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "M38UVPSjwEe9Il/d7x6w+w=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "XBTO7cs0TU2WFGiaAdUCqA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "Ev/BKdbVK0K44F4ym3oC9w=="
+                          },
+                          "$Type": "DomainModels$AttributeRef",
+                          "Attribute": "OpcenterEXDS_OperatorLanding.DependencyGraphContext.ParentFolderId",
+                          "EntityRef": null
+                        },
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "gfYBjk+mjUujnZoyiwzVcQ=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "ti0yb8XODUKHNItg0s2pBA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "vSTZGpuu4kqpJU9WuQn/rA=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "+9+3y2xCgEm5TmcYtmDPWQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "TGCrS4RxGk+NmXjuYT0NJQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "7DfPfFv+KU6rssJ/Ugr4fg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "lnXQ6hvFAEGvPSpyp2dmjA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "1wbvF4Y01EKCSr/1nLao0g=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "NjBcW8akPkCtxAnO9O5p8Q=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "IBUyFgfTxUybBxQ2+/Psqw=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "4",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "zD9fz0IrIkGBWZKcoNoDlg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "WC5kLRHGZ0y3p7m5OMtgDg=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "y8rEbGgh3U+UiiqNKUqrBg=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "ZhYZvTc99kS/FS5tEXQAwg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "I748OJoGekSBYW/9KH1YgQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "$currentObject/Height",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "FkLaC/LWfU+N2A6if4v+lA=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "3BryfWJg1keY3RYzM9jHdw=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "nIlhthB7CUmibwiWldK4ZA=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "psvAq78DVUWoV3+h82Akqg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "dEkFt3av4E2QmMOCltk1aA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "240",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "kcVWL9HyF0Cp+ZYQWfwPsg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "SVvv4VsprEepBVMYbPUcpA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "eH73PNel1UeiF4pP9aOiyg=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "ps9eNimKHU64MMK8xOb7Zw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "42jZtLgwT0+s3GTJfYSkGg=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "90",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "hVcwp5MdwkKXzg8XSFbqZA=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "9kLiwKMEikOFDkHXwGVMSw=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "4b/zrPotnEu1MA+CboIZ2Q=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "5wRr0fszoEyS+qeAk6C6Eg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "X9MwvgrqC0aL35y2dEYSvg=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "LjbYxtXW/kylBDiQ5wDFJg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "TyCUjv6eI0eTBfg9LmoQvA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "egcQ03LijUm+yAbr/0ww3g=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "QTx5Mv7fCEe+6NKnByD3lg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "/w8SHclALEWXgOiK4f1MdQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "322CiHwYDkOPGt4/mIYtLg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "sFBpZGUotU6Z+xqHcm7Gug=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "+eRPgF0JiUKwJrDZOfUMYA=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "u7Wmpp7WgEq9xKEePqv0Yg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "ILLZLWxH40OSHd4KZOCn9g=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "kN6bzJudGEmUd6hi+pijKA=="
+                          },
+                          "$Type": "CustomWidgets$CustomWidgetXPathSource",
+                          "EntityRef": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "3jah/eKzTkCMIjRvhqCFjw=="
+                            },
+                            "$Type": "DomainModels$DirectEntityRef",
+                            "Entity": "OpcenterEXDS_OperatorLanding.RM_RoutingNode"
+                          },
+                          "ForceFullObjects": false,
+                          "SortBar": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "D+jlYvEMgUClRqO6B7nDAg=="
+                            },
+                            "$Type": "Forms$GridSortBar",
+                            "SortItems": [
+                              2
+                            ]
+                          },
+                          "SourceVariable": null,
+                          "XPathConstraint": "[(CurrentWorkOrderId = $currentObject/WorkOrderId)\nand (($currentObject/ParentFolderId = empty and (ParentEntityId = empty)) or\n   ($currentObject/ParentFolderId != empty and (ParentEntityId= $currentObject/ParentFolderId)\n))]"
+                        },
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "dc1fEgYusEaRD/L3xCUpjQ=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "Wpd2VCHxFUmzQpURIXv2Jg=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "PAHF/s8N+02dPd+UpXFwkw=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "qV2nvVnPckKmCO7OeV1JqQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "zJnRONDaMEaKxlXRtOf4FA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "7FAei7u4mk6vrIfTuyYNcw=="
+                          },
+                          "$Type": "DomainModels$AttributeRef",
+                          "Attribute": "OpcenterEXDS_OperatorLanding.RM_RoutingNode.EntityId",
+                          "EntityRef": null
+                        },
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "Z5R9h2EJJ0+Kmz+hY2j5TA=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "4zLF9n+w1k+X3eIPJT6SMQ=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "GpZQ7KsKbkG6mUUO1RD7oA=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "G2BJrOoTpkaCJ9O01mo4SA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "PXoMzmm4qEGP914I5ZmZTQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "g7sPfc3FJkuLL0H6ELbeyw=="
+                          },
+                          "$Type": "DomainModels$AttributeRef",
+                          "Attribute": "OpcenterEXDS_OperatorLanding.RM_RoutingNode.EntityHasChildren",
+                          "EntityRef": null
+                        },
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "37/br02F0k29tVv2eimUuA=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "FCbFmDNA6U6nvB8IXRPFWw=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "znhjBhb5Jk6LqVbnKB9EGQ=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "gBoZk4Mmu0i5zAaJ4g67Iw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "xQmS1YTe7kmszxhyQzRieg=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "cN+HyWqvPE6ZxoxTA11hFg=="
+                        },
+                        "Widgets": [
+                          2,
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "C5CGGEoB1EGquzrXUUhhDg=="
+                            },
+                            "$Type": "Forms$SnippetCallWidget",
+                            "Appearance": {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "B3vef7fMsEeEDXogfn8KnA=="
+                              },
+                              "$Type": "Forms$Appearance",
+                              "Class": "",
+                              "DesignProperties": [
+                                3
+                              ],
+                              "DynamicClasses": "",
+                              "Style": ""
+                            },
+                            "FormCall": {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "H1TrZ3bLZky5NHWvxij/8Q=="
+                              },
+                              "$Type": "Forms$SnippetCall",
+                              "Form": "OpcenterEXDS_OperatorLanding.RoutingNode",
+                              "ParameterMappings": [
+                                2
+                              ]
+                            },
+                            "Name": "snippetCall2",
+                            "TabIndex": 0
+                          }
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "UPNJOdvg/k+TKxfz0HJG5w=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "RpQaiva2WESd1j1FF7J+UQ=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "gIjt8pcDQEmyeax+AA4odA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "X/FUZz+95kS+IM89YeFRdA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "if $currentObject/EntityType = 'WOOFolder'\nthen 'parent-entity' \nelse 'navigable-entity'",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "SwXH5CjetEeLK7RklsGfuQ=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "UDoaODpwr06esaEo3+cqfw=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "1a4IPatbWEiM+MJwJyRobA=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "NFtipyzyYUmdm+BA6Uq/Xg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "EXVErHX3XUaj7ScvinBzRg=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "+E5oqcCjyki0sLHIq2G/BA=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "2PNJEzJu+0KF9JmZe54jSg=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "O0zhulp0GU+67Nzgg22siA=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "TFeSAHpHvEKkNA/F5BmXtw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "9R+rwckvZEa4OKnP4Em9BQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "LJFv7aji8EKgNFoHW3u8tQ=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "iwBmworjw0yqQtdMbE8Ymg=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "z+Vgo8lFQUKiEaLX7OulcQ=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "BX27TWjcBk+40EeRu0jzLQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "Q9hUjLhX5katAxPcjvQ6Zg=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "VH67xst3ikibQAwNKmLuZQ=="
+                          },
+                          "$Type": "CustomWidgets$CustomWidgetXPathSource",
+                          "EntityRef": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "lNtFgRhvFUKN0f8GKnetkg=="
+                            },
+                            "$Type": "DomainModels$DirectEntityRef",
+                            "Entity": "OpcenterEXDS_OperatorLanding.RM_RoutingEdge"
+                          },
+                          "ForceFullObjects": false,
+                          "SortBar": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "6aZYi6FqH0efIdAc7UiLXA=="
+                            },
+                            "$Type": "Forms$GridSortBar",
+                            "SortItems": [
+                              2
+                            ]
+                          },
+                          "SourceVariable": null,
+                          "XPathConstraint": "[CurrentWorkOrderId = $currentObject/WorkOrderId\nand (($currentObject/ParentFolderId = empty and (FromNodeParentEntityId = empty or ToNodeParentEntityId = empty)) or\n   ($currentObject/ParentFolderId != empty and (FromNodeParentEntityId = $currentObject/ParentFolderId or ToNodeParentEntityId = $currentObject/ParentFolderId)\n))]"
+                        },
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "6Bft0MHpiECu8zXNpx2bLg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "QCL5l5eZwkWKjWtzkUGRkQ=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "/j6i26wMZkKN6rfD9NhsAQ=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "l/w/RKRCL0qTX3Vt8N4H4Q=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "/3fekG3NJkeul1cGWAOhOA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "OevBBxKhbE+/M91CuZSfBA=="
+                          },
+                          "$Type": "DomainModels$AttributeRef",
+                          "Attribute": "OpcenterEXDS_OperatorLanding.RM_RoutingEdge.FromNodeEntityId",
+                          "EntityRef": null
+                        },
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "FM5CWvcT4ESQk3+OLXt77A=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "isWhX4K8PEK1NSDl5Vb4QA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "BYVGQXSZ2UiUe+Qm2oIacw=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "frBoJsrsbkuI0Zu10r5zfQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "fBAxtdF5Mkm4TdgyJZjZNQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "HwxruIqhUEOhYcth8XgXuA=="
+                          },
+                          "$Type": "DomainModels$AttributeRef",
+                          "Attribute": "OpcenterEXDS_OperatorLanding.RM_RoutingEdge.ToNodeEntityId",
+                          "EntityRef": null
+                        },
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "3MoRt7G8lEit8DI2g8jPTg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "vO5M/ckyEkOYfmsKcNmMaw=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "VIBx6nWXrE6VFk4PBBfZKg=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "u4rMUGfr1UmX3M/CBBRphQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "LW8zAxqFbkCMv7/GrL+KEA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "if $currentObject/IsExternalDependency\nthen 'external-dependency'\nelse if $currentObject/IsPreferred\nthen 'preferred-dependency'\nelse ''",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "WcWQVDVKQ0+aCxXCGkLf9g=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "ljwogu1xKUS2DE8ZTi61cg=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "oICpkQ9MKE+mxaUtoz95tw=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "+jhcCiK7eUib5u3RqM7brA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "xzgAna+FDUWBJKm+6R62fw=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "k6e3E8WJRkifgG2rilU1eg=="
+                          },
+                          "$Type": "Forms$NanoflowSource",
+                          "ForceFullObjects": false,
+                          "Nanoflow": "OpcenterEXDS_OperatorLanding.DS_GetBreadcrumb",
+                          "ParameterMappings": [
+                            2
+                          ]
+                        },
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "QZ6jg3yO90CKv8cGEIrj1w=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "Un5syR+wN0WoxmF5nK+rOQ=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "97Qf3YVkEUG3SxswQIxtVw=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "Kb91n17ZMUe2QOuoStGXog=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "z7nq9gerHUyVdSo9FLsxFA=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "Eh+vCVGpIkWDVZKmbGZnbw=="
+                          },
+                          "$Type": "DomainModels$AttributeRef",
+                          "Attribute": "OpcenterEXDS_OperatorLanding.GraphBreadcrumb.ParentId",
+                          "EntityRef": null
+                        },
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "0VlUokqX5EmL3ZUXIMCrDg=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "1C5k6KYJtEq/hW/9BN9taA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "B7KEC9I/fkKxlKm6tJVLlQ=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "GIiEGfZO60+dr/e61jZfvA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "eTUg8rezd0WZ8498eDSfQQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "$currentObject/Label",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "QBNOsBt4jUCgZSxjeY6H2Q=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "8JwfRzqxLkCOXhk5Zqt2ig=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "69Nl/TtGFECSA4e7S5rLQg=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "vwPPaWHvV0+JpoCXrKOqMw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "WJmiuSVHlUO9vflnglbZ1Q=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "$currentObject/DependencyType",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "Dne+PJQPhE+0hGU9bS2M6A=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "C4tU9rQDZUKH2KdOjJtplQ=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "pyc4OQvTskSJzNWoyl3bBQ=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "MgO+Y6Vg4ki2akC2sjQVvQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "0SGyaaBQkkWKxn13yw9iFQ=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "VeqA/OxUQkWFdlOa3IfxsQ=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "dhChflEc7EORNfW1R8XeHA=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "O+mxQAGQnESs+d+FYfUYKg=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "/o1DKwKWaE2OPMmTrn3zMA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "XdU87U7otESfltthpUx4xg=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "W1SAhQyRokiGpvpSQ85PDA=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    },
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "PbC2f4cvCUOtIRjw8Wl+rg=="
+                      },
+                      "$Type": "CustomWidgets$WidgetProperty",
+                      "TypePointer": {
+                        "Subtype": 0,
+                        "Data": "bvRPtT9lzkicwsrAwrZQXg=="
+                      },
+                      "Value": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "vHlhTcu49kmdUdHDmCxzqQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetValue",
+                        "Action": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "YtNwE6rcxEW9WdHfX5+31A=="
+                          },
+                          "$Type": "Forms$NoAction",
+                          "DisabledDuringExecution": true
+                        },
+                        "AttributeRef": null,
+                        "DataSource": null,
+                        "EntityRef": null,
+                        "Expression": "$currentObject/AlternativeGroup",
+                        "Form": "",
+                        "Icon": null,
+                        "Image": "",
+                        "Microflow": "",
+                        "Nanoflow": "",
+                        "Objects": [
+                          2
+                        ],
+                        "PrimitiveValue": "",
+                        "Selection": "None",
+                        "SourceVariable": null,
+                        "TextTemplate": null,
+                        "TranslatableValue": null,
+                        "TypePointer": {
+                          "Subtype": 0,
+                          "Data": "SuvwOR9TmUq/tcs2B5I+0w=="
+                        },
+                        "Widgets": [
+                          2
+                        ],
+                        "XPathConstraint": ""
+                      }
+                    }
+                  ],
+                  "TypePointer": {
+                    "Subtype": 0,
+                    "Data": "XqvA1XXBlke9vTfW1fe2Cw=="
+                  }
+                },
+                "TabIndex": 0,
+                "Type": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "dPxuA7PfBUy0Ym+6k7zl7w=="
+                  },
+                  "$Type": "CustomWidgets$CustomWidgetType",
+                  "HelpUrl": "",
+                  "ObjectType": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "XqvA1XXBlke9vTfW1fe2Cw=="
+                    },
+                    "$Type": "CustomWidgets$WidgetObjectType",
+                    "PropertyTypes": [
+                      2,
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "wbwQqGEDjEGomlisYapw+g=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Parent node ID *",
+                        "Category": "Graph::General",
+                        "Description": "If a graph of nested nodes needs to be rendered a parent node id should be supplied. This can then be used in the edges and nodes datasources to retrieve the correct data. The widget will also change this attribute on double-clicking a node",
+                        "IsDefault": false,
+                        "PropertyKey": "graphParentNodeAttr",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "gfYBjk+mjUujnZoyiwzVcQ=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "vSTZGpuu4kqpJU9WuQn/rA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Zoom to node",
+                        "Category": "Graph::General",
+                        "Description": "When a change to this attribute is detected the widget will zoom to the node ID supplied in the attribute. After this the attribute will be cleared.",
+                        "IsDefault": false,
+                        "PropertyKey": "zoomToNodeAttr",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "7DfPfFv+KU6rssJ/Ugr4fg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "1wbvF4Y01EKCSr/1nLao0g=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Zoom nodes",
+                        "Category": "Graph::General",
+                        "Description": "Default: 2. Defines how many nodes around the target node (the node to zoom in on) should be visible on both the left and right side.",
+                        "IsDefault": false,
+                        "PropertyKey": "zoomNodePadNr",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "zD9fz0IrIkGBWZKcoNoDlg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "Zuu96PS2dE2etndnd/Vnyg=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "Integer"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "y8rEbGgh3U+UiiqNKUqrBg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Graph min height",
+                        "Category": "Graph::Overrides / advanced",
+                        "Description": "Default: 500px, minimal height of the graph.",
+                        "IsDefault": false,
+                        "PropertyKey": "graphMinHeight",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "FkLaC/LWfU+N2A6if4v+lA=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "BiSw2XaQmUGTmmGa/tg3Ow=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "Integer"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "nIlhthB7CUmibwiWldK4ZA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node width",
+                        "Category": "Graph::Overrides / advanced",
+                        "Description": "Default: 250px",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeWidthExp",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "kcVWL9HyF0Cp+ZYQWfwPsg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "xDSOlNJwnk2b0gnqjGoo0A=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "Integer"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "eH73PNel1UeiF4pP9aOiyg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node height",
+                        "Category": "Graph::Overrides / advanced",
+                        "Description": "Default: 75px",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeHeightExp",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "hVcwp5MdwkKXzg8XSFbqZA=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "WkuYVM8DxUyx0sTBIMyQDg=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "Integer"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "4b/zrPotnEu1MA+CboIZ2Q=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node spacing x",
+                        "Category": "Graph::Overrides / advanced",
+                        "Description": "Default: 100px",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeSpacingXExp",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "LjbYxtXW/kylBDiQ5wDFJg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "LMzDbOy1J0ieaYrR7hfjTw=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "Integer"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "egcQ03LijUm+yAbr/0ww3g=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node spacing y",
+                        "Category": "Graph::Overrides / advanced",
+                        "Description": "Default: 20px",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeSpacingYExp",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "322CiHwYDkOPGt4/mIYtLg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "tEFSeI9kBU+SkwBddoPIJA=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "Integer"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "+eRPgF0JiUKwJrDZOfUMYA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Datasource *",
+                        "Category": "Nodes::Nodes",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeDatasource",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "dc1fEgYusEaRD/L3xCUpjQ=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": true,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": true,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "DataSource"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "PAHF/s8N+02dPd+UpXFwkw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node ID *",
+                        "Category": "Nodes::Nodes",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeId",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "Z5R9h2EJJ0+Kmz+hY2j5TA=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String",
+                            "AutoNumber",
+                            "Integer",
+                            "Long",
+                            "Decimal"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "nodeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": true,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "GpZQ7KsKbkG6mUUO1RD7oA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Has children *",
+                        "Category": "Nodes::Nodes",
+                        "Description": "If the node has nested/sub nodes",
+                        "IsDefault": false,
+                        "PropertyKey": "hasChildrenAttr",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "37/br02F0k29tVv2eimUuA=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "Boolean"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "nodeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "znhjBhb5Jk6LqVbnKB9EGQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node widgets *",
+                        "Category": "Nodes::Nodes",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeElementCreator",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "cN+HyWqvPE6ZxoxTA11hFg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "nodeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": true,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Widgets"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "RpQaiva2WESd1j1FF7J+UQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "CSS Class",
+                        "Category": "Nodes::Nodes",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "nodeClass",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "SwXH5CjetEeLK7RklsGfuQ=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "nodeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "Vuf2QQLwM0yP4uipR6iqgw=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "String"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "1a4IPatbWEiM+MJwJyRobA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "On click action",
+                        "Category": "Nodes::Actions",
+                        "Description": "Define a single click action. Double-click will show the sub graph if possible and ctrl + click will zoom on the node",
+                        "IsDefault": false,
+                        "PropertyKey": "onClickAction",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "+E5oqcCjyki0sLHIq2G/BA=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "nodeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Action"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "O0zhulp0GU+67Nzgg22siA=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "On double-click",
+                        "Category": "Nodes::Actions",
+                        "Description": "This action will be triggered along with opening the sub graph (if the node has children). The double click action will always be performed so it can be used to provide feedback when no children are available.",
+                        "IsDefault": false,
+                        "PropertyKey": "onDoubleClickAction",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "LJFv7aji8EKgNFoHW3u8tQ=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "nodeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Action"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "z+Vgo8lFQUKiEaLX7OulcQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Datasource *",
+                        "Category": "Edges::Edges",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "edgeDatasource",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "6Bft0MHpiECu8zXNpx2bLg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": true,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": true,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "DataSource"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "/j6i26wMZkKN6rfD9NhsAQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "From ID *",
+                        "Category": "Edges::Edges",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "edgeFromId",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "FM5CWvcT4ESQk3+OLXt77A=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String",
+                            "AutoNumber",
+                            "Integer",
+                            "Long",
+                            "Decimal"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "edgeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": true,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "BYVGQXSZ2UiUe+Qm2oIacw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "To ID *",
+                        "Category": "Edges::Edges",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "edgeToId",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "3MoRt7G8lEit8DI2g8jPTg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String",
+                            "AutoNumber",
+                            "Integer",
+                            "Long",
+                            "Decimal"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "edgeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": true,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "69Nl/TtGFECSA4e7S5rLQg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Edge Label",
+                        "Category": "Edges::Edges",
+                        "Description": "Label applied above the edge.",
+                        "IsDefault": false,
+                        "PropertyKey": "edgeLabel",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "Dne+PJQPhE+0hGU9bS2M6A=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "edgeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "4b/b2Kg5PE23jersl9oTaQ=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "String"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "bvRPtT9lzkicwsrAwrZQXg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Edge Label Subtitle",
+                        "Category": "Edges::Edges",
+                        "Description": "Label applied below the edge.",
+                        "IsDefault": false,
+                        "PropertyKey": "edgeLabelSubtitle",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "SuvwOR9TmUq/tcs2B5I+0w=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "edgeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "maLN0HvlKEm463Xay5TtTQ=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "String"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "VIBx6nWXrE6VFk4PBBfZKg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "CSS Class",
+                        "Category": "Edges::Edges",
+                        "Description": "The class will be applied to both the polyline and the label elements.",
+                        "IsDefault": false,
+                        "PropertyKey": "edgeClass",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "WcWQVDVKQ0+aCxXCGkLf9g=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "edgeDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "Iddi85bkC0W+DoEp7kVS9A=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "String"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "oICpkQ9MKE+mxaUtoz95tw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Datasource",
+                        "Category": "Breadcrumbs::Data",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "breadcrumbDatasource",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "QZ6jg3yO90CKv8cGEIrj1w=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": true,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "DataSource"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "97Qf3YVkEUG3SxswQIxtVw=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Node ID *",
+                        "Category": "Breadcrumbs::Data",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "breadcrumbNodeId",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "0VlUokqX5EmL3ZUXIMCrDg=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String",
+                            "AutoNumber",
+                            "Integer",
+                            "Long",
+                            "Decimal"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "breadcrumbDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "B7KEC9I/fkKxlKm6tJVLlQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Label *",
+                        "Category": "Breadcrumbs::Data",
+                        "Description": "",
+                        "IsDefault": false,
+                        "PropertyKey": "breadcrumbLabel",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "QBNOsBt4jUCgZSxjeY6H2Q=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "breadcrumbDatasource",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "Deg/BB0+Uk29dhocVEk+DA=="
+                            },
+                            "$Type": "CustomWidgets$WidgetReturnType",
+                            "AssignableTo": "",
+                            "EntityProperty": "",
+                            "IsList": false,
+                            "Type": "String"
+                          },
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Expression"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "pyc4OQvTskSJzNWoyl3bBQ=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Highlighted Source Node ID",
+                        "Category": "Highlights::Highlighting",
+                        "Description": "ID of the source node to highlight in the graph.",
+                        "IsDefault": false,
+                        "PropertyKey": "highlightedFromNodeId",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "VeqA/OxUQkWFdlOa3IfxsQ=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      },
+                      {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "O+mxQAGQnESs+d+FYfUYKg=="
+                        },
+                        "$Type": "CustomWidgets$WidgetPropertyType",
+                        "Caption": "Highlighted Destination Node ID",
+                        "Category": "Highlights::Highlighting",
+                        "Description": "ID of the destination node to highlight in the graph.",
+                        "IsDefault": false,
+                        "PropertyKey": "highlightedToNodeId",
+                        "ValueType": {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "W1SAhQyRokiGpvpSQ85PDA=="
+                          },
+                          "$Type": "CustomWidgets$WidgetValueType",
+                          "ActionVariables": [
+                            2
+                          ],
+                          "AllowNonPersistableEntities": false,
+                          "AllowedTypes": [
+                            1,
+                            "String"
+                          ],
+                          "AssociationTypes": [
+                            1
+                          ],
+                          "DataSourceProperty": "",
+                          "DefaultType": "None",
+                          "DefaultValue": "",
+                          "EntityProperty": "",
+                          "EnumerationValues": [
+                            2
+                          ],
+                          "IsLinked": false,
+                          "IsList": false,
+                          "IsMetaData": false,
+                          "IsPath": "No",
+                          "Multiline": false,
+                          "ObjectType": null,
+                          "OnChangeProperty": "",
+                          "ParameterIsList": false,
+                          "PathType": "None",
+                          "Required": false,
+                          "ReturnType": null,
+                          "SelectableObjectsProperty": "",
+                          "SelectionTypes": [
+                            1
+                          ],
+                          "SetLabel": false,
+                          "Translations": [
+                            2
+                          ],
+                          "Type": "Attribute"
+                        }
+                      }
+                    ]
+                  },
+                  "OfflineCapable": true,
+                  "StudioCategory": "Opcenter EX FN",
+                  "StudioProCategory": "Opcenter EX FN",
+                  "SupportedPlatform": "Web",
+                  "WidgetDescription": "Renders a graph with nodes and edges visualizing the dependencies and relation of the nodes",
+                  "WidgetId": "siemens.dependencyGraph.DependencyGraph",
+                  "WidgetName": "OPC EX FN Graph",
+                  "WidgetNeedsEntityContext": true,
+                  "WidgetPluginWidget": true
+                }
+              },
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "Hs4ASyIOikiSE+gQJjhP/A=="
+                },
+                "$Type": "Forms$DivContainer",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "nAti0TfenUeklV1ogdPDlw=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "additional-graph-command-bar",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "ConditionalVisibilitySettings": null,
+                "Name": "container1",
+                "NativeAccessibilitySettings": null,
+                "OnClickAction": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "aHWIN2uQ4kiYvJv1paJTJg=="
+                  },
+                  "$Type": "Forms$NoAction",
+                  "DisabledDuringExecution": true
+                },
+                "RenderMode": "Div",
+                "ScreenReaderHidden": false,
+                "TabIndex": 0,
+                "Widgets": [
+                  2,
+                  {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "DE/vrEh1SkmzrXjTcJrW4A=="
+                    },
+                    "$Type": "Forms$ActionButton",
+                    "Action": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "Sgik7OanREaDoWH6UPeV8A=="
+                      },
+                      "$Type": "Forms$CallNanoflowClientAction",
+                      "ConfirmationInfo": null,
+                      "DisabledDuringExecution": true,
+                      "Nanoflow": "OpcenterEXDS_OperatorLanding.NAV_Back",
+                      "OutputMappings": [
+                        3
+                      ],
+                      "ParameterMappings": [
+                        2
+                      ],
+                      "ProgressBar": "None",
+                      "ProgressMessage": null
+                    },
+                    "Appearance": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "W513KN5ev0OPUCwarGV+jA=="
+                      },
+                      "$Type": "Forms$Appearance",
+                      "Class": "",
+                      "DesignProperties": [
+                        3
+                      ],
+                      "DynamicClasses": "",
+                      "Style": ""
+                    },
+                    "AriaRole": "Button",
+                    "ButtonStyle": "Default",
+                    "CaptionTemplate": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "bGx2Wr+iyUKky7xaDeUoPA=="
+                      },
+                      "$Type": "Forms$ClientTemplate",
+                      "Fallback": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "VNV+5RQqz0iIlZhTdw2+ig=="
+                        },
+                        "$Type": "Texts$Text",
+                        "Items": [
+                          3
+                        ]
+                      },
+                      "Parameters": [
+                        2
+                      ],
+                      "Template": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "vEH48TN2L0W3a+rhQmjIyg=="
+                        },
+                        "$Type": "Texts$Text",
+                        "Items": [
+                          3,
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "byY1sVP3V0CR7LChpOAnPA=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "nl_NL",
+                            "Text": "Knop"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "ofbmcCK5b0amkKYBJ1A6cQ=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "en_US",
+                            "Text": "Exit Fullscreen"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "XhcwWPs+OEuVUFL1VkIOWA=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "it_IT",
+                            "Text": "Esci dalla modalità schermo intero"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "y7TovLY4PUCSpcPG+yNsPA=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "de_DE",
+                            "Text": "Vollbildmodus beenden"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "w6ENwZd4F06YUladyZd99w=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "zh_CN",
+                            "Text": "退出全屏"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "t6GQ6fG/pke5v2LLWSh8Zw=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "fr_FR",
+                            "Text": "Quitter Plein écran"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "2J/2qaQa3E6+gAl501/iGQ=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "ja_JP",
+                            "Text": "全画面表示を終了"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "Jv8s73bQHkiqRDHNKiZFBg=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "ko_KR",
+                            "Text": "전체 화면 종료"
+                          },
+                          {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "0JM967b3jU662B/EWJjb9g=="
+                            },
+                            "$Type": "Texts$Translation",
+                            "LanguageCode": "es_ES",
+                            "Text": "Salir de pantalla completa"
+                          }
+                        ]
+                      }
+                    },
+                    "ConditionalVisibilitySettings": null,
+                    "Icon": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "G3F8WkapBEeuxF08RbP92w=="
+                      },
+                      "$Type": "Forms$ImageIcon",
+                      "Image": "DISW_DesignSystem.SVG_Icons.siemens_full_screen_exit"
+                    },
+                    "Name": "actionButtonExitFullscreen",
+                    "NativeAccessibilitySettings": null,
+                    "RenderType": "Button",
+                    "TabIndex": 0,
+                    "Tooltip": {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "gqmCgG4Vyk6MVsnjRgrl0w=="
+                      },
+                      "$Type": "Texts$Text",
+                      "Items": [
+                        3,
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "D+qJ4Ib4dEi8vWiGoNmB2w=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "en_US",
+                          "Text": "Exit Fullscreen"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "QRntOVUKSkqKMbzaxjuNig=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "it_IT",
+                          "Text": "Esci dalla modalità schermo intero"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "30hH+9tl2EKMJGHkCkUaxg=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "de_DE",
+                          "Text": "Vollbildmodus beenden"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "vY3LqW7aGUyC7zwYwel3eA=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "zh_CN",
+                          "Text": "退出全屏"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "uR1z+pB3S02DIeZB4z5voA=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "fr_FR",
+                          "Text": "Quitter Plein écran"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "OSyf0x439kCbqjY98wHnbA=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "ja_JP",
+                          "Text": "全画面表示を終了"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "fa5KdACZQ06UMsXhOsLEjQ=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "ko_KR",
+                          "Text": "전체 화면 종료"
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "2wqiXHHalEe4pSoU0kfJmQ=="
+                          },
+                          "$Type": "Texts$Translation",
+                          "LanguageCode": "es_ES",
+                          "Text": "Salir de pantalla completa"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Form": "OpcenterEXFN_DISW_DesignSystem.CanvasContainer"
+  },
+  "MarkAsUsed": false,
+  "Name": "Routing_Popup",
+  "Parameters": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "ZkqhOFjUWEuQQtAMs6k9nA=="
+      },
+      "$Type": "Forms$PageParameter",
+      "DefaultValue": "",
+      "IsRequired": true,
+      "Name": "DependencyGraphContext",
+      "ParameterType": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "nKMf+sJrO0yVSgHyEWZyqA=="
+        },
+        "$Type": "DataTypes$ObjectType",
+        "Entity": "OpcenterEXDS_OperatorLanding.DependencyGraphContext"
+      }
+    },
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "yL4bzj+tcUKpGARmMq4MLQ=="
+      },
+      "$Type": "Forms$PageParameter",
+      "DefaultValue": "",
+      "IsRequired": true,
+      "Name": "RM_ComplexManufacturing_WorkOrderOperation",
+      "ParameterType": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "e+YZq+7n0k23Zs/9DSBdWA=="
+        },
+        "$Type": "DataTypes$ObjectType",
+        "Entity": "OpcenterEXDS_OperatorLanding.RM_ComplexManufacturing_WorkOrderOperation"
+      }
+    }
+  ],
+  "PopupCloseAction": "actionButtonExitFullscreen",
+  "PopupHeight": 0,
+  "PopupResizable": true,
+  "PopupWidth": 0,
+  "Title": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "r7n3XzrhjEaUUZsh2lm00w=="
+    },
+    "$Type": "Texts$Text",
+    "Items": [
+      3,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "bl6BAQwzSUaCW7jIir5kvQ=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "en_US",
+        "Text": "Navigator"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "mcQuvu+VxUyD69snyZZVOg=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "zh_CN",
+        "Text": "导航器"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "AkCO6Y68gkKetNZPiSgloQ=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "fr_FR",
+        "Text": "Navigateur"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "WqfW6FjhTUizZTB4iEDTUA=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "ja_JP",
+        "Text": "ナビゲータ"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "L/FtAwc9CUq4bHm6NeumNg=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "en_GB",
+        "Text": "Navigator"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "TFZPa5ZgjUGKQ//i/+zmKw=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "it_IT",
+        "Text": "Navigatore"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "YHfyI1eAmEqafNDN3pNiWA=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "de_DE",
+        "Text": "Navigator"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "Kby84J5dBUy+gordAlfRhQ=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "es_ES",
+        "Text": "Navegador"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "MaY7LotKRkWbdD3fzfu0Zg=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "ko_KR",
+        "Text": "탐색기"
+      }
+    ]
+  },
+  "Url": "",
+  "Variables": [
+    3
+  ]
+}
