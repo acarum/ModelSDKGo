@@ -490,6 +490,48 @@ func processBatchMode(sourceDir string, outputDir string, outputFormat string, o
 			}
 		}
 
+		// ==== SECTION 6: Page Commands ====
+		if options.IncludePageCommands {
+			pageCommands, err := collectPageCommands(db, contentsDir, mprPath, report.NavigationItems, report.MicroflowCalls)
+			if err != nil {
+				fmt.Printf("  ⚠️  Warning: Error collecting page commands: %v\n", err)
+			} else {
+				report.NavigationCommands = pageCommands
+			}
+		}
+
+		// ==== SECTION 7: Pages Analysis (Detailed with Recursive Hierarchy) ====
+		if options.IncludePagesCommandsHierarchy {
+			pagesAnalysis, err := collectPagesWithMicroflows(db, contentsDir)
+			if err != nil {
+				fmt.Printf("  ⚠️  Warning: Error analyzing pages: %v\n", err)
+			} else {
+				report.PagesAnalysis = pagesAnalysis
+				// Populate PageCommands (simplified view) from PagesAnalysis
+				for _, page := range report.PagesAnalysis {
+					targets := make([]TargetInfo, 0)
+					for _, cmd := range page.TargetCommands {
+						if idx := strings.LastIndex(cmd, "."); idx >= 0 {
+							targets = append(targets, TargetInfo{
+								AppName:     cmd[:idx],
+								CommandName: cmd[idx+1:],
+							})
+						} else {
+							targets = append(targets, TargetInfo{
+								AppName:     "-",
+								CommandName: cmd,
+							})
+						}
+					}
+					report.PageCommands = append(report.PageCommands, PageCommandSummary{
+						PageName: page.Name,
+						Module:   page.Module,
+						Targets:  targets,
+					})
+				}
+			}
+		}
+
 		db.Close()
 
 		// Generate reports based on format
