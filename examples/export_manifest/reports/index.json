@@ -1,0 +1,29 @@
+{
+  "GeneratedAt": "2026-05-18 18:03:44",
+  "TotalReports": 3,
+  "SuccessCount": 3,
+  "FailedCount": 0,
+  "Reports": [
+    {
+      "ProjectName": "Opcenter EX DS Complex Manufacturing",
+      "MPRPath": "c:\\Workspaces\\Mendix\\2601S186_SPX\\CMX\\Opcenter EX DS Complex Manufacturing.mpr",
+      "ReportPath": "reports\\Opcenter EX DS Complex Manufacturing.json",
+      "Success": true,
+      "Error": ""
+    },
+    {
+      "ProjectName": "Opcenter EX DS Manufacturing",
+      "MPRPath": "c:\\Workspaces\\Mendix\\2601S186_SPX\\MFT\\Opcenter EX DS Manufacturing.mpr",
+      "ReportPath": "reports\\Opcenter EX DS Manufacturing.json",
+      "Success": true,
+      "Error": ""
+    },
+    {
+      "ProjectName": "Opcenter EX DS Repetitive Manufacturing",
+      "MPRPath": "c:\\Workspaces\\Mendix\\2601S186_SPX\\RPT\\Opcenter EX DS Repetitive Manufacturing.mpr",
+      "ReportPath": "reports\\Opcenter EX DS Repetitive Manufacturing.json",
+      "Success": true,
+      "Error": ""
+    }
+  ]
+}

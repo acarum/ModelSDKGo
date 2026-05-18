@@ -173,6 +173,10 @@ func main() {
 
 	fmt.Printf("Scanning %d pages...\n\n", len(pages))
 
+	fmt.Printf("Building unit caches...")
+	caches := buildUnitCaches(reader)
+	fmt.Printf(" done (%d nanoflows, %d pages cached)\n\n", len(caches.NanoflowShowPage), len(caches.PageWidgets))
+
 	var reports []PageReport
 
 	for i, page := range pages {
@@ -216,7 +220,7 @@ func main() {
 			continue
 		}
 
-		report := extractPlaceholders(pageData, page.Name, string(page.ID), mprPath)
+		report := extractPlaceholders(pageData, page.Name, string(page.ID), mprPath, caches)
 		report.MprPath = mprPath
 		// Extract page title using en_US
 		if page.Title != nil {
@@ -236,7 +240,7 @@ func main() {
 		// One file per page
 		for _, r := range reports {
 			outputFile := filepath.Join(outputDir, r.PageName+"_manifest.md")
-			exportMarkdown([]PageReport{r}, outputFile, r.PageName)
+			exportMarkdown([]PageReport{r}, outputFile, r.PageName, caches)
 		}
 	} else {
 		outputFileName := "buttons_manifest.md"
@@ -244,7 +248,7 @@ func main() {
 			outputFileName = pageFilter + "_manifest.md"
 		}
 		outputFile := filepath.Join(outputDir, outputFileName)
-		exportMarkdown(reports, outputFile, pageFilter)
+		exportMarkdown(reports, outputFile, pageFilter, caches)
 	}
 }
 
@@ -264,7 +268,7 @@ func matchesPageType(pageName, pageType string) bool {
 }
 
 // extractPlaceholders parses FormCall.Arguments to find Main and Right placeholders
-func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprPath string) PageReport {
+func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprPath string, caches *UnitCaches) PageReport {
 	report := PageReport{PageName: pageName, PageID: pageID}
 
 	formCall, ok := getMap(pageData, "FormCall")
@@ -297,7 +301,10 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprP
 				for bi := range tabs[ti].Widgets[wi].ActionButtons {
 					btn := &tabs[ti].Widgets[wi].ActionButtons[bi]
 					if btn.NanoflowName != "" {
-						btn.ShowPageName = loadNanoflowShowPage(mprPath, btn.NanoflowName)
+						parts := strings.SplitN(btn.NanoflowName, ".", 2)
+						if len(parts) == 2 {
+							btn.ShowPageName = caches.NanoflowShowPage[parts[1]]
+						}
 					}
 				}
 			}
@@ -311,7 +318,10 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprP
 			// Resolve ShowPage for each button's nanoflow
 			for i := range directButtons {
 				if directButtons[i].NanoflowName != "" {
-					directButtons[i].ShowPageName = loadNanoflowShowPage(mprPath, directButtons[i].NanoflowName)
+					parts := strings.SplitN(directButtons[i].NanoflowName, ".", 2)
+					if len(parts) == 2 {
+						directButtons[i].ShowPageName = caches.NanoflowShowPage[parts[1]]
+					}
 				}
 			}
 		}
@@ -680,7 +690,54 @@ func loadPanelWidgets(mprPath, fullPageName string) []WidgetCaption {
 	return nil
 }
 
-// bytesToUUID converts a 16-byte SQL BLOB to UUID string (Windows GUID byte order)
+// UnitCaches holds pre-built lookup maps to avoid repeated MPR scans.
+// Both maps use short names (no module prefix) as keys.
+type UnitCaches struct {
+	NanoflowShowPage map[string]string          // nanoflow short name → opened page full name
+	PageWidgets      map[string][]WidgetCaption // page short name → widgets
+}
+
+// buildUnitCaches scans all units once and builds lookup caches used throughout the export.
+// This replaces the O(N²) pattern of loadNanoflowShowPage / loadPanelWidgets.
+func buildUnitCaches(reader *modelsdk.Reader) *UnitCaches {
+	caches := &UnitCaches{
+		NanoflowShowPage: make(map[string]string),
+		PageWidgets:      make(map[string][]WidgetCaption),
+	}
+
+	nanoflows, err := reader.GetRawUnitsByType("Microflows$Nanoflow")
+	if err == nil {
+		for _, unit := range nanoflows {
+			var m map[string]interface{}
+			if bson.Unmarshal(unit.Contents, &m) != nil {
+				continue
+			}
+			name, _ := m["Name"].(string)
+			if name == "" {
+				continue
+			}
+			caches.NanoflowShowPage[name] = findShowFormPage(m)
+		}
+	}
+
+	allPages, err := reader.GetRawUnitsByType("Forms$Page")
+	if err == nil {
+		for _, unit := range allPages {
+			var m map[string]interface{}
+			if bson.Unmarshal(unit.Contents, &m) != nil {
+				continue
+			}
+			name, _ := m["Name"].(string)
+			if name == "" {
+				continue
+			}
+			caches.PageWidgets[name] = findWidgetCaptions(m)
+		}
+	}
+
+	return caches
+}
+
 func bytesToUUID(b []byte) string {
 	if len(b) != 16 {
 		return ""
@@ -1407,7 +1464,7 @@ func isUIModule(moduleName string) bool {
 }
 
 // writePlaceholderSection writes one Main/Right section with tabs and widget captions
-func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderContent, mprPath string) {
+func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderContent, mprPath string, caches *UnitCaches) {
 	isModalPanel := ph != nil && strings.Contains(ph.Parameter, "EXFN_ModalPanel")
 	fmt.Fprintf(file, "### %s\n\n", sectionName)
 	if ph == nil {
@@ -1553,7 +1610,8 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 					pageShort = pageShort[idx+1:]
 				}
 				fmt.Fprintf(file, "**Panel: `%s`**\n\n", pageShort)
-				widgets := loadPanelWidgets(mprPath, btn.ShowPageName)
+				pageShortName := pageShort
+				widgets := caches.PageWidgets[pageShortName]
 				if len(widgets) == 0 {
 					fmt.Fprintf(file, "_No widgets with captions found._\n\n")
 				} else {
@@ -1686,7 +1744,7 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 								pageShort = pageShort[idx+1:]
 							}
 							fmt.Fprintf(file, "  **Panel: `%s`**\n\n", pageShort)
-							panelWidgets := loadPanelWidgets(mprPath, btn.ShowPageName)
+							panelWidgets := caches.PageWidgets[pageShort]
 							if len(panelWidgets) == 0 {
 								fmt.Fprintf(file, "  _No widgets with captions found._\n\n")
 							} else {
@@ -1714,7 +1772,7 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 }
 
 // exportMarkdown writes the full report to a .md file
-func exportMarkdown(reports []PageReport, outputFile string, pageFilter string) {
+func exportMarkdown(reports []PageReport, outputFile string, pageFilter string, caches *UnitCaches) {
 	file, err := os.Create(outputFile)
 	if err != nil {
 		log.Fatalf("Error creating Markdown file: %v", err)
@@ -1755,7 +1813,7 @@ func exportMarkdown(reports []PageReport, outputFile string, pageFilter string) 
 			fmt.Fprintf(file, "**Title:** %s\n\n", r.PageTitle)
 		}
 
-		writePlaceholderSection(file, "Main", r.Main, r.MprPath)
+		writePlaceholderSection(file, "Main", r.Main, r.MprPath, caches)
 
 		// Skip Right section if the layout is EXFN_ModalPanel (modal panel has no Right placeholder)
 		mainParam := ""
@@ -1763,7 +1821,7 @@ func exportMarkdown(reports []PageReport, outputFile string, pageFilter string) 
 			mainParam = r.Main.Parameter
 		}
 		if !strings.Contains(mainParam, "EXFN_ModalPanel") {
-			writePlaceholderSection(file, "Right", r.Right, r.MprPath)
+			writePlaceholderSection(file, "Right", r.Right, r.MprPath, caches)
 		}
 
 		fmt.Fprintf(file, "---\n\n")

@@ -141,6 +141,65 @@ type ReportOptions struct {
 	IncludePagesCommandsHierarchy bool
 }
 
+// Hierarchy diagnostics (phase 7)
+var hierarchyDebug bool
+var hierarchyLogEvery int
+var hierarchyLoadCalls int
+var hierarchyLookupScans int
+var hierarchyLookupMisses int
+var hierarchyStartTime time.Time
+var hierarchyFlowIndex map[string]map[string]interface{}
+var hierarchyMissingFlows map[string]bool
+var pageCommandsDebug bool
+var pageCommandsLogEvery int
+var flowLookupLoaded bool
+var flowLookupByName map[string]MicroflowInfo
+var flowLookupByQualified map[string]MicroflowInfo
+
+func hierarchyLogf(format string, args ...interface{}) {
+	if !hierarchyDebug {
+		return
+	}
+	fmt.Printf("  [hierarchy] "+format+"\n", args...)
+}
+
+func pageCommandsLogf(format string, args ...interface{}) {
+	if !pageCommandsDebug {
+		return
+	}
+	fmt.Printf("  [page-commands] "+format+"\n", args...)
+}
+
+func ensureFlowLookup(db *sql.DB, contentsDir string) {
+	if flowLookupLoaded {
+		return
+	}
+
+	flowLookupByName = make(map[string]MicroflowInfo)
+	flowLookupByQualified = make(map[string]MicroflowInfo)
+
+	microflows, err := listMicroflows(db, contentsDir)
+	if err != nil {
+		pageCommandsLogf("flow lookup init failed: %v", err)
+		flowLookupLoaded = true
+		return
+	}
+
+	for _, mf := range microflows {
+		if mf.Name != "" {
+			if _, exists := flowLookupByName[mf.Name]; !exists {
+				flowLookupByName[mf.Name] = mf
+			}
+		}
+		if mf.ModuleName != "" && mf.Name != "" {
+			flowLookupByQualified[mf.ModuleName+"."+mf.Name] = mf
+		}
+	}
+
+	flowLookupLoaded = true
+	pageCommandsLogf("flow lookup initialized: byName=%d byQualified=%d", len(flowLookupByName), len(flowLookupByQualified))
+}
+
 // MicroflowCallHierarchy represents a recursive call tree
 type MicroflowCallHierarchy struct {
 	Name  string
@@ -301,6 +360,10 @@ func main() {
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
 	includePageCommands := flag.Bool("include-page-commands", true, "Include command bar actions from navigation pages in the report")
 	includePagesCommandsHierarchy := flag.Bool("include-pages-commands-hierarchy", true, "Include detailed pages/panels analysis with recursive microflow hierarchy (up to 5 levels)")
+	pageCommandsDebugFlag := flag.Bool("page-commands-debug", false, "Enable verbose diagnostics for page command extraction (phase 6)")
+	pageCommandsLogEveryFlag := flag.Int("page-commands-log-every", 10, "When page-commands-debug is enabled, print progress every N analyzed pages")
+	hierarchyDebugFlag := flag.Bool("hierarchy-debug", false, "Enable verbose diagnostics for recursive hierarchy analysis (phase 7)")
+	hierarchyLogEveryFlag := flag.Int("hierarchy-log-every", 200, "When hierarchy-debug is enabled, print progress every N scanned units")
 	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
 	sourceDir := flag.String("source-dir", "", "Source directory to scan for MPR files recursively (batch mode)")
 	outputFormat := flag.String("output-format", "md", "Output format: 'md' (Markdown), 'json' (JSON), or 'both' (Markdown + JSON)")
@@ -331,6 +394,18 @@ func main() {
 		fmt.Fprintf(os.Stderr, "❌ Invalid output format '%s'. Must be 'md', 'json', or 'both'\n", *outputFormat)
 		flag.Usage()
 		os.Exit(1)
+	}
+
+	hierarchyDebug = *hierarchyDebugFlag
+	hierarchyLogEvery = *hierarchyLogEveryFlag
+	if hierarchyLogEvery <= 0 {
+		hierarchyLogEvery = 200
+	}
+
+	pageCommandsDebug = *pageCommandsDebugFlag
+	pageCommandsLogEvery = *pageCommandsLogEveryFlag
+	if pageCommandsLogEvery <= 0 {
+		pageCommandsLogEvery = 10
 	}
 
 	// Create report options
@@ -2638,17 +2713,13 @@ func loadFlowByReference(db *sql.DB, contentsDir string, flowRef string) map[str
 		}
 	}
 
-	// Try loading by qualified name
-	microflows, err := listMicroflows(db, contentsDir)
-	if err != nil {
-		return nil
+	// Try cached lookup by qualified name or simple name
+	ensureFlowLookup(db, contentsDir)
+	if mf, ok := flowLookupByQualified[flowRef]; ok {
+		return mf.Content
 	}
-
-	for _, mf := range microflows {
-		fullName := mf.ModuleName + "." + mf.Name
-		if fullName == flowRef || mf.Name == flowRef {
-			return mf.Content
-		}
+	if mf, ok := flowLookupByName[flowRef]; ok {
+		return mf.Content
 	}
 
 	return nil
@@ -3096,10 +3167,17 @@ func extractButtonCaption(button map[string]interface{}) string {
 // Note: In Mendix, OnClickAction is on the parent DivContainer, and Caption is in sibling DynamicText
 func extractActionButtons(container map[string]interface{}, db *sql.DB, contentsDir string) []PageCommandButton {
 	var buttons []PageCommandButton
+	start := time.Now()
+	nodesVisited := 0
+	divContainers := 0
+	buttonPairs := 0
+	nanoflowResolves := 0
+	microflowResolves := 0
 
 	// Recursive search that only follows Widgets field, not all fields
 	var searchWidgets func(data interface{}, parentAction map[string]interface{})
 	searchWidgets = func(data interface{}, parentAction map[string]interface{}) {
+		nodesVisited++
 		switch v := data.(type) {
 		case map[string]interface{}:
 			typeStr, _ := v["$Type"].(string)
@@ -3107,6 +3185,7 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 			// Capture OnClickAction from DivContainer to pass to children
 			currentAction := parentAction
 			if typeStr == "Forms$DivContainer" {
+				divContainers++
 				if onClickAction, ok := v["OnClickAction"].(map[string]interface{}); ok {
 					currentAction = onClickAction
 				}
@@ -3132,6 +3211,7 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 
 					// If we found both, extract button with caption from DynamicText
 					if actionButton != nil && currentAction != nil {
+						buttonPairs++
 						button := PageCommandButton{
 							ButtonName: extractNameFromContents(actionButton),
 							Caption:    extractCaptionFromDynamicText(dynamicText),
@@ -3144,7 +3224,10 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 							if strings.Contains(actionType, "CallNanoflowClientAction") {
 								if nanoflow, ok := currentAction["Nanoflow"].(string); ok {
 									button.ActionName = nanoflow
+									nanoflowResolves++
+									nfStart := time.Now()
 									nanoflowPages := loadNanoflowShowPages(db, contentsDir, nanoflow)
+									pageCommandsLogf("extractButtons nanoflow=%s pages=%d elapsed=%s", nanoflow, len(nanoflowPages), time.Since(nfStart).Truncate(time.Millisecond))
 									if len(nanoflowPages) > 0 {
 										button.TargetPage = strings.Join(nanoflowPages, ", ")
 									}
@@ -3152,7 +3235,10 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 							} else if strings.Contains(actionType, "CallMicroflowClientAction") {
 								if microflow, ok := currentAction["Microflow"].(string); ok {
 									button.ActionName = microflow
+									microflowResolves++
+									mfStart := time.Now()
 									microflowPages := loadMicroflowShowPages(db, contentsDir, microflow)
+									pageCommandsLogf("extractButtons microflow=%s pages=%d elapsed=%s", microflow, len(microflowPages), time.Since(mfStart).Truncate(time.Millisecond))
 									if len(microflowPages) > 0 {
 										button.TargetPage = strings.Join(microflowPages, ", ")
 									}
@@ -3213,6 +3299,15 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 	}
 
 	searchWidgets(container, nil)
+	pageCommandsLogf("extractButtons summary nodes=%d divContainers=%d pairs=%d nanoflowResolves=%d microflowResolves=%d buttons=%d elapsed=%s",
+		nodesVisited,
+		divContainers,
+		buttonPairs,
+		nanoflowResolves,
+		microflowResolves,
+		len(buttons),
+		time.Since(start).Truncate(time.Millisecond),
+	)
 	return buttons
 }
 
@@ -3347,18 +3442,29 @@ func findCommandByButtonHeuristic(pageQualifiedName string, buttonCaption string
 // findSaveButtonCommand finds the "Save" button in a page and extracts the command it calls
 // Uses multiple strategies: direct button search, flow analysis, and heuristic name matching
 func findSaveButtonCommand(db *sql.DB, contentsDir string, pageQualifiedName string, allMicroflowCalls []MicroflowCallInfo) string {
+	start := time.Now()
+	pageCommandsLogf("findSaveButton start page=%s", pageQualifiedName)
+	defer func() {
+		pageCommandsLogf("findSaveButton end page=%s elapsed=%s", pageQualifiedName, time.Since(start).Truncate(time.Millisecond))
+	}()
+
 	// Load the target page
+	loadStart := time.Now()
 	pageData, err := loadPageByQualifiedName(db, contentsDir, pageQualifiedName)
+	pageCommandsLogf("findSaveButton page=%s loadPage elapsed=%s", pageQualifiedName, time.Since(loadStart).Truncate(time.Millisecond))
 	if err != nil || pageData == nil {
 		// If page loading fails, try heuristic approach
+		pageCommandsLogf("findSaveButton page=%s fallback=page-heuristic reason=load-error", pageQualifiedName)
 		return findCommandByPageNameHeuristic(pageQualifiedName, allMicroflowCalls)
 	}
 
 	// First try to find "Save" button specifically
 	saveButtonFlow := findSaveButtonFlow(pageData)
+	pageCommandsLogf("findSaveButton page=%s saveButtonFlow=%s", pageQualifiedName, saveButtonFlow)
 	if saveButtonFlow != "" {
 		command := extractCommandFromFlow(db, contentsDir, saveButtonFlow)
 		if command != "" {
+			pageCommandsLogf("findSaveButton page=%s resolved-from-save-flow command=%s", pageQualifiedName, command)
 			return command
 		}
 	}
@@ -3366,14 +3472,17 @@ func findSaveButtonCommand(db *sql.DB, contentsDir string, pageQualifiedName str
 	// If no Save button found, try to find any flow that might contain a command
 	// This handles PANEL pages that might have different button structures
 	flows := findAllFlowsInPage(pageData)
+	pageCommandsLogf("findSaveButton page=%s flowsInPage=%d", pageQualifiedName, len(flows))
 	for _, flow := range flows {
 		command := extractCommandFromFlow(db, contentsDir, flow)
 		if command != "" {
+			pageCommandsLogf("findSaveButton page=%s resolved-from-flow=%s command=%s", pageQualifiedName, flow, command)
 			return command
 		}
 	}
 
 	// If no command found through flow analysis, try heuristic approach
+	pageCommandsLogf("findSaveButton page=%s fallback=page-heuristic reason=no-command", pageQualifiedName)
 	return findCommandByPageNameHeuristic(pageQualifiedName, allMicroflowCalls)
 }
 
@@ -3633,9 +3742,16 @@ func findAllFlowsInPage(pageData map[string]interface{}) []string {
 
 // extractCommandFromFlow loads a flow and extracts CommandName from MicroflowCall, ExternalAction, or JavaAction
 func extractCommandFromFlow(db *sql.DB, contentsDir string, flowName string) string {
+	flowStart := time.Now()
+	pageCommandsLogf("extractCommandFromFlow start flow=%s", flowName)
+	defer func() {
+		pageCommandsLogf("extractCommandFromFlow end flow=%s elapsed=%s", flowName, time.Since(flowStart).Truncate(time.Millisecond))
+	}()
+
 	query := `SELECT UnitID FROM Unit`
 	rows, err := db.Query(query)
 	if err != nil {
+		pageCommandsLogf("extractCommandFromFlow flow=%s query-error=%v", flowName, err)
 		return ""
 	}
 	defer rows.Close()
@@ -3676,7 +3792,11 @@ func extractCommandFromFlow(db *sql.DB, contentsDir string, flowName string) str
 
 		if matched {
 			// Search for command calls in the flow
-			return searchFlowForCommand(data)
+			command := searchFlowForCommand(data)
+			if command != "" {
+				pageCommandsLogf("extractCommandFromFlow flow=%s command=%s", flowName, command)
+			}
+			return command
 		}
 	}
 
@@ -3777,34 +3897,35 @@ func searchFlowForCommand(data interface{}) string {
 
 // loadNanoflowShowPages loads a nanoflow and finds all ShowPage actions
 func loadNanoflowShowPages(db *sql.DB, contentsDir string, nanoflowName string) []string {
-	query := `SELECT UnitID FROM Unit`
-	rows, err := db.Query(query)
-	if err != nil {
-		return nil
+	ensureFlowLookup(db, contentsDir)
+
+	// Try qualified name first
+	if mf, ok := flowLookupByQualified[nanoflowName]; ok {
+		if typeName, ok := mf.Content["$Type"].(string); ok && typeName == "Microflows$Nanoflow" {
+			visited := make(map[string]bool)
+			visited[nanoflowName] = true
+			return findAllShowPagesInFlowRecursive(db, contentsDir, mf.Content, visited)
+		}
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		var unitID []byte
-		if err := rows.Scan(&unitID); err != nil {
-			continue
-		}
-
-		unitIDStr := blobToUUID(unitID)
-		content, err := loadUnitContents(contentsDir, unitIDStr)
-		if err != nil {
-			continue
-		}
-
-		// Check if this is a Nanoflow with matching name
-		if typeName, ok := content["$Type"].(string); ok && typeName == "Microflows$Nanoflow" {
-			name := extractNameFromContents(content)
-			// Match by simple name or qualified name
-			if name == nanoflowName || strings.HasSuffix(nanoflowName, "."+name) {
+	// Try simple name from qualified input
+	if idx := strings.LastIndex(nanoflowName, "."); idx >= 0 && idx+1 < len(nanoflowName) {
+		simpleName := nanoflowName[idx+1:]
+		if mf, ok := flowLookupByName[simpleName]; ok {
+			if typeName, ok := mf.Content["$Type"].(string); ok && typeName == "Microflows$Nanoflow" {
 				visited := make(map[string]bool)
 				visited[nanoflowName] = true
-				return findAllShowPagesInFlowRecursive(db, contentsDir, content, visited)
+				return findAllShowPagesInFlowRecursive(db, contentsDir, mf.Content, visited)
 			}
+		}
+	}
+
+	// Fallback: input already a simple name
+	if mf, ok := flowLookupByName[nanoflowName]; ok {
+		if typeName, ok := mf.Content["$Type"].(string); ok && typeName == "Microflows$Nanoflow" {
+			visited := make(map[string]bool)
+			visited[nanoflowName] = true
+			return findAllShowPagesInFlowRecursive(db, contentsDir, mf.Content, visited)
 		}
 	}
 
@@ -3813,19 +3934,31 @@ func loadNanoflowShowPages(db *sql.DB, contentsDir string, nanoflowName string) 
 
 // loadMicroflowShowPages loads a microflow and finds all ShowPage actions
 func loadMicroflowShowPages(db *sql.DB, contentsDir string, microflowName string) []string {
-	microflows, err := listMicroflows(db, contentsDir)
-	if err != nil {
-		return nil
+	ensureFlowLookup(db, contentsDir)
+
+	if mf, ok := flowLookupByQualified[microflowName]; ok {
+		visited := make(map[string]bool)
+		visited[microflowName] = true
+		return findAllShowPagesInFlowRecursive(db, contentsDir, mf.Content, visited)
 	}
 
-	for _, mf := range microflows {
-		// Match by simple name or qualified name
-		if mf.Name == microflowName || strings.HasSuffix(microflowName, "."+mf.Name) {
+	if idx := strings.LastIndex(microflowName, "."); idx >= 0 && idx+1 < len(microflowName) {
+		simpleName := microflowName[idx+1:]
+		if mf, ok := flowLookupByName[simpleName]; ok {
 			visited := make(map[string]bool)
-			fullName := mf.ModuleName + "." + mf.Name
-			visited[fullName] = true
+			if mf.ModuleName != "" {
+				visited[mf.ModuleName+"."+mf.Name] = true
+			}
 			return findAllShowPagesInFlowRecursive(db, contentsDir, mf.Content, visited)
 		}
+	}
+
+	if mf, ok := flowLookupByName[microflowName]; ok {
+		visited := make(map[string]bool)
+		if mf.ModuleName != "" {
+			visited[mf.ModuleName+"."+mf.Name] = true
+		}
+		return findAllShowPagesInFlowRecursive(db, contentsDir, mf.Content, visited)
 	}
 
 	return nil
@@ -3833,6 +3966,9 @@ func loadMicroflowShowPages(db *sql.DB, contentsDir string, microflowName string
 
 // collectPageCommands extracts command bar actions from pages listed in navigation items
 func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigationItems []NavigationItem, allMicroflowCalls []MicroflowCallInfo) ([]PageCommandInfo, error) {
+	phaseStart := time.Now()
+	pageCommandsLogf("start phase 6")
+
 	// Get unique list of target pages from navigation items (filter out "-" and empty strings)
 	uniquePages := make(map[string]bool)
 	for _, item := range navigationItems {
@@ -3842,44 +3978,77 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 	}
 
 	fmt.Printf("  📄 Found %d unique page(s) to analyze\n", len(uniquePages))
+	pageCommandsLogf("uniquePages=%d", len(uniquePages))
 
 	var pageCommands []PageCommandInfo
 	analyzed := 0
 	skipped := 0
+	processed := 0
+	skipReasons := make(map[string]int)
 
 	for pageName := range uniquePages {
+		processed++
+		pageStart := time.Now()
+		pageCommandsLogf("start page=%s", pageName)
+		if pageCommandsDebug && processed%pageCommandsLogEvery == 0 {
+			pageCommandsLogf("progress processed=%d analyzed=%d skipped=%d elapsed=%s",
+				processed,
+				analyzed,
+				skipped,
+				time.Since(phaseStart).Truncate(time.Second),
+			)
+		}
+
 		// Load page BSON
+		loadPageStart := time.Now()
 		pageData, err := loadPageByQualifiedName(db, contentsDir, pageName)
+		pageCommandsLogf("step page=%s loadPage elapsed=%s", pageName, time.Since(loadPageStart).Truncate(time.Millisecond))
 		if err != nil {
 			// Skip pages that can't be loaded
 			skipped++
+			skipReasons["page-load"]++
+			pageCommandsLogf("skip page=%s reason=page-load err=%v", pageName, err)
 			continue
 		}
 
 		// Find Right placeholder
+		rightStart := time.Now()
 		rightWidgets := findRightPlaceholder(pageData)
+		pageCommandsLogf("step page=%s findRight elapsed=%s hasRight=%v", pageName, time.Since(rightStart).Truncate(time.Millisecond), rightWidgets != nil)
 		if rightWidgets == nil {
 			skipped++
+			skipReasons["no-right-placeholder"]++
+			pageCommandsLogf("skip page=%s reason=no-right-placeholder", pageName)
 			continue
 		}
 
 		// Resolve snippet if present in Right placeholder
+		resolveStart := time.Now()
 		resolvedWidgets, _ := resolveRightPlaceholderWidgets(rightWidgets, contentsDir, db, mprPath)
+		pageCommandsLogf("step page=%s resolveRightSnippet elapsed=%s", pageName, time.Since(resolveStart).Truncate(time.Millisecond))
 
 		// Find first command bar container
+		cmdBarStart := time.Now()
 		commandBarContainer := findFirstCommandBarContainer(resolvedWidgets)
+		pageCommandsLogf("step page=%s findCommandBar elapsed=%s hasCommandBar=%v", pageName, time.Since(cmdBarStart).Truncate(time.Millisecond), commandBarContainer != nil)
 		if commandBarContainer == nil {
 			skipped++
+			skipReasons["no-command-bar"]++
+			pageCommandsLogf("skip page=%s reason=no-command-bar", pageName)
 			continue
 		}
 
 		// Extract action buttons
+		buttonsStart := time.Now()
 		buttons := extractActionButtons(commandBarContainer, db, contentsDir)
+		pageCommandsLogf("step page=%s extractButtons elapsed=%s buttons=%d", pageName, time.Since(buttonsStart).Truncate(time.Millisecond), len(buttons))
 		if len(buttons) > 0 {
 			// For each button, find the command it calls
 			for i := range buttons {
+				buttonStart := time.Now()
 				// Strategy 1: If button opens a target page (PANEL_*), find command in that page
 				if buttons[i].TargetPage != "" && buttons[i].TargetPage != "-" {
+					pageCommandsLogf("button page=%s targetPage=%s call=findSaveButton", pageName, buttons[i].TargetPage)
 					buttons[i].TargetCommand = findSaveButtonCommand(db, contentsDir, buttons[i].TargetPage, allMicroflowCalls)
 					// Extract AppName and CommandName from TargetCommand (format: "AppName.CommandName")
 					if buttons[i].TargetCommand != "" {
@@ -3892,6 +4061,7 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 					// Strategy 2: If button calls a nanoflow/microflow directly, try to find command in that flow
 					if strings.Contains(buttons[i].ActionType, "CallNanoflowClientAction") ||
 						strings.Contains(buttons[i].ActionType, "CallMicroflowClientAction") {
+						pageCommandsLogf("button page=%s action=%s call=extractCommandFromFlow", pageName, buttons[i].ActionName)
 						buttons[i].TargetCommand = extractCommandFromFlow(db, contentsDir, buttons[i].ActionName)
 						// Extract AppName and CommandName from TargetCommand
 						if buttons[i].TargetCommand != "" {
@@ -3914,6 +4084,20 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 						}
 					}
 				}
+				if pageCommandsDebug {
+					btnLabel := buttons[i].Caption
+					if btnLabel == "" {
+						btnLabel = buttons[i].ButtonName
+					}
+					pageCommandsLogf("page=%s button=%s action=%s targetPage=%s command=%s elapsed=%s",
+						pageName,
+						btnLabel,
+						buttons[i].ActionType,
+						buttons[i].TargetPage,
+						buttons[i].TargetCommand,
+						time.Since(buttonStart).Truncate(time.Millisecond),
+					)
+				}
 			}
 
 			pageCommands = append(pageCommands, PageCommandInfo{
@@ -3921,12 +4105,21 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 				Commands: buttons,
 			})
 			analyzed++
+			pageCommandsLogf("done page=%s buttons=%d elapsed=%s", pageName, len(buttons), time.Since(pageStart).Truncate(time.Millisecond))
 		} else {
 			skipped++
+			skipReasons["no-buttons"]++
+			pageCommandsLogf("skip page=%s reason=no-buttons", pageName)
 		}
 	}
 
 	fmt.Printf("  ✓ Analyzed %d page(s) with commands, skipped %d page(s)\n", analyzed, skipped)
+	if pageCommandsDebug {
+		pageCommandsLogf("summary analyzed=%d skipped=%d elapsed=%s", analyzed, skipped, time.Since(phaseStart).Truncate(time.Millisecond))
+		for reason, count := range skipReasons {
+			pageCommandsLogf("skip-reason %s=%d", reason, count)
+		}
+	}
 
 	// Validate that all Target Commands exist in allMicroflowCalls
 	validateTargetCommands(pageCommands, allMicroflowCalls)
@@ -4891,6 +5084,14 @@ func shouldExcludeModule(moduleName string) bool {
 
 // collectPagesWithMicroflows collects all pages/panels and analyzes their microflow/nanoflow calls with recursive hierarchy
 func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisInfo, error) {
+	hierarchyStartTime = time.Now()
+	hierarchyLoadCalls = 0
+	hierarchyLookupScans = 0
+	hierarchyLookupMisses = 0
+	hierarchyFlowIndex = make(map[string]map[string]interface{})
+	hierarchyMissingFlows = make(map[string]bool)
+	hierarchyLogf("start phase 7, progress every %d scanned units", hierarchyLogEvery)
+
 	// Query all Units
 	query := `SELECT UnitID, ContainerID FROM Unit`
 	rows, err := db.Query(query)
@@ -4902,6 +5103,11 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 	var pagesAnalysis []PageAnalysisInfo
 	microflowCache := make(map[string]map[string]interface{})   // Cache: microflowName -> content
 	hierarchyCache := make(map[string][]MicroflowCallHierarchy) // Cache: microflowName -> hierarchy
+	type pageCandidate struct {
+		doc         map[string]interface{}
+		containerID string
+	}
+	var pageCandidates []pageCandidate
 
 	processedCount := 0
 	cacheHits := 0
@@ -4912,6 +5118,17 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 
 	for rows.Next() {
 		scannedCount++
+		if hierarchyDebug && scannedCount%hierarchyLogEvery == 0 {
+			hierarchyLogf("progress units=%d pagesFound=%d processed=%d cacheEntries=%d cacheHits=%d elapsed=%s",
+				scannedCount,
+				pagesFoundCount,
+				processedCount,
+				len(microflowCache),
+				cacheHits,
+				time.Since(hierarchyStartTime).Truncate(time.Second),
+			)
+		}
+
 		var unitIDBlob, containerIDBlob []byte
 		if err := rows.Scan(&unitIDBlob, &containerIDBlob); err != nil {
 			continue
@@ -4940,13 +5157,41 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 			continue
 		}
 
-		// Only process Forms$Page (pages and panels)
+		// Inspect unit type
 		typeField, ok := doc["$Type"].(string)
-		if !ok || typeField != "Forms$Page" {
+		if !ok {
+			continue
+		}
+
+		// Build a flow index during the same Unit scan to avoid repeated DB scans later.
+		if typeField == "Microflows$Microflow" || typeField == "Microflows$Nanoflow" {
+			if flowName, ok := doc["Name"].(string); ok && flowName != "" {
+				hierarchyFlowIndex[flowName] = doc
+			}
+			if qualifiedName, ok := doc["QualifiedName"].(string); ok && qualifiedName != "" {
+				hierarchyFlowIndex[qualifiedName] = doc
+				if idx := strings.LastIndex(qualifiedName, "."); idx >= 0 && idx+1 < len(qualifiedName) {
+					shortName := qualifiedName[idx+1:]
+					if shortName != "" {
+						hierarchyFlowIndex[shortName] = doc
+					}
+				}
+			}
+		}
+
+		if typeField != "Forms$Page" {
 			continue
 		}
 
 		pagesFoundCount++
+		pageCandidates = append(pageCandidates, pageCandidate{
+			doc:         doc,
+			containerID: blobToUUID(containerIDBlob),
+		})
+	}
+
+	for _, candidate := range pageCandidates {
+		doc := candidate.doc
 
 		// Get page name and module
 		pageName, ok := doc["Name"].(string)
@@ -4955,8 +5200,7 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 		}
 
 		// Get module name from ContainerID
-		containerID := blobToUUID(containerIDBlob)
-		moduleName := getModuleNameFromContainerID(db, contentsDir, containerID)
+		moduleName := getModuleNameFromContainerID(db, contentsDir, candidate.containerID)
 
 		// Filter out marketplace and UI modules
 		if shouldExcludeModule(moduleName) {
@@ -4965,6 +5209,8 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 
 		// Extract microflow/nanoflow calls from page
 		microflowCalls := extractMicroflowCallsFromPage(doc)
+		pageTimer := time.Now()
+		hierarchyLogf("page=%s.%s rootFlows=%d", moduleName, pageName, len(microflowCalls))
 
 		// Build call hierarchy for each microflow (up to 5 levels deep)
 		var callHierarchy []MicroflowCallHierarchy
@@ -4990,6 +5236,16 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 
 		// Extract target commands from filtered hierarchy
 		targetCommands := extractCommandsFromHierarchy(filteredHierarchy, db, contentsDir, microflowCache)
+		pageElapsed := time.Since(pageTimer)
+		if hierarchyDebug || pageElapsed > 3*time.Second {
+			hierarchyLogf("done page=%s.%s hierarchyRoots=%d commands=%d elapsed=%s",
+				moduleName,
+				pageName,
+				len(filteredHierarchy),
+				len(targetCommands),
+				pageElapsed.Truncate(time.Millisecond),
+			)
+		}
 
 		pagesAnalysis = append(pagesAnalysis, PageAnalysisInfo{
 			Name:           pageName,
@@ -5005,6 +5261,13 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 	fmt.Printf("  📦 Scanned %d units, %d file read errors, %d BSON parse errors\n", scannedCount, fileReadErrors, bsonParseErrors)
 	fmt.Printf("  📦 Found %d Forms$Page documents, processed %d pages\n", pagesFoundCount, processedCount)
 	fmt.Printf("  📦 Built call hierarchies: %d microflows cached, %d hierarchies reused\n", len(microflowCache), cacheHits)
+	fmt.Printf("  📦 Preloaded %d microflow/nanoflow index entries\n", len(hierarchyFlowIndex))
+	hierarchyLogf("summary: loadCalls=%d unitScans=%d misses=%d elapsed=%s",
+		hierarchyLoadCalls,
+		hierarchyLookupScans,
+		hierarchyLookupMisses,
+		time.Since(hierarchyStartTime).Truncate(time.Second),
+	)
 	return pagesAnalysis, nil
 }
 
@@ -5018,6 +5281,13 @@ func buildMicroflowCallHierarchy(name string, currentLevel int, maxDepth int, db
 
 	// Stop recursion if max depth reached or already visited (cycle detection)
 	if currentLevel >= maxDepth || visited[name] {
+		if hierarchyDebug {
+			if currentLevel >= maxDepth {
+				hierarchyLogf("max depth reached flow=%s depth=%d", name, currentLevel)
+			} else {
+				hierarchyLogf("cycle detected flow=%s depth=%d", name, currentLevel)
+			}
+		}
 		return hierarchy
 	}
 
@@ -5034,6 +5304,7 @@ func buildMicroflowCallHierarchy(name string, currentLevel int, maxDepth int, db
 			cache[name] = content
 		} else {
 			// Microflow not found
+			hierarchyLogf("flow not found: %s", name)
 			delete(visited, name)
 			return hierarchy
 		}
@@ -5041,6 +5312,9 @@ func buildMicroflowCallHierarchy(name string, currentLevel int, maxDepth int, db
 
 	// Extract called microflows/nanoflows
 	calledFlows := extractMicroflowCallsFromMicroflow(content)
+	if hierarchyDebug && currentLevel <= 1 {
+		hierarchyLogf("flow=%s depth=%d calledFlows=%d", name, currentLevel, len(calledFlows))
+	}
 
 	// Recursively build hierarchy for each called flow
 	for _, calledFlow := range calledFlows {
@@ -5164,10 +5438,38 @@ func extractMicroflowCallsFromMicroflow(microflowDoc map[string]interface{}) []s
 
 // loadMicroflowByName loads a microflow/nanoflow by name from the database
 func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string]interface{} {
+	hierarchyLoadCalls++
+	lookupStart := time.Now()
+	unitsScanned := 0
+
 	// Extract simple name from qualified name (Module.Name -> Name)
 	simpleName := name
 	if idx := strings.LastIndex(name, "."); idx >= 0 {
 		simpleName = name[idx+1:]
+	}
+
+	if hierarchyFlowIndex != nil {
+		if content, ok := hierarchyFlowIndex[name]; ok {
+			if hierarchyDebug && hierarchyLoadCalls%100 == 0 {
+				hierarchyLogf("index hit flow=%s call=%d", name, hierarchyLoadCalls)
+			}
+			return content
+		}
+		if content, ok := hierarchyFlowIndex[simpleName]; ok {
+			if hierarchyDebug && hierarchyLoadCalls%100 == 0 {
+				hierarchyLogf("index hit flow=%s (simple=%s) call=%d", name, simpleName, hierarchyLoadCalls)
+			}
+			return content
+		}
+	}
+
+	if hierarchyMissingFlows != nil {
+		if hierarchyMissingFlows[name] || hierarchyMissingFlows[simpleName] {
+			if hierarchyDebug && hierarchyLoadCalls%100 == 0 {
+				hierarchyLogf("cached miss flow=%s call=%d", name, hierarchyLoadCalls)
+			}
+			return nil
+		}
 	}
 
 	// Query all Units (brute force scan)
@@ -5179,6 +5481,7 @@ func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string
 	defer rows.Close()
 
 	for rows.Next() {
+		unitsScanned++
 		var unitIDBlob []byte
 		if err := rows.Scan(&unitIDBlob); err != nil {
 			continue
@@ -5217,8 +5520,33 @@ func loadMicroflowByName(db *sql.DB, contentsDir string, name string) map[string
 		nameField, ok := doc["Name"].(string)
 		// Match both simple name and qualified name
 		if ok && (nameField == name || nameField == simpleName) {
+			hierarchyLookupScans += unitsScanned
+			if hierarchyFlowIndex != nil {
+				hierarchyFlowIndex[name] = doc
+				hierarchyFlowIndex[simpleName] = doc
+				if qualifiedName, ok := doc["QualifiedName"].(string); ok && qualifiedName != "" {
+					hierarchyFlowIndex[qualifiedName] = doc
+				}
+			}
+			if hierarchyDebug {
+				dur := time.Since(lookupStart)
+				if dur > 2*time.Second || hierarchyLoadCalls%50 == 0 {
+					hierarchyLogf("lookup hit flow=%s scanned=%d elapsed=%s call=%d", name, unitsScanned, dur.Truncate(time.Millisecond), hierarchyLoadCalls)
+				}
+			}
 			return doc
 		}
+	}
+
+	hierarchyLookupScans += unitsScanned
+	hierarchyLookupMisses++
+	if hierarchyMissingFlows != nil {
+		hierarchyMissingFlows[name] = true
+		hierarchyMissingFlows[simpleName] = true
+	}
+	if hierarchyDebug {
+		dur := time.Since(lookupStart)
+		hierarchyLogf("lookup miss flow=%s scanned=%d elapsed=%s call=%d", name, unitsScanned, dur.Truncate(time.Millisecond), hierarchyLoadCalls)
 	}
 
 	return nil

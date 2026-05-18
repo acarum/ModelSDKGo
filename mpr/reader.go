@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/anthropics/modelsdk-go/domainmodel"
 	"github.com/anthropics/modelsdk-go/microflows"
@@ -37,6 +38,11 @@ type Reader struct {
 	version     MPRVersion
 	contentsDir string
 	readOnly    bool
+
+	// unit cache: loaded once, shared across all calls
+	unitCacheOnce    sync.Once
+	allUnitsCache    []rawUnit
+	allUnitsCacheErr error
 }
 
 // OpenOptions configures how the MPR file is opened.
@@ -197,8 +203,34 @@ func getTypeFromContents(contents []byte) string {
 	return ""
 }
 
-// listUnitsByType returns all units matching the given type prefix.
+// listUnitsByType returns all units matching the given type prefix, using the unit cache.
 func (r *Reader) listUnitsByType(typePrefix string) ([]rawUnit, error) {
+	all, err := r.getAllUnits()
+	if err != nil {
+		return nil, err
+	}
+	if typePrefix == "" {
+		return all, nil
+	}
+	var result []rawUnit
+	for _, u := range all {
+		if strings.HasPrefix(u.Type, typePrefix) {
+			result = append(result, u)
+		}
+	}
+	return result, nil
+}
+
+// getAllUnits returns all units, loading and caching them on the first call.
+func (r *Reader) getAllUnits() ([]rawUnit, error) {
+	r.unitCacheOnce.Do(func() {
+		r.allUnitsCache, r.allUnitsCacheErr = r.loadAllUnits()
+	})
+	return r.allUnitsCache, r.allUnitsCacheErr
+}
+
+// loadAllUnits scans the database and reads all unit files. Called once via sync.Once.
+func (r *Reader) loadAllUnits() ([]rawUnit, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -247,18 +279,44 @@ func (r *Reader) listUnitsByType(typePrefix string) ([]rawUnit, error) {
 		}
 
 		typeName := getTypeFromContents(contents)
-		if typePrefix == "" || strings.HasPrefix(typeName, typePrefix) {
-			units = append(units, rawUnit{
-				ID:              unitIDStr,
-				ContainerID:     blobToUUID(containerID),
-				ContainmentName: containmentName,
-				Type:            typeName,
-				Contents:        contents,
-			})
-		}
+		units = append(units, rawUnit{
+			ID:              unitIDStr,
+			ContainerID:     blobToUUID(containerID),
+			ContainmentName: containmentName,
+			Type:            typeName,
+			Contents:        contents,
+		})
 	}
 
 	return units, nil
+}
+
+// RawUnit contains raw unit data for external callers.
+type RawUnit struct {
+	ID       string
+	Type     string
+	Contents []byte
+}
+
+// GetRawUnitsByType returns all units matching the given type prefix as raw data.
+// Results are cached after the first call — subsequent calls return the cached data
+// at O(N) filter cost with no disk I/O.
+func (r *Reader) GetRawUnitsByType(typePrefix string) ([]RawUnit, error) {
+	all, err := r.getAllUnits()
+	if err != nil {
+		return nil, err
+	}
+	var result []RawUnit
+	for _, u := range all {
+		if typePrefix == "" || strings.HasPrefix(u.Type, typePrefix) {
+			result = append(result, RawUnit{
+				ID:       u.ID,
+				Type:     u.Type,
+				Contents: u.Contents,
+			})
+		}
+	}
+	return result, nil
 }
 
 // rawUnit holds raw unit data from the database.
