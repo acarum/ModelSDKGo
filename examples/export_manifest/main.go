@@ -1441,6 +1441,25 @@ func collectMicroflowCalls(db *sql.DB, contentsDir string, report *ManifestRepor
 		}
 	}
 
+	// Pre-populate the global flow lookup so Phase 6/7 (ensureFlowLookup) can skip
+	// the expensive full re-scan of all units (~8000 files).
+	if !flowLookupLoaded {
+		flowLookupByName = make(map[string]MicroflowInfo)
+		flowLookupByQualified = make(map[string]MicroflowInfo)
+		for _, mf := range microflows {
+			if mf.Name != "" {
+				if _, exists := flowLookupByName[mf.Name]; !exists {
+					flowLookupByName[mf.Name] = mf
+				}
+			}
+			if mf.ModuleName != "" && mf.Name != "" {
+				flowLookupByQualified[mf.ModuleName+"."+mf.Name] = mf
+			}
+		}
+		flowLookupLoaded = true
+		fmt.Printf("  📋 Flow lookup pre-populated: %d by name, %d qualified\n", len(flowLookupByName), len(flowLookupByQualified))
+	}
+
 	fmt.Printf("\n  ✅ Completed: Analyzed %d microflows\n", processedCount)
 	fmt.Printf("  📊 Result: %d microflow/action calls found\n", totalCalls)
 	return nil
@@ -1455,7 +1474,12 @@ func listMicroflows(db *sql.DB, contentsDir string) ([]MicroflowInfo, error) {
 	defer rows.Close()
 
 	var microflows []MicroflowInfo
+	scannedMF := 0
 	for rows.Next() {
+		scannedMF++
+		if scannedMF%500 == 0 {
+			fmt.Printf("  [listMicroflows] scanned %d units, found %d microflows so far...\n", scannedMF, len(microflows))
+		}
 		var unitID, containerID []byte
 		var containmentName string
 		var contentsHash interface{}
@@ -2838,8 +2862,8 @@ func loadPageByQualifiedName(db *sql.DB, contentsDir string, qualifiedName strin
 	}
 	pageName := parts[1]
 
-	// Query all units to find the page
-	query := `SELECT UnitID FROM Unit`
+	// Query only page units (ContainmentName = 'Forms$Page') to avoid scanning all 8000+ units
+	query := `SELECT UnitID FROM Unit WHERE ContainmentName = 'Forms$Page'`
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query units: %w", err)
@@ -2858,12 +2882,9 @@ func loadPageByQualifiedName(db *sql.DB, contentsDir string, qualifiedName strin
 			continue
 		}
 
-		// Check if this is a Page with matching name
-		if typeName, ok := content["$Type"].(string); ok && typeName == "Forms$Page" {
-			name := extractNameFromContents(content)
-			if name == pageName {
-				return content, nil
-			}
+		name := extractNameFromContents(content)
+		if name == pageName {
+			return content, nil
 		}
 	}
 
@@ -3989,6 +4010,7 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 	for pageName := range uniquePages {
 		processed++
 		pageStart := time.Now()
+		fmt.Printf("  [%d/%d] Phase 6: analyzing page: %s\n", processed, len(uniquePages), pageName)
 		pageCommandsLogf("start page=%s", pageName)
 		if pageCommandsDebug && processed%pageCommandsLogEvery == 0 {
 			pageCommandsLogf("progress processed=%d analyzed=%d skipped=%d elapsed=%s",
@@ -4874,7 +4896,12 @@ func collectSystemRolesAndPageAccess(db *sql.DB, contentsDir string, report *Man
 	}
 	defer rows.Close()
 
+	scannedSec := 0
 	for rows.Next() {
+		scannedSec++
+		if scannedSec%500 == 0 {
+			fmt.Printf("  [collectSecurity] scanned %d units, found %d pages/snippets, %d roles so far...\n", scannedSec, len(pageAccessList), len(systemRoles))
+		}
 		var unitID, containerID []byte
 		var containmentName string
 		var contentsHash interface{}
@@ -5190,7 +5217,8 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 		})
 	}
 
-	for _, candidate := range pageCandidates {
+	fmt.Printf("  📦 Phase 7: scanned %d units, found %d Forms$Page candidates. Starting hierarchy analysis...\n", scannedCount, pagesFoundCount)
+	for candidateIdx, candidate := range pageCandidates {
 		doc := candidate.doc
 
 		// Get page name and module
@@ -5206,6 +5234,8 @@ func collectPagesWithMicroflows(db *sql.DB, contentsDir string) ([]PageAnalysisI
 		if shouldExcludeModule(moduleName) {
 			continue
 		}
+
+		fmt.Printf("  [%d/%d] Phase 7: analyzing page: %s.%s\n", candidateIdx+1, pagesFoundCount, moduleName, pageName)
 
 		// Extract microflow/nanoflow calls from page
 		microflowCalls := extractMicroflowCallsFromPage(doc)
