@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -114,6 +115,13 @@ type PageCommandSummary struct {
 	Targets  []TargetInfo `json:"Targets"`
 }
 
+// PageEntityInfo stores entity datasources loaded by a single page
+type PageEntityInfo struct {
+	PageName string   `json:"PageName"`
+	Module   string   `json:"Module"`
+	Entities []string `json:"Entities"` // qualified entity paths, e.g. "Module.EntityName"
+}
+
 type ManifestReport struct {
 	ProjectName        string                  `json:"ProjectName"`
 	MendixVersion      string                  `json:"MendixVersion"`
@@ -128,6 +136,7 @@ type ManifestReport struct {
 	NavigationCommands []PageCommandInfo       `json:"NavigationPageCommands"`     // command bar actions from navigation pages
 	PagesAnalysis      []PageAnalysisInfo      `json:"PageCommandsHierarchy"`      // detailed pages/panels analysis with recursive hierarchy
 	PageCommands       []PageCommandSummary    `json:"PageCommands"`               // simplified view of all page/panel commands
+	PageEntities       []PageEntityInfo        `json:"PageEntities"`               // pages with DataGrid2/Gallery entity datasources
 }
 
 type ReportOptions struct {
@@ -139,6 +148,7 @@ type ReportOptions struct {
 	IncludeRoles                  bool
 	IncludePageCommands           bool
 	IncludePagesCommandsHierarchy bool
+	IncludePageEntities           bool
 }
 
 // Hierarchy diagnostics (phase 7)
@@ -406,6 +416,7 @@ func main() {
 	includeRoles := flag.Bool("include-roles", false, "Include system roles and page accessibility in the report")
 	includePageCommands := flag.Bool("include-page-commands", true, "Include command bar actions from navigation pages in the report")
 	includePagesCommandsHierarchy := flag.Bool("include-pages-commands-hierarchy", true, "Include detailed pages/panels analysis with recursive microflow hierarchy (up to 5 levels)")
+	includePageEntities := flag.Bool("include-page-entities", true, "Include pages with DataGrid2/Gallery entity datasources in the report (phase 8)")
 	pageCommandsDebugFlag := flag.Bool("page-commands-debug", false, "Enable verbose diagnostics for page command extraction (phase 6)")
 	pageCommandsLogEveryFlag := flag.Int("page-commands-log-every", 10, "When page-commands-debug is enabled, print progress every N analyzed pages")
 	hierarchyDebugFlag := flag.Bool("hierarchy-debug", false, "Enable verbose diagnostics for recursive hierarchy analysis (phase 7)")
@@ -463,6 +474,7 @@ func main() {
 		IncludeNavigation:             *includeNavigation,
 		IncludeRoles:                  *includeRoles,
 		IncludePageCommands:           *includePageCommands,
+		IncludePageEntities:           *includePageEntities,
 		IncludePagesCommandsHierarchy: *includePagesCommandsHierarchy,
 	}
 
@@ -650,6 +662,13 @@ func processBatchMode(sourceDir string, outputDir string, outputFormat string, o
 						Targets:  targets,
 					})
 				}
+			}
+		}
+
+		// ==== SECTION 8: Page Entities (DataGrid2/Gallery) ====
+		if options.IncludePageEntities {
+			if err := collectPageEntities(reader, mprPath, &report); err != nil {
+				fmt.Printf("  ⚠️  Warning: Error collecting page entities: %v\n", err)
 			}
 		}
 
@@ -856,6 +875,9 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 	if options.IncludePagesCommandsHierarchy {
 		totalPhases++ // Phase for pages analysis
 	}
+	if options.IncludePageEntities {
+		totalPhases++ // Phase 8: page entities
+	}
 	totalPhases++ // Final report generation
 
 	fmt.Printf("\n📋 Analysis plan: %d phase(s) to complete\n", totalPhases)
@@ -974,6 +996,19 @@ func processSingleFile(mprPathArg string, outputDir string, outputFormat string,
 				Targets:  targets,
 			})
 		}
+	}
+
+	// ==== SECTION 8: Page Entities (DataGrid2/Gallery) ====
+	if options.IncludePageEntities {
+		currentPhase++
+		fmt.Printf("\n[Phase %d/%d] 🔎 Scanning for page entity datasources (DataGrid2/Gallery)...\n", currentPhase, totalPhases)
+		err = collectPageEntities(reader, mprPath, &report)
+		if err != nil {
+			fmt.Printf("Error collecting page entities: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("  ✅ Completed: Page entities collected\n")
+		fmt.Printf("  📊 Result: %d page(s) with entity datasources\n", len(report.PageEntities))
 	}
 
 	// Generate reports based on format
@@ -2332,6 +2367,163 @@ func isMarketplaceModule(moduleName string) bool {
 	}
 
 	return false
+}
+
+// isUIModule checks if a module is a UI/design-system module that should be excluded
+func isUIModule(moduleName string) bool {
+	uiIndicators := []string{"DISW", "DesignSystem", "_UI", "UI_"}
+	for _, indicator := range uiIndicators {
+		if strings.Contains(moduleName, indicator) {
+			return true
+		}
+	}
+	return false
+}
+
+// hasExfnMasterLayout returns true when any FormCall argument Parameter contains "EXFN_Master"
+func hasExfnMasterLayout(content map[string]interface{}) bool {
+	formCall, ok := content["FormCall"].(map[string]interface{})
+	if !ok {
+		return false
+	}
+	if args, ok := formCall["Arguments"].(primitive.A); ok {
+		for i, arg := range args {
+			if i == 0 {
+				continue // skip Mendix BSON array count element
+			}
+			if argMap, ok := arg.(map[string]interface{}); ok {
+				if param, _ := argMap["Parameter"].(string); strings.Contains(param, "EXFN_Master") {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// extractEntityPathsFromWidget recursively finds entity paths from a DataGrid2/Gallery widget.
+// The entity path is stored in CustomWidgets$CustomWidgetXPathSource.EntityRef.Entity.
+// The widget map comes from findWidgetsByWidgetID (JSON round-trip), so arrays are []interface{}.
+func extractEntityPathsFromWidget(widget map[string]interface{}) []string {
+	var entities []string
+	var walk func(v interface{})
+	walk = func(v interface{}) {
+		switch m := v.(type) {
+		case map[string]interface{}:
+			if dsType, _ := m["$Type"].(string); dsType == "CustomWidgets$CustomWidgetXPathSource" {
+				if entityRef, ok := m["EntityRef"].(map[string]interface{}); ok {
+					if entity, _ := entityRef["Entity"].(string); entity != "" {
+						entities = append(entities, entity)
+					}
+				}
+				return // don't recurse further into this datasource node
+			}
+			for _, val := range m {
+				walk(val)
+			}
+		case []interface{}:
+			for _, item := range m {
+				walk(item)
+			}
+		}
+	}
+	walk(widget)
+	return entities
+}
+
+// collectPageEntities scans all non-marketplace, non-UI pages that use the EXFN_Master layout,
+// finds DataGrid2 and Gallery custom widgets on those pages, and extracts their entity datasource paths.
+func collectPageEntities(reader *modelsdk.Reader, mprPath string, report *ManifestReport) error {
+	contentsDir := filepath.Join(filepath.Dir(mprPath), "mprcontents")
+
+	db, err := sql.Open("sqlite3", mprPath)
+	if err != nil {
+		return fmt.Errorf("failed to open database: %w", err)
+	}
+	defer db.Close()
+
+	pages, err := reader.ListPages()
+	if err != nil {
+		return fmt.Errorf("failed to list pages: %w", err)
+	}
+
+	const dataGridWidgetID = "com.mendix.widget.web.datagrid.Datagrid"
+	const galleryWidgetID = "com.mendix.widget.web.gallery.Gallery"
+
+	fmt.Printf("  📄 Scanning %d pages for DataGrid2/Gallery entity datasources...\n", len(pages))
+
+	var results []PageEntityInfo
+
+	for i, page := range pages {
+		if i%100 == 0 {
+			fmt.Printf("\r  [%d/%d] Scanning...", i+1, len(pages))
+		}
+
+		pid := string(page.ID)
+
+		// Fast pre-filter: skip pages without EXFN_Master layout or without DataGrid2/Gallery widgets
+		hasLayout := containsWidgetID(contentsDir, pid, "EXFN_Master")
+		hasGrid := containsWidgetID(contentsDir, pid, dataGridWidgetID) || containsWidgetID(contentsDir, pid, galleryWidgetID)
+		if !hasLayout || !hasGrid {
+			continue
+		}
+
+		content, err := loadUnitContents(contentsDir, pid)
+		if err != nil {
+			continue
+		}
+
+		moduleName, docName := extractModuleAndNameFromBSON(content, pid, db)
+
+		if isMarketplaceModule(moduleName) || isUIModule(moduleName) {
+			continue
+		}
+
+		if !hasExfnMasterLayout(content) {
+			continue
+		}
+
+		// Collect unique entity paths from all DataGrid2 and Gallery widgets on this page
+		entitySet := make(map[string]bool)
+		for _, widgetID := range []string{dataGridWidgetID, galleryWidgetID} {
+			widgets := findWidgetsByWidgetID(content, widgetID)
+			for _, widget := range widgets {
+				for _, e := range extractEntityPathsFromWidget(widget) {
+					if e != "" {
+						entitySet[e] = true
+					}
+				}
+			}
+		}
+
+		if len(entitySet) == 0 {
+			continue
+		}
+
+		entityList := make([]string, 0, len(entitySet))
+		for e := range entitySet {
+			entityList = append(entityList, e)
+		}
+		sort.Strings(entityList)
+
+		results = append(results, PageEntityInfo{
+			PageName: docName,
+			Module:   moduleName,
+			Entities: entityList,
+		})
+	}
+
+	fmt.Printf("\r  ✅ Scanned %d pages                        \n", len(pages))
+
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].Module != results[j].Module {
+			return results[i].Module < results[j].Module
+		}
+		return results[i].PageName < results[j].PageName
+	})
+
+	report.PageEntities = results
+	return nil
 }
 
 func blobToUUID(blob []byte) string {
@@ -5992,6 +6184,9 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "- **System Roles:** %d\n", len(report.SystemRoles))
 		fmt.Fprintf(file, "- **Pages/Snippets:** %d\n", len(report.PageAccess))
 	}
+	if options.IncludePageEntities {
+		fmt.Fprintf(file, "- **Pages with Entity Datasources:** %d page(s)\n", len(report.PageEntities))
+	}
 	fmt.Fprintf(file, "\n")
 	fmt.Fprintf(file, "---\n\n")
 
@@ -6355,6 +6550,35 @@ func generateMarkdownReport(report *ManifestReport, outputPath string, options *
 		fmt.Fprintf(file, "\n---\n\n")
 	}
 
+	// Section 8: Page Entities (DataGrid2/Gallery datasources)
+	if options.IncludePageEntities && len(report.PageEntities) > 0 {
+		// Calculate dynamic section number
+		sectionNum := 4
+		if options.IncludeNavigation {
+			sectionNum++
+		}
+		if options.IncludePageCommands {
+			sectionNum++
+		}
+		if options.IncludeRoles {
+			sectionNum++
+		}
+		if options.IncludePagesCommandsHierarchy {
+			sectionNum += 2 // hierarchy + pagecommands subsections
+		}
+		sectionNum++ // this section
+
+		fmt.Fprintf(file, "## %d. Page Entities\n\n", sectionNum)
+		fmt.Fprintf(file, "Pages using the EXFN_Master layout that load entities via DataGrid2 or Gallery datasources.\n\n")
+		fmt.Fprintf(file, "| Page | Module | Entities |\n")
+		fmt.Fprintf(file, "|------|--------|----------|\n")
+
+		for _, pe := range report.PageEntities {
+			fmt.Fprintf(file, "| %s | %s | %s |\n", pe.PageName, pe.Module, strings.Join(pe.Entities, "<br>"))
+		}
+		fmt.Fprintf(file, "\n---\n\n")
+	}
+
 	// Footer
 	fmt.Fprintf(file, "_Report generated by export_manifest tool_\n")
 
@@ -6460,6 +6684,13 @@ func generateJSONReport(report *ManifestReport, outputPath string, options *Repo
 	} else {
 		filteredReport.PagesAnalysis = []PageAnalysisInfo{}
 		filteredReport.PageCommands = []PageCommandSummary{}
+	}
+
+	// Include page entities if enabled
+	if options.IncludePageEntities {
+		filteredReport.PageEntities = report.PageEntities
+	} else {
+		filteredReport.PageEntities = []PageEntityInfo{}
 	}
 
 	// Marshal with pretty-print (2 spaces indentation)
