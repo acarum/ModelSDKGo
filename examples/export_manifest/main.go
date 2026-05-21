@@ -156,6 +156,9 @@ var flowLookupLoaded bool
 var flowLookupByName map[string]MicroflowInfo
 var flowLookupByQualified map[string]MicroflowInfo
 
+var pageLookupLoaded bool
+var pageLookupBySimpleName map[string][]map[string]interface{} // simple name -> list of page BSON docs (multiple modules may share same name)
+
 func hierarchyLogf(format string, args ...interface{}) {
 	if !hierarchyDebug {
 		return
@@ -198,6 +201,49 @@ func ensureFlowLookup(db *sql.DB, contentsDir string) {
 
 	flowLookupLoaded = true
 	pageCommandsLogf("flow lookup initialized: byName=%d byQualified=%d", len(flowLookupByName), len(flowLookupByQualified))
+}
+
+// ensurePageLookup builds a cache of page BSON content indexed by simple name.
+// Pages have ContainmentName='Documents' in the Unit table; we identify them by $Type='Forms$Page' in BSON.
+// This avoids scanning all 6000+ Document units for every call to loadPageByQualifiedName.
+func ensurePageLookup(db *sql.DB, contentsDir string) {
+	if pageLookupLoaded {
+		return
+	}
+
+	pageLookupBySimpleName = make(map[string][]map[string]interface{})
+
+	rows, err := db.Query(`SELECT UnitID FROM Unit WHERE ContainmentName = 'Documents'`)
+	if err != nil {
+		pageCommandsLogf("page lookup init query failed: %v", err)
+		pageLookupLoaded = true
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var unitIDBlob []byte
+		if err := rows.Scan(&unitIDBlob); err != nil {
+			continue
+		}
+		unitIDStr := blobToUUID(unitIDBlob)
+		content, err := loadUnitContents(contentsDir, unitIDStr)
+		if err != nil {
+			continue
+		}
+		typeField, _ := content["$Type"].(string)
+		if typeField != "Forms$Page" {
+			continue
+		}
+		name, _ := content["Name"].(string)
+		if name == "" {
+			continue
+		}
+		pageLookupBySimpleName[name] = append(pageLookupBySimpleName[name], content)
+	}
+
+	pageLookupLoaded = true
+	pageCommandsLogf("page lookup initialized: %d page name(s)", len(pageLookupBySimpleName))
 }
 
 // MicroflowCallHierarchy represents a recursive call tree
@@ -2860,35 +2906,37 @@ func loadPageByQualifiedName(db *sql.DB, contentsDir string, qualifiedName strin
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid qualified name format: %s", qualifiedName)
 	}
+	moduleName := parts[0]
 	pageName := parts[1]
 
-	// Query only page units (ContainmentName = 'Forms$Page') to avoid scanning all 8000+ units
-	query := `SELECT UnitID FROM Unit WHERE ContainmentName = 'Forms$Page'`
-	rows, err := db.Query(query)
-	if err != nil {
-		return nil, fmt.Errorf("failed to query units: %w", err)
-	}
-	defer rows.Close()
+	// Ensure the page lookup cache is populated (scans Documents once, filters by $Type=Forms$Page)
+	ensurePageLookup(db, contentsDir)
 
-	for rows.Next() {
-		var unitID []byte
-		if err := rows.Scan(&unitID); err != nil {
-			continue
-		}
-
-		unitIDStr := blobToUUID(unitID)
-		content, err := loadUnitContents(contentsDir, unitIDStr)
-		if err != nil {
-			continue
-		}
-
-		name := extractNameFromContents(content)
-		if name == pageName {
-			return content, nil
-		}
+	candidates, ok := pageLookupBySimpleName[pageName]
+	if !ok || len(candidates) == 0 {
+		return nil, fmt.Errorf("page not found: %s", qualifiedName)
 	}
 
-	return nil, fmt.Errorf("page not found: %s", qualifiedName)
+	// If there is only one candidate, return it directly
+	if len(candidates) == 1 {
+		return candidates[0], nil
+	}
+
+	// Multiple pages share the same simple name — disambiguate by module.
+	// We need to find which candidate belongs to moduleName.
+	// Build lookup for container IDs to find the module-owned one.
+	for _, candidate := range candidates {
+		// Check ContainmentName field inside BSON (format: "ModuleName.PageName")
+		if cn, _ := candidate["ContainmentName"].(string); cn != "" {
+			cnParts := strings.Split(cn, ".")
+			if len(cnParts) >= 1 && cnParts[0] == moduleName {
+				return candidate, nil
+			}
+		}
+	}
+
+	// Fallback: return first candidate
+	return candidates[0], nil
 }
 
 // findRightPlaceholder finds the Right placeholder's widgets array in a page
