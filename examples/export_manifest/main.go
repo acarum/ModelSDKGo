@@ -162,6 +162,8 @@ var hierarchyFlowIndex map[string]map[string]interface{}
 var hierarchyMissingFlows map[string]bool
 var pageCommandsDebug bool
 var pageCommandsLogEvery int
+var pageCommandsFocus string
+var pageCommandsCurrentPage string
 var flowLookupLoaded bool
 var flowLookupByName map[string]MicroflowInfo
 var flowLookupByQualified map[string]MicroflowInfo
@@ -181,6 +183,13 @@ func pageCommandsLogf(format string, args ...interface{}) {
 		return
 	}
 	fmt.Printf("  [page-commands] "+format+"\n", args...)
+}
+
+func pageCommandsFocused() bool {
+	if !pageCommandsDebug || pageCommandsFocus == "" {
+		return false
+	}
+	return strings.Contains(strings.ToLower(pageCommandsCurrentPage), strings.ToLower(pageCommandsFocus))
 }
 
 func ensureFlowLookup(db *sql.DB, contentsDir string) {
@@ -419,6 +428,7 @@ func main() {
 	includePageEntities := flag.Bool("include-page-entities", true, "Include pages with DataGrid2/Gallery entity datasources in the report (phase 8)")
 	pageCommandsDebugFlag := flag.Bool("page-commands-debug", false, "Enable verbose diagnostics for page command extraction (phase 6)")
 	pageCommandsLogEveryFlag := flag.Int("page-commands-log-every", 10, "When page-commands-debug is enabled, print progress every N analyzed pages")
+	pageCommandsFocusFlag := flag.String("page-commands-focus", "", "Optional page name substring to emit extra phase-6 debug details for Right placeholder and command bar matching")
 	hierarchyDebugFlag := flag.Bool("hierarchy-debug", false, "Enable verbose diagnostics for recursive hierarchy analysis (phase 7)")
 	hierarchyLogEveryFlag := flag.Int("hierarchy-log-every", 200, "When hierarchy-debug is enabled, print progress every N scanned units")
 	outputDir := flag.String("output-dir", "", "Output directory for the report file (optional)")
@@ -461,6 +471,7 @@ func main() {
 
 	pageCommandsDebug = *pageCommandsDebugFlag
 	pageCommandsLogEvery = *pageCommandsLogEveryFlag
+	pageCommandsFocus = *pageCommandsFocusFlag
 	if pageCommandsLogEvery <= 0 {
 		pageCommandsLogEvery = 10
 	}
@@ -3143,8 +3154,18 @@ func findRightPlaceholder(pageData map[string]interface{}) interface{} {
 				if argMap, ok := arg.(map[string]interface{}); ok {
 					if argType, ok := argMap["$Type"].(string); ok && argType == "Forms$FormCallArgument" {
 						if param, ok := argMap["Parameter"].(string); ok {
+							if pageCommandsFocused() {
+								pageCommandsLogf("focus page=%s right-arg param=%s", pageCommandsCurrentPage, param)
+							}
 							if strings.HasSuffix(param, ".Right") {
 								// Return the Widgets array
+								if pageCommandsFocused() {
+									if widgets, ok := argMap["Widgets"].(primitive.A); ok {
+										pageCommandsLogf("focus page=%s found-right-placeholder widgets=%d", pageCommandsCurrentPage, len(widgets)-1)
+									} else {
+										pageCommandsLogf("focus page=%s found-right-placeholder widgets=<non-array>", pageCommandsCurrentPage)
+									}
+								}
 								return argMap["Widgets"]
 							}
 						}
@@ -3152,6 +3173,9 @@ func findRightPlaceholder(pageData map[string]interface{}) interface{} {
 				}
 			}
 		}
+	}
+	if pageCommandsFocused() {
+		pageCommandsLogf("focus page=%s no-right-placeholder-found", pageCommandsCurrentPage)
 	}
 	return nil
 }
@@ -3323,10 +3347,14 @@ func findFirstCommandBarContainer(data interface{}) map[string]interface{} {
 			if appearance, ok := v["Appearance"].(map[string]interface{}); ok {
 				if class, ok := appearance["Class"].(string); ok {
 					classLower := strings.ToLower(class)
+					if pageCommandsFocused() {
+						pageCommandsLogf("focus page=%s inspect-div class=%q", pageCommandsCurrentPage, class)
+					}
 					// Match various command bar class patterns
-					if strings.Contains(classLower, "vertical-command-bar") ||
-						strings.Contains(classLower, "verticalcommandbar") ||
-						(strings.Contains(classLower, "vertical") && strings.Contains(classLower, "command")) {
+					if isCommandBarClass(classLower) {
+						if pageCommandsFocused() {
+							pageCommandsLogf("focus page=%s matched-command-bar class=%q", pageCommandsCurrentPage, class)
+						}
 						return v // Found it!
 					}
 				}
@@ -3359,6 +3387,17 @@ func findFirstCommandBarContainer(data interface{}) map[string]interface{} {
 	}
 
 	return nil
+}
+
+func isCommandBarClass(classLower string) bool {
+	if classLower == "" {
+		return false
+	}
+	return strings.Contains(classLower, "vertical-command-bar") ||
+		strings.Contains(classLower, "vertical-command-bar-gallery") ||
+		strings.Contains(classLower, "verticalcommandbar") ||
+		(strings.Contains(classLower, "vertical") && strings.Contains(classLower, "command")) ||
+		strings.Contains(classLower, "command")
 }
 
 // extractButtonCaption extracts caption from an ActionButton widget
@@ -3426,7 +3465,7 @@ func extractButtonCaption(button map[string]interface{}) string {
 
 // extractActionButtons finds all ActionButton widgets in a container and extracts their details
 // Note: In Mendix, OnClickAction is on the parent DivContainer, and Caption is in sibling DynamicText
-func extractActionButtons(container map[string]interface{}, db *sql.DB, contentsDir string) []PageCommandButton {
+func extractActionButtons(container interface{}, db *sql.DB, contentsDir string) []PageCommandButton {
 	var buttons []PageCommandButton
 	start := time.Now()
 	nodesVisited := 0
@@ -3447,6 +3486,12 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 			currentAction := parentAction
 			if typeStr == "Forms$DivContainer" {
 				divContainers++
+				isCommandContainer := false
+				if appearance, ok := v["Appearance"].(map[string]interface{}); ok {
+					if class, ok := appearance["Class"].(string); ok {
+						isCommandContainer = isCommandBarClass(strings.ToLower(class))
+					}
+				}
 				if onClickAction, ok := v["OnClickAction"].(map[string]interface{}); ok {
 					currentAction = onClickAction
 				}
@@ -3470,8 +3515,8 @@ func extractActionButtons(container map[string]interface{}, db *sql.DB, contents
 						}
 					}
 
-					// If we found both, extract button with caption from DynamicText
-					if actionButton != nil && currentAction != nil {
+					// If we found both in a command container, extract button with caption from DynamicText
+					if isCommandContainer && actionButton != nil && currentAction != nil {
 						buttonPairs++
 						button := PageCommandButton{
 							ButtonName: extractNameFromContents(actionButton),
@@ -3859,7 +3904,7 @@ func findCommandByPageNameHeuristic(pageQualifiedName string, allMicroflowCalls 
 	return ""
 }
 
-// findSaveButtonFlow recursively searches for a button with caption "Save" and returns its flow name
+// findSaveButtonFlow recursively searches for a button with caption "Save", "Create", or "Associate" and returns its flow name
 func findSaveButtonFlow(pageData map[string]interface{}) string {
 	var search func(data interface{}, parentAction map[string]interface{}) string
 	search = func(data interface{}, parentAction map[string]interface{}) string {
@@ -3893,10 +3938,10 @@ func findSaveButtonFlow(pageData map[string]interface{}) string {
 						}
 					}
 
-					// Check if this is a Save button
+					// Check if this is a Save/Create/Associate button
 					if actionButton != nil && dynamicText != nil {
-						caption := extractCaptionFromDynamicText(dynamicText)
-						if caption == "Save" {
+						caption := strings.TrimSpace(extractCaptionFromDynamicText(dynamicText))
+						if strings.EqualFold(caption, "Save") || strings.EqualFold(caption, "Create") || strings.EqualFold(caption, "Associate") {
 							// Get the flow name from inherited or own action
 							actionToUse := currentAction
 							if onClickAction, ok := actionButton["OnClickAction"].(map[string]interface{}); ok {
@@ -4248,6 +4293,7 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 	skipReasons := make(map[string]int)
 
 	for pageName := range uniquePages {
+		pageCommandsCurrentPage = pageName
 		processed++
 		pageStart := time.Now()
 		fmt.Printf("  [%d/%d] Phase 6: analyzing page: %s\n", processed, len(uniquePages), pageName)
@@ -4289,7 +4335,7 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 		resolvedWidgets, _ := resolveRightPlaceholderWidgets(rightWidgets, contentsDir, db, mprPath)
 		pageCommandsLogf("step page=%s resolveRightSnippet elapsed=%s", pageName, time.Since(resolveStart).Truncate(time.Millisecond))
 
-		// Find first command bar container
+		// Detect whether command bar exists somewhere in Right scope
 		cmdBarStart := time.Now()
 		commandBarContainer := findFirstCommandBarContainer(resolvedWidgets)
 		pageCommandsLogf("step page=%s findCommandBar elapsed=%s hasCommandBar=%v", pageName, time.Since(cmdBarStart).Truncate(time.Millisecond), commandBarContainer != nil)
@@ -4300,9 +4346,9 @@ func collectPageCommands(db *sql.DB, contentsDir string, mprPath string, navigat
 			continue
 		}
 
-		// Extract action buttons
+		// Extract action buttons from full Right scope to include all command containers
 		buttonsStart := time.Now()
-		buttons := extractActionButtons(commandBarContainer, db, contentsDir)
+		buttons := extractActionButtons(resolvedWidgets, db, contentsDir)
 		pageCommandsLogf("step page=%s extractButtons elapsed=%s buttons=%d", pageName, time.Since(buttonsStart).Truncate(time.Millisecond), len(buttons))
 		if len(buttons) > 0 {
 			// For each button, find the command it calls
