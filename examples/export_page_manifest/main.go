@@ -52,6 +52,20 @@ type DataGridColumn struct {
 	Caption string
 }
 
+// WizardStepItem represents a single row in the Steps section.
+type WizardStepItem struct {
+	Source   string // container/snippet source
+	ItemType string
+	Name     string
+	Caption  string
+}
+
+// WizardStepSection groups step items under a sectionContainer.
+type WizardStepSection struct {
+	Name  string
+	Items []WizardStepItem
+}
+
 // TabInfo represents a tab found inside a TabContainer
 type TabInfo struct {
 	Name    string
@@ -65,9 +79,13 @@ type PlaceholderContent struct {
 	Parameter               string          // full parameter path e.g. "Atlas_Default.Main"
 	RootContainerName       string          // name of the first DivContainer in the placeholder
 	CommandBarContainerName string          // name of DivContainer with CSS class containing "vertical-command-bar"
+	WizardContainerName     string          // name of DivContainer with CSS class containing "containerRight"
+	IsWizard                bool            // true when page contains CSS class containing "exds-wizard"
 	Widgets                 []WidgetCaption // all widgets with captions (for Contents section)
 	Tabs                    []TabInfo
 	Buttons                 []DataGridActionButton // direct ActionButtons outside of tabs (e.g. Right command bar)
+	StepSections            []WizardStepSection
+	WizardAreaSections      []WizardStepSection
 }
 
 // PageReport represents the full report for one page
@@ -129,7 +147,7 @@ func main() {
 		pageFilter = args[1]
 	}
 	wildcardFilter := *filterFlag
-	outputDir := "." // Current directory
+	outputDir := filepath.Join("examples", "export_page_manifest")
 
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		log.Fatalf("Error creating output directory: %v", err)
@@ -270,6 +288,7 @@ func matchesPageType(pageName, pageType string) bool {
 // extractPlaceholders parses FormCall.Arguments to find Main and Right placeholders
 func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprPath string, caches *UnitCaches) PageReport {
 	report := PageReport{PageName: pageName, PageID: pageID}
+	isWizardPage := containsClass(pageData, "exds-wizard")
 
 	formCall, ok := getMap(pageData, "FormCall")
 	if !ok {
@@ -331,9 +350,13 @@ func extractPlaceholders(pageData map[string]interface{}, pageName, pageID, mprP
 			Parameter:               param,
 			RootContainerName:       findFirstContainerName(widgets),
 			CommandBarContainerName: findContainerByClass(widgets, "vertical-command-bar"),
+			WizardContainerName:     findContainerByClass(widgets, "containerRight"),
+			IsWizard:                isWizardPage,
 			Widgets:                 findAllWidgetsSummary(widgets),
 			Tabs:                    tabs,
 			Buttons:                 directButtons,
+			StepSections:            extractWizardSections(widgets, caches),
+			WizardAreaSections:      extractWizardAreaSections(widgets, caches),
 		}
 
 		switch strings.ToLower(placeholderName) {
@@ -468,6 +491,364 @@ func findContainerByClass(data interface{}, cssClass string) string {
 		}
 	}
 	return ""
+}
+
+// containsClass returns true if any node has Appearance.Class containing cssClass.
+func containsClass(data interface{}, cssClass string) bool {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if app, ok := v["Appearance"].(map[string]interface{}); ok {
+			if cls, ok := app["Class"].(string); ok && strings.Contains(cls, cssClass) {
+				return true
+			}
+		}
+		for _, val := range v {
+			if containsClass(val, cssClass) {
+				return true
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if containsClass(item, cssClass) {
+				return true
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if containsClass(item, cssClass) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// findContainerNodeByClass returns the first Forms$DivContainer whose Appearance.Class contains cssClass.
+func findContainerNodeByClass(data interface{}, cssClass string) map[string]interface{} {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if v["$Type"] == "Forms$DivContainer" {
+			if app, ok := v["Appearance"].(map[string]interface{}); ok {
+				if cls, ok := app["Class"].(string); ok && strings.Contains(cls, cssClass) {
+					return v
+				}
+			}
+		}
+		for _, val := range v {
+			if r := findContainerNodeByClass(val, cssClass); r != nil {
+				return r
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if r := findContainerNodeByClass(item, cssClass); r != nil {
+				return r
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if r := findContainerNodeByClass(item, cssClass); r != nil {
+				return r
+			}
+		}
+	}
+	return nil
+}
+
+// findContainerNodesByClass returns all Forms$DivContainer nodes whose Appearance.Class contains cssClass.
+func findContainerNodesByClass(data interface{}, cssClass string) []map[string]interface{} {
+	var result []map[string]interface{}
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if v["$Type"] == "Forms$DivContainer" {
+			if app, ok := v["Appearance"].(map[string]interface{}); ok {
+				if cls, ok := app["Class"].(string); ok && strings.Contains(cls, cssClass) {
+					result = append(result, v)
+				}
+			}
+		}
+		for _, val := range v {
+			result = append(result, findContainerNodesByClass(val, cssClass)...)
+		}
+	case primitive.A:
+		for _, item := range v {
+			result = append(result, findContainerNodesByClass(item, cssClass)...)
+		}
+	case []interface{}:
+		for _, item := range v {
+			result = append(result, findContainerNodesByClass(item, cssClass)...)
+		}
+	}
+	return result
+}
+
+// findContainerNodeByName returns the first Forms$DivContainer with matching Name.
+func findContainerNodeByName(data interface{}, name string) map[string]interface{} {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if v["$Type"] == "Forms$DivContainer" && getStr(v, "Name") == name {
+			return v
+		}
+		for _, val := range v {
+			if r := findContainerNodeByName(val, name); r != nil {
+				return r
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if r := findContainerNodeByName(item, name); r != nil {
+				return r
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if r := findContainerNodeByName(item, name); r != nil {
+				return r
+			}
+		}
+	}
+	return nil
+}
+
+func getAppearanceClass(node map[string]interface{}) string {
+	if node == nil {
+		return ""
+	}
+	if app, ok := node["Appearance"].(map[string]interface{}); ok {
+		if cls, ok := app["Class"].(string); ok {
+			return cls
+		}
+	}
+	return ""
+}
+
+func hasClass(node map[string]interface{}, cssClass string) bool {
+	return strings.Contains(getAppearanceClass(node), cssClass)
+}
+
+// getSnippetForm returns fully-qualified snippet form (Module.Snippet) from a snippet-call widget.
+func getSnippetForm(node map[string]interface{}) string {
+	if node == nil {
+		return ""
+	}
+	t, _ := node["$Type"].(string)
+	if t == "Forms$SnippetCall" {
+		return getStr(node, "Form")
+	}
+	if t == "Forms$SnippetCallWidget" {
+		if fc, ok := node["FormCall"].(map[string]interface{}); ok {
+			if fc["$Type"] == "Forms$SnippetCall" {
+				return getStr(fc, "Form")
+			}
+		}
+	}
+	return ""
+}
+
+func snippetShortName(form string) string {
+	if form == "" {
+		return ""
+	}
+	if idx := strings.LastIndex(form, "."); idx >= 0 && idx+1 < len(form) {
+		return form[idx+1:]
+	}
+	return form
+}
+
+func appendStepFromWidget(items []WizardStepItem, source string, w WidgetCaption) []WizardStepItem {
+	if w.WidgetType == "DataView" {
+		return items
+	}
+	cap := strings.TrimSpace(w.Caption)
+	if cap == "" {
+		cap = "(no caption)"
+	}
+	name := strings.TrimSpace(w.WidgetName)
+	if name == "" {
+		name = "-"
+	}
+	return append(items, WizardStepItem{
+		Source:   source,
+		ItemType: w.WidgetType,
+		Name:     name,
+		Caption:  cap,
+	})
+}
+
+func findClickableContainerItems(data interface{}, source string) []WizardStepItem {
+	var result []WizardStepItem
+	seen := make(map[string]bool)
+
+	var walk func(v interface{})
+	walk = func(v interface{}) {
+		switch m := v.(type) {
+		case map[string]interface{}:
+			if m["$Type"] == "Forms$DivContainer" {
+				if oca, ok := m["OnClickAction"].(map[string]interface{}); ok {
+					if oca["$Type"] == "Forms$CallNanoflowClientAction" {
+						name := strings.TrimSpace(getStr(m, "Name"))
+						if name == "" {
+							name = "-"
+						}
+						nf := strings.TrimSpace(getStr(oca, "Nanoflow"))
+						key := name + "|" + nf
+						if !seen[key] {
+							seen[key] = true
+							caption := "OnClick"
+							if nf != "" {
+								caption = "OnClick: " + nf
+							}
+							result = append(result, WizardStepItem{
+								Source:   source,
+								ItemType: "Container",
+								Name:     name,
+								Caption:  caption,
+							})
+						}
+					}
+				}
+			}
+			for _, val := range m {
+				walk(val)
+			}
+		case primitive.A:
+			for _, item := range m {
+				walk(item)
+			}
+		case []interface{}:
+			for _, item := range m {
+				walk(item)
+			}
+		}
+	}
+
+	walk(data)
+	return result
+}
+
+func expandSnippetStepItems(snippetForm string, caches *UnitCaches, includeClickableContainers bool) []WizardStepItem {
+	var items []WizardStepItem
+	short := snippetShortName(snippetForm)
+	snippetWidgets := caches.SnippetWidgets[short]
+	for _, w := range snippetWidgets {
+		items = appendStepFromWidget(items, snippetForm, w)
+	}
+	if includeClickableContainers {
+		for _, c := range caches.SnippetClickContainers[short] {
+			c.Source = snippetForm
+			items = append(items, c)
+		}
+	}
+	return items
+}
+
+func extractStepItemsFromChild(child map[string]interface{}, caches *UnitCaches, includeClickableContainers bool) []WizardStepItem {
+	var items []WizardStepItem
+	if child == nil {
+		return items
+	}
+
+	if form := getSnippetForm(child); form != "" {
+		return expandSnippetStepItems(form, caches, includeClickableContainers)
+	}
+
+	// Keep first-level scope: inspect direct widgets only.
+	for _, nested := range getArray(child, "Widgets") {
+		nm, ok := nested.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if form := getSnippetForm(nm); form != "" {
+			items = append(items, expandSnippetStepItems(form, caches, includeClickableContainers)...)
+			continue
+		}
+		widgets := findAllWidgetsSummary(nm)
+		for _, w := range widgets {
+			items = appendStepFromWidget(items, getStr(child, "Name"), w)
+		}
+		if includeClickableContainers {
+			items = append(items, findClickableContainerItems(nm, getStr(child, "Name"))...)
+		}
+	}
+
+	if len(items) > 0 {
+		return items
+	}
+
+	widgets := findAllWidgetsSummary(child)
+	for _, w := range widgets {
+		items = appendStepFromWidget(items, getStr(child, "Name"), w)
+	}
+	if includeClickableContainers {
+		items = append(items, findClickableContainerItems(child, getStr(child, "Name"))...)
+	}
+	return items
+}
+
+// extractWizardSections returns steps grouped by sectionContainer from the container with class "containerRight".
+// Fallback: if class lookup fails, it tries container Name == "containerRight".
+func extractWizardSections(data interface{}, caches *UnitCaches) []WizardStepSection {
+	target := findContainerNodeByClass(data, "containerRight")
+	if target == nil {
+		target = findContainerNodeByName(data, "containerRight")
+	}
+	if target == nil {
+		return nil
+	}
+
+	var sections []WizardStepSection
+	for _, child := range getArray(target, "Widgets") {
+		cm, ok := child.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if !hasClass(cm, "sectionContainer") {
+			continue
+		}
+		items := extractStepItemsFromChild(cm, caches, false)
+		if len(items) == 0 {
+			continue
+		}
+		sections = append(sections, WizardStepSection{
+			Name:  getStr(cm, "Name"),
+			Items: items,
+		})
+	}
+
+	return sections
+}
+
+// extractWizardAreaSections returns item groups from exds-wizard containers.
+// Snippet content is expanded at first level via extractStepItemsFromChild.
+func extractWizardAreaSections(data interface{}, caches *UnitCaches) []WizardStepSection {
+	containers := findContainerNodesByClass(data, "exds-wizard")
+	if len(containers) == 0 {
+		return nil
+	}
+
+	var sections []WizardStepSection
+	for i, c := range containers {
+		name := getStr(c, "Name")
+		if name == "" {
+			name = fmt.Sprintf("wizardArea_%d", i+1)
+		}
+
+		var items []WizardStepItem
+		for _, child := range getArray(c, "Widgets") {
+			cm, ok := child.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			items = append(items, extractStepItemsFromChild(cm, caches, true)...)
+		}
+
+		if len(items) == 0 {
+			continue
+		}
+		sections = append(sections, WizardStepSection{Name: name, Items: items})
+	}
+
+	return sections
 }
 
 // findFirstContainerName returns the Name of the first Forms$DivContainer found in data.
@@ -695,6 +1076,8 @@ func loadPanelWidgets(mprPath, fullPageName string) []WidgetCaption {
 type UnitCaches struct {
 	NanoflowShowPage map[string]string          // nanoflow short name → opened page full name
 	PageWidgets      map[string][]WidgetCaption // page short name → widgets
+	SnippetWidgets   map[string][]WidgetCaption // snippet short name → widgets
+	SnippetClickContainers map[string][]WizardStepItem // snippet short name → clickable containers
 }
 
 // buildUnitCaches scans all units once and builds lookup caches used throughout the export.
@@ -703,6 +1086,8 @@ func buildUnitCaches(reader *modelsdk.Reader) *UnitCaches {
 	caches := &UnitCaches{
 		NanoflowShowPage: make(map[string]string),
 		PageWidgets:      make(map[string][]WidgetCaption),
+		SnippetWidgets:   make(map[string][]WidgetCaption),
+		SnippetClickContainers: make(map[string][]WizardStepItem),
 	}
 
 	nanoflows, err := reader.GetRawUnitsByType("Microflows$Nanoflow")
@@ -732,6 +1117,22 @@ func buildUnitCaches(reader *modelsdk.Reader) *UnitCaches {
 				continue
 			}
 			caches.PageWidgets[name] = findWidgetCaptions(m)
+		}
+	}
+
+	snippets, err := reader.GetRawUnitsByType("Forms$Snippet")
+	if err == nil {
+		for _, unit := range snippets {
+			var m map[string]interface{}
+			if bson.Unmarshal(unit.Contents, &m) != nil {
+				continue
+			}
+			name, _ := m["Name"].(string)
+			if name == "" {
+				continue
+			}
+			caches.SnippetWidgets[name] = findAllWidgetsSummary(m)
+			caches.SnippetClickContainers[name] = findClickableContainerItems(m, "")
 		}
 	}
 
@@ -1481,8 +1882,27 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 		}
 	}
 
-	// Contents section: all widgets with name and caption (only for EXFN_ModalPanel)
-	if isModalPanel && len(ph.Widgets) > 0 {
+	if ph.IsWizard && len(ph.WizardAreaSections) > 0 {
+		fmt.Fprintf(file, "#### Wizard Area\n\n")
+		for ai, area := range ph.WizardAreaSections {
+			areaName := area.Name
+			if areaName == "" {
+				areaName = fmt.Sprintf("wizardArea_%d", ai+1)
+			}
+			fmt.Fprintf(file, "##### Area %d: `%s`\n\n", ai+1, strings.ReplaceAll(areaName, "|", "\\|"))
+			fmt.Fprintf(file, "| # | Source | Type | Name | Caption |\n")
+			fmt.Fprintf(file, "|---|---|---|---|---|\n")
+			for i, item := range area.Items {
+				fmt.Fprintf(file, "| %d | %s | %s | %s | %s |\n", i+1,
+					strings.ReplaceAll(item.Source, "|", "\\|"),
+					strings.ReplaceAll(item.ItemType, "|", "\\|"),
+					strings.ReplaceAll(item.Name, "|", "\\|"),
+					strings.ReplaceAll(item.Caption, "|", "\\|"))
+			}
+			fmt.Fprintf(file, "\n")
+		}
+	} else if len(ph.Widgets) > 0 {
+		// Contents section: all widgets with name and caption
 		fmt.Fprintf(file, "#### Contents\n\n")
 		fmt.Fprintf(file, "| # | Type | Name | Caption |\n")
 		fmt.Fprintf(file, "|---|---|---|---|\n")
@@ -1532,6 +1952,35 @@ func writePlaceholderSection(file *os.File, sectionName string, ph *PlaceholderC
 	}
 
 	if len(ph.Tabs) == 0 {
+		if ph.IsWizard {
+			fmt.Fprintf(file, "**Steps**\n\n")
+			if ph.WizardContainerName != "" {
+				fmt.Fprintf(file, "- **ContainerRightClass:** `%s`\n\n", ph.WizardContainerName)
+			}
+			if len(ph.StepSections) == 0 {
+				fmt.Fprintf(file, "_No steps found in containerRight._\n\n")
+			} else {
+				for si, sec := range ph.StepSections {
+					secName := sec.Name
+					if secName == "" {
+						secName = fmt.Sprintf("section_%d", si+1)
+					}
+					fmt.Fprintf(file, "##### Section %d: `%s`\n\n", si+1, strings.ReplaceAll(secName, "|", "\\|"))
+					fmt.Fprintf(file, "| # | Source | Type | Name | Caption |\n")
+					fmt.Fprintf(file, "|---|---|---|---|---|\n")
+					for i, step := range sec.Items {
+						fmt.Fprintf(file, "| %d | %s | %s | %s | %s |\n", i+1,
+							strings.ReplaceAll(step.Source, "|", "\\|"),
+							strings.ReplaceAll(step.ItemType, "|", "\\|"),
+							strings.ReplaceAll(step.Name, "|", "\\|"),
+							strings.ReplaceAll(step.Caption, "|", "\\|"))
+					}
+					fmt.Fprintf(file, "\n")
+				}
+			}
+			return
+		}
+
 		if len(ph.Buttons) == 0 {
 			if !isModalPanel {
 				fmt.Fprintf(file, "_No tabs found in %s placeholder._\n\n", sectionName)
@@ -1815,12 +2264,14 @@ func exportMarkdown(reports []PageReport, outputFile string, pageFilter string, 
 
 		writePlaceholderSection(file, "Main", r.Main, r.MprPath, caches)
 
-		// Skip Right section if the layout is EXFN_ModalPanel (modal panel has no Right placeholder)
+		// Skip Right section for modal panel layouts and wizard pages.
 		mainParam := ""
+		isWizard := false
 		if r.Main != nil {
 			mainParam = r.Main.Parameter
+			isWizard = r.Main.IsWizard
 		}
-		if !strings.Contains(mainParam, "EXFN_ModalPanel") {
+		if !strings.Contains(mainParam, "EXFN_ModalPanel") && !isWizard {
 			writePlaceholderSection(file, "Right", r.Right, r.MprPath, caches)
 		}
 

@@ -1,0 +1,2261 @@
+{
+  "$ID": {
+    "Subtype": 0,
+    "Data": "riRE2ovL6kOxY793Rk+VQw=="
+  },
+  "$Type": "Forms$Page",
+  "AllowedModuleRoles": [
+    1,
+    "OpcenterEXDS_OperatorLanding.User"
+  ],
+  "Appearance": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "DpQuBBL/SUOqC8ZwTfmX+w=="
+    },
+    "$Type": "Forms$Appearance",
+    "Class": "exds-non-conformance-page",
+    "DesignProperties": [
+      3
+    ],
+    "DynamicClasses": "",
+    "Style": ""
+  },
+  "Autofocus": "DesktopOnly",
+  "CanvasHeight": 600,
+  "CanvasWidth": 1198,
+  "Documentation": "",
+  "Excluded": false,
+  "ExportLevel": "Hidden",
+  "FormCall": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "pXmJBmY8MEqOHQGfm0Espg=="
+    },
+    "$Type": "Forms$LayoutCall",
+    "Arguments": [
+      2,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "WukYxyTvjUi70KPnv2Yucw=="
+        },
+        "$Type": "Forms$FormCallArgument",
+        "Parameter": "OpcenterEXFN_DISW_DesignSystem.CanvasContainer.Main",
+        "Widgets": [
+          2,
+          {
+            "$ID": {
+              "Subtype": 0,
+              "Data": "wKgvFI7SPEGC9xGqbNhxMQ=="
+            },
+            "$Type": "Forms$DataView",
+            "Appearance": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "2l/0TKIoD0SOGR4h0Ec4uA=="
+              },
+              "$Type": "Forms$Appearance",
+              "Class": "",
+              "DesignProperties": [
+                3
+              ],
+              "DynamicClasses": "",
+              "Style": ""
+            },
+            "ConditionalEditabilitySettings": null,
+            "ConditionalVisibilitySettings": null,
+            "DataSource": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "6UjRlW1EjkS9aL6abFmnUg=="
+              },
+              "$Type": "Forms$DataViewSource",
+              "EntityRef": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "E2N/YZz0mEW0W755ENFdSQ=="
+                },
+                "$Type": "DomainModels$DirectEntityRef",
+                "Entity": "OpcenterEXDS_OperatorLanding.NCPageContext"
+              },
+              "ForceFullObjects": false,
+              "SourceVariable": {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "6uIGjE6/N1iq7Oyk5cOlLg=="
+                },
+                "$Type": "Forms$PageVariable",
+                "LocalVariable": "",
+                "PageParameter": "NCPageContext",
+                "SnippetParameter": "",
+                "SubKey": "",
+                "UseAllPages": false,
+                "Widget": ""
+              }
+            },
+            "Editability": "Always",
+            "FooterWidgets": [
+              2
+            ],
+            "LabelWidth": 3,
+            "Name": "NCPageContextDataView",
+            "NoEntityMessage": {
+              "$ID": {
+                "Subtype": 0,
+                "Data": "AKY4S+ixPUOqMxAxI8eqVA=="
+              },
+              "$Type": "Texts$Text",
+              "Items": [
+                3
+              ]
+            },
+            "ReadOnlyStyle": "Control",
+            "ShowFooter": true,
+            "TabIndex": 0,
+            "Widgets": [
+              2,
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "Fls1qP74M0yDpOnHIejyhw=="
+                },
+                "$Type": "Forms$DataView",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "0RB6CIVgdUeAxHG0PKy8nw=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": ""
+                },
+                "ConditionalEditabilitySettings": null,
+                "ConditionalVisibilitySettings": null,
+                "DataSource": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "rVuh+d7ZEkOd72VpObhlYA=="
+                  },
+                  "$Type": "Forms$NanoflowSource",
+                  "ForceFullObjects": false,
+                  "Nanoflow": "OpcenterEXDS_OperatorLanding.DS_NonConformancePage_RegisterClosePageAction",
+                  "ParameterMappings": [
+                    2
+                  ]
+                },
+                "Editability": "Always",
+                "FooterWidgets": [
+                  2
+                ],
+                "LabelWidth": 3,
+                "Name": "dataView4",
+                "NoEntityMessage": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "gFkJ9fIjNk6WxFsMT57YGA=="
+                  },
+                  "$Type": "Texts$Text",
+                  "Items": [
+                    3
+                  ]
+                },
+                "ReadOnlyStyle": "Control",
+                "ShowFooter": true,
+                "TabIndex": 0,
+                "Widgets": [
+                  2
+                ]
+              },
+              {
+                "$ID": {
+                  "Subtype": 0,
+                  "Data": "jCLK2NYv90q9Kub5L/r2Kg=="
+                },
+                "$Type": "Forms$ScrollContainer",
+                "Alignment": "Center",
+                "Appearance": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "qSf7BDXRak6KKmAFYfUPZQ=="
+                  },
+                  "$Type": "Forms$Appearance",
+                  "Class": "",
+                  "DesignProperties": [
+                    3
+                  ],
+                  "DynamicClasses": "",
+                  "Style": "height: 100%;"
+                },
+                "Bottom": null,
+                "CenterRegion": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "w7gUGtBJT0qM9lewNEkRBA=="
+                  },
+                  "$Type": "Forms$ScrollContainerRegion",
+                  "Appearance": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "mg80RuYPCkCPw6U40Gt/+w=="
+                    },
+                    "$Type": "Forms$Appearance",
+                    "Class": "",
+                    "DesignProperties": [
+                      3
+                    ],
+                    "DynamicClasses": "",
+                    "Style": "width: (100% - 280px)"
+                  },
+                  "Size": 200,
+                  "SizeMode": "Auto",
+                  "ToggleMode": "None",
+                  "Widgets": [
+                    2,
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "ACtmiUb+/EegSJfbvGFQbQ=="
+                      },
+                      "$Type": "Forms$DivContainer",
+                      "Appearance": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "MJrYlA/xkEO8xhwMH1bHbg=="
+                        },
+                        "$Type": "Forms$Appearance",
+                        "Class": "",
+                        "DesignProperties": [
+                          3
+                        ],
+                        "DynamicClasses": "",
+                        "Style": "width: calc(100% - 70px)"
+                      },
+                      "ConditionalVisibilitySettings": null,
+                      "Name": "containerRight",
+                      "NativeAccessibilitySettings": null,
+                      "OnClickAction": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "kirF5jwoWUyJ8u+y2C1fUg=="
+                        },
+                        "$Type": "Forms$NoAction",
+                        "DisabledDuringExecution": true
+                      },
+                      "RenderMode": "Div",
+                      "ScreenReaderHidden": false,
+                      "TabIndex": 0,
+                      "Widgets": [
+                        2,
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "hdiYwI6eFUiVVaOuXfqc4w=="
+                          },
+                          "$Type": "Forms$DivContainer",
+                          "Appearance": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "rAU8ows8F021i22jMqET5g=="
+                            },
+                            "$Type": "Forms$Appearance",
+                            "Class": "sectionContainer",
+                            "DesignProperties": [
+                              3
+                            ],
+                            "DynamicClasses": "",
+                            "Style": ""
+                          },
+                          "ConditionalVisibilitySettings": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "7Rj+toUbB0yieCXXUmwm5Q=="
+                            },
+                            "$Type": "Forms$ConditionalVisibilitySettings",
+                            "Attribute": "",
+                            "Conditions": [
+                              2
+                            ],
+                            "Expression": "$currentObject/SelectedNavigationWizardStep = OpcenterEXDS_OperatorLanding.NonConformancesNavigationWizardStep.Failure\n",
+                            "IgnoreSecurity": false,
+                            "ModuleRoles": [
+                              1
+                            ],
+                            "SourceVariable": null
+                          },
+                          "Name": "containerFailures",
+                          "NativeAccessibilitySettings": null,
+                          "OnClickAction": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "B0wmvhi5BEqn34KectMnNQ=="
+                            },
+                            "$Type": "Forms$NoAction",
+                            "DisabledDuringExecution": true
+                          },
+                          "RenderMode": "Div",
+                          "ScreenReaderHidden": false,
+                          "TabIndex": 0,
+                          "Widgets": [
+                            2,
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "8jNhXJGQVEGd+QFQlX5tow=="
+                              },
+                              "$Type": "Forms$DivContainer",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "JI5qM0H7j02SZJgr9tkRrw=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "sectionTitleHeader",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalVisibilitySettings": null,
+                              "Name": "NCFailureStep1",
+                              "NativeAccessibilitySettings": null,
+                              "OnClickAction": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "wXAbi3/jTEaX6J/SW+fnjg=="
+                                },
+                                "$Type": "Forms$NoAction",
+                                "DisabledDuringExecution": true
+                              },
+                              "RenderMode": "Div",
+                              "ScreenReaderHidden": false,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "P/tAPSsM4UKbny5OCK1NSA=="
+                                  },
+                                  "$Type": "Forms$DynamicText",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "OpOQ8u3Dv0GVkxHjTxB7NA=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "ConditionalVisibilitySettings": null,
+                                  "Content": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "f7bcpW+3M0+LwCVyKoGYEA=="
+                                    },
+                                    "$Type": "Forms$ClientTemplate",
+                                    "Fallback": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "w3dhkeF06kuK/3mFNJt0/w=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3
+                                      ]
+                                    },
+                                    "Parameters": [
+                                      2
+                                    ],
+                                    "Template": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "K7B6ua+j6kycSyFhxC2xpQ=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3,
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "pBsBgiUZV0628tALOxYRTw=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "nl_NL",
+                                          "Text": "Tekst"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "s89/CMLM40CfAX4gTo4ymg=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_US",
+                                          "Text": "2. Select one or more Failures from the list below"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "f6LkGxRm50KppFwBA5Us2Q=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "it_IT",
+                                          "Text": "2. Selezionare uno o più errori dall'elenco seguente"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "M478gdFDgEy1w/z1QCOT2g=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "de_DE",
+                                          "Text": "2. Wählen Sie ein oder mehrere Fehler in der folgenden Liste aus"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "BRJfzqiw80CxSESdKlGREA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "zh_CN",
+                                          "Text": "2.从下面的列表中选择一个或多个故障"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "+EhFB0S9PUCXmXRG5ClHVQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "fr_FR",
+                                          "Text": "2. Sélectionner une ou plusieurs Défaillances dans la liste ci-dessous."
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "xk8MuuLWLkKT6Pp1r7oESA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ja_JP",
+                                          "Text": "2.下のリストから1つまたは複数の故障を選択します"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "SHTqFiPyMEWKZVSGrZVCNA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ko_KR",
+                                          "Text": "2. 아래 리스트에서 하나 이상의 실패 선택"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "qHf0LkH9jUSKP7YoyBzVlQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "es_ES",
+                                          "Text": "2. Seleccione uno o varios fallos de la lista siguiente"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "J3M+aSAGy0SBD3+nUujvJA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_GB",
+                                          "Text": "2. Select one or more Failures from the list below"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "Name": "NCFailureStep1_text",
+                                  "NativeAccessibilitySettings": null,
+                                  "NativeTextStyle": "Text",
+                                  "RenderMode": "H5",
+                                  "TabIndex": 0
+                                }
+                              ]
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "S3LYQqovqkip3Yo0zGY1Kg=="
+                              },
+                              "$Type": "Forms$SnippetCallWidget",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "DIxTdOD5rkqWb9i/kw688g=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "FormCall": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "IcPWJeC8I0GaSsuV+Obx7g=="
+                                },
+                                "$Type": "Forms$SnippetCall",
+                                "Form": "OpcenterEXDS_OperatorLanding.FailureBrowser",
+                                "ParameterMappings": [
+                                  2
+                                ]
+                              },
+                              "Name": "snippetCall1",
+                              "TabIndex": 0
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "M+A9t4c7LEegYLlyUFkbTA=="
+                              },
+                              "$Type": "Forms$DataView",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "24U9hnHDi06iduff5PGDgQ=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalEditabilitySettings": null,
+                              "ConditionalVisibilitySettings": null,
+                              "DataSource": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "4KE8VNRhXEOM25sEdECj/A=="
+                                },
+                                "$Type": "Forms$NanoflowSource",
+                                "ForceFullObjects": false,
+                                "Nanoflow": "OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode",
+                                "ParameterMappings": [
+                                  2
+                                ]
+                              },
+                              "Editability": "Always",
+                              "FooterWidgets": [
+                                2
+                              ],
+                              "LabelWidth": 3,
+                              "Name": "dataView2",
+                              "NoEntityMessage": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "RaO0TLarFUaoDiajjaggeg=="
+                                },
+                                "$Type": "Texts$Text",
+                                "Items": [
+                                  3
+                                ]
+                              },
+                              "ReadOnlyStyle": "Control",
+                              "ShowFooter": true,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "sWKiD3+Cx06rd3MnwN9lQg=="
+                                  },
+                                  "$Type": "Forms$SnippetCallWidget",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "SM2qWZi4YkOFQt6GkzfWzw=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "FormCall": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "lS1QJgjU2UmV+WSPV1nFbA=="
+                                    },
+                                    "$Type": "Forms$SnippetCall",
+                                    "Form": "OpcenterEXDS_OperatorLanding.SelectedFailureBadge",
+                                    "ParameterMappings": [
+                                      2
+                                    ]
+                                  },
+                                  "Name": "snippetCall2",
+                                  "TabIndex": 0
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "3p5utBJ4M0OmUpuV5AaXpg=="
+                          },
+                          "$Type": "Forms$DivContainer",
+                          "Appearance": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "YYzG41Nq5kWOKp9fjGwfrA=="
+                            },
+                            "$Type": "Forms$Appearance",
+                            "Class": "sectionContainer",
+                            "DesignProperties": [
+                              3
+                            ],
+                            "DynamicClasses": "",
+                            "Style": ""
+                          },
+                          "ConditionalVisibilitySettings": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "iPM19ru6iU+vpGXeOZ80Bw=="
+                            },
+                            "$Type": "Forms$ConditionalVisibilitySettings",
+                            "Attribute": "",
+                            "Conditions": [
+                              2
+                            ],
+                            "Expression": "$currentObject/SelectedNavigationWizardStep = OpcenterEXDS_OperatorLanding.NonConformancesNavigationWizardStep.Details\n",
+                            "IgnoreSecurity": false,
+                            "ModuleRoles": [
+                              1
+                            ],
+                            "SourceVariable": null
+                          },
+                          "Name": "containerDetails",
+                          "NativeAccessibilitySettings": null,
+                          "OnClickAction": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "zh8e7iS9q0mEX+nEjnmjww=="
+                            },
+                            "$Type": "Forms$NoAction",
+                            "DisabledDuringExecution": true
+                          },
+                          "RenderMode": "Div",
+                          "ScreenReaderHidden": false,
+                          "TabIndex": 0,
+                          "Widgets": [
+                            2,
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "u8mzy4jQ3kmdM5+7pkyebA=="
+                              },
+                              "$Type": "Forms$DivContainer",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "0e9dK/xj7EmxSNeO3EfF8w=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "sectionTitleHeader",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalVisibilitySettings": null,
+                              "Name": "NCFailureStep2",
+                              "NativeAccessibilitySettings": null,
+                              "OnClickAction": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "9SyoYX9NCEys68LWJ1MZPQ=="
+                                },
+                                "$Type": "Forms$NoAction",
+                                "DisabledDuringExecution": true
+                              },
+                              "RenderMode": "Div",
+                              "ScreenReaderHidden": false,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "f9ifffRxr06xzYAAfyOteg=="
+                                  },
+                                  "$Type": "Forms$DynamicText",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "EPl6o1XKi0uyLsIez3ZJSA=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "ConditionalVisibilitySettings": null,
+                                  "Content": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "T6c5GxCfAkGOSfDM1a5n0w=="
+                                    },
+                                    "$Type": "Forms$ClientTemplate",
+                                    "Fallback": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "cuJ1OaHH8U+jKMjyJhOI0g=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3
+                                      ]
+                                    },
+                                    "Parameters": [
+                                      2
+                                    ],
+                                    "Template": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "I7mVlSLLdEKdUQbP8CRO3A=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3,
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "P2Q+aM9rcUyJ+u0S4upvSA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "nl_NL",
+                                          "Text": "Tekst"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "fqvHO0TwxEmTjI05kQ+QwQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_US",
+                                          "Text": "1. Fill data in the fields below"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "I8SSJcPOkUyxmLENh6TB2g=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "it_IT",
+                                          "Text": "1. Compilare i dati nei campi seguenti"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "f3XmfikDU0OIP6v31B0dcw=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "de_DE",
+                                          "Text": "1. Füllen Sie Daten in den folgenden Feldern aus"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "wt6qP5CG5kyxMvbUcQE7dA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "zh_CN",
+                                          "Text": "1.填充以下字段中的数据"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "uWBNwPDYL0W9exm2yIN/pA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "fr_FR",
+                                          "Text": "1. Remplir les données dans les champs ci-dessous"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "Tkw0cc6DBka1IBnatf8O/w=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ja_JP",
+                                          "Text": "1.下のフィールドにデータを入力します"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "J0dinz1BCU+miD51pYnS7Q=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ko_KR",
+                                          "Text": "1. 아래 필드에 데이터 입력"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "6Jqi+17dfkuGOuSINPK2iQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "es_ES",
+                                          "Text": "1. Rellene los datos en los campos siguientes"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "v5+shGQN1Uy8dN2CjlhB6A=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_GB",
+                                          "Text": "1. Fill data in the fields below"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "Name": "NCFailureStep2_text",
+                                  "NativeAccessibilitySettings": null,
+                                  "NativeTextStyle": "Text",
+                                  "RenderMode": "H5",
+                                  "TabIndex": 0
+                                }
+                              ]
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "n/FL1axPC0q05LWxh/Kk3w=="
+                              },
+                              "$Type": "Forms$SnippetCallWidget",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "ZwLKGV9c90S4K9/DCQ+4kA=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "FormCall": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "Qvh9iAqvIEqtT+zm2j2wXg=="
+                                },
+                                "$Type": "Forms$SnippetCall",
+                                "Form": "OpcenterEXDS_OperatorLanding.NonConformancesInfo",
+                                "ParameterMappings": [
+                                  2
+                                ]
+                              },
+                              "Name": "snippetCall3",
+                              "TabIndex": 0
+                            }
+                          ]
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "tcqknVxd9kqXWPOVoot7fQ=="
+                          },
+                          "$Type": "Forms$DivContainer",
+                          "Appearance": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "5qjo/oAWeE24XeG8rYPZhA=="
+                            },
+                            "$Type": "Forms$Appearance",
+                            "Class": "sectionContainer",
+                            "DesignProperties": [
+                              3
+                            ],
+                            "DynamicClasses": "",
+                            "Style": ""
+                          },
+                          "ConditionalVisibilitySettings": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "J7SR94gc9UGX5IvCBzU9KQ=="
+                            },
+                            "$Type": "Forms$ConditionalVisibilitySettings",
+                            "Attribute": "",
+                            "Conditions": [
+                              2
+                            ],
+                            "Expression": "$currentObject/SelectedNavigationWizardStep = OpcenterEXDS_OperatorLanding.NonConformancesNavigationWizardStep.Documents\n",
+                            "IgnoreSecurity": false,
+                            "ModuleRoles": [
+                              1
+                            ],
+                            "SourceVariable": null
+                          },
+                          "Name": "containerDocuments",
+                          "NativeAccessibilitySettings": null,
+                          "OnClickAction": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "ivziE5rGt0KNDwKa6gkWHw=="
+                            },
+                            "$Type": "Forms$NoAction",
+                            "DisabledDuringExecution": true
+                          },
+                          "RenderMode": "Div",
+                          "ScreenReaderHidden": false,
+                          "TabIndex": 0,
+                          "Widgets": [
+                            2,
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "E3CCXUrgDUakd1maTzgYHA=="
+                              },
+                              "$Type": "Forms$DivContainer",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "Nh1zYpNAO0KA9yXmK0/Heg=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "sectionTitleHeader",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalVisibilitySettings": null,
+                              "Name": "NCFailureStep4",
+                              "NativeAccessibilitySettings": null,
+                              "OnClickAction": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "/GzWHPIAOku350x3/1ZeDQ=="
+                                },
+                                "$Type": "Forms$NoAction",
+                                "DisabledDuringExecution": true
+                              },
+                              "RenderMode": "Div",
+                              "ScreenReaderHidden": false,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "/arc+73ZAkWLW8q9yscmWg=="
+                                  },
+                                  "$Type": "Forms$DynamicText",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "pDnowGzHs0qzYnxdm9VdKA=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "ConditionalVisibilitySettings": null,
+                                  "Content": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "ofYlwI0j2EeJx5EnuCE6uw=="
+                                    },
+                                    "$Type": "Forms$ClientTemplate",
+                                    "Fallback": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "efvnP8O6NkqvI5dlAbnp8Q=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3
+                                      ]
+                                    },
+                                    "Parameters": [
+                                      2
+                                    ],
+                                    "Template": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "Q/k3mlnOn0SPjEQ+UW+V/A=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3,
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "/8hlJ+KiuUKwPjgdoz3NSw=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "nl_NL",
+                                          "Text": "Tekst"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "ZI4DASK0lU2OEuHU0zhvdw=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_US",
+                                          "Text": "3. Select one or more Documents from the list below"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "rM9iRabCAUaWDlHrZd/FGA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "it_IT",
+                                          "Text": "3. Selezionare uno o più documenti dall'elenco seguente"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "MKDKDpgWLU+HfMtUKWO74w=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "de_DE",
+                                          "Text": "3. Wählen Sie ein oder mehrere Dokumente aus der folgenden Liste aus"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "sCltK/cs0UqoMMav8HAfDA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "zh_CN",
+                                          "Text": "3.从下面的列表中选择一个或多个文档"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "CflsA0IB90m9OLPvJZ5vHg=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "fr_FR",
+                                          "Text": "3. Sélectionner un ou plusieurs documents dans la liste ci-dessous."
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "svRSGPzpPEO5OwhmVOvKeQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ja_JP",
+                                          "Text": "3.下のリストから1つまたは複数の文書を選択します"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "RSIUbUaoTEioSutX5uCoQg=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ko_KR",
+                                          "Text": "3. 아래 리스트에서 하나 이상의 문서 선택"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "3n3my4pQp02ABlMZ7QnURw=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "es_ES",
+                                          "Text": "3. Seleccione uno o más documentos de la lista siguiente"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "IbS1YBXBqUmO188oZQVQQg=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_GB",
+                                          "Text": "3. Select one or more Documents from the list below"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "Name": "NCFailureStep3_text1",
+                                  "NativeAccessibilitySettings": null,
+                                  "NativeTextStyle": "Text",
+                                  "RenderMode": "H5",
+                                  "TabIndex": 0
+                                }
+                              ]
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "Q23PZm+rlk2qdfj/Ubo3lw=="
+                              },
+                              "$Type": "Forms$SnippetCallWidget",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "PxXHoOmXI0GnkUqcka2YMw=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "FormCall": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "2CaOF8HPJUqqkgfjy+kU4Q=="
+                                },
+                                "$Type": "Forms$SnippetCall",
+                                "Form": "OpcenterEXDS_OperatorLanding.NonConformanceDocuments",
+                                "ParameterMappings": [
+                                  2
+                                ]
+                              },
+                              "Name": "snippetCall6",
+                              "TabIndex": 0
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "El8ZnmtH9ESZzSYjs2Mrug=="
+                              },
+                              "$Type": "Forms$DataView",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "idqfVuRofkmCPWD2hOmqrg=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalEditabilitySettings": null,
+                              "ConditionalVisibilitySettings": null,
+                              "DataSource": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "Z48X4o52E0GCrf+8mw2HDw=="
+                                },
+                                "$Type": "Forms$NanoflowSource",
+                                "ForceFullObjects": false,
+                                "Nanoflow": "OpcenterEXDS_OperatorLanding.DS_GetLayoutHorizontalMode",
+                                "ParameterMappings": [
+                                  2
+                                ]
+                              },
+                              "Editability": "Always",
+                              "FooterWidgets": [
+                                2
+                              ],
+                              "LabelWidth": 3,
+                              "Name": "dataView3",
+                              "NoEntityMessage": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "/cVQ8gGT90W/YPCEsb4jTw=="
+                                },
+                                "$Type": "Texts$Text",
+                                "Items": [
+                                  3
+                                ]
+                              },
+                              "ReadOnlyStyle": "Control",
+                              "ShowFooter": true,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "n9IkQuK1UUifI/k6GNFKYw=="
+                                  },
+                                  "$Type": "Forms$SnippetCallWidget",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "dXfpVhvLBUqaaYOX4KaO3A=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "FormCall": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "Gwemi0YVYkKoqxjWf+U/hw=="
+                                    },
+                                    "$Type": "Forms$SnippetCall",
+                                    "Form": "OpcenterEXDS_OperatorLanding.SelectedDocumentBadge",
+                                    "ParameterMappings": [
+                                      2
+                                    ]
+                                  },
+                                  "Name": "snippetCall7",
+                                  "TabIndex": 0
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "cp/eP8KoDUOjKggYbhueTg=="
+                          },
+                          "$Type": "Forms$DivContainer",
+                          "Appearance": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "l9wZU7fmH0avVoMbIcW79Q=="
+                            },
+                            "$Type": "Forms$Appearance",
+                            "Class": "sectionContainer",
+                            "DesignProperties": [
+                              3
+                            ],
+                            "DynamicClasses": "",
+                            "Style": ""
+                          },
+                          "ConditionalVisibilitySettings": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "MP69j12K3EWbpcNB3DAP1A=="
+                            },
+                            "$Type": "Forms$ConditionalVisibilitySettings",
+                            "Attribute": "",
+                            "Conditions": [
+                              2
+                            ],
+                            "Expression": "$currentObject/SelectedNavigationWizardStep = OpcenterEXDS_OperatorLanding.NonConformancesNavigationWizardStep.Submit\n",
+                            "IgnoreSecurity": false,
+                            "ModuleRoles": [
+                              1
+                            ],
+                            "SourceVariable": null
+                          },
+                          "Name": "containerSubmit",
+                          "NativeAccessibilitySettings": null,
+                          "OnClickAction": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "FNanrzAaY0GJer3H2J/aYw=="
+                            },
+                            "$Type": "Forms$NoAction",
+                            "DisabledDuringExecution": true
+                          },
+                          "RenderMode": "Div",
+                          "ScreenReaderHidden": false,
+                          "TabIndex": 0,
+                          "Widgets": [
+                            2,
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "2Jb2MOGAxE+FHK7GLeQ1mQ=="
+                              },
+                              "$Type": "Forms$DivContainer",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "yxoqQoevAEyZF/Jo7aUCTA=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "sectionTitleHeader",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalVisibilitySettings": null,
+                              "Name": "NCFailureStep3",
+                              "NativeAccessibilitySettings": null,
+                              "OnClickAction": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "pBqQIy6WyE++KXe/ggdVYQ=="
+                                },
+                                "$Type": "Forms$NoAction",
+                                "DisabledDuringExecution": true
+                              },
+                              "RenderMode": "Div",
+                              "ScreenReaderHidden": false,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "SXrCcXKpjEm80IFip4EHMQ=="
+                                  },
+                                  "$Type": "Forms$DynamicText",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "5pT4vJaVFUC0F3lhEZVQHg=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "ConditionalVisibilitySettings": null,
+                                  "Content": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "iX3vM+uSLkeUWF2xvb7UTw=="
+                                    },
+                                    "$Type": "Forms$ClientTemplate",
+                                    "Fallback": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "P3s/zSQswEijhlfdxK2f9w=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3
+                                      ]
+                                    },
+                                    "Parameters": [
+                                      2
+                                    ],
+                                    "Template": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "hg4IR1J4GkCGmDm45xGUkQ=="
+                                      },
+                                      "$Type": "Texts$Text",
+                                      "Items": [
+                                        3,
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "x2Ll0OAhZkqyc8bQyEfbZA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "nl_NL",
+                                          "Text": "Tekst"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "0iqHsBXN6kGYbQffkwHdNg=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_US",
+                                          "Text": "4. Review the information and Submit"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "IpBJRdso9UeLZfG80DHK2A=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "it_IT",
+                                          "Text": "4. Rivedere le informazioni e inviare"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "XQNgyX4C3Um5b8WHJy2rwQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "de_DE",
+                                          "Text": "4. Prüfen Sie die Informationen und klicken Sie auf \"Senden\""
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "vwvlrYn7akOm4c+GQ1JmZA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "zh_CN",
+                                          "Text": "4.查看信息并提交"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "3mktzB/hS0yDOTfAZ/NA2A=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "fr_FR",
+                                          "Text": "4. Réviser les informations et Soumettre"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "9cf9spwJxEu78a8SO6xXpA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ja_JP",
+                                          "Text": "4.情報のレビューおよび送信"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "pxH0MxZxdESa9QNKJqQMUQ=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "ko_KR",
+                                          "Text": "4. 정보 검토 및 제출"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "1XRnGUPfEEewxEam4NKNdg=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "es_ES",
+                                          "Text": "4. Revise la información y envíela"
+                                        },
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "856AR5FQ00+Jbw5V6ouGVA=="
+                                          },
+                                          "$Type": "Texts$Translation",
+                                          "LanguageCode": "en_GB",
+                                          "Text": "4. Review the information and Submit"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "Name": "NCFailureStep3_text",
+                                  "NativeAccessibilitySettings": null,
+                                  "NativeTextStyle": "Text",
+                                  "RenderMode": "H5",
+                                  "TabIndex": 0
+                                }
+                              ]
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "n/yGa5ytz0KtjqjGq0VonQ=="
+                              },
+                              "$Type": "Forms$SnippetCallWidget",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "k78zHCMeVEm5tZYxun2SFg=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "FormCall": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "OMSLXS6uhUGCTwsk5RXh+w=="
+                                },
+                                "$Type": "Forms$SnippetCall",
+                                "Form": "OpcenterEXDS_OperatorLanding.NonConformancesSummary",
+                                "ParameterMappings": [
+                                  2
+                                ]
+                              },
+                              "Name": "snippetCall4",
+                              "TabIndex": 0
+                            },
+                            {
+                              "$ID": {
+                                "Subtype": 0,
+                                "Data": "D4VbdnnzvUq/SNw9pBdHmg=="
+                              },
+                              "$Type": "Forms$DivContainer",
+                              "Appearance": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "DlUub7W5DUmb40giqJZWCA=="
+                                },
+                                "$Type": "Forms$Appearance",
+                                "Class": "footerButtons",
+                                "DesignProperties": [
+                                  3
+                                ],
+                                "DynamicClasses": "",
+                                "Style": ""
+                              },
+                              "ConditionalVisibilitySettings": null,
+                              "Name": "submitButtonsContainer",
+                              "NativeAccessibilitySettings": null,
+                              "OnClickAction": {
+                                "$ID": {
+                                  "Subtype": 0,
+                                  "Data": "ch9SHJW6i06eqzBoIsU8NQ=="
+                                },
+                                "$Type": "Forms$NoAction",
+                                "DisabledDuringExecution": true
+                              },
+                              "RenderMode": "Div",
+                              "ScreenReaderHidden": false,
+                              "TabIndex": 0,
+                              "Widgets": [
+                                2,
+                                {
+                                  "$ID": {
+                                    "Subtype": 0,
+                                    "Data": "ZTN/zhyza0GQ4p+LEaiovQ=="
+                                  },
+                                  "$Type": "Forms$DataView",
+                                  "Appearance": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "TB4FemRj9k2eXazP60320Q=="
+                                    },
+                                    "$Type": "Forms$Appearance",
+                                    "Class": "",
+                                    "DesignProperties": [
+                                      3
+                                    ],
+                                    "DynamicClasses": "",
+                                    "Style": ""
+                                  },
+                                  "ConditionalEditabilitySettings": null,
+                                  "ConditionalVisibilitySettings": null,
+                                  "DataSource": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "QEY+AbRJ5kmxurhNLTZgng=="
+                                    },
+                                    "$Type": "Forms$DataViewSource",
+                                    "EntityRef": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "eMNrxZcGnkiweEP3C3kXrg=="
+                                      },
+                                      "$Type": "DomainModels$IndirectEntityRef",
+                                      "Steps": [
+                                        2,
+                                        {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "KNmtsU8dIUW0Ff1AVz5zrw=="
+                                          },
+                                          "$Type": "DomainModels$EntityRefStep",
+                                          "Association": "OpcenterEXDS_OperatorLanding.OneToOneSeverityLink",
+                                          "DestinationEntity": "OpcenterEXDS_OperatorLanding.Severity"
+                                        }
+                                      ]
+                                    },
+                                    "ForceFullObjects": false,
+                                    "SourceVariable": {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "9Nm1+wUk4F+2kdwinMZPIw=="
+                                      },
+                                      "$Type": "Forms$PageVariable",
+                                      "LocalVariable": "",
+                                      "PageParameter": "NCPageContext",
+                                      "SnippetParameter": "",
+                                      "SubKey": "",
+                                      "UseAllPages": false,
+                                      "Widget": ""
+                                    }
+                                  },
+                                  "Editability": "Always",
+                                  "FooterWidgets": [
+                                    2
+                                  ],
+                                  "LabelWidth": 3,
+                                  "Name": "dataView1",
+                                  "NoEntityMessage": {
+                                    "$ID": {
+                                      "Subtype": 0,
+                                      "Data": "MLbgU+YTQEOM6T6gOWEgxw=="
+                                    },
+                                    "$Type": "Texts$Text",
+                                    "Items": [
+                                      3
+                                    ]
+                                  },
+                                  "ReadOnlyStyle": "Control",
+                                  "ShowFooter": true,
+                                  "TabIndex": 0,
+                                  "Widgets": [
+                                    2,
+                                    {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "MTRCUW3uoECPGrBjafuYIQ=="
+                                      },
+                                      "$Type": "Forms$ActionButton",
+                                      "Action": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "GtMHXUryAEuKDSOIXhiJWw=="
+                                        },
+                                        "$Type": "Forms$CallNanoflowClientAction",
+                                        "ConfirmationInfo": null,
+                                        "DisabledDuringExecution": true,
+                                        "Nanoflow": "OpcenterEXDS_OperatorLanding.ACT_Submit_NonConformance",
+                                        "OutputMappings": [
+                                          3
+                                        ],
+                                        "ParameterMappings": [
+                                          2
+                                        ],
+                                        "ProgressBar": "None",
+                                        "ProgressMessage": null
+                                      },
+                                      "Appearance": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "Qe/weTB2IUGB/lSD5eR1Ug=="
+                                        },
+                                        "$Type": "Forms$Appearance",
+                                        "Class": "",
+                                        "DesignProperties": [
+                                          3,
+                                          {
+                                            "$ID": {
+                                              "Subtype": 0,
+                                              "Data": "d7XGAoqDC0uS2RCUjEj90Q=="
+                                            },
+                                            "$Type": "Forms$DesignPropertyValue",
+                                            "Key": "Align self",
+                                            "Value": {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "Q3twqLoQ2VKBjnN8u5eOJg=="
+                                              },
+                                              "$Type": "Forms$OptionDesignPropertyValue",
+                                              "Option": "Right"
+                                            }
+                                          }
+                                        ],
+                                        "DynamicClasses": "if ($NCPageContextDataView/AreSomeFailureSelected = false or $NCPageContextDataView/AreNCMandatoryInfoFilled = false or \n    ($NCPageContextDataView/_Context = 'WorkOrderOperation' and ($NCPageContextDataView/IsSerializedWO and $NCPageContextDataView/AvailableQty \u003e 1 and $NCPageContextDataView/AreSomeMaterialTrackingUnitsSelected = false)) or\n    ($NCPageContextDataView/_Context = 'MaterialTrackingUnit' and $NCPageContextDataView/AreSomeMaterialTrackingUnitsSelected = false)\n) \nthen 'disabled'\nelse ''",
+                                        "Style": "margin-left: 10px;"
+                                      },
+                                      "AriaRole": "Button",
+                                      "ButtonStyle": "Primary",
+                                      "CaptionTemplate": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "iL+GjaS9WUq2zjTD2ElTQQ=="
+                                        },
+                                        "$Type": "Forms$ClientTemplate",
+                                        "Fallback": {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "1a6+94ttTE+GbIRRrxJqLw=="
+                                          },
+                                          "$Type": "Texts$Text",
+                                          "Items": [
+                                            3
+                                          ]
+                                        },
+                                        "Parameters": [
+                                          2
+                                        ],
+                                        "Template": {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "C/iy4++WmUi8WT4McV8lVg=="
+                                          },
+                                          "$Type": "Texts$Text",
+                                          "Items": [
+                                            3,
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "Mine17F7ckGrF8eO79d1QQ=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "nl_NL",
+                                              "Text": "Opslaan"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "AYZrAcTRn0G9BqxbMMZOVA=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "en_US",
+                                              "Text": "Submit"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "ORCt0b5j+0GdWeMoY0oj6g=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "it_IT",
+                                              "Text": "Inoltra"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "F4juuLIVgkikoQX5Q7w/xA=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "de_DE",
+                                              "Text": "Senden"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "pY2mp9444UOt8unYGtu0rg=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "zh_CN",
+                                              "Text": "提交"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "k9lZCNKookOiHfcrhRqk+Q=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "fr_FR",
+                                              "Text": "Soumettre"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "dfuwfwSUaU2TDKU0EFyOCA=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "ja_JP",
+                                              "Text": "送信"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "2Ac4iVBy8UGgGuTp46U3ow=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "ko_KR",
+                                              "Text": "제출"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "ElrHS5iA50S/TpzJcITa/w=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "es_ES",
+                                              "Text": "Enviar"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "QGlioKnSBkO53dW+9G6/Ag=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "en_GB",
+                                              "Text": "Submit"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "ConditionalVisibilitySettings": null,
+                                      "Icon": null,
+                                      "Name": "NC_SubmitButton",
+                                      "NativeAccessibilitySettings": null,
+                                      "RenderType": "Button",
+                                      "TabIndex": 0,
+                                      "Tooltip": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "txRSRvmDsk60QCwAXwIw1w=="
+                                        },
+                                        "$Type": "Texts$Text",
+                                        "Items": [
+                                          3
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "$ID": {
+                                        "Subtype": 0,
+                                        "Data": "a7aKSyvUnkihNv6fwr0VNw=="
+                                      },
+                                      "$Type": "Forms$ActionButton",
+                                      "Action": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "ZT/loQq6gEKOzyB6UYm6LQ=="
+                                        },
+                                        "$Type": "Forms$CallNanoflowClientAction",
+                                        "ConfirmationInfo": null,
+                                        "DisabledDuringExecution": true,
+                                        "Nanoflow": "OpcenterEXDS_OperatorLanding.NAV_Back",
+                                        "OutputMappings": [
+                                          3
+                                        ],
+                                        "ParameterMappings": [
+                                          2
+                                        ],
+                                        "ProgressBar": "None",
+                                        "ProgressMessage": null
+                                      },
+                                      "Appearance": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "swdGmCJj6062Q1OWU/k/1g=="
+                                        },
+                                        "$Type": "Forms$Appearance",
+                                        "Class": "",
+                                        "DesignProperties": [
+                                          3,
+                                          {
+                                            "$ID": {
+                                              "Subtype": 0,
+                                              "Data": "kmV6ZMcHbEe7kiQHlHnH3g=="
+                                            },
+                                            "$Type": "Forms$DesignPropertyValue",
+                                            "Key": "Align self",
+                                            "Value": {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "PiADiwVt8VmdWAOBNPxc3g=="
+                                              },
+                                              "$Type": "Forms$OptionDesignPropertyValue",
+                                              "Option": "Right"
+                                            }
+                                          }
+                                        ],
+                                        "DynamicClasses": "",
+                                        "Style": ""
+                                      },
+                                      "AriaRole": "Button",
+                                      "ButtonStyle": "Default",
+                                      "CaptionTemplate": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "/Ytmn5UjXUSUjVbwbDqVMQ=="
+                                        },
+                                        "$Type": "Forms$ClientTemplate",
+                                        "Fallback": {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "QvcjOvjJQEKIi9YCCL33vw=="
+                                          },
+                                          "$Type": "Texts$Text",
+                                          "Items": [
+                                            3
+                                          ]
+                                        },
+                                        "Parameters": [
+                                          2
+                                        ],
+                                        "Template": {
+                                          "$ID": {
+                                            "Subtype": 0,
+                                            "Data": "WuhlI+azVkygF9taeex4Ag=="
+                                          },
+                                          "$Type": "Texts$Text",
+                                          "Items": [
+                                            3,
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "LnJvIx3sH0ik6LBa3KOADA=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "nl_NL",
+                                              "Text": "Knop"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "rnXUbSKmZkOAuzJsgfRNBg=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "en_US",
+                                              "Text": "Cancel"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "eIhvzM/GWkmG7ABRTBdfjQ=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "it_IT",
+                                              "Text": "Annulla"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "6lKuZSahTUuVDjvxdjiSoA=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "de_DE",
+                                              "Text": "Abbrechen"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "H38pLfCQG0aasaBHK9j3yw=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "zh_CN",
+                                              "Text": "取消"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "H2V2jIyLPkSNw4/2YwCxGA=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "fr_FR",
+                                              "Text": "Annuler"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "syofZQQe5kW2AMrUABLF+Q=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "ja_JP",
+                                              "Text": "キャンセル"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "BYampX+k3ESbcSk0QqHMHw=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "ko_KR",
+                                              "Text": "취소"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "DnmR2r9Xf0ilvwcx/qvD6w=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "es_ES",
+                                              "Text": "Cancelar"
+                                            },
+                                            {
+                                              "$ID": {
+                                                "Subtype": 0,
+                                                "Data": "1SK0JGFLwEuPoKnlEW4h6g=="
+                                              },
+                                              "$Type": "Texts$Translation",
+                                              "LanguageCode": "en_GB",
+                                              "Text": "Cancel"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "ConditionalVisibilitySettings": null,
+                                      "Icon": null,
+                                      "Name": "cancelToolSelectionActionButton",
+                                      "NativeAccessibilitySettings": null,
+                                      "RenderType": "Button",
+                                      "TabIndex": -1,
+                                      "Tooltip": {
+                                        "$ID": {
+                                          "Subtype": 0,
+                                          "Data": "MSbwVhjzp06T0hQy5/kYMg=="
+                                        },
+                                        "$Type": "Texts$Text",
+                                        "Items": [
+                                          3
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "LayoutMode": "Headline",
+                "Left": {
+                  "$ID": {
+                    "Subtype": 0,
+                    "Data": "i6LxehRPDESuMqrWwTyC0A=="
+                  },
+                  "$Type": "Forms$ScrollContainerRegion",
+                  "Appearance": {
+                    "$ID": {
+                      "Subtype": 0,
+                      "Data": "yCbrlQbeS0mZd92mdvn0eA=="
+                    },
+                    "$Type": "Forms$Appearance",
+                    "Class": "",
+                    "DesignProperties": [
+                      3
+                    ],
+                    "DynamicClasses": "",
+                    "Style": ""
+                  },
+                  "Size": 280,
+                  "SizeMode": "Pixels",
+                  "ToggleMode": "None",
+                  "Widgets": [
+                    2,
+                    {
+                      "$ID": {
+                        "Subtype": 0,
+                        "Data": "u/GfnMTKI0mXBosZXf9xGg=="
+                      },
+                      "$Type": "Forms$DivContainer",
+                      "Appearance": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "7raI1U+Mf0OrHRw0bcDIFA=="
+                        },
+                        "$Type": "Forms$Appearance",
+                        "Class": "exds-wizard",
+                        "DesignProperties": [
+                          3
+                        ],
+                        "DynamicClasses": "",
+                        "Style": ""
+                      },
+                      "ConditionalVisibilitySettings": null,
+                      "Name": "container1",
+                      "NativeAccessibilitySettings": null,
+                      "OnClickAction": {
+                        "$ID": {
+                          "Subtype": 0,
+                          "Data": "G1jnLUiaPEeLG9ggyiw7qA=="
+                        },
+                        "$Type": "Forms$NoAction",
+                        "DisabledDuringExecution": true
+                      },
+                      "RenderMode": "Div",
+                      "ScreenReaderHidden": false,
+                      "TabIndex": 0,
+                      "Widgets": [
+                        2,
+                        {
+                          "$ID": {
+                            "Subtype": 0,
+                            "Data": "40tvLP5TCECSBMIbMLWM6w=="
+                          },
+                          "$Type": "Forms$SnippetCallWidget",
+                          "Appearance": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "hNtW1BXaP0iUubg7vCHA4g=="
+                            },
+                            "$Type": "Forms$Appearance",
+                            "Class": "",
+                            "DesignProperties": [
+                              3
+                            ],
+                            "DynamicClasses": "",
+                            "Style": ""
+                          },
+                          "FormCall": {
+                            "$ID": {
+                              "Subtype": 0,
+                              "Data": "hF6b0VkbGkuI0mcUBXq5fQ=="
+                            },
+                            "$Type": "Forms$SnippetCall",
+                            "Form": "OpcenterEXDS_OperatorLanding.NonConformancesNavigationWizard",
+                            "ParameterMappings": [
+                              2
+                            ]
+                          },
+                          "Name": "snippetCall5",
+                          "TabIndex": 0
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "Name": "scrollContainer1",
+                "NativeHideScrollbars": false,
+                "Right": null,
+                "ScrollBehavior": "PerRegion",
+                "TabIndex": 0,
+                "Top": null,
+                "Width": 960,
+                "WidthMode": "Auto"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Form": "OpcenterEXFN_DISW_DesignSystem.CanvasContainer"
+  },
+  "MarkAsUsed": false,
+  "Name": "NonConformancePopup",
+  "Parameters": [
+    3,
+    {
+      "$ID": {
+        "Subtype": 0,
+        "Data": "zJ0Zlf8/7ka1/spwxq6jyQ=="
+      },
+      "$Type": "Forms$PageParameter",
+      "DefaultValue": "",
+      "IsRequired": true,
+      "Name": "NCPageContext",
+      "ParameterType": {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "CiM/7elE9EqGEqa00HEvqQ=="
+        },
+        "$Type": "DataTypes$ObjectType",
+        "Entity": "OpcenterEXDS_OperatorLanding.NCPageContext"
+      }
+    }
+  ],
+  "PopupCloseAction": "cancelToolSelectionActionButton",
+  "PopupHeight": 0,
+  "PopupResizable": true,
+  "PopupWidth": 0,
+  "Title": {
+    "$ID": {
+      "Subtype": 0,
+      "Data": "0ucIA+Zia0aI07E2k2w1Ew=="
+    },
+    "$Type": "Texts$Text",
+    "Items": [
+      3,
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "51LjPxHHvUK4hOibk5+hkg=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "en_US",
+        "Text": "Declare Non-Conformance"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "xqll1yEgSUS3gjJbStWotA=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "nl_NL",
+        "Text": "Page Context Bewerken"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "ZM9/uPckVU+UrgzN/KcXBg=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "it_IT",
+        "Text": "Dichiara non conformità"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "SSEHsop9f02IjgB7upInKw=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "de_DE",
+        "Text": "Nichtkonformität deklarieren"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "b93NUiVB2Uex8v+JCe4YdQ=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "zh_CN",
+        "Text": "声明非合规项"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "3y/WdRqJhUmHgI1AVdWWlg=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "fr_FR",
+        "Text": "Déclarer une non-conformité"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "FCh8tow9yUKxNiIJWZaU/A=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "ja_JP",
+        "Text": "不適合を宣言"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "zQlv185pfUSs5h581fx5nQ=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "ko_KR",
+        "Text": "부적합 선언"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "TcPVvpva/kKQ1j0LrdFl7g=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "es_ES",
+        "Text": "Declarar falta de conformidad"
+      },
+      {
+        "$ID": {
+          "Subtype": 0,
+          "Data": "u8cjtUsbyUOyrFPJNt/IKw=="
+        },
+        "$Type": "Texts$Translation",
+        "LanguageCode": "en_GB",
+        "Text": "Declare Non-Conformance"
+      }
+    ]
+  },
+  "Url": "",
+  "Variables": [
+    3
+  ]
+}
