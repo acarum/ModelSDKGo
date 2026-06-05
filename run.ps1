@@ -34,9 +34,29 @@ if (-not $gccVersion) {
     exit 1
 }
 
+$resolvedScriptPath = (Resolve-Path -LiteralPath $Script -ErrorAction Stop).Path
+$scriptDir = Split-Path -Parent $resolvedScriptPath
+$scriptFileName = Split-Path -Leaf $resolvedScriptPath
+$scriptFolderName = Split-Path -Leaf $scriptDir
+
+# For export_manifest, always produce the executable next to main.go.
+if ($scriptFolderName -eq "export_manifest" -and $scriptFileName -eq "main.go") {
+    $outputExe = Join-Path $scriptDir "export_manifest.exe"
+    Write-Host "Building export_manifest executable..." -ForegroundColor Cyan
+    Write-Host "Output: $outputExe" -ForegroundColor Gray
+
+    go build -o $outputExe $resolvedScriptPath
+    if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+    }
+
+    Write-Host "Build completed: $outputExe" -ForegroundColor Green
+    exit 0
+}
+
 # Run the Go script
 if ($Args) {
-    go run $Script $Args
+    go run $resolvedScriptPath $Args
 } else {
-    go run $Script
+    go run $resolvedScriptPath
 }
