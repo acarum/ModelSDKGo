@@ -1074,9 +1074,9 @@ func loadPanelWidgets(mprPath, fullPageName string) []WidgetCaption {
 // UnitCaches holds pre-built lookup maps to avoid repeated MPR scans.
 // Both maps use short names (no module prefix) as keys.
 type UnitCaches struct {
-	NanoflowShowPage map[string]string          // nanoflow short name → opened page full name
-	PageWidgets      map[string][]WidgetCaption // page short name → widgets
-	SnippetWidgets   map[string][]WidgetCaption // snippet short name → widgets
+	NanoflowShowPage       map[string]string           // nanoflow short name → opened page full name
+	PageWidgets            map[string][]WidgetCaption  // page short name → widgets
+	SnippetWidgets         map[string][]WidgetCaption  // snippet short name → widgets
 	SnippetClickContainers map[string][]WizardStepItem // snippet short name → clickable containers
 }
 
@@ -1084,9 +1084,9 @@ type UnitCaches struct {
 // This replaces the O(N²) pattern of loadNanoflowShowPage / loadPanelWidgets.
 func buildUnitCaches(reader *modelsdk.Reader) *UnitCaches {
 	caches := &UnitCaches{
-		NanoflowShowPage: make(map[string]string),
-		PageWidgets:      make(map[string][]WidgetCaption),
-		SnippetWidgets:   make(map[string][]WidgetCaption),
+		NanoflowShowPage:       make(map[string]string),
+		PageWidgets:            make(map[string][]WidgetCaption),
+		SnippetWidgets:         make(map[string][]WidgetCaption),
 		SnippetClickContainers: make(map[string][]WizardStepItem),
 	}
 
