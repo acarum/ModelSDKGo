@@ -727,8 +727,21 @@ func findClickableContainerItems(data interface{}, source string) []WizardStepIt
 }
 
 func expandSnippetStepItems(snippetForm string, caches *UnitCaches, includeClickableContainers bool) []WizardStepItem {
+	return expandSnippetStepItemsRecursive(snippetForm, caches, includeClickableContainers, map[string]bool{})
+}
+
+func expandSnippetStepItemsRecursive(snippetForm string, caches *UnitCaches, includeClickableContainers bool, visiting map[string]bool) []WizardStepItem {
 	var items []WizardStepItem
 	short := snippetShortName(snippetForm)
+	if short == "" {
+		return items
+	}
+	if visiting[short] {
+		return items
+	}
+	visiting[short] = true
+	defer delete(visiting, short)
+
 	snippetWidgets := caches.SnippetWidgets[short]
 	for _, w := range snippetWidgets {
 		items = appendStepFromWidget(items, snippetForm, w)
@@ -739,7 +752,44 @@ func expandSnippetStepItems(snippetForm string, caches *UnitCaches, includeClick
 			items = append(items, c)
 		}
 	}
+
+	for _, childForm := range caches.SnippetChildForms[short] {
+		items = append(items, expandSnippetStepItemsRecursive(childForm, caches, includeClickableContainers, visiting)...)
+	}
+
 	return items
+}
+
+func findSnippetCallForms(data interface{}) []string {
+	var forms []string
+	seen := make(map[string]bool)
+
+	var walk func(v interface{})
+	walk = func(v interface{}) {
+		switch m := v.(type) {
+		case map[string]interface{}:
+			if form := strings.TrimSpace(getSnippetForm(m)); form != "" {
+				if !seen[form] {
+					seen[form] = true
+					forms = append(forms, form)
+				}
+			}
+			for _, val := range m {
+				walk(val)
+			}
+		case primitive.A:
+			for _, item := range m {
+				walk(item)
+			}
+		case []interface{}:
+			for _, item := range m {
+				walk(item)
+			}
+		}
+	}
+
+	walk(data)
+	return forms
 }
 
 func extractStepItemsFromChild(child map[string]interface{}, caches *UnitCaches, includeClickableContainers bool) []WizardStepItem {
@@ -819,7 +869,7 @@ func extractWizardSections(data interface{}, caches *UnitCaches) []WizardStepSec
 }
 
 // extractWizardAreaSections returns item groups from exds-wizard containers.
-// Snippet content is expanded at first level via extractStepItemsFromChild.
+// Snippet content is expanded recursively via extractStepItemsFromChild.
 func extractWizardAreaSections(data interface{}, caches *UnitCaches) []WizardStepSection {
 	containers := findContainerNodesByClass(data, "exds-wizard")
 	if len(containers) == 0 {
@@ -839,7 +889,7 @@ func extractWizardAreaSections(data interface{}, caches *UnitCaches) []WizardSte
 			if !ok {
 				continue
 			}
-			items = append(items, extractStepItemsFromChild(cm, caches, true)...)
+			items = append(items, extractStepItemsFromChild(cm, caches, false)...)
 		}
 
 		if len(items) == 0 {
@@ -1078,6 +1128,7 @@ type UnitCaches struct {
 	PageWidgets            map[string][]WidgetCaption  // page short name → widgets
 	SnippetWidgets         map[string][]WidgetCaption  // snippet short name → widgets
 	SnippetClickContainers map[string][]WizardStepItem // snippet short name → clickable containers
+	SnippetChildForms      map[string][]string         // snippet short name → referenced snippet forms
 }
 
 // buildUnitCaches scans all units once and builds lookup caches used throughout the export.
@@ -1088,6 +1139,7 @@ func buildUnitCaches(reader *modelsdk.Reader) *UnitCaches {
 		PageWidgets:            make(map[string][]WidgetCaption),
 		SnippetWidgets:         make(map[string][]WidgetCaption),
 		SnippetClickContainers: make(map[string][]WizardStepItem),
+		SnippetChildForms:      make(map[string][]string),
 	}
 
 	nanoflows, err := reader.GetRawUnitsByType("Microflows$Nanoflow")
@@ -1133,6 +1185,7 @@ func buildUnitCaches(reader *modelsdk.Reader) *UnitCaches {
 			}
 			caches.SnippetWidgets[name] = findAllWidgetsSummary(m)
 			caches.SnippetClickContainers[name] = findClickableContainerItems(m, "")
+			caches.SnippetChildForms[name] = findSnippetCallForms(m)
 		}
 	}
 
@@ -1413,6 +1466,22 @@ func findAllWidgetsSummary(data interface{}) []WidgetCaption {
 	switch v := data.(type) {
 	case map[string]interface{}:
 		t, _ := v["$Type"].(string)
+		if t == "Forms$DivContainer" {
+			cap := ""
+			if oca, ok := v["OnClickAction"].(map[string]interface{}); ok {
+				if oca["$Type"] == "Forms$CallNanoflowClientAction" {
+					nf := strings.TrimSpace(getStr(oca, "Nanoflow"))
+					if nf != "" {
+						cap = "OnClick: " + nf
+					}
+				}
+			}
+			result = append(result, WidgetCaption{
+				WidgetType: "Container",
+				WidgetName: getStr(v, "Name"),
+				Caption:    cap,
+			})
+		}
 		if t == "CustomWidgets$CustomWidget" {
 			if typeNode, ok := v["Type"].(map[string]interface{}); ok {
 				wid, _ := typeNode["WidgetId"].(string)
@@ -1445,6 +1514,13 @@ func findAllWidgetsSummary(data interface{}) []WidgetCaption {
 				}
 			}
 		}
+		if isLayoutWidgetType(t) {
+			result = append(result, WidgetCaption{
+				WidgetType: "Layout",
+				WidgetName: getStr(v, "Name"),
+				Caption:    "",
+			})
+		}
 		if include[t] {
 			cap := extractCaption(v)
 			result = append(result, WidgetCaption{
@@ -1466,6 +1542,15 @@ func findAllWidgetsSummary(data interface{}) []WidgetCaption {
 		}
 	}
 	return result
+}
+
+func isLayoutWidgetType(t string) bool {
+	switch t {
+	case "Forms$LayoutGrid", "Forms$Layout", "Forms$LayoutGridContainer":
+		return true
+	default:
+		return false
+	}
 }
 
 // shortType strips the "Forms$" prefix for readability
