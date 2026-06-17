@@ -1361,7 +1361,6 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, [
 			}
 
 			colProps := getArray(colMap, "Properties")
-			isLastUpdatedOn := columnTargetsLastUpdatedOn(colProps)
 
 			// Check if this column has legacy dynamicText marker property
 			hasLegacyMarker := hasLegacyDynamicTextProperty(colProps)
@@ -1369,8 +1368,8 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, [
 			columnUpdated := false
 			columnUsesDateTime := false
 
-			// Align LastUpdatedOn to CreatedOn behavior: dynamicText -> attribute
-			if isLastUpdatedOn && hasLegacyMarker && normalizeDynamicTextToAttribute(colProps) {
+			// Normalize legacy marker for all matching columns: dynamicText -> attribute.
+			if hasLegacyMarker && normalizeDynamicTextToAttribute(colProps) {
 				columnUpdated = true
 			}
 
@@ -1382,13 +1381,9 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, [
 
 				if valMap, ok := cpMap["Value"].(map[string]interface{}); ok {
 					if hasDateTimeFormatInContentParams(valMap) {
-						// Only track DateTime usage on LastUpdatedOn column
-						if isLastUpdatedOn {
-							columnUsesDateTime = true
-						}
+						columnUsesDateTime = true
 					}
-					// Apply DateTime expression reset only to LastUpdatedOn
-					if isLastUpdatedOn && resetDateTimeInContentParams(valMap) > 0 {
+					if resetDateTimeInContentParams(valMap) > 0 {
 						columnUpdated = true
 					}
 				}
@@ -1449,69 +1444,6 @@ func normalizeDynamicTextToAttribute(colProps []interface{}) bool {
 	return updated
 }
 
-func columnTargetsLastUpdatedOn(colProps []interface{}) bool {
-	for _, cp := range colProps {
-		cpMap, ok := cp.(map[string]interface{})
-		if !ok {
-			continue
-		}
-
-		valMap, ok := cpMap["Value"].(map[string]interface{})
-		if !ok {
-			continue
-		}
-
-		if containsLastUpdatedOnReference(valMap) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func containsLastUpdatedOnReference(data interface{}) bool {
-	switch v := data.(type) {
-	case map[string]interface{}:
-		if attrRef, ok := v["AttributeRef"].(map[string]interface{}); ok {
-			if attr, ok := attrRef["Attribute"].(string); ok {
-				attrLower := strings.ToLower(attr)
-				if attrLower == "lastupdatedon" || strings.HasSuffix(attrLower, ".lastupdatedon") {
-					return true
-				}
-			}
-		}
-
-		if expr, ok := v["Expression"].(string); ok {
-			exprLower := strings.ToLower(expr)
-			if strings.Contains(exprLower, "lastupdatedon") {
-				return true
-			}
-		}
-
-		for _, value := range v {
-			if containsLastUpdatedOnReference(value) {
-				return true
-			}
-		}
-
-	case []interface{}:
-		for _, item := range v {
-			if containsLastUpdatedOnReference(item) {
-				return true
-			}
-		}
-
-	case primitive.A:
-		for _, item := range v {
-			if containsLastUpdatedOnReference(item) {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
 func hasDateTimeFormatInContentParams(data interface{}) bool {
 	switch v := data.(type) {
 	case map[string]interface{}:
@@ -1546,6 +1478,11 @@ func hasDateTimeFormatInContentParams(data interface{}) bool {
 
 func resolveDataGridColumnName(colProps []interface{}, typeMap map[string]string, colIdx int) string {
 	fallback := fmt.Sprintf("col%d", colIdx+1)
+
+	if attrName, ok := extractColumnAttributeName(colProps); ok {
+		return attrName
+	}
+
 	for _, cp := range colProps {
 		cpMap, ok := cp.(map[string]interface{})
 		if !ok {
@@ -1568,6 +1505,64 @@ func resolveDataGridColumnName(colProps []interface{}, typeMap map[string]string
 	}
 
 	return fallback
+}
+
+func extractColumnAttributeName(colProps []interface{}) (string, bool) {
+	for _, cp := range colProps {
+		cpMap, ok := cp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		valMap, ok := cpMap["Value"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		if fullAttribute, found := findAttributeReference(valMap); found {
+			if idx := strings.LastIndex(fullAttribute, "."); idx >= 0 && idx+1 < len(fullAttribute) {
+				return fullAttribute[idx+1:], true
+			}
+			if strings.TrimSpace(fullAttribute) != "" {
+				return strings.TrimSpace(fullAttribute), true
+			}
+		}
+	}
+
+	return "", false
+}
+
+func findAttributeReference(data interface{}) (string, bool) {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if attrRef, ok := v["AttributeRef"].(map[string]interface{}); ok {
+			if attr, ok := attrRef["Attribute"].(string); ok && strings.TrimSpace(attr) != "" {
+				return strings.TrimSpace(attr), true
+			}
+		}
+
+		for _, value := range v {
+			if attr, found := findAttributeReference(value); found {
+				return attr, true
+			}
+		}
+
+	case []interface{}:
+		for _, item := range v {
+			if attr, found := findAttributeReference(item); found {
+				return attr, true
+			}
+		}
+
+	case primitive.A:
+		for _, item := range v {
+			if attr, found := findAttributeReference(item); found {
+				return attr, true
+			}
+		}
+	}
+
+	return "", false
 }
 
 func appendUniqueStrings(base []string, values ...string) []string {
