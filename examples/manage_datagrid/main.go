@@ -25,7 +25,7 @@ func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage:")
 		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json]")
-		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--force-page-diff]")
+		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --dump-json")
@@ -33,6 +33,7 @@ func main() {
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --defaultDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --dump-target-json")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage")
+		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-module MyModule")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --dump-target-json --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("\nNote:")
@@ -49,6 +50,7 @@ func main() {
 	dumpTargetJSON := false
 	forcePageDiff := false
 	onlyPage := ""
+	onlyModule := ""
 	widgetIDSet := false
 
 	for i := 2; i < len(os.Args); i++ {
@@ -67,6 +69,11 @@ func main() {
 		}
 		if arg == "--force-page-diff" {
 			forcePageDiff = true
+			continue
+		}
+		if arg == "--only-module" && i+1 < len(os.Args) {
+			onlyModule = os.Args[i+1]
+			i++ // skip next arg
 			continue
 		}
 		if arg == "--only-page" && i+1 < len(os.Args) {
@@ -114,11 +121,14 @@ func main() {
 		if onlyPage != "" {
 			fmt.Printf("Filter: Only page %s will be modified\n", onlyPage)
 		}
+		if onlyModule != "" {
+			fmt.Printf("Filter: Only module %s will be modified\n", onlyModule)
+		}
 		if forcePageDiff {
 			fmt.Println("Force page diff mode: ENABLED")
 		}
 		fmt.Println()
-		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, forcePageDiff)
+		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, onlyModule, forcePageDiff)
 	} else {
 		fmt.Printf("\n=== Searching for custom widgets with widgetId: %s ===\n", sourceWidgetID)
 		if dumpJSON {
@@ -498,7 +508,7 @@ func performReplace(reader *modelsdk.Reader, mprPath, sourceWidgetID, destWidget
 	fmt.Println("\n✓ Replacement completed!")
 }
 
-func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, dumpTargetJSON bool, onlyPage string, forcePageDiff bool) {
+func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, dumpTargetJSON bool, onlyPage string, onlyModule string, forcePageDiff bool) {
 	var unitsToUpdate []UnitDefaultDateTmeInfo
 	dumpedTargetPages := 0
 
@@ -528,6 +538,11 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 	} else {
 		fmt.Printf("Scanning %d snippets...\n", len(snippets))
 		for _, snippet := range snippets {
+			moduleName := resolveModuleNameFromContainerID(string(snippet.ContainerID), moduleMap, containerMap)
+			if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+				continue
+			}
+
 			bsonData, err := loadUnitBSON(mprPath, string(snippet.ID))
 			if err != nil {
 				continue
@@ -577,6 +592,9 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 		fmt.Printf("Scanning %d pages...\n", len(pages))
 		for _, page := range pages {
 			moduleName := resolveModuleNameFromContainerID(string(page.ContainerID), moduleMap, containerMap)
+			if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+				continue
+			}
 			if moduleName == "" {
 				moduleName = "[unknown]"
 			}
@@ -644,6 +662,11 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 	} else {
 		fmt.Printf("Scanning %d layouts...\n", len(layouts))
 		for _, layout := range layouts {
+			moduleName := resolveModuleNameFromContainerID(string(layout.ContainerID), moduleMap, containerMap)
+			if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+				continue
+			}
+
 			bsonData, err := loadUnitBSON(mprPath, string(layout.ID))
 			if err != nil {
 				continue
