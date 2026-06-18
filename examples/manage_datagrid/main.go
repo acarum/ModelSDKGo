@@ -18,6 +18,15 @@ import (
 const defaultDataGridWidgetID = "com.mendix.widget.web.datagrid.Datagrid"
 const targetCustomDateTimeFormat = ",MMM dd, yyyy  hh:mm:ss a"
 const dateTimeModificationDescription = "set DateTime format from custom to default and remove custom format value when it matches the target pattern"
+const removeCustomFormatDateTimeModificationDescription = "set DateTime format from custom to Date and Time"
+const defaultDateAndTimeSelectorKey = "datetime"
+
+type DateTimeUpdateMode string
+
+const (
+	dateTimeUpdateModeDefault            DateTimeUpdateMode = "defaultDateTme"
+	dateTimeUpdateModeRemoveCustomFormat DateTimeUpdateMode = "removeCustomFormatDateTme"
+)
 
 var formatDateTimeExpressionRegex = regexp.MustCompile(`(?i)^\s*formatdatetime\s*\(\s*(.+?)\s*,\s*'([^']*)'\s*\)\s*$`)
 
@@ -46,6 +55,7 @@ func main() {
 
 	// Check modes and flags
 	defaultDateTmeMode := false
+	removeCustomFormatDateTmeMode := false
 	dumpJSON := false
 	dumpTargetJSON := false
 	forcePageDiff := false
@@ -61,6 +71,10 @@ func main() {
 		}
 		if arg == "--defaultDateTme" {
 			defaultDateTmeMode = true
+			continue
+		}
+		if arg == "--removeCustomFormatDateTme" {
+			removeCustomFormatDateTmeMode = true
 			continue
 		}
 		if arg == "--dump-target-json" {
@@ -101,6 +115,12 @@ func main() {
 		fmt.Printf("No widget_id provided, using default: %s\n", sourceWidgetID)
 	}
 
+	// Ensure modes are mutually exclusive
+	if defaultDateTmeMode && removeCustomFormatDateTmeMode {
+		fmt.Println("Error: cannot specify both --defaultDateTme and --removeCustomFormatDateTme")
+		os.Exit(1)
+	}
+
 	// Open the MPR file
 	reader, err := modelsdk.Open(mprPath)
 	if err != nil {
@@ -111,10 +131,17 @@ func main() {
 
 	fmt.Printf("Opened: %s\n", reader.Path())
 
-	if defaultDateTmeMode {
-		fmt.Printf("\n=== DEFAULT DATETIME MODE ===\n")
+	if defaultDateTmeMode || removeCustomFormatDateTmeMode {
+		mode := dateTimeUpdateModeDefault
+		if removeCustomFormatDateTmeMode {
+			mode = dateTimeUpdateModeRemoveCustomFormat
+		}
+
+		fmt.Printf("\n=== %s ===\n", dateTimeModeString(mode))
 		fmt.Printf("Searching for widgets with widgetId: %s\n", sourceWidgetID)
-		fmt.Printf("Will reset custom DateTime formatting to default only when custom format is: %s\n\n", targetCustomDateTimeFormat)
+		if mode == dateTimeUpdateModeDefault {
+			fmt.Printf("Will reset custom DateTime formatting to default only when custom format is: %s\n\n", targetCustomDateTimeFormat)
+		}
 		if dumpTargetJSON {
 			fmt.Println("Target page JSON dump mode: ENABLED")
 		}
@@ -128,7 +155,7 @@ func main() {
 			fmt.Println("Force page diff mode: ENABLED")
 		}
 		fmt.Println()
-		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, onlyModule, forcePageDiff)
+		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, onlyModule, forcePageDiff, mode)
 	} else {
 		fmt.Printf("\n=== Searching for custom widgets with widgetId: %s ===\n", sourceWidgetID)
 		if dumpJSON {
@@ -508,7 +535,7 @@ func performReplace(reader *modelsdk.Reader, mprPath, sourceWidgetID, destWidget
 	fmt.Println("\n✓ Replacement completed!")
 }
 
-func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, dumpTargetJSON bool, onlyPage string, onlyModule string, forcePageDiff bool) {
+func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, dumpTargetJSON bool, onlyPage string, onlyModule string, forcePageDiff bool, mode DateTimeUpdateMode) {
 	var unitsToUpdate []UnitDefaultDateTmeInfo
 	dumpedTargetPages := 0
 
@@ -562,7 +589,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 			columnNames := make([]string, 0)
 			dateTimeColumns := make([]string, 0)
 			for _, widget := range widgets {
-				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget)
+				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget, mode)
 				columnsUpdated += updated
 				columnNames = appendUniqueStrings(columnNames, updatedColumns...)
 				dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
@@ -577,7 +604,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 					ColumnsUpdated:   columnsUpdated,
 					ColumnNames:      columnNames,
 					DateTimeColumns:  dateTimeColumns,
-					ModificationType: dateTimeModificationDescription,
+					ModificationType: dateTimeModeDescription(mode),
 				})
 			}
 		}
@@ -623,7 +650,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 			columnNames := make([]string, 0)
 			dateTimeColumns := make([]string, 0)
 			for _, widget := range widgets {
-				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget)
+				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget, mode)
 				columnsUpdated += updated
 				columnNames = appendUniqueStrings(columnNames, updatedColumns...)
 				dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
@@ -639,7 +666,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 					ColumnsUpdated:   columnsUpdated,
 					ColumnNames:      columnNames,
 					DateTimeColumns:  dateTimeColumns,
-					ModificationType: dateTimeModificationDescription,
+					ModificationType: dateTimeModeDescription(mode),
 				})
 
 				if dumpTargetJSON && columnsUpdated > 0 {
@@ -686,7 +713,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 			columnNames := make([]string, 0)
 			dateTimeColumns := make([]string, 0)
 			for _, widget := range widgets {
-				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget)
+				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget, mode)
 				columnsUpdated += updated
 				columnNames = appendUniqueStrings(columnNames, updatedColumns...)
 				dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
@@ -714,7 +741,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 			fmt.Printf("  Page: %s\n", onlyPage)
 			fmt.Printf("  Columns to modify: none\n")
 			fmt.Printf("  DateTime columns: none\n")
-			fmt.Printf("  Modification: %s\n", dateTimeModificationDescription)
+			fmt.Printf("  Modification: %s\n", dateTimeModeDescription(mode))
 			fmt.Printf("Note: Filter was set to only-page %s\n", onlyPage)
 			if forcePageDiff {
 				if err := forceDumpPageBeforeAfterDiff(reader, mprPath, onlyPage); err != nil {
@@ -809,7 +836,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 		widgets := findWidgetsByWidgetIDDirect(unitData, widgetID)
 		columnsUpdated := 0
 		for _, widget := range widgets {
-			columnsUpdated += resetDateTimeCustomFormattingInWidget(widget)
+			columnsUpdated += resetDateTimeCustomFormattingInWidget(widget, mode)
 		}
 
 		if columnsUpdated == 0 {
@@ -1344,12 +1371,12 @@ func searchForMatchingWidgetsDirect(data interface{}, widgetID string, matchingW
 	}
 }
 
-func resetDateTimeCustomFormattingInWidget(widget map[string]interface{}) int {
-	updatedColumns, _, _ := collectDateTimeModificationsInWidget(widget)
+func resetDateTimeCustomFormattingInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) int {
+	updatedColumns, _, _ := collectDateTimeModificationsInWidget(widget, mode)
 	return updatedColumns
 }
 
-func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, []string, []string) {
+func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) (int, []string, []string) {
 	typeMap := make(map[string]string)
 	buildTypePointerMap(widget, typeMap)
 
@@ -1385,16 +1412,8 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, [
 
 			colProps := getArray(colMap, "Properties")
 
-			// Check if this column has legacy dynamicText marker property
-			hasLegacyMarker := hasLegacyDynamicTextProperty(colProps)
-
 			columnUpdated := false
 			columnUsesDateTime := false
-
-			// Normalize legacy marker for all matching columns: dynamicText -> attribute.
-			if hasLegacyMarker && normalizeDynamicTextToAttribute(colProps) {
-				columnUpdated = true
-			}
 
 			for _, cp := range colProps {
 				cpMap, ok := cp.(map[string]interface{})
@@ -1406,7 +1425,7 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, [
 					if hasDateTimeFormatInContentParams(valMap) {
 						columnUsesDateTime = true
 					}
-					if resetDateTimeInContentParams(valMap) > 0 {
+					if resetDateTimeInContentParams(valMap, mode) > 0 {
 						columnUpdated = true
 					}
 				}
@@ -1427,44 +1446,6 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}) (int, [
 	}
 
 	return 0, nil, nil
-}
-
-func hasLegacyDynamicTextProperty(colProps []interface{}) bool {
-	for _, cp := range colProps {
-		cpMap, ok := cp.(map[string]interface{})
-		if !ok {
-			continue
-		}
-
-		if valMap, ok := cpMap["Value"].(map[string]interface{}); ok {
-			if primVal, ok := valMap["PrimitiveValue"].(string); ok && primVal == "dynamicText" {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func normalizeDynamicTextToAttribute(colProps []interface{}) bool {
-	updated := false
-	for _, cp := range colProps {
-		cpMap, ok := cp.(map[string]interface{})
-		if !ok {
-			continue
-		}
-
-		valMap, ok := cpMap["Value"].(map[string]interface{})
-		if !ok {
-			continue
-		}
-
-		if primVal, ok := valMap["PrimitiveValue"].(string); ok && strings.EqualFold(strings.TrimSpace(primVal), "dynamicText") {
-			valMap["PrimitiveValue"] = "attribute"
-			updated = true
-		}
-	}
-
-	return updated
 }
 
 func hasDateTimeFormatInContentParams(data interface{}) bool {
@@ -1677,26 +1658,26 @@ func getArray(data map[string]interface{}, key string) []interface{} {
 	return toSlice(v)
 }
 
-func resetDateTimeInContentParams(data interface{}) int {
+func resetDateTimeInContentParams(data interface{}, mode DateTimeUpdateMode) int {
 	switch v := data.(type) {
 	case map[string]interface{}:
-		changes := resetDateTimeInContentParamsMap(v)
+		changes := resetDateTimeInContentParamsMap(v, mode)
 		for _, value := range v {
-			changes += resetDateTimeInContentParams(value)
+			changes += resetDateTimeInContentParams(value, mode)
 		}
 		return changes
 
 	case []interface{}:
 		changes := 0
 		for _, item := range v {
-			changes += resetDateTimeInContentParams(item)
+			changes += resetDateTimeInContentParams(item, mode)
 		}
 		return changes
 
 	case primitive.A:
 		changes := 0
 		for _, item := range v {
-			changes += resetDateTimeInContentParams(item)
+			changes += resetDateTimeInContentParams(item, mode)
 		}
 		return changes
 	}
@@ -1704,24 +1685,55 @@ func resetDateTimeInContentParams(data interface{}) int {
 	return 0
 }
 
-func resetDateTimeInContentParamsMap(v map[string]interface{}) int {
+func resetDateTimeInContentParamsMap(v map[string]interface{}, mode DateTimeUpdateMode) int {
 	changes := 0
 
 	formatKey, hasFormat := findMapKey(v, isDateTimeFormatKey)
 	customFormatKey, hasCustomFormat := findMapKey(v, isCustomDateTimeFormatKey)
+	dateFormatKey, hasDateFormat := findMapKey(v, isDateFormatKey)
+	customDateFormatKey, hasCustomDateFormat := findMapKey(v, isCustomDateFormatKey)
 
 	if hasFormat && hasCustomFormat {
 		if isCustomSelectorValue(v[formatKey]) {
 			customFormatValue, ok := extractComparableString(v[customFormatKey])
 			if ok && isTargetDateTimeFormat(customFormatValue) {
-				if updatedValue, changed := replaceCustomWithDefault(v[formatKey]); changed {
-					v[formatKey] = updatedValue
+				if mode == dateTimeUpdateModeRemoveCustomFormat {
+					// For removeCustomFormatDateTme mode, replace "custom" with "datetime"
+					if updatedValue, changed := replaceCustomSelector(v[formatKey], defaultDateAndTimeSelectorKey); changed {
+						v[formatKey] = updatedValue
+						changes++
+					}
+				} else {
+					// For default mode, replace "custom" with "default"
+					if updatedValue, changed := replaceCustomWithDefault(v[formatKey]); changed {
+						v[formatKey] = updatedValue
+						changes++
+					}
+
+					delete(v, customFormatKey)
 					changes++
 				}
-
-				delete(v, customFormatKey)
-				changes++
 			}
+		}
+	}
+
+	if hasDateFormat && hasCustomDateFormat {
+		customFormatValue, ok := extractComparableString(v[customDateFormatKey])
+		if ok && isTargetDateTimeFormat(customFormatValue) {
+			if mode == dateTimeUpdateModeRemoveCustomFormat {
+				if updatedValue, changed := replaceDateOrCustomWithDateTime(v[dateFormatKey]); changed {
+					v[dateFormatKey] = updatedValue
+					changes++
+				}
+			} else {
+				if updatedValue, changed := replaceDateWithDateTime(v[dateFormatKey]); changed {
+					v[dateFormatKey] = updatedValue
+					changes++
+				}
+			}
+
+			delete(v, customDateFormatKey)
+			changes++
 		}
 	}
 
@@ -1739,6 +1751,12 @@ func resetDateTimeInContentParamsMap(v map[string]interface{}) int {
 		if changed {
 			v[key] = updatedExpression
 			changes++
+
+			if formattingInfoRaw, ok := v["FormattingInfo"]; ok {
+				if formattingInfoMap, ok := formattingInfoRaw.(map[string]interface{}); ok {
+					changes += promoteFormattingInfoDateFormatToDateTime(formattingInfoMap)
+				}
+			}
 		}
 	}
 
@@ -1813,6 +1831,90 @@ func replaceCustomWithDefault(value interface{}) (interface{}, bool) {
 	return value, false
 }
 
+func replaceDateWithDateTime(value interface{}) (interface{}, bool) {
+	switch v := value.(type) {
+	case string:
+		if strings.EqualFold(strings.TrimSpace(v), "date") {
+			return "DateTime", true
+		}
+		return value, false
+
+	case map[string]interface{}:
+		changed := false
+
+		if pv, ok := v["PrimitiveValue"].(string); ok && strings.EqualFold(strings.TrimSpace(pv), "date") {
+			v["PrimitiveValue"] = "DateTime"
+			changed = true
+		}
+		if rawValue, ok := v["Value"].(string); ok && strings.EqualFold(strings.TrimSpace(rawValue), "date") {
+			v["Value"] = "DateTime"
+			changed = true
+		}
+		if key, ok := v["_Key"].(string); ok && strings.EqualFold(strings.TrimSpace(key), "date") {
+			v["_Key"] = "DateTime"
+			changed = true
+		}
+
+		return v, changed
+	}
+
+	return value, false
+}
+
+func replaceDateOrCustomWithDateTime(value interface{}) (interface{}, bool) {
+	if updatedValue, changed := replaceDateWithDateTime(value); changed {
+		return updatedValue, true
+	}
+
+	switch v := value.(type) {
+	case string:
+		if strings.EqualFold(strings.TrimSpace(v), "custom") {
+			return "DateTime", true
+		}
+		return value, false
+
+	case map[string]interface{}:
+		changed := false
+
+		if pv, ok := v["PrimitiveValue"].(string); ok && strings.EqualFold(strings.TrimSpace(pv), "custom") {
+			v["PrimitiveValue"] = "DateTime"
+			changed = true
+		}
+		if rawValue, ok := v["Value"].(string); ok && strings.EqualFold(strings.TrimSpace(rawValue), "custom") {
+			v["Value"] = "DateTime"
+			changed = true
+		}
+		if key, ok := v["_Key"].(string); ok && strings.EqualFold(strings.TrimSpace(key), "custom") {
+			v["_Key"] = "DateTime"
+			changed = true
+		}
+
+		return v, changed
+	}
+
+	return value, false
+}
+
+func promoteFormattingInfoDateFormatToDateTime(formattingInfo map[string]interface{}) int {
+	changes := 0
+
+	dateFormatKey, hasDateFormat := findMapKey(formattingInfo, isDateFormatKey)
+	if hasDateFormat {
+		if updatedValue, changed := replaceDateOrCustomWithDateTime(formattingInfo[dateFormatKey]); changed {
+			formattingInfo[dateFormatKey] = updatedValue
+			changes++
+		}
+	}
+
+	customDateFormatKey, hasCustomDateFormat := findMapKey(formattingInfo, isCustomDateFormatKey)
+	if hasCustomDateFormat {
+		delete(formattingInfo, customDateFormatKey)
+		changes++
+	}
+
+	return changes
+}
+
 func isCustomSelectorValue(value interface{}) bool {
 	_, changed := replaceCustomWithDefault(value)
 	return changed
@@ -1853,6 +1955,14 @@ func isDateTimeFormatKey(normalizedKey string) bool {
 func isCustomDateTimeFormatKey(normalizedKey string) bool {
 	return strings.Contains(normalizedKey, "custom") &&
 		(strings.Contains(normalizedKey, "formatdatetime") || strings.Contains(normalizedKey, "formatdatatime"))
+}
+
+func isDateFormatKey(normalizedKey string) bool {
+	return normalizedKey == "dateformat"
+}
+
+func isCustomDateFormatKey(normalizedKey string) bool {
+	return normalizedKey == "customdateformat"
 }
 
 func normalizeKey(s string) string {
@@ -2074,4 +2184,59 @@ func extractPropertyValue(propMap map[string]interface{}) string {
 	}
 
 	return "[value not found]"
+}
+
+func dateTimeModeString(mode DateTimeUpdateMode) string {
+	switch mode {
+	case dateTimeUpdateModeRemoveCustomFormat:
+		return "REMOVE CUSTOM FORMAT DATETIME MODE"
+	case dateTimeUpdateModeDefault:
+		fallthrough
+	default:
+		return "DEFAULT DATETIME MODE"
+	}
+}
+
+func replaceCustomSelector(value interface{}, targetSelector string) (interface{}, bool) {
+	// Handle string values
+	if strVal, ok := value.(string); ok {
+		if strVal == "custom" {
+			return targetSelector, true
+		}
+		return value, false
+	}
+
+	// Handle map values (PrimitiveValue, Value, _Key)
+	if mapVal, ok := value.(map[string]interface{}); ok {
+		// Check PrimitiveValue
+		if primVal, ok := mapVal["PrimitiveValue"].(string); ok && primVal == "custom" {
+			mapVal["PrimitiveValue"] = targetSelector
+			return mapVal, true
+		}
+
+		// Check Value
+		if val, ok := mapVal["Value"].(string); ok && val == "custom" {
+			mapVal["Value"] = targetSelector
+			return mapVal, true
+		}
+
+		// Check _Key for enum values
+		if keyVal, ok := mapVal["_Key"].(string); ok && keyVal == "custom" {
+			mapVal["_Key"] = targetSelector
+			return mapVal, true
+		}
+	}
+
+	return value, false
+}
+
+func dateTimeModeDescription(mode DateTimeUpdateMode) string {
+	switch mode {
+	case dateTimeUpdateModeRemoveCustomFormat:
+		return removeCustomFormatDateTimeModificationDescription
+	case dateTimeUpdateModeDefault:
+		fallthrough
+	default:
+		return dateTimeModificationDescription
+	}
 }
