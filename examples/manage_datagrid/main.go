@@ -35,16 +35,24 @@ func main() {
 		fmt.Println("Usage:")
 		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json]")
 		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
+		fmt.Println("  RemoveCustomFormatDateTme mode: manage_datagrid <mpr_file_path> [widget_id] --removeCustomFormatDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --dump-json")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --defaultDateTme")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme")
+		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --removeCustomFormatDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --dump-target-json")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --dump-target-json")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-module MyModule")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-module MyModule")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --dump-target-json --only-page MyModule.MyPage")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --dump-target-json --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage --force-page-diff")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("\nNote:")
 		fmt.Printf("  Default widget_id: %s\n", defaultDataGridWidgetID)
 		os.Exit(1)
@@ -175,6 +183,8 @@ type UnitDefaultDateTmeInfo struct {
 	ColumnsUpdated   int
 	ColumnNames      []string
 	DateTimeColumns  []string
+	TooltipColumns   []string
+	TooltipLabelMap  map[string]string
 	ModificationType string
 }
 
@@ -559,53 +569,65 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 
 	// Search in snippets
 	fmt.Println("=== Scanning Snippets ===")
-	snippets, err := reader.ListSnippets()
-	if err != nil {
-		fmt.Printf("Error listing snippets: %v\n", err)
+	if onlyPage != "" {
+		fmt.Println("Skipping snippets because --only-page filter is set.")
 	} else {
-		fmt.Printf("Scanning %d snippets...\n", len(snippets))
-		for _, snippet := range snippets {
-			moduleName := resolveModuleNameFromContainerID(string(snippet.ContainerID), moduleMap, containerMap)
-			if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
-				continue
-			}
+		snippets, err := reader.ListSnippets()
+		if err != nil {
+			fmt.Printf("Error listing snippets: %v\n", err)
+		} else {
+			fmt.Printf("Scanning %d snippets...\n", len(snippets))
+			for _, snippet := range snippets {
+				moduleName := resolveModuleNameFromContainerID(string(snippet.ContainerID), moduleMap, containerMap)
+				if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+					continue
+				}
 
-			bsonData, err := loadUnitBSON(mprPath, string(snippet.ID))
-			if err != nil {
-				continue
-			}
+				bsonData, err := loadUnitBSON(mprPath, string(snippet.ID))
+				if err != nil {
+					continue
+				}
 
-			var snippetData map[string]interface{}
-			if err := bson.Unmarshal(bsonData, &snippetData); err != nil {
-				continue
-			}
+				var snippetData map[string]interface{}
+				if err := bson.Unmarshal(bsonData, &snippetData); err != nil {
+					continue
+				}
 
-			widgets := findWidgetsByWidgetIDDirect(snippetData, widgetID)
-			if len(widgets) == 0 {
-				continue
-			}
+				widgets := findWidgetsByWidgetIDDirect(snippetData, widgetID)
+				if len(widgets) == 0 {
+					continue
+				}
 
-			columnsUpdated := 0
-			columnNames := make([]string, 0)
-			dateTimeColumns := make([]string, 0)
-			for _, widget := range widgets {
-				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget, mode)
-				columnsUpdated += updated
-				columnNames = appendUniqueStrings(columnNames, updatedColumns...)
-				dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
-			}
+				columnsUpdated := 0
+				columnNames := make([]string, 0)
+				dateTimeColumns := make([]string, 0)
+				tooltipColumns := make([]string, 0)
+				tooltipLabelMap := make(map[string]string)
+				for _, widget := range widgets {
+					updated, updatedColumns, dtColumns, ttColumns, ttLabels := collectDateTimeModificationsInWidget(widget, mode)
+					columnsUpdated += updated
+					columnNames = appendUniqueStrings(columnNames, updatedColumns...)
+					dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
+					tooltipColumns = appendUniqueStrings(tooltipColumns, ttColumns...)
+					for k, v := range ttLabels {
+						tooltipLabelMap[k] = v
+					}
+				}
 
-			if columnsUpdated > 0 || len(dateTimeColumns) > 0 {
-				unitsToUpdate = append(unitsToUpdate, UnitDefaultDateTmeInfo{
-					UnitType:         "Snippet",
-					UnitID:           string(snippet.ID),
-					UnitName:         snippet.Name,
-					GridCount:        len(widgets),
-					ColumnsUpdated:   columnsUpdated,
-					ColumnNames:      columnNames,
-					DateTimeColumns:  dateTimeColumns,
-					ModificationType: dateTimeModeDescription(mode),
-				})
+				if columnsUpdated > 0 || len(dateTimeColumns) > 0 {
+					unitsToUpdate = append(unitsToUpdate, UnitDefaultDateTmeInfo{
+						UnitType:         "Snippet",
+						UnitID:           string(snippet.ID),
+						UnitName:         snippet.Name,
+						GridCount:        len(widgets),
+						ColumnsUpdated:   columnsUpdated,
+						ColumnNames:      columnNames,
+						DateTimeColumns:  dateTimeColumns,
+						TooltipColumns:   tooltipColumns,
+						TooltipLabelMap:  tooltipLabelMap,
+						ModificationType: dateTimeModeDescription(mode),
+					})
+				}
 			}
 		}
 	}
@@ -649,11 +671,17 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 			columnsUpdated := 0
 			columnNames := make([]string, 0)
 			dateTimeColumns := make([]string, 0)
+			tooltipColumns := make([]string, 0)
+			tooltipLabelMap := make(map[string]string)
 			for _, widget := range widgets {
-				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget, mode)
+				updated, updatedColumns, dtColumns, ttColumns, ttLabels := collectDateTimeModificationsInWidget(widget, mode)
 				columnsUpdated += updated
 				columnNames = appendUniqueStrings(columnNames, updatedColumns...)
 				dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
+				tooltipColumns = appendUniqueStrings(tooltipColumns, ttColumns...)
+				for k, v := range ttLabels {
+					tooltipLabelMap[k] = v
+				}
 			}
 
 			if columnsUpdated > 0 || len(dateTimeColumns) > 0 {
@@ -666,6 +694,8 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 					ColumnsUpdated:   columnsUpdated,
 					ColumnNames:      columnNames,
 					DateTimeColumns:  dateTimeColumns,
+					TooltipColumns:   tooltipColumns,
+					TooltipLabelMap:  tooltipLabelMap,
 					ModificationType: dateTimeModeDescription(mode),
 				})
 
@@ -683,53 +713,65 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 
 	// Search in layouts
 	fmt.Println("\n=== Scanning Layouts ===")
-	layouts, err := reader.ListLayouts()
-	if err != nil {
-		fmt.Printf("Error listing layouts: %v\n", err)
+	if onlyPage != "" {
+		fmt.Println("Skipping layouts because --only-page filter is set.")
 	} else {
-		fmt.Printf("Scanning %d layouts...\n", len(layouts))
-		for _, layout := range layouts {
-			moduleName := resolveModuleNameFromContainerID(string(layout.ContainerID), moduleMap, containerMap)
-			if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
-				continue
-			}
+		layouts, err := reader.ListLayouts()
+		if err != nil {
+			fmt.Printf("Error listing layouts: %v\n", err)
+		} else {
+			fmt.Printf("Scanning %d layouts...\n", len(layouts))
+			for _, layout := range layouts {
+				moduleName := resolveModuleNameFromContainerID(string(layout.ContainerID), moduleMap, containerMap)
+				if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+					continue
+				}
 
-			bsonData, err := loadUnitBSON(mprPath, string(layout.ID))
-			if err != nil {
-				continue
-			}
+				bsonData, err := loadUnitBSON(mprPath, string(layout.ID))
+				if err != nil {
+					continue
+				}
 
-			var layoutData map[string]interface{}
-			if err := bson.Unmarshal(bsonData, &layoutData); err != nil {
-				continue
-			}
+				var layoutData map[string]interface{}
+				if err := bson.Unmarshal(bsonData, &layoutData); err != nil {
+					continue
+				}
 
-			widgets := findWidgetsByWidgetIDDirect(layoutData, widgetID)
-			if len(widgets) == 0 {
-				continue
-			}
+				widgets := findWidgetsByWidgetIDDirect(layoutData, widgetID)
+				if len(widgets) == 0 {
+					continue
+				}
 
-			columnsUpdated := 0
-			columnNames := make([]string, 0)
-			dateTimeColumns := make([]string, 0)
-			for _, widget := range widgets {
-				updated, updatedColumns, dtColumns := collectDateTimeModificationsInWidget(widget, mode)
-				columnsUpdated += updated
-				columnNames = appendUniqueStrings(columnNames, updatedColumns...)
-				dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
-			}
+				columnsUpdated := 0
+				columnNames := make([]string, 0)
+				dateTimeColumns := make([]string, 0)
+				tooltipColumns := make([]string, 0)
+				tooltipLabelMap := make(map[string]string)
+				for _, widget := range widgets {
+					updated, updatedColumns, dtColumns, ttColumns, ttLabels := collectDateTimeModificationsInWidget(widget, mode)
+					columnsUpdated += updated
+					columnNames = appendUniqueStrings(columnNames, updatedColumns...)
+					dateTimeColumns = appendUniqueStrings(dateTimeColumns, dtColumns...)
+					tooltipColumns = appendUniqueStrings(tooltipColumns, ttColumns...)
+					for k, v := range ttLabels {
+						tooltipLabelMap[k] = v
+					}
+				}
 
-			if columnsUpdated > 0 || len(dateTimeColumns) > 0 {
-				unitsToUpdate = append(unitsToUpdate, UnitDefaultDateTmeInfo{
-					UnitType:         "Layout",
-					UnitID:           string(layout.ID),
-					UnitName:         layout.Name,
-					GridCount:        len(widgets),
-					ColumnsUpdated:   columnsUpdated,
-					ColumnNames:      columnNames,
-					DateTimeColumns:  dateTimeColumns,
-					ModificationType: dateTimeModificationDescription,
-				})
+				if columnsUpdated > 0 || len(dateTimeColumns) > 0 {
+					unitsToUpdate = append(unitsToUpdate, UnitDefaultDateTmeInfo{
+						UnitType:         "Layout",
+						UnitID:           string(layout.ID),
+						UnitName:         layout.Name,
+						GridCount:        len(widgets),
+						ColumnsUpdated:   columnsUpdated,
+						ColumnNames:      columnNames,
+						DateTimeColumns:  dateTimeColumns,
+						TooltipColumns:   tooltipColumns,
+						TooltipLabelMap:  tooltipLabelMap,
+						ModificationType: dateTimeModificationDescription,
+					})
+				}
 			}
 		}
 	}
@@ -751,6 +793,11 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 				}
 			}
 		}
+		fmt.Printf("\n=== Summary ===\n")
+		fmt.Printf("Successfully processed: %d unit(s)\n", 0)
+		fmt.Println("\nDetailed modifications:")
+		fmt.Println("  none")
+		fmt.Println("\n✓ Default DateTime update completed!")
 		return
 	}
 
@@ -777,6 +824,9 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 		} else {
 			fmt.Printf("    DateTime columns: none\n")
 		}
+		if len(unit.TooltipColumns) > 0 {
+			fmt.Printf("    Tooltip columns modified: %s\n", strings.Join(unit.TooltipColumns, ", "))
+		}
 		if unit.ModificationType != "" {
 			fmt.Printf("    Modification: %s\n", unit.ModificationType)
 		}
@@ -801,7 +851,7 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 	errorCount := 0
 	pageDumpPairs := 0
 	diffReports := 0
-	modifiedPageSummaries := make([]string, 0)
+	modifiedUnitSummaries := make([]string, 0)
 
 	for _, unit := range unitsToUpdate {
 		fmt.Printf("Processing %s: %s... ", unit.UnitType, unit.UnitName)
@@ -890,15 +940,16 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 				diffReports++
 			}
 
-			pageDisplayName := unit.QualifiedName
-			if pageDisplayName == "" {
-				pageDisplayName = unit.UnitName
+			displayName := unit.UnitName
+			if unit.UnitType == "Page" && unit.QualifiedName != "" {
+				displayName = unit.QualifiedName
 			}
+			colDisplayList := buildModifiedColumnDisplayList(unit.ColumnNames, unit.TooltipColumns, unit.TooltipLabelMap)
 			modifiedColumns := "none"
-			if len(unit.ColumnNames) > 0 {
-				modifiedColumns = strings.Join(unit.ColumnNames, ", ")
+			if len(colDisplayList) > 0 {
+				modifiedColumns = strings.Join(colDisplayList, ", ")
 			}
-			modifiedPageSummaries = append(modifiedPageSummaries, fmt.Sprintf("%s: %s", pageDisplayName, modifiedColumns))
+			modifiedUnitSummaries = append(modifiedUnitSummaries, fmt.Sprintf("%s %s: columns=%s", unit.UnitType, displayName, modifiedColumns))
 			if shouldDumpPageArtifacts && shouldGeneratePageDiff {
 				fmt.Printf("✓ Updated %d column(s) [BEFORE/AFTER dumped, DIFF: %d change(s)]\n", columnsUpdated, len(diffs))
 			} else if shouldDumpPageArtifacts {
@@ -911,6 +962,17 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 			successCount++
 			continue
 		}
+
+		displayName := unit.UnitName
+		if unit.UnitType == "Page" && unit.QualifiedName != "" {
+			displayName = unit.QualifiedName
+		}
+		colDisplayList := buildModifiedColumnDisplayList(unit.ColumnNames, unit.TooltipColumns, unit.TooltipLabelMap)
+		modifiedColumns := "none"
+		if len(colDisplayList) > 0 {
+			modifiedColumns = strings.Join(colDisplayList, ", ")
+		}
+		modifiedUnitSummaries = append(modifiedUnitSummaries, fmt.Sprintf("%s %s: columns=%s", unit.UnitType, displayName, modifiedColumns))
 
 		fmt.Printf("✓ Updated %d column(s)\n", columnsUpdated)
 		successCount++
@@ -927,13 +989,61 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 	if diffReports > 0 {
 		fmt.Printf("Diff reports generated: %d\n", diffReports)
 	}
-	if len(modifiedPageSummaries) > 0 {
-		fmt.Println("\nModified pages (ModuleName.PageName: col1, col2, ...):")
-		for _, summaryLine := range modifiedPageSummaries {
+	fmt.Println("\nDetailed modifications:")
+	if len(modifiedUnitSummaries) > 0 {
+		for _, summaryLine := range modifiedUnitSummaries {
 			fmt.Printf("  %s\n", summaryLine)
 		}
+	} else {
+		fmt.Println("  none")
 	}
 	fmt.Println("\n✓ Default DateTime update completed!")
+}
+
+func buildModifiedColumnDisplayList(columnNames []string, tooltipColumns []string, tooltipLabelMap map[string]string) []string {
+	colDisplayList := make([]string, 0)
+
+	for _, col := range columnNames {
+		hasTooltip := false
+		for _, tCol := range tooltipColumns {
+			if tCol == col {
+				hasTooltip = true
+				break
+			}
+		}
+
+		if hasTooltip {
+			label := tooltipLabelMap[col]
+			if label != "" {
+				colDisplayList = append(colDisplayList, col+" [+tooltip: \""+label+"\"]")
+			} else {
+				colDisplayList = append(colDisplayList, col+" [+tooltip]")
+			}
+		} else {
+			colDisplayList = append(colDisplayList, col)
+		}
+	}
+
+	for _, tCol := range tooltipColumns {
+		found := false
+		for _, col := range columnNames {
+			if col == tCol {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			label := tooltipLabelMap[tCol]
+			if label != "" {
+				colDisplayList = append(colDisplayList, tCol+" [tooltip-only: \""+label+"\"]")
+			} else {
+				colDisplayList = append(colDisplayList, tCol+" [tooltip-only]")
+			}
+		}
+	}
+
+	return colDisplayList
 }
 
 // loadUnitBSON loads the raw BSON data for a unit from the mprcontents folder
@@ -1372,17 +1482,17 @@ func searchForMatchingWidgetsDirect(data interface{}, widgetID string, matchingW
 }
 
 func resetDateTimeCustomFormattingInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) int {
-	updatedColumns, _, _ := collectDateTimeModificationsInWidget(widget, mode)
+	updatedColumns, _, _, _, _ := collectDateTimeModificationsInWidget(widget, mode)
 	return updatedColumns
 }
 
-func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) (int, []string, []string) {
+func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) (int, []string, []string, []string, map[string]string) {
 	typeMap := make(map[string]string)
 	buildTypePointerMap(widget, typeMap)
 
 	obj, ok := widget["Object"].(map[string]interface{})
 	if !ok {
-		return 0, nil, nil
+		return 0, nil, nil, nil, nil
 	}
 
 	props := getArray(obj, "Properties")
@@ -1403,6 +1513,8 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode Da
 		updatedColumns := 0
 		columnNames := make([]string, 0)
 		dateTimeColumns := make([]string, 0)
+		tooltipColumns := make([]string, 0)
+		tooltipLabelMap := make(map[string]string)
 		colObjects := toSlice(val["Objects"])
 		for colIdx, colObj := range colObjects {
 			colMap, ok := colObj.(map[string]interface{})
@@ -1411,9 +1523,15 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode Da
 			}
 
 			colProps := getArray(colMap, "Properties")
+			if isCustomContentColumn(colProps) {
+				continue
+			}
+			isDynamicTextCol := isDynamicTextColumn(colProps)
 
 			columnUpdated := false
 			columnUsesDateTime := false
+			tooltipUpdated := false
+			var tooltipPropForLabel map[string]interface{}
 
 			for _, cp := range colProps {
 				cpMap, ok := cp.(map[string]interface{})
@@ -1427,6 +1545,27 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode Da
 					}
 					if resetDateTimeInContentParams(valMap, mode) > 0 {
 						columnUpdated = true
+						if isTooltipProperty(cpMap, typeMap) {
+							tooltipUpdated = true
+							if tooltipPropForLabel == nil {
+								tooltipPropForLabel = cpMap
+							}
+						}
+					}
+				}
+			}
+
+			// Process column Tooltip if present
+			if isDynamicTextCol {
+				if tooltipProp, found := findColumnTooltipProperty(colProps, typeMap); found {
+					tooltipUsesDateTime, changed := processColumnTooltip(tooltipProp, mode)
+					if changed {
+						columnUpdated = true
+						tooltipUpdated = true
+						tooltipPropForLabel = tooltipProp
+					}
+					if tooltipUsesDateTime {
+						columnUsesDateTime = true
 					}
 				}
 			}
@@ -1440,12 +1579,19 @@ func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode Da
 				updatedColumns++
 				columnNames = appendUniqueStrings(columnNames, columnName)
 			}
+
+			if tooltipUpdated {
+				tooltipColumns = appendUniqueStrings(tooltipColumns, columnName)
+				if tooltipPropForLabel != nil {
+					tooltipLabelMap[columnName] = extractTooltipLabel(tooltipPropForLabel)
+				}
+			}
 		}
 
-		return updatedColumns, columnNames, dateTimeColumns
+		return updatedColumns, columnNames, dateTimeColumns, tooltipColumns, tooltipLabelMap
 	}
 
-	return 0, nil, nil
+	return 0, nil, nil, nil, nil
 }
 
 func hasDateTimeFormatInContentParams(data interface{}) bool {
@@ -1695,31 +1841,47 @@ func resetDateTimeInContentParamsMap(v map[string]interface{}, mode DateTimeUpda
 
 	if hasFormat && hasCustomFormat {
 		if isCustomSelectorValue(v[formatKey]) {
-			customFormatValue, ok := extractComparableString(v[customFormatKey])
-			if ok && isTargetDateTimeFormat(customFormatValue) {
+			shouldUpdate := false
+			if mode == dateTimeUpdateModeRemoveCustomFormat {
+				// In removeCustomFormatDateTme mode, always convert custom selectors to Date and Time.
+				shouldUpdate = true
+			} else {
+				customFormatValue, ok := extractComparableString(v[customFormatKey])
+				shouldUpdate = ok && isTargetDateTimeFormat(customFormatValue)
+			}
+
+			if shouldUpdate {
 				if mode == dateTimeUpdateModeRemoveCustomFormat {
-					// For removeCustomFormatDateTme mode, replace "custom" with "datetime"
+					// For removeCustomFormatDateTme mode, replace "custom" with "datetime".
 					if updatedValue, changed := replaceCustomSelector(v[formatKey], defaultDateAndTimeSelectorKey); changed {
 						v[formatKey] = updatedValue
 						changes++
 					}
 				} else {
-					// For default mode, replace "custom" with "default"
+					// For default mode, replace "custom" with "default".
 					if updatedValue, changed := replaceCustomWithDefault(v[formatKey]); changed {
 						v[formatKey] = updatedValue
 						changes++
 					}
-
-					delete(v, customFormatKey)
-					changes++
 				}
+
+				delete(v, customFormatKey)
+				changes++
 			}
 		}
 	}
 
 	if hasDateFormat && hasCustomDateFormat {
-		customFormatValue, ok := extractComparableString(v[customDateFormatKey])
-		if ok && isTargetDateTimeFormat(customFormatValue) {
+		shouldUpdate := false
+		if mode == dateTimeUpdateModeRemoveCustomFormat {
+			// In removeCustomFormatDateTme mode, always normalize to DateTime and drop custom date format.
+			shouldUpdate = true
+		} else {
+			customFormatValue, ok := extractComparableString(v[customDateFormatKey])
+			shouldUpdate = ok && isTargetDateTimeFormat(customFormatValue)
+		}
+
+		if shouldUpdate {
 			if mode == dateTimeUpdateModeRemoveCustomFormat {
 				if updatedValue, changed := replaceDateOrCustomWithDateTime(v[dateFormatKey]); changed {
 					v[dateFormatKey] = updatedValue
@@ -1939,6 +2101,245 @@ func extractComparableString(value interface{}) (string, bool) {
 	return "", false
 }
 
+func extractTooltipLabel(tooltipProp map[string]interface{}) string {
+	valMap, ok := tooltipProp["Value"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	if ttRaw, ok := valMap["TextTemplate"]; ok {
+		if ttMap, ok := ttRaw.(map[string]interface{}); ok {
+			if text, ok := ttMap["Text"].(string); ok && strings.TrimSpace(text) != "" {
+				return strings.TrimSpace(text)
+			}
+		}
+	}
+	return ""
+}
+
+func findColumnTooltipProperty(colProps []interface{}, typeMap map[string]string) (map[string]interface{}, bool) {
+	for _, cp := range colProps {
+		cpMap, ok := cp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		if nameVal, ok := cpMap["Name"].(string); ok {
+			if strings.EqualFold(nameVal, "tooltip") {
+				return cpMap, true
+			}
+		}
+
+		propKey := normalizeKey(typeMap[getTypePointerData(cpMap)])
+		if isTooltipKey(propKey) {
+			return cpMap, true
+		}
+	}
+
+	return nil, false
+}
+
+func isTooltipProperty(prop map[string]interface{}, typeMap map[string]string) bool {
+	if nameVal, ok := prop["Name"].(string); ok {
+		if strings.EqualFold(nameVal, "tooltip") {
+			return true
+		}
+	}
+
+	propKey := normalizeKey(typeMap[getTypePointerData(prop)])
+	return isTooltipKey(propKey)
+}
+
+func processColumnTooltip(tooltipProp map[string]interface{}, mode DateTimeUpdateMode) (bool, bool) {
+	if valMap, ok := tooltipProp["Value"].(map[string]interface{}); ok {
+		hasDateTime := hasDateTimeFormatInContentParams(valMap)
+
+		// In removeCustomFormat mode, tooltip updates are driven by TextTemplate parameters:
+		// Parameters[].FormattingInfo.DateFormat == custom -> DateTime.
+		if mode == dateTimeUpdateModeRemoveCustomFormat {
+			changed := promoteTooltipParameterDateFormatToDateTime(valMap) > 0
+			return hasDateTime, changed
+		}
+
+		changed := resetDateTimeInContentParams(valMap, mode) > 0
+		return hasDateTime, changed
+	}
+
+	return false, false
+}
+
+func promoteTooltipParameterDateFormatToDateTime(data interface{}) int {
+	changes := 0
+
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if textTemplateRaw, ok := v["TextTemplate"]; ok {
+			changes += promoteDateFormatInTextTemplateParameters(textTemplateRaw)
+		}
+
+		for _, value := range v {
+			changes += promoteTooltipParameterDateFormatToDateTime(value)
+		}
+
+	case []interface{}:
+		for _, item := range v {
+			changes += promoteTooltipParameterDateFormatToDateTime(item)
+		}
+
+	case primitive.A:
+		for _, item := range v {
+			changes += promoteTooltipParameterDateFormatToDateTime(item)
+		}
+	}
+
+	return changes
+}
+
+func promoteDateFormatInTextTemplateParameters(textTemplate interface{}) int {
+	ttMap, ok := textTemplate.(map[string]interface{})
+	if !ok {
+		return 0
+	}
+
+	changes := 0
+	parameters := toSlice(ttMap["Parameters"])
+	for _, parameter := range parameters {
+		paramMap, ok := parameter.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		formattingInfoRaw, ok := paramMap["FormattingInfo"]
+		if !ok {
+			continue
+		}
+
+		formattingInfoMap, ok := formattingInfoRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		dateFormatKey, hasDateFormat := findMapKey(formattingInfoMap, isDateFormatKey)
+		if !hasDateFormat {
+			continue
+		}
+
+		if updatedValue, changed := replaceCustomSelector(formattingInfoMap[dateFormatKey], "DateTime"); changed {
+			formattingInfoMap[dateFormatKey] = updatedValue
+			changes++
+		}
+	}
+
+	return changes
+}
+
+func isDynamicTextColumn(colProps []interface{}) bool {
+	for _, cp := range colProps {
+		cpMap, ok := cp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		valMap, ok := cpMap["Value"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		if hasPrimitiveValue(valMap, "dynamicText") {
+			return true
+		}
+	}
+
+	return false
+}
+
+func hasPrimitiveValue(data interface{}, expected string) bool {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if pv, ok := v["PrimitiveValue"].(string); ok && strings.EqualFold(strings.TrimSpace(pv), expected) {
+			return true
+		}
+		for _, value := range v {
+			if hasPrimitiveValue(value, expected) {
+				return true
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if hasPrimitiveValue(item, expected) {
+				return true
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if hasPrimitiveValue(item, expected) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func containsTargetDateTimeFormat(data interface{}) bool {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		for key, value := range v {
+			normalizedKey := normalizeKey(key)
+			if isCustomDateTimeFormatKey(normalizedKey) || isCustomDateFormatKey(normalizedKey) {
+				if customFormatValue, ok := extractComparableString(value); ok && isTargetDateTimeFormat(customFormatValue) {
+					return true
+				}
+			}
+			if normalizedKey == "expression" {
+				expression, ok := value.(string)
+				if ok {
+					_, formatValue, matched := parseFormatDateTimeExpression(expression)
+					if matched && isTargetDateTimeFormat(formatValue) {
+						return true
+					}
+				}
+			}
+			if containsTargetDateTimeFormat(value) {
+				return true
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if containsTargetDateTimeFormat(item) {
+				return true
+			}
+		}
+	case primitive.A:
+		for _, item := range v {
+			if containsTargetDateTimeFormat(item) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func isCustomContentColumn(colProps []interface{}) bool {
+	for _, cp := range colProps {
+		cpMap, ok := cp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		valMap, ok := cpMap["Value"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		if pv, ok := valMap["PrimitiveValue"].(string); ok && strings.EqualFold(strings.TrimSpace(pv), "customContent") {
+			return true
+		}
+	}
+
+	return false
+}
+
 func findMapKey(v map[string]interface{}, predicate func(string) bool) (string, bool) {
 	for key := range v {
 		if predicate(normalizeKey(key)) {
@@ -1948,21 +2349,42 @@ func findMapKey(v map[string]interface{}, predicate func(string) bool) (string, 
 	return "", false
 }
 
+func isTooltipKey(normalizedKey string) bool {
+	return normalizedKey == "tooltip" || normalizedKey == "tooltiptext"
+}
+
 func isDateTimeFormatKey(normalizedKey string) bool {
-	return normalizedKey == "formatdatetime" || normalizedKey == "formatdatatime"
+	if strings.Contains(normalizedKey, "custom") {
+		return false
+	}
+	return strings.Contains(normalizedKey, "dateformat")
 }
 
 func isCustomDateTimeFormatKey(normalizedKey string) bool {
 	return strings.Contains(normalizedKey, "custom") &&
-		(strings.Contains(normalizedKey, "formatdatetime") || strings.Contains(normalizedKey, "formatdatatime"))
+		strings.Contains(normalizedKey, "dateformat")
 }
 
 func isDateFormatKey(normalizedKey string) bool {
-	return normalizedKey == "dateformat"
+	if strings.Contains(normalizedKey, "custom") {
+		return false
+	}
+	if strings.Contains(normalizedKey, "formatdatetime") || strings.Contains(normalizedKey, "formatdatatime") {
+		return false
+	}
+
+	return strings.Contains(normalizedKey, "dateformat")
 }
 
 func isCustomDateFormatKey(normalizedKey string) bool {
-	return normalizedKey == "customdateformat"
+	if !strings.Contains(normalizedKey, "custom") {
+		return false
+	}
+	if strings.Contains(normalizedKey, "formatdatetime") || strings.Contains(normalizedKey, "formatdatatime") {
+		return false
+	}
+
+	return strings.Contains(normalizedKey, "dateformat")
 }
 
 func normalizeKey(s string) string {
