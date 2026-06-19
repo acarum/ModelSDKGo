@@ -23,6 +23,8 @@ const defaultDateAndTimeSelectorKey = "datetime"
 
 type DateTimeUpdateMode string
 
+var debugExpressions bool
+
 const (
 	dateTimeUpdateModeDefault            DateTimeUpdateMode = "defaultDateTme"
 	dateTimeUpdateModeRemoveCustomFormat DateTimeUpdateMode = "removeCustomFormatDateTme"
@@ -36,6 +38,7 @@ func main() {
 		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json]")
 		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  RemoveCustomFormatDateTme mode: manage_datagrid <mpr_file_path> [widget_id] --removeCustomFormatDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
+		fmt.Println("  Debug expressions:    add --debug-expressions to print all expression values and match status")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --dump-json")
@@ -53,6 +56,7 @@ func main() {
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --dump-target-json --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --force-page-diff")
+		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --debug-expressions")
 		fmt.Println("\nNote:")
 		fmt.Printf("  Default widget_id: %s\n", defaultDataGridWidgetID)
 		os.Exit(1)
@@ -67,6 +71,7 @@ func main() {
 	dumpJSON := false
 	dumpTargetJSON := false
 	forcePageDiff := false
+	debugExpressions = false
 	onlyPage := ""
 	onlyModule := ""
 	widgetIDSet := false
@@ -91,6 +96,10 @@ func main() {
 		}
 		if arg == "--force-page-diff" {
 			forcePageDiff = true
+			continue
+		}
+		if arg == "--debug-expressions" {
+			debugExpressions = true
 			continue
 		}
 		if arg == "--only-module" && i+1 < len(os.Args) {
@@ -161,6 +170,9 @@ func main() {
 		}
 		if forcePageDiff {
 			fmt.Println("Force page diff mode: ENABLED")
+		}
+		if debugExpressions {
+			fmt.Println("Expression debug mode: ENABLED")
 		}
 		fmt.Println()
 		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, onlyModule, forcePageDiff, mode)
@@ -1945,12 +1957,30 @@ func replaceTargetFormatDateTimeExpression(expression string) (string, bool) {
 }
 
 func parseFormatDateTimeExpression(expression string) (string, string, bool) {
-	matches := formatDateTimeExpressionRegex.FindStringSubmatch(expression)
+	normalizedExpression := normalizeExpressionInput(expression)
+	matches := formatDateTimeExpressionRegex.FindStringSubmatch(normalizedExpression)
 	if len(matches) != 3 {
 		return "", "", false
 	}
 
 	return strings.TrimSpace(matches[1]), strings.TrimSpace(matches[2]), true
+}
+
+func normalizeExpressionInput(expression string) string {
+	normalized := strings.TrimSpace(expression)
+	for {
+		updated := strings.TrimSpace(normalized)
+		updated = strings.TrimSuffix(updated, `\n`)
+		updated = strings.TrimSuffix(updated, `\r`)
+		updated = strings.TrimSuffix(updated, `\t`)
+		updated = strings.TrimSpace(updated)
+
+		if updated == normalized {
+			return normalized
+		}
+
+		normalized = updated
+	}
 }
 
 func isTargetDateTimeFormat(value string) bool {
@@ -2172,7 +2202,7 @@ func promoteTooltipParameterDateFormatToDateTime(data interface{}) int {
 
 	switch v := data.(type) {
 	case map[string]interface{}:
-		if textTemplateRaw, ok := v["TextTemplate"]; ok {
+		if _, textTemplateRaw, ok := getMapValueByNormalizedKey(v, "texttemplate"); ok {
 			changes += promoteDateFormatInTextTemplateParameters(textTemplateRaw)
 		}
 
@@ -2201,35 +2231,119 @@ func promoteDateFormatInTextTemplateParameters(textTemplate interface{}) int {
 	}
 
 	changes := 0
-	parameters := toSlice(ttMap["Parameters"])
+	_, parametersRaw, hasParameters := getMapValueByNormalizedKey(ttMap, "parameters")
+	if !hasParameters {
+		return 0
+	}
+
+	parameters := toSlice(parametersRaw)
 	for _, parameter := range parameters {
 		paramMap, ok := parameter.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		formattingInfoRaw, ok := paramMap["FormattingInfo"]
-		if !ok {
+		if removeCustomDateTimeFormatFromExpression(paramMap) {
+			changes++
+		}
+
+		formattingInfoKey, formattingInfoRaw, hasFormattingInfo := getMapValueByNormalizedKey(paramMap, "formattinginfo")
+		if !hasFormattingInfo {
+			paramMap["FormattingInfo"] = map[string]interface{}{"DateFormat": "DateTime"}
+			changes++
 			continue
 		}
 
 		formattingInfoMap, ok := formattingInfoRaw.(map[string]interface{})
 		if !ok {
+			if formattingInfoKey == "" {
+				formattingInfoKey = "FormattingInfo"
+			}
+			paramMap[formattingInfoKey] = map[string]interface{}{"DateFormat": "DateTime"}
+			changes++
 			continue
 		}
 
 		dateFormatKey, hasDateFormat := findMapKey(formattingInfoMap, isDateFormatKey)
 		if !hasDateFormat {
+			formattingInfoMap["DateFormat"] = "DateTime"
+			changes++
 			continue
 		}
 
-		if updatedValue, changed := replaceCustomSelector(formattingInfoMap[dateFormatKey], "DateTime"); changed {
+		if updatedValue, changed := forceSelectorValue(formattingInfoMap[dateFormatKey], "DateTime"); changed {
 			formattingInfoMap[dateFormatKey] = updatedValue
 			changes++
 		}
 	}
 
 	return changes
+}
+
+func getMapValueByNormalizedKey(m map[string]interface{}, normalizedKey string) (string, interface{}, bool) {
+	for key, value := range m {
+		if normalizeKey(key) == normalizedKey {
+			return key, value, true
+		}
+	}
+
+	return "", nil, false
+}
+
+func removeCustomDateTimeFormatFromExpression(v map[string]interface{}) bool {
+	for key := range v {
+		if normalizeKey(key) == "expression" {
+			if str, ok := v[key].(string); ok {
+				expressionValue, formatValue, matched := parseFormatDateTimeExpression(str)
+				if debugExpressions {
+					fmt.Printf("Expression found\n  value         : %s\n  matched parser: %t\n", str, matched)
+					if matched {
+						fmt.Printf("  format value  : %s\n  target match  : %t\n", formatValue, isTargetDateTimeFormat(formatValue))
+					}
+				}
+				if matched && isTargetDateTimeFormat(formatValue) {
+					newExpression := fmt.Sprintf("formatDateTime(%s)", expressionValue)
+					fmt.Printf("Expression updated\n  before: %s\n  after : %s\n", str, newExpression)
+					v[key] = newExpression
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
+
+func forceSelectorValue(value interface{}, targetSelector string) (interface{}, bool) {
+	switch v := value.(type) {
+	case string:
+		if strings.EqualFold(strings.TrimSpace(v), targetSelector) {
+			return value, false
+		}
+		return targetSelector, true
+
+	case map[string]interface{}:
+		changed := false
+
+		if pv, ok := v["PrimitiveValue"].(string); !ok || !strings.EqualFold(strings.TrimSpace(pv), targetSelector) {
+			v["PrimitiveValue"] = targetSelector
+			changed = true
+		}
+		if rawValue, ok := v["Value"].(string); !ok || !strings.EqualFold(strings.TrimSpace(rawValue), targetSelector) {
+			v["Value"] = targetSelector
+			changed = true
+		}
+		if key, ok := v["_Key"].(string); !ok || !strings.EqualFold(strings.TrimSpace(key), targetSelector) {
+			v["_Key"] = targetSelector
+			changed = true
+		}
+
+		if changed {
+			return v, true
+		}
+	}
+
+	return value, false
 }
 
 func isDynamicTextColumn(colProps []interface{}) bool {
