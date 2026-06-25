@@ -316,6 +316,37 @@ cd examples/modify_project
 go run main.go /path/to/MyApp.mpr
 ```
 
+### Inspect DataGrid Column Properties
+
+Use the DataGrid utility in `examples/manage_datagrid` to inspect DataGrid custom widget columns and print resolved column-level properties.
+
+Run from repository root:
+
+```bash
+go run ./examples/manage_datagrid /path/to/MyApp.mpr --showColumnProperties
+```
+
+Filter to a single page:
+
+```bash
+go run ./examples/manage_datagrid /path/to/MyApp.mpr --showColumnProperties --only-page ModuleName.PageName
+```
+
+When `--showColumnProperties` is enabled, each detected DataGrid column includes:
+
+- `attribute`
+- `dynamicText`
+- `tooltip`
+- `caption`
+- `dateFormat`
+- `customDateFormat`
+
+Example (Windows):
+
+```powershell
+go run ./examples/manage_datagrid "C:\Workspaces\Mendix\MDUI\MxCLI\System_CLI\OC EX System.mpr" --showColumnProperties --only-page CustomModule.UoM_Master
+```
+
 **Warning**: Always backup your `.mpr` file before modifying it!
 
 ## Compatibility

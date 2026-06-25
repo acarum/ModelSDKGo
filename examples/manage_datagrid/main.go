@@ -35,13 +35,15 @@ var formatDateTimeExpressionRegex = regexp.MustCompile(`(?i)^\s*formatdatetime\s
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage:")
-		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json]")
+		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json] [--showColumnProperties|--show-column-properties] [--only-page ModuleName.PageName]")
 		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  RemoveCustomFormatDateTme mode: manage_datagrid <mpr_file_path> [widget_id] --removeCustomFormatDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  Debug expressions:    add --debug-expressions to print all expression values and match status")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --dump-json")
+		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --showColumnProperties")
+		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --showColumnProperties --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --defaultDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme")
@@ -69,6 +71,7 @@ func main() {
 	defaultDateTmeMode := false
 	removeCustomFormatDateTmeMode := false
 	dumpJSON := false
+	showColumnProperties := false
 	dumpTargetJSON := false
 	forcePageDiff := false
 	debugExpressions = false
@@ -80,6 +83,10 @@ func main() {
 		arg := os.Args[i]
 		if arg == "--dump-json" {
 			dumpJSON = true
+			continue
+		}
+		if arg == "--showColumnProperties" || arg == "--show-column-properties" {
+			showColumnProperties = true
 			continue
 		}
 		if arg == "--defaultDateTme" {
@@ -181,8 +188,14 @@ func main() {
 		if dumpJSON {
 			fmt.Printf("JSON dump mode: ENABLED\n")
 		}
+		if showColumnProperties {
+			fmt.Printf("Show DataGrid column properties mode: ENABLED\n")
+		}
+		if onlyPage != "" {
+			fmt.Printf("Filter: Only page %s\n", onlyPage)
+		}
 		fmt.Println()
-		performSearch(reader, mprPath, sourceWidgetID, dumpJSON)
+		performSearch(reader, mprPath, sourceWidgetID, dumpJSON, showColumnProperties, onlyPage)
 	}
 }
 
@@ -207,63 +220,89 @@ type UnitReplaceInfo struct {
 	Widgets  []map[string]interface{}
 }
 
-func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON bool) {
+func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON bool, showColumnProperties bool, onlyPage string) {
 	totalFound := 0
+	totalColumnsShown := 0
 	dumpedFiles := 0
+
+	moduleMap := make(map[string]string)
+	containerMap := make(map[string]string)
+	if onlyPage != "" {
+		modules, err := reader.ListModules()
+		if err == nil {
+			for _, module := range modules {
+				moduleMap[string(module.ID)] = module.Name
+			}
+		}
+
+		units, err := reader.ListUnits()
+		if err == nil {
+			for _, unit := range units {
+				containerMap[string(unit.ID)] = string(unit.ContainerID)
+			}
+		}
+	}
 
 	// Search in snippets
 	fmt.Println("=== Searching Snippets ===")
-	snippets, err := reader.ListSnippets()
-	if err != nil {
-		fmt.Printf("Error listing snippets: %v\n", err)
+	if onlyPage != "" {
+		fmt.Println("Skipping snippets because --only-page filter is set.")
 	} else {
-		fmt.Printf("Scanning %d snippets...\n\n", len(snippets))
-		for i, snippet := range snippets {
-			fmt.Printf("\r[%d/%d] Scanning snippet: %s", i+1, len(snippets), snippet.Name)
+		snippets, err := reader.ListSnippets()
+		if err != nil {
+			fmt.Printf("Error listing snippets: %v\n", err)
+		} else {
+			fmt.Printf("Scanning %d snippets...\n\n", len(snippets))
+			for i, snippet := range snippets {
+				fmt.Printf("\r[%d/%d] Scanning snippet: %s", i+1, len(snippets), snippet.Name)
 
-			bsonData, err := loadUnitBSON(mprPath, string(snippet.ID))
-			if err != nil {
-				continue
-			}
-
-			var snippetData map[string]interface{}
-			if err := bson.Unmarshal(bsonData, &snippetData); err != nil {
-				continue
-			}
-
-			widgets := findWidgetsByWidgetID(snippetData, widgetID)
-			if len(widgets) > 0 {
-				fmt.Printf("\n\n✓ Snippet: %s\n", snippet.Name)
-				fmt.Printf("  ID: %s\n", snippet.ID)
-				fmt.Printf("  Found %d widget(s) with widgetId '%s':\n", len(widgets), widgetID)
-				for j, widget := range widgets {
-					widgetName := "[unnamed]"
-					if name, ok := widget["Name"].(string); ok && name != "" {
-						widgetName = name
-					}
-					actualWidgetID := extractWidgetID(widget)
-					fmt.Printf("    %d. Widget Name: %s\n", j+1, widgetName)
-					fmt.Printf("       WidgetId: %s\n", actualWidgetID)
-
-					// Extract AppName and Signal Name from Properties
-					printSignalSubscriptions(widget)
+				bsonData, err := loadUnitBSON(mprPath, string(snippet.ID))
+				if err != nil {
+					continue
 				}
 
-				// Dump JSON if requested
-				if dumpJSON {
-					if err := dumpUnitJSON(snippetData, "Snippet", snippet.Name); err != nil {
-						fmt.Printf("  ✗ Error dumping JSON: %v\n", err)
-					} else {
-						fmt.Printf("  ✓ JSON saved to: SNIPPET_%s.json\n", sanitizeFilename(snippet.Name))
-						dumpedFiles++
-					}
+				var snippetData map[string]interface{}
+				if err := bson.Unmarshal(bsonData, &snippetData); err != nil {
+					continue
 				}
 
-				fmt.Println()
-				totalFound += len(widgets)
+				widgets := findWidgetsByWidgetID(snippetData, widgetID)
+				if len(widgets) > 0 {
+					fmt.Printf("\n\n✓ Snippet: %s\n", snippet.Name)
+					fmt.Printf("  ID: %s\n", snippet.ID)
+					fmt.Printf("  Found %d widget(s) with widgetId '%s':\n", len(widgets), widgetID)
+					for j, widget := range widgets {
+						widgetName := "[unnamed]"
+						if name, ok := widget["Name"].(string); ok && name != "" {
+							widgetName = name
+						}
+						actualWidgetID := extractWidgetID(widget)
+						fmt.Printf("    %d. Widget Name: %s\n", j+1, widgetName)
+						fmt.Printf("       WidgetId: %s\n", actualWidgetID)
+						if showColumnProperties {
+							totalColumnsShown += printDataGridColumnProperties(widget)
+						}
+
+						// Extract AppName and Signal Name from Properties
+						printSignalSubscriptions(widget)
+					}
+
+					// Dump JSON if requested
+					if dumpJSON {
+						if err := dumpUnitJSON(snippetData, "Snippet", snippet.Name); err != nil {
+							fmt.Printf("  ✗ Error dumping JSON: %v\n", err)
+						} else {
+							fmt.Printf("  ✓ JSON saved to: SNIPPET_%s.json\n", sanitizeFilename(snippet.Name))
+							dumpedFiles++
+						}
+					}
+
+					fmt.Println()
+					totalFound += len(widgets)
+				}
 			}
+			fmt.Println()
 		}
-		fmt.Println()
 	}
 
 	// Search in pages
@@ -274,6 +313,17 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 	} else {
 		fmt.Printf("Scanning %d pages...\n\n", len(pages))
 		for i, page := range pages {
+			if onlyPage != "" {
+				moduleName := resolveModuleNameFromContainerID(string(page.ContainerID), moduleMap, containerMap)
+				if moduleName == "" {
+					moduleName = "[unknown]"
+				}
+				pageIdentifier := moduleName + "." + page.Name
+				if !matchesOnlyPageFilter(pageIdentifier, page.Name, onlyPage) {
+					continue
+				}
+			}
+
 			fmt.Printf("\r[%d/%d] Scanning page: %s", i+1, len(pages), page.Name)
 
 			bsonData, err := loadUnitBSON(mprPath, string(page.ID))
@@ -299,6 +349,9 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 					actualWidgetID := extractWidgetID(widget)
 					fmt.Printf("    %d. Widget Name: %s\n", j+1, widgetName)
 					fmt.Printf("       WidgetId: %s\n", actualWidgetID)
+					if showColumnProperties {
+						totalColumnsShown += printDataGridColumnProperties(widget)
+					}
 
 					// Extract AppName and Signal Name from Properties
 					printSignalSubscriptions(widget)
@@ -323,61 +376,71 @@ func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON b
 
 	// Search in layouts
 	fmt.Println("\n=== Searching Layouts ===")
-	layouts, err := reader.ListLayouts()
-	if err != nil {
-		fmt.Printf("Error listing layouts: %v\n", err)
+	if onlyPage != "" {
+		fmt.Println("Skipping layouts because --only-page filter is set.")
 	} else {
-		fmt.Printf("Scanning %d layouts...\n\n", len(layouts))
-		for i, layout := range layouts {
-			fmt.Printf("\r[%d/%d] Scanning layout: %s", i+1, len(layouts), layout.Name)
+		layouts, err := reader.ListLayouts()
+		if err != nil {
+			fmt.Printf("Error listing layouts: %v\n", err)
+		} else {
+			fmt.Printf("Scanning %d layouts...\n\n", len(layouts))
+			for i, layout := range layouts {
+				fmt.Printf("\r[%d/%d] Scanning layout: %s", i+1, len(layouts), layout.Name)
 
-			bsonData, err := loadUnitBSON(mprPath, string(layout.ID))
-			if err != nil {
-				continue
-			}
-
-			var layoutData map[string]interface{}
-			if err := bson.Unmarshal(bsonData, &layoutData); err != nil {
-				continue
-			}
-
-			widgets := findWidgetsByWidgetID(layoutData, widgetID)
-			if len(widgets) > 0 {
-				fmt.Printf("\n\n✓ Layout: %s\n", layout.Name)
-				fmt.Printf("  ID: %s\n", layout.ID)
-				fmt.Printf("  Found %d widget(s) with widgetId '%s':\n", len(widgets), widgetID)
-				for j, widget := range widgets {
-					widgetName := "[unnamed]"
-					if name, ok := widget["Name"].(string); ok && name != "" {
-						widgetName = name
-					}
-					actualWidgetID := extractWidgetID(widget)
-					fmt.Printf("    %d. Widget Name: %s\n", j+1, widgetName)
-					fmt.Printf("       WidgetId: %s\n", actualWidgetID)
-
-					// Extract AppName and Signal Name from Properties
-					printSignalSubscriptions(widget)
+				bsonData, err := loadUnitBSON(mprPath, string(layout.ID))
+				if err != nil {
+					continue
 				}
 
-				// Dump JSON if requested
-				if dumpJSON {
-					if err := dumpUnitJSON(layoutData, "Layout", layout.Name); err != nil {
-						fmt.Printf("  ✗ Error dumping JSON: %v\n", err)
-					} else {
-						fmt.Printf("  ✓ JSON saved to: LAYOUT_%s.json\n", sanitizeFilename(layout.Name))
-						dumpedFiles++
-					}
+				var layoutData map[string]interface{}
+				if err := bson.Unmarshal(bsonData, &layoutData); err != nil {
+					continue
 				}
 
-				fmt.Println()
-				totalFound += len(widgets)
+				widgets := findWidgetsByWidgetID(layoutData, widgetID)
+				if len(widgets) > 0 {
+					fmt.Printf("\n\n✓ Layout: %s\n", layout.Name)
+					fmt.Printf("  ID: %s\n", layout.ID)
+					fmt.Printf("  Found %d widget(s) with widgetId '%s':\n", len(widgets), widgetID)
+					for j, widget := range widgets {
+						widgetName := "[unnamed]"
+						if name, ok := widget["Name"].(string); ok && name != "" {
+							widgetName = name
+						}
+						actualWidgetID := extractWidgetID(widget)
+						fmt.Printf("    %d. Widget Name: %s\n", j+1, widgetName)
+						fmt.Printf("       WidgetId: %s\n", actualWidgetID)
+						if showColumnProperties {
+							totalColumnsShown += printDataGridColumnProperties(widget)
+						}
+
+						// Extract AppName and Signal Name from Properties
+						printSignalSubscriptions(widget)
+					}
+
+					// Dump JSON if requested
+					if dumpJSON {
+						if err := dumpUnitJSON(layoutData, "Layout", layout.Name); err != nil {
+							fmt.Printf("  ✗ Error dumping JSON: %v\n", err)
+						} else {
+							fmt.Printf("  ✓ JSON saved to: LAYOUT_%s.json\n", sanitizeFilename(layout.Name))
+							dumpedFiles++
+						}
+					}
+
+					fmt.Println()
+					totalFound += len(widgets)
+				}
 			}
+			fmt.Println()
 		}
-		fmt.Println()
 	}
 
 	fmt.Printf("\n=== Summary ===\n")
 	fmt.Printf("Total widgets with widgetId '%s': %d\n", widgetID, totalFound)
+	if showColumnProperties {
+		fmt.Printf("Total columns listed: %d\n", totalColumnsShown)
+	}
 	if dumpJSON && dumpedFiles > 0 {
 		fmt.Printf("JSON files saved: %d\n", dumpedFiles)
 	}
@@ -1355,16 +1418,16 @@ func matchesOnlyPageFilter(pageIdentifier, pageName, onlyPage string) bool {
 		return true
 	}
 
+	// When module is provided (Module.Page), require exact qualified-name match.
+	if strings.Contains(onlyPage, ".") {
+		return pageIdentifier == onlyPage
+	}
+
 	if pageIdentifier == onlyPage {
 		return true
 	}
 
-	requestedPageName := onlyPage
-	if idx := strings.LastIndex(onlyPage, "."); idx >= 0 && idx+1 < len(onlyPage) {
-		requestedPageName = onlyPage[idx+1:]
-	}
-
-	return pageName == requestedPageName
+	return pageName == onlyPage
 }
 
 func resolveModuleNameFromContainerID(containerID string, moduleMap map[string]string, containerMap map[string]string) string {
@@ -1496,6 +1559,447 @@ func searchForMatchingWidgetsDirect(data interface{}, widgetID string, matchingW
 func resetDateTimeCustomFormattingInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) int {
 	updatedColumns, _, _, _, _ := collectDateTimeModificationsInWidget(widget, mode)
 	return updatedColumns
+}
+
+func printDataGridColumnProperties(widget map[string]interface{}) int {
+	typeMap := make(map[string]string)
+	buildTypePointerMap(widget, typeMap)
+
+	obj, ok := widget["Object"].(map[string]interface{})
+	if !ok {
+		fmt.Println("       Columns: none")
+		return 0
+	}
+
+	props := getArray(obj, "Properties")
+	for _, p := range props {
+		pm, ok := p.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if typeMap[getTypePointerData(pm)] != "columns" {
+			continue
+		}
+
+		val, ok := pm["Value"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		colObjects := toSlice(val["Objects"])
+		if len(colObjects) == 0 {
+			fmt.Println("       Columns: none")
+			return 0
+		}
+
+		visibleCount := 0
+		for _, colObj := range colObjects {
+			colMap, ok := colObj.(map[string]interface{})
+			if !ok || colMap["$Type"] != "CustomWidgets$WidgetObject" {
+				continue
+			}
+			colProps := getArray(colMap, "Properties")
+			columnType := resolveDataGridColumnType(colProps)
+			if columnType == "Custom Content" || columnType == "Attribute" {
+				continue
+			}
+			visibleCount++
+		}
+
+		if visibleCount == 0 {
+			fmt.Println("       Columns: none")
+			return 0
+		}
+
+		fmt.Printf("       Columns (%d):\n", visibleCount)
+		listed := 0
+		for colIdx, colObj := range colObjects {
+			colMap, ok := colObj.(map[string]interface{})
+			if !ok || colMap["$Type"] != "CustomWidgets$WidgetObject" {
+				continue
+			}
+
+			colProps := getArray(colMap, "Properties")
+			columnName := resolveDataGridColumnName(colProps, typeMap, colIdx)
+			propertyNames := collectColumnPropertyNames(colProps, typeMap)
+			sort.Strings(propertyNames)
+			selectedValues := collectSelectedColumnPropertyValues(colProps, typeMap)
+			if _, ok := selectedValues["caption"]; !ok {
+				selectedValues["caption"] = "[no en_US caption]"
+			}
+			columnType := resolveDataGridColumnType(colProps)
+			if columnType == "Custom Content" || columnType == "Attribute" {
+				continue
+			}
+
+			flags := make([]string, 0)
+			if isCustomContentColumn(colProps) {
+				flags = append(flags, "custom-content")
+			}
+			if isDynamicTextColumn(colProps) {
+				flags = append(flags, "dynamic-text")
+			}
+
+			fmt.Printf("         - %s\n", columnName)
+			fmt.Printf("           Column Type: %s\n", columnType)
+			if len(selectedValues) > 0 {
+				for _, key := range []string{"attribute", "dynamicText", "tooltip", "caption", "dateFormat", "customDateFormat"} {
+					if value, ok := selectedValues[key]; ok {
+						fmt.Printf("           %s: %s\n", key, value)
+					}
+				}
+			} else if len(propertyNames) > 0 {
+				fmt.Printf("           Selected property values: [none]\n")
+			} else {
+				fmt.Println("           Selected property values: [none]")
+			}
+			if len(flags) > 0 {
+				fmt.Printf("           Flags: %s\n", strings.Join(flags, ", "))
+			}
+
+			listed++
+		}
+
+		if listed == 0 {
+			fmt.Println("       Columns: none")
+		}
+
+		return listed
+	}
+
+	fmt.Println("       Columns: none")
+	return 0
+}
+
+func collectColumnPropertyNames(colProps []interface{}, typeMap map[string]string) []string {
+	propertyNames := make([]string, 0)
+	for _, cp := range colProps {
+		cpMap, ok := cp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		propName := strings.TrimSpace(typeMap[getTypePointerData(cpMap)])
+		if propName == "" {
+			if name, ok := cpMap["Name"].(string); ok {
+				propName = strings.TrimSpace(name)
+			}
+		}
+		if propName == "" {
+			propName = "[unknown]"
+		}
+
+		propertyNames = appendUniqueStrings(propertyNames, propName)
+	}
+
+	return propertyNames
+}
+
+func collectSelectedColumnPropertyValues(colProps []interface{}, typeMap map[string]string) map[string]string {
+	selectedKeys := map[string]string{
+		"attribute":        "attribute",
+		"caption":          "caption",
+		"header":           "caption",
+		"content":          "content",
+		"dynamictext":      "dynamicText",
+		"tooltip":          "tooltip",
+		"exportdateformat": "exportDateFormat",
+	}
+
+	values := make(map[string]string)
+	for _, cp := range colProps {
+		cpMap, ok := cp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		propName := strings.TrimSpace(typeMap[getTypePointerData(cpMap)])
+		if propName == "" {
+			if name, ok := cpMap["Name"].(string); ok {
+				propName = strings.TrimSpace(name)
+			}
+		}
+		if propName == "" {
+			continue
+		}
+
+		outputKey, include := selectedKeys[strings.ToLower(propName)]
+		if !include {
+			continue
+		}
+
+		value, ok := cpMap["Value"]
+		if !ok {
+			values[outputKey] = "null"
+			continue
+		}
+
+		if outputKey == "attribute" {
+			if extracted, found := extractAttributeRefAttributePath(value); found {
+				values[outputKey] = extracted
+				continue
+			}
+		}
+
+		if outputKey == "tooltip" {
+			extracted := extractTooltipExpressionValue(value)
+			if extracted == "" {
+				values[outputKey] = `""`
+			} else {
+				values[outputKey] = extracted
+			}
+			if _, exists := values["dateFormat"]; !exists {
+				df, cdf := extractDateFormattingInfo(value)
+				values["dateFormat"] = df
+				values["customDateFormat"] = cdf
+			}
+			continue
+		}
+
+		if outputKey == "dynamicText" {
+			extracted := extractTooltipExpressionValue(value)
+			if extracted == "" {
+				values[outputKey] = `""`
+			} else {
+				values[outputKey] = extracted
+			}
+			df, cdf := extractDateFormattingInfo(value)
+			values["dateFormat"] = df
+			values["customDateFormat"] = cdf
+			continue
+		}
+
+		if outputKey == "caption" {
+			extracted := extractCaptionEnUS(value)
+			if extracted == "" {
+				values[outputKey] = "[no en_US caption]"
+			} else {
+				values[outputKey] = extracted
+			}
+			continue
+		}
+
+		values[outputKey] = toJSONValueString(value)
+	}
+
+	return values
+}
+
+func extractAttributeRefAttributePath(value interface{}) (string, bool) {
+	vMap, ok := value.(map[string]interface{})
+	if !ok {
+		return "", false
+	}
+
+	attrRefRaw, ok := vMap["AttributeRef"]
+	if !ok {
+		return "", false
+	}
+
+	attrRefMap, ok := attrRefRaw.(map[string]interface{})
+	if !ok {
+		return "", false
+	}
+
+	attribute, ok := attrRefMap["Attribute"].(string)
+	if !ok || strings.TrimSpace(attribute) == "" {
+		return "", false
+	}
+
+	return strings.TrimSpace(attribute), true
+}
+
+func extractTooltipExpressionValue(value interface{}) string {
+	vMap, ok := value.(map[string]interface{})
+	if !ok {
+		return "[no Expression]"
+	}
+
+	textTemplateRaw, ok := vMap["TextTemplate"]
+	if !ok || textTemplateRaw == nil {
+		return "[no Expression]"
+	}
+
+	textTemplateMap, ok := textTemplateRaw.(map[string]interface{})
+	if !ok {
+		return "[no Expression]"
+	}
+
+	parametersRaw, ok := textTemplateMap["Parameters"]
+	if !ok {
+		return "[no Expression]"
+	}
+
+	for _, item := range toSlice(parametersRaw) {
+		parameterMap, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		expressionRaw, exists := parameterMap["Expression"]
+		if !exists {
+			continue
+		}
+
+		expression, ok := expressionRaw.(string)
+		if !ok {
+			return ""
+		}
+
+		return strings.TrimSpace(expression)
+	}
+
+	return "[no Expression]"
+}
+
+func extractDateFormattingInfo(value interface{}) (string, string) {
+	vMap, ok := value.(map[string]interface{})
+	if !ok {
+		return "[no date format]", ""
+	}
+
+	textTemplateRaw, ok := vMap["TextTemplate"]
+	if !ok || textTemplateRaw == nil {
+		return "[no date format]", ""
+	}
+
+	textTemplateMap, ok := textTemplateRaw.(map[string]interface{})
+	if !ok {
+		return "[no date format]", ""
+	}
+
+	parametersRaw, ok := textTemplateMap["Parameters"]
+	if !ok {
+		return "[no date format]", ""
+	}
+
+	for _, item := range toSlice(parametersRaw) {
+		parameterMap, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		formattingInfoRaw, hasFormattingInfo := parameterMap["FormattingInfo"]
+		if !hasFormattingInfo {
+			formattingInfoRaw = parameterMap["formattingInfo"]
+		}
+		if formattingInfoRaw == nil {
+			continue
+		}
+
+		formattingInfoMap, ok := formattingInfoRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		dateFormat := ""
+		if v, ok := formattingInfoMap["DateFormat"].(string); ok {
+			dateFormat = strings.TrimSpace(v)
+		} else if v, ok := formattingInfoMap["dateFormat"].(string); ok {
+			dateFormat = strings.TrimSpace(v)
+		}
+
+		customDateFormat := ""
+		if v, ok := formattingInfoMap["CustomDateFormat"].(string); ok {
+			customDateFormat = strings.TrimSpace(v)
+		} else if v, ok := formattingInfoMap["customDateFormat"].(string); ok {
+			customDateFormat = strings.TrimSpace(v)
+		}
+
+		if dateFormat == "" && customDateFormat == "" {
+			continue
+		}
+
+		if dateFormat == "" {
+			dateFormat = "[no date format]"
+		}
+
+		return dateFormat, customDateFormat
+	}
+
+	return "[no date format]", ""
+}
+
+func extractCaptionEnUS(value interface{}) string {
+	vMap, ok := value.(map[string]interface{})
+	if !ok {
+		return ""
+	}
+
+	textTemplateRaw, ok := vMap["TextTemplate"]
+	if !ok || textTemplateRaw == nil {
+		return ""
+	}
+
+	textTemplateMap, ok := textTemplateRaw.(map[string]interface{})
+	if !ok {
+		return ""
+	}
+
+	templateRaw, ok := textTemplateMap["Template"]
+	if !ok || templateRaw == nil {
+		return ""
+	}
+
+	templateMap, ok := templateRaw.(map[string]interface{})
+	if !ok {
+		return ""
+	}
+
+	translationsRaw, ok := templateMap["Translations"]
+	if !ok {
+		translationsRaw = templateMap["translations"]
+	}
+	if translationsRaw == nil {
+		itemsRaw, hasItems := templateMap["Items"]
+		if !hasItems {
+			itemsRaw = templateMap["items"]
+		}
+		translationsRaw = itemsRaw
+	}
+
+	for _, item := range toSlice(translationsRaw) {
+		translationMap, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		lang := ""
+		if v, ok := translationMap["LanguageCode"].(string); ok {
+			lang = strings.TrimSpace(v)
+		} else if v, ok := translationMap["languageCode"].(string); ok {
+			lang = strings.TrimSpace(v)
+		}
+
+		if !strings.EqualFold(lang, "en_US") {
+			continue
+		}
+
+		if text, ok := translationMap["Text"].(string); ok {
+			return strings.TrimSpace(text)
+		}
+		if text, ok := translationMap["text"].(string); ok {
+			return strings.TrimSpace(text)
+		}
+
+		return ""
+	}
+
+	return ""
+}
+
+func resolveDataGridColumnType(colProps []interface{}) string {
+	if isCustomContentColumn(colProps) {
+		return "Custom Content"
+	}
+	if isDynamicTextColumn(colProps) {
+		return "Dynamic Text"
+	}
+	if _, ok := extractColumnAttributeName(colProps); ok {
+		return "Attribute"
+	}
+
+	return "Unknown"
 }
 
 func collectDateTimeModificationsInWidget(widget map[string]interface{}, mode DateTimeUpdateMode) (int, []string, []string, []string, map[string]string) {
@@ -2191,10 +2695,105 @@ func processColumnTooltip(tooltipProp map[string]interface{}, mode DateTimeUpdat
 		}
 
 		changed := resetDateTimeInContentParams(valMap, mode) > 0
+		if promoteTooltipParameterDateFormatToDefault(valMap) > 0 {
+			changed = true
+		}
 		return hasDateTime, changed
 	}
 
 	return false, false
+}
+
+func promoteTooltipParameterDateFormatToDefault(data interface{}) int {
+	changes := 0
+
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if _, textTemplateRaw, ok := getMapValueByNormalizedKey(v, "texttemplate"); ok {
+			changes += normalizeDateFormatInTextTemplateParametersToDefault(textTemplateRaw)
+		}
+
+		for _, value := range v {
+			changes += promoteTooltipParameterDateFormatToDefault(value)
+		}
+
+	case []interface{}:
+		for _, item := range v {
+			changes += promoteTooltipParameterDateFormatToDefault(item)
+		}
+
+	case primitive.A:
+		for _, item := range v {
+			changes += promoteTooltipParameterDateFormatToDefault(item)
+		}
+	}
+
+	return changes
+}
+
+func normalizeDateFormatInTextTemplateParametersToDefault(textTemplate interface{}) int {
+	ttMap, ok := textTemplate.(map[string]interface{})
+	if !ok {
+		return 0
+	}
+
+	changes := 0
+	_, parametersRaw, hasParameters := getMapValueByNormalizedKey(ttMap, "parameters")
+	if !hasParameters {
+		return 0
+	}
+
+	parameters := toSlice(parametersRaw)
+	for _, parameter := range parameters {
+		paramMap, ok := parameter.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		if !containsTargetDateTimeFormat(paramMap) {
+			continue
+		}
+
+		if removeCustomDateTimeFormatFromExpression(paramMap) {
+			changes++
+		}
+
+		formattingInfoKey, formattingInfoRaw, hasFormattingInfo := getMapValueByNormalizedKey(paramMap, "formattinginfo")
+		if !hasFormattingInfo {
+			paramMap["FormattingInfo"] = map[string]interface{}{"DateFormat": "default"}
+			changes++
+			continue
+		}
+
+		formattingInfoMap, ok := formattingInfoRaw.(map[string]interface{})
+		if !ok {
+			if formattingInfoKey == "" {
+				formattingInfoKey = "FormattingInfo"
+			}
+			paramMap[formattingInfoKey] = map[string]interface{}{"DateFormat": "default"}
+			changes++
+			continue
+		}
+
+		dateFormatKey, hasDateFormat := findMapKey(formattingInfoMap, isDateFormatKey)
+		if hasDateFormat {
+			if updatedValue, changed := replaceCustomWithDefault(formattingInfoMap[dateFormatKey]); changed {
+				formattingInfoMap[dateFormatKey] = updatedValue
+				changes++
+			}
+		} else {
+			formattingInfoMap["DateFormat"] = "default"
+			changes++
+		}
+
+		customDateFormatKey, hasCustomDateFormat := findMapKey(formattingInfoMap, isCustomDateFormatKey)
+		if hasCustomDateFormat {
+			delete(formattingInfoMap, customDateFormatKey)
+			changes++
+		}
+	}
+
+	return changes
 }
 
 func promoteTooltipParameterDateFormatToDateTime(data interface{}) int {
