@@ -19,6 +19,7 @@ const defaultDataGridWidgetID = "com.mendix.widget.web.datagrid.Datagrid"
 const targetCustomDateTimeFormat = ",MMM dd, yyyy  hh:mm:ss a"
 const dateTimeModificationDescription = "set DateTime format from custom to default and remove custom format value when it matches the target pattern"
 const removeCustomFormatDateTimeModificationDescription = "set DateTime format from custom to Date and Time"
+const useDefaultDateTimeModificationDescription = "set DateFormat from Custom to DateTime and clear CustomDateFormat when it matches the target pattern"
 const defaultDateAndTimeSelectorKey = "datetime"
 
 type DateTimeUpdateMode string
@@ -28,6 +29,7 @@ var debugExpressions bool
 const (
 	dateTimeUpdateModeDefault            DateTimeUpdateMode = "defaultDateTme"
 	dateTimeUpdateModeRemoveCustomFormat DateTimeUpdateMode = "removeCustomFormatDateTme"
+	dateTimeUpdateModeUseDefaultDateTime DateTimeUpdateMode = "useDefaultDateTime"
 )
 
 var formatDateTimeExpressionRegex = regexp.MustCompile(`(?i)^\s*formatdatetime\s*\(\s*(.+?)\s*,\s*'([^']*)'\s*\)\s*$`)
@@ -38,6 +40,7 @@ func main() {
 		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json] [--showColumnProperties|--show-column-properties] [--only-page ModuleName.PageName]")
 		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  RemoveCustomFormatDateTme mode: manage_datagrid <mpr_file_path> [widget_id] --removeCustomFormatDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
+		fmt.Println("  UseDefaultDateTime mode: manage_datagrid <mpr_file_path> [widget_id] --useDefaultDateTime [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  Debug expressions:    add --debug-expressions to print all expression values and match status")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
@@ -48,16 +51,23 @@ func main() {
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --defaultDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --removeCustomFormatDateTme")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime")
+		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --useDefaultDateTime")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --dump-target-json")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --dump-target-json")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime --dump-target-json")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-module MyModule")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-module MyModule")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime --only-module MyModule")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --dump-target-json --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --dump-target-json --only-page MyModule.MyPage")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime --dump-target-json --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --defaultDateTme --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --force-page-diff")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --debug-expressions")
 		fmt.Println("\nNote:")
 		fmt.Printf("  Default widget_id: %s\n", defaultDataGridWidgetID)
@@ -70,6 +80,7 @@ func main() {
 	// Check modes and flags
 	defaultDateTmeMode := false
 	removeCustomFormatDateTmeMode := false
+	useDefaultDateTimeMode := false
 	dumpJSON := false
 	showColumnProperties := false
 	dumpTargetJSON := false
@@ -95,6 +106,10 @@ func main() {
 		}
 		if arg == "--removeCustomFormatDateTme" {
 			removeCustomFormatDateTmeMode = true
+			continue
+		}
+		if arg == "--useDefaultDateTime" {
+			useDefaultDateTimeMode = true
 			continue
 		}
 		if arg == "--dump-target-json" {
@@ -140,8 +155,18 @@ func main() {
 	}
 
 	// Ensure modes are mutually exclusive
-	if defaultDateTmeMode && removeCustomFormatDateTmeMode {
-		fmt.Println("Error: cannot specify both --defaultDateTme and --removeCustomFormatDateTme")
+	selectedModes := 0
+	if defaultDateTmeMode {
+		selectedModes++
+	}
+	if removeCustomFormatDateTmeMode {
+		selectedModes++
+	}
+	if useDefaultDateTimeMode {
+		selectedModes++
+	}
+	if selectedModes > 1 {
+		fmt.Println("Error: choose only one mode among --defaultDateTme, --removeCustomFormatDateTme, --useDefaultDateTime")
 		os.Exit(1)
 	}
 
@@ -155,16 +180,22 @@ func main() {
 
 	fmt.Printf("Opened: %s\n", reader.Path())
 
-	if defaultDateTmeMode || removeCustomFormatDateTmeMode {
+	if defaultDateTmeMode || removeCustomFormatDateTmeMode || useDefaultDateTimeMode {
 		mode := dateTimeUpdateModeDefault
 		if removeCustomFormatDateTmeMode {
 			mode = dateTimeUpdateModeRemoveCustomFormat
+		}
+		if useDefaultDateTimeMode {
+			mode = dateTimeUpdateModeUseDefaultDateTime
 		}
 
 		fmt.Printf("\n=== %s ===\n", dateTimeModeString(mode))
 		fmt.Printf("Searching for widgets with widgetId: %s\n", sourceWidgetID)
 		if mode == dateTimeUpdateModeDefault {
 			fmt.Printf("Will reset custom DateTime formatting to default only when custom format is: %s\n\n", targetCustomDateTimeFormat)
+		}
+		if mode == dateTimeUpdateModeUseDefaultDateTime {
+			fmt.Printf("Will set DateFormat to DateTime and clear CustomDateFormat when custom format is: %s\n\n", strings.TrimPrefix(targetCustomDateTimeFormat, ","))
 		}
 		if dumpTargetJSON {
 			fmt.Println("Target page JSON dump mode: ENABLED")
@@ -2361,6 +2392,9 @@ func resetDateTimeInContentParamsMap(v map[string]interface{}, mode DateTimeUpda
 			if mode == dateTimeUpdateModeRemoveCustomFormat {
 				// In removeCustomFormatDateTme mode, always convert custom selectors to Date and Time.
 				shouldUpdate = true
+			} else if mode == dateTimeUpdateModeUseDefaultDateTime {
+				customFormatValue, ok := extractComparableString(v[customFormatKey])
+				shouldUpdate = ok && isTargetDateTimeFormat(customFormatValue)
 			} else {
 				customFormatValue, ok := extractComparableString(v[customFormatKey])
 				shouldUpdate = ok && isTargetDateTimeFormat(customFormatValue)
@@ -2370,6 +2404,11 @@ func resetDateTimeInContentParamsMap(v map[string]interface{}, mode DateTimeUpda
 				if mode == dateTimeUpdateModeRemoveCustomFormat {
 					// For removeCustomFormatDateTme mode, replace "custom" with "datetime".
 					if updatedValue, changed := replaceCustomSelector(v[formatKey], defaultDateAndTimeSelectorKey); changed {
+						v[formatKey] = updatedValue
+						changes++
+					}
+				} else if mode == dateTimeUpdateModeUseDefaultDateTime {
+					if updatedValue, changed := forceSelectorValue(v[formatKey], "DateTime"); changed {
 						v[formatKey] = updatedValue
 						changes++
 					}
@@ -2392,6 +2431,10 @@ func resetDateTimeInContentParamsMap(v map[string]interface{}, mode DateTimeUpda
 		if mode == dateTimeUpdateModeRemoveCustomFormat {
 			// In removeCustomFormatDateTme mode, always normalize to DateTime and drop custom date format.
 			shouldUpdate = true
+		} else if mode == dateTimeUpdateModeUseDefaultDateTime {
+			isCustomDateFormatSelector := isCustomSelectorValue(v[dateFormatKey])
+			customFormatValue, ok := extractComparableString(v[customDateFormatKey])
+			shouldUpdate = isCustomDateFormatSelector && ok && isTargetDateTimeFormat(customFormatValue)
 		} else {
 			customFormatValue, ok := extractComparableString(v[customDateFormatKey])
 			shouldUpdate = ok && isTargetDateTimeFormat(customFormatValue)
@@ -2400,6 +2443,11 @@ func resetDateTimeInContentParamsMap(v map[string]interface{}, mode DateTimeUpda
 		if shouldUpdate {
 			if mode == dateTimeUpdateModeRemoveCustomFormat {
 				if updatedValue, changed := replaceDateOrCustomWithDateTime(v[dateFormatKey]); changed {
+					v[dateFormatKey] = updatedValue
+					changes++
+				}
+			} else if mode == dateTimeUpdateModeUseDefaultDateTime {
+				if updatedValue, changed := forceSelectorValue(v[dateFormatKey], "DateTime"); changed {
 					v[dateFormatKey] = updatedValue
 					changes++
 				}
@@ -2457,7 +2505,7 @@ func replaceTargetFormatDateTimeExpression(expression string) (string, bool) {
 		return expression, false
 	}
 
-	return expressionValue, true
+	return fmt.Sprintf("formatDateTime(%s)", expressionValue), true
 }
 
 func parseFormatDateTimeExpression(expression string) (string, string, bool) {
@@ -3325,6 +3373,8 @@ func dateTimeModeString(mode DateTimeUpdateMode) string {
 	switch mode {
 	case dateTimeUpdateModeRemoveCustomFormat:
 		return "REMOVE CUSTOM FORMAT DATETIME MODE"
+	case dateTimeUpdateModeUseDefaultDateTime:
+		return "USE DEFAULT DATETIME MODE"
 	case dateTimeUpdateModeDefault:
 		fallthrough
 	default:
@@ -3369,6 +3419,8 @@ func dateTimeModeDescription(mode DateTimeUpdateMode) string {
 	switch mode {
 	case dateTimeUpdateModeRemoveCustomFormat:
 		return removeCustomFormatDateTimeModificationDescription
+	case dateTimeUpdateModeUseDefaultDateTime:
+		return useDefaultDateTimeModificationDescription
 	case dateTimeUpdateModeDefault:
 		fallthrough
 	default:
