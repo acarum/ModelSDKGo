@@ -220,6 +220,7 @@ func main() {
 		}
 		if mode == dateTimeUpdateModeUseDefaultDateTime {
 			fmt.Printf("Will set DateFormat to DateTime and clear CustomDateFormat when custom format is: %s\n\n", strings.TrimPrefix(targetCustomDateTimeFormat, ","))
+			fmt.Println("After DataGrid update, DatePicker update logic will run in sequence.")
 		}
 		if dumpTargetJSON {
 			fmt.Println("Target page JSON dump mode: ENABLED")
@@ -238,6 +239,19 @@ func main() {
 		}
 		fmt.Println()
 		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, onlyModule, forcePageDiff, mode)
+
+		if mode == dateTimeUpdateModeUseDefaultDateTime {
+			fmt.Printf("\n=== CHAINED PICKER UPDATE (useDefaultDateTime4Picker) ===\n")
+			fmt.Printf("Searching for DatePicker (Pages$DatePicker or Forms$DatePicker) with DateFormat=Custom and CustomDateFormat=%q\n", targetDatePickerCustomDateFormat)
+			if onlyPage != "" {
+				fmt.Printf("Filter: Only page %s\n", onlyPage)
+			}
+			if onlyModule != "" {
+				fmt.Printf("Filter: Only module %s\n", onlyModule)
+			}
+			fmt.Println()
+			performUseDefaultDateTime4Picker(reader, mprPath, onlyPage, onlyModule)
+		}
 	} else {
 		fmt.Printf("\n=== Searching for custom widgets with widgetId: %s ===\n", sourceWidgetID)
 		if dumpJSON {
@@ -581,7 +595,7 @@ func collectTargetDatePickerUpdates(data interface{}, updatedCount *int) {
 	case map[string]interface{}:
 		if typeVal, ok := v["$Type"].(string); ok && isSupportedDatePickerType(typeVal) {
 			if updateTargetDatePickerFormatting(v) {
-				*updatedCount++
+				*updatedCount = *updatedCount + 1
 			}
 		}
 
