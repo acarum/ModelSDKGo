@@ -921,17 +921,26 @@ func performDefaultDateTme(reader *modelsdk.Reader, mprPath, widgetID string, du
 		}
 		fmt.Printf("  %s: %s (%d grid(s), %d column update(s))\n", unit.UnitType, displayName, unit.GridCount, unit.ColumnsUpdated)
 		if len(unit.ColumnNames) > 0 {
-			fmt.Printf("    Columns to modify: %s\n", strings.Join(unit.ColumnNames, ", "))
+			fmt.Println("    Columns to modify:")
+			for _, colName := range unit.ColumnNames {
+				fmt.Printf("      - %s\n", colName)
+			}
 		} else {
 			fmt.Printf("    Columns to modify: none\n")
 		}
 		if len(unit.DateTimeColumns) > 0 {
-			fmt.Printf("    DateTime columns: %s\n", strings.Join(unit.DateTimeColumns, ", "))
+			fmt.Println("    DateTime columns:")
+			for _, colName := range unit.DateTimeColumns {
+				fmt.Printf("      - %s\n", colName)
+			}
 		} else {
 			fmt.Printf("    DateTime columns: none\n")
 		}
 		if len(unit.TooltipColumns) > 0 {
-			fmt.Printf("    Tooltip columns modified: %s\n", strings.Join(unit.TooltipColumns, ", "))
+			fmt.Println("    Tooltip columns modified:")
+			for _, colName := range unit.TooltipColumns {
+				fmt.Printf("      - %s\n", colName)
+			}
 		}
 		if unit.ModificationType != "" {
 			fmt.Printf("    Modification: %s\n", unit.ModificationType)
