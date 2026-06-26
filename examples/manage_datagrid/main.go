@@ -38,14 +38,15 @@ var formatDateTimeExpressionRegex = regexp.MustCompile(`(?i)^\s*formatdatetime\s
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage:")
-		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] [--dump-json] [--showColumnProperties|--show-column-properties] [--only-page ModuleName.PageName]")
+		fmt.Println("  Find mode:            manage_datagrid <mpr_file_path> [widget_id] --find [--dump-json] [--showColumnProperties|--show-column-properties] [--only-page ModuleName.PageName]")
 		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  RemoveCustomFormatDateTme mode: manage_datagrid <mpr_file_path> [widget_id] --removeCustomFormatDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
-		fmt.Println("  UseDefaultDateTime mode: manage_datagrid <mpr_file_path> [widget_id] --useDefaultDateTime [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
+		fmt.Println("  UseDefaultDateTime mode (default): manage_datagrid <mpr_file_path> [widget_id] [--useDefaultDateTime] [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  UseDefaultDateTime4Picker mode: manage_datagrid <mpr_file_path> --useDefaultDateTime4Picker [--only-page ModuleName.PageName] [--only-module ModuleName]")
 		fmt.Println("  Debug expressions:    add --debug-expressions to print all expression values and match status")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
+		fmt.Println("  manage_datagrid MyApp.mpr --find")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --dump-json")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --showColumnProperties")
 		fmt.Println("  manage_datagrid MyApp.mpr com.mendix.widget.web.datagrid.Datagrid --showColumnProperties --only-page MyModule.MyPage")
@@ -75,6 +76,8 @@ func main() {
 		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime4Picker --only-page MyModule.MyPage")
 		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime4Picker --only-module MyModule")
 		fmt.Println("\nNote:")
+		fmt.Println("  If no mode is specified, --useDefaultDateTime is applied by default.")
+		fmt.Println("  Use --find to run search/report mode without applying updates.")
 		fmt.Printf("  Default widget_id: %s\n", defaultDataGridWidgetID)
 		os.Exit(1)
 	}
@@ -85,8 +88,9 @@ func main() {
 	// Check modes and flags
 	defaultDateTmeMode := false
 	removeCustomFormatDateTmeMode := false
-	useDefaultDateTimeMode := false
+	useDefaultDateTimeMode := true
 	useDefaultDateTime4PickerMode := false
+	findMode := false
 	dumpJSON := false
 	showColumnProperties := false
 	dumpTargetJSON := false
@@ -108,10 +112,12 @@ func main() {
 		}
 		if arg == "--defaultDateTme" {
 			defaultDateTmeMode = true
+			useDefaultDateTimeMode = false
 			continue
 		}
 		if arg == "--removeCustomFormatDateTme" {
 			removeCustomFormatDateTmeMode = true
+			useDefaultDateTimeMode = false
 			continue
 		}
 		if arg == "--useDefaultDateTime" {
@@ -120,6 +126,12 @@ func main() {
 		}
 		if arg == "--useDefaultDateTime4Picker" {
 			useDefaultDateTime4PickerMode = true
+			useDefaultDateTimeMode = false
+			continue
+		}
+		if arg == "--find" {
+			findMode = true
+			useDefaultDateTimeMode = false
 			continue
 		}
 		if arg == "--dump-target-json" {
@@ -178,8 +190,11 @@ func main() {
 	if useDefaultDateTime4PickerMode {
 		selectedModes++
 	}
+	if findMode {
+		selectedModes++
+	}
 	if selectedModes > 1 {
-		fmt.Println("Error: choose only one mode among --defaultDateTme, --removeCustomFormatDateTme, --useDefaultDateTime, --useDefaultDateTime4Picker")
+		fmt.Println("Error: choose only one mode among --defaultDateTme, --removeCustomFormatDateTme, --useDefaultDateTime, --useDefaultDateTime4Picker, --find")
 		os.Exit(1)
 	}
 
@@ -252,7 +267,7 @@ func main() {
 			fmt.Println()
 			performUseDefaultDateTime4Picker(reader, mprPath, onlyPage, onlyModule)
 		}
-	} else {
+	} else if findMode {
 		fmt.Printf("\n=== Searching for custom widgets with widgetId: %s ===\n", sourceWidgetID)
 		if dumpJSON {
 			fmt.Printf("JSON dump mode: ENABLED\n")
@@ -265,6 +280,9 @@ func main() {
 		}
 		fmt.Println()
 		performSearch(reader, mprPath, sourceWidgetID, dumpJSON, showColumnProperties, onlyPage)
+	} else {
+		fmt.Println("No mode selected. This should not happen because --useDefaultDateTime is the default mode.")
+		os.Exit(1)
 	}
 }
 
