@@ -17,6 +17,7 @@ import (
 
 const defaultDataGridWidgetID = "com.mendix.widget.web.datagrid.Datagrid"
 const targetCustomDateTimeFormat = ",MMM dd, yyyy  hh:mm:ss a"
+const targetDatePickerCustomDateFormat = "MMM dd, yyyy  hh:mm:ss a"
 const dateTimeModificationDescription = "set DateTime format from custom to default and remove custom format value when it matches the target pattern"
 const removeCustomFormatDateTimeModificationDescription = "set DateTime format from custom to Date and Time"
 const useDefaultDateTimeModificationDescription = "set DateFormat from Custom to DateTime and clear CustomDateFormat when it matches the target pattern"
@@ -41,6 +42,7 @@ func main() {
 		fmt.Println("  DefaultDateTme mode:  manage_datagrid <mpr_file_path> [widget_id] --defaultDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  RemoveCustomFormatDateTme mode: manage_datagrid <mpr_file_path> [widget_id] --removeCustomFormatDateTme [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
 		fmt.Println("  UseDefaultDateTime mode: manage_datagrid <mpr_file_path> [widget_id] --useDefaultDateTime [--dump-target-json] [--only-page ModuleName.PageName] [--only-module ModuleName] [--force-page-diff]")
+		fmt.Println("  UseDefaultDateTime4Picker mode: manage_datagrid <mpr_file_path> --useDefaultDateTime4Picker [--only-page ModuleName.PageName] [--only-module ModuleName]")
 		fmt.Println("  Debug expressions:    add --debug-expressions to print all expression values and match status")
 		fmt.Println("\nExamples:")
 		fmt.Println("  manage_datagrid MyApp.mpr")
@@ -69,6 +71,9 @@ func main() {
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime --only-page MyModule.MyPage --force-page-diff")
 		fmt.Println("  manage_datagrid MyApp.mpr --removeCustomFormatDateTme --only-page MyModule.MyPage --debug-expressions")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime4Picker")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime4Picker --only-page MyModule.MyPage")
+		fmt.Println("  manage_datagrid MyApp.mpr --useDefaultDateTime4Picker --only-module MyModule")
 		fmt.Println("\nNote:")
 		fmt.Printf("  Default widget_id: %s\n", defaultDataGridWidgetID)
 		os.Exit(1)
@@ -81,6 +86,7 @@ func main() {
 	defaultDateTmeMode := false
 	removeCustomFormatDateTmeMode := false
 	useDefaultDateTimeMode := false
+	useDefaultDateTime4PickerMode := false
 	dumpJSON := false
 	showColumnProperties := false
 	dumpTargetJSON := false
@@ -110,6 +116,10 @@ func main() {
 		}
 		if arg == "--useDefaultDateTime" {
 			useDefaultDateTimeMode = true
+			continue
+		}
+		if arg == "--useDefaultDateTime4Picker" {
+			useDefaultDateTime4PickerMode = true
 			continue
 		}
 		if arg == "--dump-target-json" {
@@ -150,7 +160,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if !widgetIDSet {
+	if !widgetIDSet && !useDefaultDateTime4PickerMode {
 		fmt.Printf("No widget_id provided, using default: %s\n", sourceWidgetID)
 	}
 
@@ -165,8 +175,11 @@ func main() {
 	if useDefaultDateTimeMode {
 		selectedModes++
 	}
+	if useDefaultDateTime4PickerMode {
+		selectedModes++
+	}
 	if selectedModes > 1 {
-		fmt.Println("Error: choose only one mode among --defaultDateTme, --removeCustomFormatDateTme, --useDefaultDateTime")
+		fmt.Println("Error: choose only one mode among --defaultDateTme, --removeCustomFormatDateTme, --useDefaultDateTime, --useDefaultDateTime4Picker")
 		os.Exit(1)
 	}
 
@@ -180,7 +193,18 @@ func main() {
 
 	fmt.Printf("Opened: %s\n", reader.Path())
 
-	if defaultDateTmeMode || removeCustomFormatDateTmeMode || useDefaultDateTimeMode {
+	if useDefaultDateTime4PickerMode {
+		fmt.Printf("\n=== USE DEFAULT DATETIME 4 PICKER MODE ===\n")
+		fmt.Printf("Searching for DatePicker (Pages$DatePicker or Forms$DatePicker) with DateFormat=Custom and CustomDateFormat=%q\n", targetDatePickerCustomDateFormat)
+		if onlyPage != "" {
+			fmt.Printf("Filter: Only page %s\n", onlyPage)
+		}
+		if onlyModule != "" {
+			fmt.Printf("Filter: Only module %s\n", onlyModule)
+		}
+		fmt.Println()
+		performUseDefaultDateTime4Picker(reader, mprPath, onlyPage, onlyModule)
+	} else if defaultDateTmeMode || removeCustomFormatDateTmeMode || useDefaultDateTimeMode {
 		mode := dateTimeUpdateModeDefault
 		if removeCustomFormatDateTmeMode {
 			mode = dateTimeUpdateModeRemoveCustomFormat
@@ -249,6 +273,406 @@ type UnitReplaceInfo struct {
 	UnitID   string
 	UnitName string
 	Widgets  []map[string]interface{}
+}
+
+type DatePickerMatchInfo struct {
+	WidgetName        string
+	WidgetType        string
+	DateFormat        string
+	CustomDateFormat  string
+	ContainerPathHint string
+}
+
+type UnitDatePickerMatchInfo struct {
+	UnitType      string
+	UnitID        string
+	UnitName      string
+	QualifiedName string
+	Matches       []DatePickerMatchInfo
+}
+
+func performUseDefaultDateTime4Picker(reader *modelsdk.Reader, mprPath, onlyPage, onlyModule string) {
+	unitsWithMatches := make([]UnitDatePickerMatchInfo, 0)
+
+	moduleMap := make(map[string]string)
+	modules, err := reader.ListModules()
+	if err == nil {
+		for _, module := range modules {
+			moduleMap[string(module.ID)] = module.Name
+		}
+	}
+
+	containerMap := make(map[string]string)
+	units, err := reader.ListUnits()
+	if err == nil {
+		for _, unit := range units {
+			containerMap[string(unit.ID)] = string(unit.ContainerID)
+		}
+	}
+
+	fmt.Println("=== Scanning Snippets ===")
+	if onlyPage != "" {
+		fmt.Println("Skipping snippets because --only-page filter is set.")
+	} else {
+		snippets, err := reader.ListSnippets()
+		if err != nil {
+			fmt.Printf("Error listing snippets: %v\n", err)
+		} else {
+			fmt.Printf("Scanning %d snippets...\n", len(snippets))
+			for _, snippet := range snippets {
+				moduleName := resolveModuleNameFromContainerID(string(snippet.ContainerID), moduleMap, containerMap)
+				if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+					continue
+				}
+
+				bsonData, err := loadUnitBSON(mprPath, string(snippet.ID))
+				if err != nil {
+					continue
+				}
+
+				var snippetData map[string]interface{}
+				if err := bson.Unmarshal(bsonData, &snippetData); err != nil {
+					continue
+				}
+
+				matches := findTargetDatePickerMatches(snippetData)
+				if len(matches) > 0 {
+					unitsWithMatches = append(unitsWithMatches, UnitDatePickerMatchInfo{
+						UnitType: "Snippet",
+						UnitID:   string(snippet.ID),
+						UnitName: snippet.Name,
+						Matches:  matches,
+					})
+				}
+			}
+		}
+	}
+
+	fmt.Println("\n=== Scanning Pages ===")
+	pages, err := reader.ListPages()
+	if err != nil {
+		fmt.Printf("Error listing pages: %v\n", err)
+	} else {
+		fmt.Printf("Scanning %d pages...\n", len(pages))
+		for _, page := range pages {
+			moduleName := resolveModuleNameFromContainerID(string(page.ContainerID), moduleMap, containerMap)
+			if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+				continue
+			}
+			if moduleName == "" {
+				moduleName = "[unknown]"
+			}
+			pageIdentifier := moduleName + "." + page.Name
+
+			if onlyPage != "" && !matchesOnlyPageFilter(pageIdentifier, page.Name, onlyPage) {
+				continue
+			}
+
+			bsonData, err := loadUnitBSON(mprPath, string(page.ID))
+			if err != nil {
+				continue
+			}
+
+			var pageData map[string]interface{}
+			if err := bson.Unmarshal(bsonData, &pageData); err != nil {
+				continue
+			}
+
+			matches := findTargetDatePickerMatches(pageData)
+			if len(matches) > 0 {
+				unitsWithMatches = append(unitsWithMatches, UnitDatePickerMatchInfo{
+					UnitType:      "Page",
+					UnitID:        string(page.ID),
+					UnitName:      page.Name,
+					QualifiedName: pageIdentifier,
+					Matches:       matches,
+				})
+			}
+		}
+	}
+
+	fmt.Println("\n=== Scanning Layouts ===")
+	if onlyPage != "" {
+		fmt.Println("Skipping layouts because --only-page filter is set.")
+	} else {
+		layouts, err := reader.ListLayouts()
+		if err != nil {
+			fmt.Printf("Error listing layouts: %v\n", err)
+		} else {
+			fmt.Printf("Scanning %d layouts...\n", len(layouts))
+			for _, layout := range layouts {
+				moduleName := resolveModuleNameFromContainerID(string(layout.ContainerID), moduleMap, containerMap)
+				if onlyModule != "" && !strings.EqualFold(moduleName, onlyModule) {
+					continue
+				}
+
+				bsonData, err := loadUnitBSON(mprPath, string(layout.ID))
+				if err != nil {
+					continue
+				}
+
+				var layoutData map[string]interface{}
+				if err := bson.Unmarshal(bsonData, &layoutData); err != nil {
+					continue
+				}
+
+				matches := findTargetDatePickerMatches(layoutData)
+				if len(matches) > 0 {
+					unitsWithMatches = append(unitsWithMatches, UnitDatePickerMatchInfo{
+						UnitType: "Layout",
+						UnitID:   string(layout.ID),
+						UnitName: layout.Name,
+						Matches:  matches,
+					})
+				}
+			}
+		}
+	}
+
+	fmt.Printf("\n=== DatePicker Matches ===\n")
+	if len(unitsWithMatches) == 0 {
+		fmt.Println("No matching DatePicker found (Pages$DatePicker / Forms$DatePicker).")
+		fmt.Printf("\n=== Summary ===\n")
+		fmt.Printf("Units with matches: %d\n", 0)
+		fmt.Printf("Total matching pickers: %d\n", 0)
+		return
+	}
+
+	totalPickers := 0
+	for _, unit := range unitsWithMatches {
+		for _, match := range unit.Matches {
+			fmt.Printf("    - Widget: %s\n", match.WidgetName)
+			fmt.Printf("      dateFormat: %s\n", match.DateFormat)
+			fmt.Printf("      customDateFormat: %s\n", match.CustomDateFormat)
+			totalPickers++
+		}
+	}
+
+	fmt.Printf("\n=== Summary ===\n")
+	fmt.Printf("Units with matches: %d\n", len(unitsWithMatches))
+	fmt.Printf("Total matching pickers: %d\n", totalPickers)
+
+	fmt.Printf("\nApply picker updates (dateFormat=DateTime, customDateFormat=\"\")? (yes/no): ")
+	inputReader := bufio.NewReader(os.Stdin)
+	response, _ := inputReader.ReadString('\n')
+	response = strings.TrimSpace(strings.ToLower(response))
+
+	if response != "yes" && response != "y" {
+		fmt.Println("Operation cancelled.")
+		return
+	}
+
+	fmt.Println("\n=== Saving Picker Updates ===")
+	successCount := 0
+	errorCount := 0
+	totalPickersUpdated := 0
+
+	for _, unit := range unitsWithMatches {
+		displayName := unit.UnitName
+		if unit.UnitType == "Page" && unit.QualifiedName != "" {
+			displayName = unit.QualifiedName
+		}
+
+		fmt.Printf("Processing %s: %s... ", unit.UnitType, displayName)
+
+		bsonData, err := loadUnitBSON(mprPath, unit.UnitID)
+		if err != nil {
+			fmt.Printf("✗ Error loading: %v\n", err)
+			errorCount++
+			continue
+		}
+
+		var unitData map[string]interface{}
+		if err := bson.Unmarshal(bsonData, &unitData); err != nil {
+			fmt.Printf("✗ Error unmarshaling: %v\n", err)
+			errorCount++
+			continue
+		}
+
+		pickersUpdated := applyTargetDatePickerUpdates(unitData)
+		if pickersUpdated == 0 {
+			fmt.Printf("⚠ No changes to save\n")
+			continue
+		}
+
+		updatedBSON, err := bson.Marshal(unitData)
+		if err != nil {
+			fmt.Printf("✗ Error marshaling: %v\n", err)
+			errorCount++
+			continue
+		}
+
+		if err := saveUnitBSON(mprPath, unit.UnitID, updatedBSON); err != nil {
+			fmt.Printf("✗ Error saving: %v\n", err)
+			errorCount++
+			continue
+		}
+
+		totalPickersUpdated += pickersUpdated
+		successCount++
+		fmt.Printf("✓ Updated %d picker(s)\n", pickersUpdated)
+	}
+
+	fmt.Printf("\n=== Update Summary ===\n")
+	fmt.Printf("Successfully processed: %d unit(s)\n", successCount)
+	if errorCount > 0 {
+		fmt.Printf("Failed: %d unit(s)\n", errorCount)
+	}
+	fmt.Printf("Total updated pickers: %d\n", totalPickersUpdated)
+}
+
+func findTargetDatePickerMatches(data interface{}) []DatePickerMatchInfo {
+	matches := make([]DatePickerMatchInfo, 0)
+	collectTargetDatePickerMatches(data, "$", &matches)
+	return matches
+}
+
+func collectTargetDatePickerMatches(data interface{}, path string, matches *[]DatePickerMatchInfo) {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if typeVal, ok := v["$Type"].(string); ok && isSupportedDatePickerType(typeVal) {
+			if dateFormat, customDateFormat, ok := matchesTargetDatePickerFormatting(v); ok {
+				widgetName := "[unnamed]"
+				if name, ok := v["Name"].(string); ok && strings.TrimSpace(name) != "" {
+					widgetName = strings.TrimSpace(name)
+				}
+				*matches = append(*matches, DatePickerMatchInfo{
+					WidgetName:        widgetName,
+					WidgetType:        typeVal,
+					DateFormat:        dateFormat,
+					CustomDateFormat:  customDateFormat,
+					ContainerPathHint: path,
+				})
+			}
+		}
+
+		for key, child := range v {
+			nextPath := path + "." + key
+			collectTargetDatePickerMatches(child, nextPath, matches)
+		}
+
+	case []interface{}:
+		for i, child := range v {
+			nextPath := fmt.Sprintf("%s[%d]", path, i)
+			collectTargetDatePickerMatches(child, nextPath, matches)
+		}
+
+	case primitive.A:
+		for i, child := range v {
+			nextPath := fmt.Sprintf("%s[%d]", path, i)
+			collectTargetDatePickerMatches(child, nextPath, matches)
+		}
+	}
+}
+
+func isSupportedDatePickerType(typeVal string) bool {
+	trimmedType := strings.TrimSpace(typeVal)
+	return trimmedType == "Pages$DatePicker" || trimmedType == "Forms$DatePicker"
+}
+
+func applyTargetDatePickerUpdates(data interface{}) int {
+	updatedCount := 0
+	collectTargetDatePickerUpdates(data, &updatedCount)
+	return updatedCount
+}
+
+func collectTargetDatePickerUpdates(data interface{}, updatedCount *int) {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		if typeVal, ok := v["$Type"].(string); ok && isSupportedDatePickerType(typeVal) {
+			if updateTargetDatePickerFormatting(v) {
+				*updatedCount++
+			}
+		}
+
+		for _, child := range v {
+			collectTargetDatePickerUpdates(child, updatedCount)
+		}
+
+	case []interface{}:
+		for _, child := range v {
+			collectTargetDatePickerUpdates(child, updatedCount)
+		}
+
+	case primitive.A:
+		for _, child := range v {
+			collectTargetDatePickerUpdates(child, updatedCount)
+		}
+	}
+}
+
+func updateTargetDatePickerFormatting(widget map[string]interface{}) bool {
+	_, _, matchesTarget := matchesTargetDatePickerFormatting(widget)
+	if !matchesTarget {
+		return false
+	}
+
+	_, formattingInfoRaw, hasFormattingInfo := getMapValueByNormalizedKey(widget, "formattinginfo")
+	if !hasFormattingInfo {
+		return false
+	}
+
+	formattingInfo, ok := formattingInfoRaw.(map[string]interface{})
+	if !ok {
+		return false
+	}
+
+	dateFormatKey, hasDateFormat := findMapKey(formattingInfo, isDateFormatKey)
+	customDateFormatKey, hasCustomDateFormat := findMapKey(formattingInfo, isCustomDateFormatKey)
+	if !hasDateFormat || !hasCustomDateFormat {
+		return false
+	}
+
+	changed := false
+	if updatedDateFormat, dateFormatChanged := forceSelectorValue(formattingInfo[dateFormatKey], "DateTime"); dateFormatChanged {
+		formattingInfo[dateFormatKey] = updatedDateFormat
+		changed = true
+	}
+
+	if updatedCustomDateFormat, customDateFormatChanged := forceSelectorValue(formattingInfo[customDateFormatKey], ""); customDateFormatChanged {
+		formattingInfo[customDateFormatKey] = updatedCustomDateFormat
+		changed = true
+	}
+
+	return changed
+}
+
+func matchesTargetDatePickerFormatting(widget map[string]interface{}) (string, string, bool) {
+	_, formattingInfoRaw, hasFormattingInfo := getMapValueByNormalizedKey(widget, "formattinginfo")
+	if !hasFormattingInfo {
+		return "", "", false
+	}
+
+	formattingInfo, ok := formattingInfoRaw.(map[string]interface{})
+	if !ok {
+		return "", "", false
+	}
+
+	dateFormatKey, hasDateFormat := findMapKey(formattingInfo, isDateFormatKey)
+	if !hasDateFormat {
+		return "", "", false
+	}
+
+	customDateFormatKey, hasCustomDateFormat := findMapKey(formattingInfo, isCustomDateFormatKey)
+	if !hasCustomDateFormat {
+		return "", "", false
+	}
+
+	dateFormat, ok := extractComparableString(formattingInfo[dateFormatKey])
+	if !ok || !strings.EqualFold(strings.TrimSpace(dateFormat), "Custom") {
+		return "", "", false
+	}
+
+	customDateFormat, ok := extractComparableString(formattingInfo[customDateFormatKey])
+	if !ok {
+		return "", "", false
+	}
+
+	if strings.TrimSpace(customDateFormat) != targetDatePickerCustomDateFormat {
+		return "", "", false
+	}
+
+	return dateFormat, customDateFormat, true
 }
 
 func performSearch(reader *modelsdk.Reader, mprPath, widgetID string, dumpJSON bool, showColumnProperties bool, onlyPage string) {
