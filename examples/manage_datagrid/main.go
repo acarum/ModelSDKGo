@@ -228,6 +228,9 @@ func main() {
 			mode = dateTimeUpdateModeUseDefaultDateTime
 		}
 
+		// Chain picker updates for useDefaultDateTime always, and for defaultDateTme when --only-page is used.
+		shouldRunChainedPickerUpdate := mode == dateTimeUpdateModeUseDefaultDateTime || (mode == dateTimeUpdateModeDefault && onlyPage != "")
+
 		fmt.Printf("\n=== %s ===\n", dateTimeModeString(mode))
 		fmt.Printf("Searching for widgets with widgetId: %s\n", sourceWidgetID)
 		if mode == dateTimeUpdateModeDefault {
@@ -236,6 +239,8 @@ func main() {
 		if mode == dateTimeUpdateModeUseDefaultDateTime {
 			fmt.Printf("Will set DateFormat to DateTime and clear CustomDateFormat when custom format is: %s\n\n", strings.TrimPrefix(targetCustomDateTimeFormat, ","))
 			fmt.Println("After DataGrid update, DatePicker update logic will run in sequence.")
+		} else if mode == dateTimeUpdateModeDefault && onlyPage != "" {
+			fmt.Println("With --only-page, DatePicker update logic will also run in sequence.")
 		}
 		if dumpTargetJSON {
 			fmt.Println("Target page JSON dump mode: ENABLED")
@@ -255,7 +260,7 @@ func main() {
 		fmt.Println()
 		performDefaultDateTme(reader, mprPath, sourceWidgetID, dumpTargetJSON, onlyPage, onlyModule, forcePageDiff, mode)
 
-		if mode == dateTimeUpdateModeUseDefaultDateTime {
+		if shouldRunChainedPickerUpdate {
 			fmt.Printf("\n=== CHAINED PICKER UPDATE (useDefaultDateTime4Picker) ===\n")
 			fmt.Printf("Searching for DatePicker (Pages$DatePicker or Forms$DatePicker) with DateFormat=Custom and CustomDateFormat=%q\n", targetDatePickerCustomDateFormat)
 			if onlyPage != "" {
